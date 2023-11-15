@@ -289,7 +289,6 @@ public class MauiBottomSheet : UIView
 			if (safeAreaInsets is UIEdgeInsets insets)
 			{
 				bottomMargin += VirtualView?.Peek?.IgnoreSafeArea == true ? -insets.Bottom : insets.Bottom;
-				//bottomMargin += VirtualView?.Peek?.IgnoreSafeArea == true ? -Window.SafeAreaInsets.Bottom : Window.SafeAreaInsets.Bottom;
 			}
 
 			peekView.Margin = new Thickness(

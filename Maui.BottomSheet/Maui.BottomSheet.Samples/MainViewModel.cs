@@ -52,6 +52,9 @@ public partial class MainViewModel : ObservableObject
 	}
 
 	[ObservableProperty]
+	private bool hasHandle = true;
+	
+	[ObservableProperty]
 	private bool isSimpleHeaderSheetOpen;
 
 	[ObservableProperty]
