@@ -1,0 +1,175 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Maui.BottomSheet.Samples.MainPage"
+             x:Name="this"
+             xmlns:bottomsheet="clr-namespace:Maui.BottomSheet;assembly=Maui.BottomSheet"
+             xmlns:samples="clr-namespace:Maui.BottomSheet.Samples"
+             x:DataType="samples:MainViewModel">
+
+    <VerticalStackLayout Margin="10" Spacing="10">
+        <Button Text="Open base sheet" Command="{Binding OpenBaseSheetCommand}"/>
+        <Button Text="Open sheet with header" Command="{Binding OpenSimpleHeaderSheetCommand}"/>
+        <Button Text="Open safe area sheet" Command="{Binding OpenSafeAreaSheetCommand}"/>
+        <Button Text="Open custom header sheet" Command="{Binding OpenCustomHeaderCommand}"/>
+
+        <bottomsheet:BottomSheet
+            x:Name="WelcomeSheet"
+            HasHandle="True"
+            SheetStates="All"
+            Margin="50"
+            IsOpen="True">
+            <bottomsheet:BottomSheet.Peek>
+                <bottomsheet:BottomSheetPeek>
+                    <bottomsheet:BottomSheetPeek.PeekViewDataTemplate>
+                        <DataTemplate>
+                            <Grid RowSpacing="5" RowDefinitions="Auto, Auto" Margin="0,0,0,5">
+                                <Label FontAttributes="Bold" FontSize="Large" Text="Welcome to the Maui BottomSheet!"/>
+                                <Label Grid.Row="1" FontAttributes="Bold" FontSize="Small" Text="Drag to see More"/>
+                            </Grid>
+                        </DataTemplate>
+                    </bottomsheet:BottomSheetPeek.PeekViewDataTemplate>
+                </bottomsheet:BottomSheetPeek>
+            </bottomsheet:BottomSheet.Peek>
+            <bottomsheet:BottomSheet.ContentTemplate>
+                <DataTemplate>
+                    <VerticalStackLayout>
+                        <Label Text="I'm More" FontSize="Large" FontAttributes="Bold"/>
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </bottomsheet:BottomSheet.ContentTemplate>
+        </bottomsheet:BottomSheet>
+
+        <bottomsheet:BottomSheet
+            Margin="10"
+            SheetStates="{Binding BaseStates, Mode=TwoWay}"
+            x:Name="BaseSheet"
+            IsOpen="{Binding IsBaseSheetOpen}">
+            <bottomsheet:BottomSheet.ContentTemplate>
+                <DataTemplate>
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="I'm a simple draggable sheet." HorizontalOptions="Center"/>
+                        <Label Text="Change avaibale sheet states:" HorizontalOptions="Center"/>
+                        <Button Text="Medium" HorizontalOptions="Center" Command="{Binding SetMediumStateCommand}"/>
+                        <Button Text="Large" HorizontalOptions="Center" Command="{Binding  SetLargeStateCommand}" />
+                        <Button Text="Medium and large" HorizontalOptions="Center"  Command="{Binding SetMediumAndLargeStateCommand}" />
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </bottomsheet:BottomSheet.ContentTemplate>
+        </bottomsheet:BottomSheet>
+
+        <bottomsheet:BottomSheet
+            HeaderAppearance="{Binding SimpleHeaderAppearanceMode, Mode=TwoWay}"
+            TopLeftButtonText="{Binding SimpleTopLeftButtonText}"
+            TopLeftButtonCommand="{Binding SimpleTopLeftCommand}"
+            TopRightButtonText="{Binding SimpleTopRightButtonText}"
+            SheetStates="All"
+            SelectedSheetState="{Binding SelectedState}"
+            TopRightButtonCommand="{Binding SimpleTopRightCommand}"
+            ShowHeader="{Binding ShowSimpleHeaderSheetHeader}"
+            x:Name="SimpleHeaderSheet"
+            TitleText="{Binding SimpleTitle, Mode=TwoWay}"
+            IsOpen="{Binding IsSimpleHeaderSheetOpen}"
+            Margin="10">
+            <bottomsheet:BottomSheet.Peek>
+                <bottomsheet:BottomSheetPeek>
+                    <bottomsheet:BottomSheetPeek.PeekViewDataTemplate>
+                        <DataTemplate>
+                            <VerticalStackLayout Spacing="5">
+                                <Label Text="I'm a sheet with a header!" HorizontalOptions="Center"/>
+                                <Grid ColumnDefinitions="Auto, *" ColumnSpacing="5"> 
+                                    <Label Text="Show header?"/>
+                                    <Switch Grid.Column="1" HorizontalOptions="Start" IsToggled="{Binding ShowSimpleHeaderSheetHeader}"/>
+                                </Grid>
+                                <Grid ColumnDefinitions="Auto, Auto, *" ColumnSpacing="5"> 
+                                    <Label Text="Show title?" VerticalOptions="Center"/>
+                                    <Switch Grid.Column="1" HorizontalOptions="Start" VerticalOptions="Center" IsToggled="{Binding ShowSimpleTitleSheetHeader}"/>
+                                    <Entry Grid.Column="2" Text="{Binding SimpleTitle}"/>
+                                </Grid>
+                                <Grid HorizontalOptions="Center" ColumnDefinitions="Auto,*">
+                                    <Label Text="Header appearance: " />
+                                    <Label Text="{Binding SimpleHeaderAppearanceMode}" Grid.Column="1" />
+                                </Grid>
+                                <HorizontalStackLayout Spacing="5" HorizontalOptions="Center">
+                                    <Button Text="None" HorizontalOptions="Center" Command="{Binding SimpleHeaderAppearanceNoneCommand}"/>
+                                    <Button Text="Left" HorizontalOptions="Center" Command="{Binding  SimpleHeaderAppearanceLeftCommand}" />
+                                    <Button Text="Right" HorizontalOptions="Center"  Command="{Binding SimpleHeaderAppearanceRightCommand}" />
+                                    <Button Text="Both" HorizontalOptions="Center"  Command="{Binding SimpleHeaderAppearanceBothCommand}" />
+                                </HorizontalStackLayout>
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </bottomsheet:BottomSheetPeek.PeekViewDataTemplate>
+                </bottomsheet:BottomSheetPeek>
+            </bottomsheet:BottomSheet.Peek>
+            <!--<bottomsheet:BottomSheet.ContentTemplate>
+                <DataTemplate>
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="I'm a sheet with a header!" HorizontalOptions="Center"/>
+                        <Grid ColumnDefinitions="Auto, *" ColumnSpacing="5"> 
+                            <Label Text="Show header?"/>
+                            <Switch Grid.Column="1" HorizontalOptions="Start" IsToggled="{Binding ShowSimpleHeaderSheetHeader}"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="Auto, Auto, *" ColumnSpacing="5"> 
+                            <Label Text="Show title?" VerticalOptions="Center"/>
+                            <Switch Grid.Column="1" HorizontalOptions="Start" VerticalOptions="Center" IsToggled="{Binding ShowSimpleTitleSheetHeader}"/>
+                            <Entry Grid.Column="2" Text="{Binding SimpleTitle}"/>
+                        </Grid>
+                        <Grid HorizontalOptions="Center" ColumnDefinitions="Auto,*">
+                            <Label Text="Header appearance: " />
+                            <Label Text="{Binding SimpleHeaderAppearanceMode}" Grid.Column="1" />
+                        </Grid>
+                        <HorizontalStackLayout Spacing="5" HorizontalOptions="Center">
+                            <Button Text="None" HorizontalOptions="Center" Command="{Binding SimpleHeaderAppearanceNoneCommand}"/>
+                            <Button Text="Left" HorizontalOptions="Center" Command="{Binding  SimpleHeaderAppearanceLeftCommand}" />
+                            <Button Text="Right" HorizontalOptions="Center"  Command="{Binding SimpleHeaderAppearanceRightCommand}" />
+                            <Button Text="Both" HorizontalOptions="Center"  Command="{Binding SimpleHeaderAppearanceBothCommand}" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </bottomsheet:BottomSheet.ContentTemplate>-->
+        </bottomsheet:BottomSheet>
+
+        <bottomsheet:BottomSheet
+            Margin="20"
+            x:Name="Safearea"
+            IsOpen="{Binding IsSafeAreaSheetOpen}"
+            SheetStates="Peek">
+            <bottomsheet:BottomSheet.Peek>
+                <bottomsheet:BottomSheetPeek x:Name="peek" IgnoreSafeArea="{Binding Ignoresafearea}">
+                    <bottomsheet:BottomSheetPeek.PeekViewDataTemplate>
+                        <DataTemplate>
+                            <VerticalStackLayout>
+                                <Grid ColumnDefinitions="Auto, *" ColumnSpacing="5"> 
+                                    <Label Text="Ignore safe area?" VerticalOptions="Center"/>
+                                    <Switch Grid.Column="1" HorizontalOptions="Start" IsToggled="{Binding Path=IgnoreSafeArea, Source={x:Reference peek}}"/>
+                                </Grid>
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </bottomsheet:BottomSheetPeek.PeekViewDataTemplate>
+                </bottomsheet:BottomSheetPeek>
+            </bottomsheet:BottomSheet.Peek>
+        </bottomsheet:BottomSheet>
+
+        <bottomsheet:BottomSheet
+            ShowHeader="True"
+            Margin="10"
+            OpenedCommand="{Binding OpenedCustomHeaderCommand}"
+            ClosingCommand="{Binding ClosingCustomHeaderCommand}"
+            x:Name="CustomHeader"
+            IsDraggable="False"
+            SheetStates="Peek"
+            IsOpen="{Binding IsCustomHeaderOpen}">
+            <bottomsheet:BottomSheet.Peek>
+                <bottomsheet:BottomSheetPeek PeekHeight="20" IgnoreSafeArea="True"/>
+            </bottomsheet:BottomSheet.Peek>
+            <bottomsheet:BottomSheet.TitleViewTemplate>
+                <DataTemplate>
+                    <Grid RowDefinitions="20" ColumnDefinitions="*">
+                        <Image Source="atoms.png" HorizontalOptions="Center"/>
+                    </Grid>
+                </DataTemplate>
+            </bottomsheet:BottomSheet.TitleViewTemplate>
+        </bottomsheet:BottomSheet>
+    </VerticalStackLayout>
+</ContentPage>
+
