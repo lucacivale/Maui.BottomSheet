@@ -14,6 +14,11 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.3" />
 	</ItemGroup>
+	
+	<ItemGroup>
+	  <AndroidResource Include="Platforms\Android\Resources\drawable\round_rect_shape.xml" />
+	  <AndroidResource Include="Platforms\Android\Resources\layout\bottomSheetDragHandle.xml" />
+	</ItemGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|AnyCPU'">
 	  <CreatePackage>false</CreatePackage>
