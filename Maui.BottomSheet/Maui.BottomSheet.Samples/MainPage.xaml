@@ -23,9 +23,9 @@
                 <bottomsheet:BottomSheetPeek>
                     <bottomsheet:BottomSheetPeek.PeekViewDataTemplate>
                         <DataTemplate>
-                            <Grid RowSpacing="5" RowDefinitions="Auto, Auto" Margin="0,0,0,5">
+                            <Grid RowSpacing="5" RowDefinitions="Auto, Auto">
                                 <Label FontAttributes="Bold" FontSize="Large" Text="Welcome to the Maui BottomSheet!"/>
-                                <Label Grid.Row="1" FontAttributes="Bold" FontSize="Small" Text="Drag to see More"/>
+                                <Label Grid.Row="1" FontAttributes="Bold" FontSize="Small" Text="Drag to see More" Margin="0,0,0,10"/>
                             </Grid>
                         </DataTemplate>
                     </bottomsheet:BottomSheetPeek.PeekViewDataTemplate>

@@ -6,26 +6,27 @@ using Maui.BottomSheet.Platforms.Android;
 using Microsoft.Maui.Platform;
 using MauiView = Microsoft.Maui.Controls.View;
 using AndroidView = Android.Views.View;
-using Android.Util;
 using AndroidButton = Android.Widget.Button;
 using AndroidX.Core.Content;
-using Microsoft.Maui.Controls.Shapes;
 
 namespace Maui.BottomSheet;
 
 public class MauiBottomSheet : AndroidView
 {
 	#region Members
+	private readonly BottomSheetLayoutChangeListener _layoutChangeListener;
+
 	private LinearLayout? sheetLayout;
 	private AndroidButton? topLeftButton;
 	private AndroidButton? topRightButton;
 	private AndroidView? titleView;
 	private LinearLayout? headerView;
-	private MauiView? peekView;
+	private AndroidView? peekView;
 	private LinearLayout? sheetContainer;
 	private AndroidView? handle;
 	readonly IMauiContext mauiContext;
 	private BottomSheetDialog? bottomSheetDialog;
+	private BottomSheetCallback? bottomSheetCallback;
 	#endregion
 
 	#region Properties
@@ -36,6 +37,7 @@ public class MauiBottomSheet : AndroidView
 	public MauiBottomSheet(IMauiContext mauiContext, Context context) : base(context)
 	{
 		this.mauiContext = mauiContext ?? throw new ArgumentNullException(nameof(mauiContext));
+		_layoutChangeListener = new(this);
 	}
 	#endregion
 
@@ -207,7 +209,9 @@ public class MauiBottomSheet : AndroidView
 			return;
 		}
 
-		ConfigureSheet(bottomSheetDialog);
+		bottomSheetDialog.Behavior.PeekHeight = CalcPeekHeight();
+
+		SetSelectedSheetState();
 	}
 
 	#endregion
@@ -221,20 +225,21 @@ public class MauiBottomSheet : AndroidView
 		sheetContainer = new LinearLayout(Context)
 		{
 			LayoutParameters = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MatchParent, LinearLayout.LayoutParams.MatchParent),
-			Orientation = Orientation.Vertical
+			Orientation = Orientation.Vertical,
 		};
 
 		handle = CreateHandle();
+		handle?.AddOnLayoutChangeListener(_layoutChangeListener);
 		sheetContainer.AddView(handle);
 
 		sheetLayout = new LinearLayout(Context)
 		{
 			LayoutParameters = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MatchParent, LinearLayout.LayoutParams.MatchParent)
 			{
-				TopMargin = Convert.ToInt32(VirtualView?.Margin.Top ?? 0),
-				BottomMargin = Convert.ToInt32(VirtualView?.Margin.Bottom ?? 0),
-				LeftMargin = Convert.ToInt32(VirtualView?.Margin.Left ?? 0),
-				RightMargin = Convert.ToInt32(VirtualView?.Margin.Right ?? 0),
+				TopMargin = (VirtualView?.Margin.Top ?? 0).ToPixels(Context).RoundUpToNextInt(),
+				BottomMargin = (VirtualView?.Margin.Bottom ?? 0).ToPixels(Context).RoundUpToNextInt(),
+				LeftMargin = (VirtualView?.Margin.Left ?? 0).ToPixels(Context).RoundUpToNextInt(),
+				RightMargin = (VirtualView?.Margin.Right ?? 0).ToPixels(Context).RoundUpToNextInt(),
 			},
 			Orientation = Orientation.Vertical
 		};
@@ -253,9 +258,10 @@ public class MauiBottomSheet : AndroidView
 
 		if ((MauiView?)VirtualView?.Peek?.PeekViewDataTemplate?.CreateContent() is MauiView peek)
 		{
-			peekView = peek;
-			peekView.BindingContext = VirtualView.BindingContext;
-			contentlayout.AddView(peekView.ToPlatform(mauiContext));
+			peek.BindingContext = VirtualView.BindingContext;
+			peekView = peek.ToPlatform(mauiContext);
+			peekView.AddOnLayoutChangeListener(_layoutChangeListener);
+			contentlayout.AddView(peekView);
 		}
 
 		if (((MauiView?)VirtualView?.ContentTemplate?.CreateContent())is MauiView content)
@@ -282,9 +288,9 @@ public class MauiBottomSheet : AndroidView
 		AndroidView? view = Inflate(Context, Resource.Layout.bottomSheetDragHandle, null);
 		if (view is not null)
 		{
-			view.LayoutParameters ??= new LinearLayout.LayoutParams(50, 10)
+			view.LayoutParameters ??= new LinearLayout.LayoutParams(30.ToPixels(Context).RoundUpToNextInt(), 5.ToPixels(Context).RoundUpToNextInt())
 			{
-				TopMargin = 5,
+				TopMargin = 5.ToPixels(Context).RoundUpToNextInt(),
 				Gravity = GravityFlags.CenterHorizontal
 			};
 
@@ -296,6 +302,7 @@ public class MauiBottomSheet : AndroidView
 
 		return view;
 	}
+	
 	private void BottomSheetDialog_DismissEvent(object? sender, EventArgs e)
 	{
 		if (VirtualView is not null)
@@ -310,7 +317,12 @@ public class MauiBottomSheet : AndroidView
 		sheet.Behavior.SkipCollapsed = VirtualView?.Peek is null;
 		sheet.Behavior.FitToContents = false;
 		sheet.Behavior.HalfExpandedRatio = 0.5f;
-		sheet.Behavior.AddBottomSheetCallback(new BottomSheetCallback(VirtualView, this));
+		
+		if (bottomSheetCallback is null)
+		{
+			bottomSheetCallback = new BottomSheetCallback(VirtualView, this);
+			sheet.Behavior.AddBottomSheetCallback(bottomSheetCallback);
+		}
 		sheet.Behavior.PeekHeight = CalcPeekHeight();
 
 		SetSelectedSheetState();
@@ -318,32 +330,28 @@ public class MauiBottomSheet : AndroidView
 
 	private int CalcPeekHeight()
 	{
-		double peekheight = VirtualView?.Peek?.PeekHeight ?? 0;
+		double peekheight = (VirtualView?.Peek?.PeekHeight ?? 0).ToPixels(Context);
 
 		if (double.IsNaN(peekheight)
 			&& peekView is not null)
 		{
-			var sizeReq = peekView?.Measure(double.PositiveInfinity, double.PositiveInfinity, MeasureFlags.IncludeMargins);
-			peekheight = sizeReq?.Request.Height ?? 0;
+			peekheight = peekView.Height;
 
 			if (VirtualView?.ShowHeader == true
 				&& headerView is not null)
 			{
-				headerView.Measure(0, 0);
-				peekheight += headerView.MeasuredHeight;
+				peekheight += headerView.Height;
 			}
 		}
 
 		if (handle is not null)
 		{
-			handle.Measure(0, 0);
-			peekheight += handle.MeasuredHeight;
+			peekheight += handle.Height;
 		}
 
-		peekheight += VirtualView?.Margin.Top ?? 0;
-		peekheight = TypedValue.ApplyDimension(ComplexUnitType.Dip, (float)peekheight, Context?.Resources?.DisplayMetrics);
-
-		return Convert.ToInt32(Math.Round(peekheight, MidpointRounding.AwayFromZero));
+		peekheight += (VirtualView?.Margin.Top ?? 0).ToPixels(Context);
+		
+		return peekheight.RoundUpToNextInt();
 	}
 
 	#region Header
@@ -378,6 +386,7 @@ public class MauiBottomSheet : AndroidView
 
 		headerLayout.Id = GenerateViewId();
 		headerView = headerLayout;
+		headerLayout.AddOnLayoutChangeListener(_layoutChangeListener);
 
 		return headerLayout;
 	}
@@ -560,5 +569,23 @@ public class MauiBottomSheet : AndroidView
 
 		return true;
 	}
+}
+
+
+public class BottomSheetLayoutChangeListener(MauiBottomSheet bottomSheet) : Java.Lang.Object(), AndroidView.IOnLayoutChangeListener
+{
+    public void OnLayoutChange(
+		AndroidView? v, 
+		int left, 
+		int top, 
+		int right, 
+		int bottom, 
+		int oldLeft, 
+		int oldTop, 
+		int oldRight, 
+		int oldBottom)
+    {
+		bottomSheet.SetPeek();
+    }
 }
 
