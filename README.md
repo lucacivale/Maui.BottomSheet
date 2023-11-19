@@ -1,12 +1,19 @@
 # Plugin.Maui.BottomSheet
 Show native BottomSheets with .NET MAUI!
 
+This library comes with a built-in NavigationService to make navigation between BottomSheets und Pages easy!
+
 <img src="screenshots/welcome.png?raw=true" height="400"/>
 
 # Samples
 
 <strong>Check out the sample project to explore all features!</strong>.
 
+## Prerequisites
+
+`iOS` at least iOS 15
+
+`Android` at least API 21
 
 # Setup
 
@@ -127,5 +134,37 @@ To open/close a BottomSheet simply set the `IsOpen` property to true/false. You 
 </bottomsheet:BottomSheet>
 ```
 
+# Navigation
+
+The `IBottomSheetNavigationService` is be registered automatically and can be resolved by `DI`. 
+
+```
+private readonly IBottomSheetNavigationService _bottomSheetNavigationService;
+
+public MainViewModel(IBottomSheetNavigationService bottomSheetNavigationService)
+{
+  _bottomSheetNavigationService = bottomSheetNavigationService;
+}
+```
+
+To navigate to a `BottomSheet` you have to [register](https://learn.microsoft.com/en-us/dotnet/architecture/maui/dependency-injection) the `BottomSheets` and `ViewModels`
+```
+builder.Services.AddTransient<BottomSheetVMViewModel>();
+builder.Services.AddTransient<BottomSheetGoBackViewModel>();
+
+builder.Services.AddTransient<IBottomSheet, BottomSheetNoVM>();
+builder.Services.AddTransient<IBottomSheet, BottomSheetVM>();
+builder.Services.AddTransient<IBottomSheet, BottomSheetGoBack>();
+```
+Navigate to a `BottomSheet` and wire it automatically to the specified `ViewModel` or navigate to a `BottomSheet` without a `ViewModel`
+
+```
+_bottomSheetNavigationService.NavigateTo<BottomSheetNoVM>();
+_bottomSheetNavigationService.NavigateTo<BottomSheetVM, BottomSheetVMViewModel>();
+```
+To close a `BottomSheet` simply call `GoBack` or `ClearBottomSheetStack`(if you have multiple sheets open and want to close all of them)
+
+You can pass parameters on each navigation(this follows the principle of shell navigation)
+Pass an instance of the `BottomSheetNavigationParameters` to the navigation and if the target `ViewModel` implements `IQueryAttributable` the parameters will be applied.
 
 
