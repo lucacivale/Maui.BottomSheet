@@ -12,7 +12,7 @@
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Title>.NET MAUI BottomSheet</Title>
 		<Description>.NET MAUI library for BottomSheets</Description>
-		<Version>0.0.1-alpha</Version>
+		<Version>0.0.2-alpha</Version>
 		<Owners>Luca Civale </Owners>
 		<Authors>Luca Civale</Authors>
 		<Company>Luca Civale</Company>
@@ -37,13 +37,13 @@
 	  <AndroidResource Include="Platforms\Android\Resources\drawable\round_rect_shape.xml" />
 	  <AndroidResource Include="Platforms\Android\Resources\layout\bottomSheetDragHandle.xml" />
 	</ItemGroup>
-	
+
 	<ItemGroup>
-	  <None Include="..\..\Icon.jpg">
+	  <None Include="..\..\..\Icon.jpg">
 	    <Pack>True</Pack>
 	    <PackagePath>\</PackagePath>
 	  </None>
-	  <None Include="..\..\README.md">
+	  <None Include="..\..\..\README.md">
 	    <Pack>True</Pack>
 	    <PackagePath>\</PackagePath>
 	  </None>
