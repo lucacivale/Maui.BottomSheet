@@ -1,15 +1,9 @@
 namespace Maui.BottomSheet.Navigation;
 
-public class BottomSheetNavigationService : IBottomSheetNavigationService
+public class BottomSheetNavigationService(IServiceProvider serviceProvider) : IBottomSheetNavigationService
 {
-    private readonly IBottomSheetStack _bottomSheetStack;
-    private readonly IServiceProvider _serviceProvider;
-
-    public BottomSheetNavigationService(IServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider; 
-        _bottomSheetStack = new BottomSheetStack();
-    }
+    private readonly BottomSheetStack _bottomSheetStack = new();
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
 
     public void NavigateTo<TBottomSheet>() where TBottomSheet : IBottomSheet
     {
@@ -21,7 +15,10 @@ public class BottomSheetNavigationService : IBottomSheetNavigationService
         var bottomSheet = _serviceProvider.Resolve<IBottomSheet, TBottomSheet>();
         var bottomSheetViewModel = _serviceProvider.Resolve<TViewModel>();
 
-        bottomSheet.BindingContext = bottomSheetViewModel;
+        if (bottomSheetViewModel is not null)
+        {
+            bottomSheet.BindingContext = bottomSheetViewModel;
+        }
 
         NavigateTo(bottomSheet, parameters);
     }
