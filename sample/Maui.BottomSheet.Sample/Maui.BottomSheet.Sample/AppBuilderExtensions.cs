@@ -13,19 +13,19 @@ public static class AppBuilderExtensions
 
 	public static MauiAppBuilder RegisterViewModels(this MauiAppBuilder builder)
 	{
-		builder.Services.AddSingleton<MainViewModel>();
-		builder.Services.AddSingleton<BottomSheetVMViewModel>();
-		builder.Services.AddSingleton<BottomSheetGoBackViewModel>();
+		builder.Services.AddTransient<MainViewModel>();
+		builder.Services.AddTransient<BottomSheetVMViewModel>();
+		builder.Services.AddTransient<BottomSheetGoBackViewModel>();
 
 		return builder;
 	}
 
 	public static MauiAppBuilder RegisterPages(this MauiAppBuilder builder)
 	{
-		builder.Services.AddSingleton<MainPage>();
-		builder.Services.AddSingleton<IBottomSheet, BottomSheetNoVM>();
-		builder.Services.AddSingleton<IBottomSheet, BottomSheetVM>();
-		builder.Services.AddSingleton<IBottomSheet, BottomSheetGoBack>();
+		builder.Services.AddTransient<MainPage>();
+		builder.Services.AddTransient<IBottomSheet, BottomSheetNoVM>();
+		builder.Services.AddTransient<IBottomSheet, BottomSheetVM>();
+		builder.Services.AddTransient<IBottomSheet, BottomSheetGoBack>();
 
 		return builder;
 	}
