@@ -1,4 +1,6 @@
-﻿namespace Maui.BottomSheet;
+﻿using Maui.BottomSheet.Navigation;
+
+namespace Maui.BottomSheet;
 
 public static class AppBuilderExtensions
 {
@@ -8,6 +10,8 @@ public static class AppBuilderExtensions
 		{
 			h.AddHandler<BottomSheet, BottomSheetHandler>();
 		});
+
+		builder.Services.AddSingleton<IBottomSheetNavigationService, BottomSheetNavigationService>();
 
 		return builder;
 	}

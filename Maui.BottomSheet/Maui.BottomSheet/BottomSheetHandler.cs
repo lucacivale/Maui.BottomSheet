@@ -26,5 +26,11 @@ public partial class BottomSheetHandler
 		: base(BottomSheetMapper)
 	{
 	}
+
+	public BottomSheetHandler(IMauiContext context)
+		: base(BottomSheetMapper)
+	{
+		SetMauiContext(context);
+	}
 }
 

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<bottomsheet:BottomSheet 
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="Maui.BottomSheet.Samples.BottomSheets.BottomSheetVM"
+    xmlns:bottomsheet="clr-namespace:Maui.BottomSheet;assembly=Maui.BottomSheet"
+    HeaderAppearance="{Binding SimpleHeaderAppearanceMode, Mode=TwoWay}"
+    TopLeftButtonText="{Binding SimpleTopLeftButtonText}"
+    TopLeftButtonCommand="{Binding SimpleTopLeftCommand}"
+    TopRightButtonText="{Binding SimpleTopRightButtonText}"
+    SheetStates="All"
+    HasHandle="{Binding HasHandle}"
+    SelectedSheetState="{Binding SelectedState}"
+    TopRightButtonCommand="{Binding SimpleTopRightCommand}"
+    ShowHeader="{Binding ShowSimpleHeaderSheetHeader}"
+    TitleText="{Binding SimpleTitle, Mode=TwoWay}"
+    Margin="10">
+    <bottomsheet:BottomSheet.Peek>
+        <bottomsheet:BottomSheetPeek>
+            <bottomsheet:BottomSheetPeek.PeekViewDataTemplate>
+                <DataTemplate>
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="I'm a sheet with a header!" HorizontalOptions="Center"/>
+                        <Grid ColumnDefinitions="Auto, *" ColumnSpacing="5"> 
+                            <Label Text="Show header?"/>
+                            <Switch Grid.Column="1" HorizontalOptions="Start" IsToggled="{Binding ShowSimpleHeaderSheetHeader}"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="Auto, *" ColumnSpacing="5"> 
+                            <Label Text="Has handle?"/>
+                            <Switch Grid.Column="1" HorizontalOptions="Start" IsToggled="{Binding HasHandle}"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="Auto, Auto, *" ColumnSpacing="5"> 
+                            <Label Text="Show title?" VerticalOptions="Center"/>
+                            <Switch Grid.Column="1" HorizontalOptions="Start" VerticalOptions="Center" IsToggled="{Binding ShowSimpleTitleSheetHeader}"/>
+                            <Entry Grid.Column="2" Text="{Binding SimpleTitle}"/>
+                        </Grid>
+                        <Grid HorizontalOptions="Center" ColumnDefinitions="Auto,*">
+                            <Label Text="Header appearance: " />
+                            <Label Text="{Binding SimpleHeaderAppearanceMode}" Grid.Column="1" />
+                        </Grid>
+                        <HorizontalStackLayout Spacing="5" HorizontalOptions="Center">
+                            <Button Text="None" HorizontalOptions="Center" Command="{Binding SimpleHeaderAppearanceNoneCommand}"/>
+                            <Button Text="Left" HorizontalOptions="Center" Command="{Binding  SimpleHeaderAppearanceLeftCommand}" />
+                            <Button Text="Right" HorizontalOptions="Center"  Command="{Binding SimpleHeaderAppearanceRightCommand}" />
+                            <Button Text="Both" HorizontalOptions="Center"  Command="{Binding SimpleHeaderAppearanceBothCommand}" />
+                        </HorizontalStackLayout>
+                        <Button Text="Navigate to BottomSheetGoBack" Command="{Binding NavigateToBottomSheetGoBackCommand}"/>
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </bottomsheet:BottomSheetPeek.PeekViewDataTemplate>
+        </bottomsheet:BottomSheetPeek>
+    </bottomsheet:BottomSheet.Peek>
+</bottomsheet:BottomSheet>

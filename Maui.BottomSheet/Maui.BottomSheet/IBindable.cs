@@ -2,6 +2,6 @@
 
 public interface IBindable
 {
-	object BindingContext { get; }
+	object BindingContext { get; set;}
 }
 
