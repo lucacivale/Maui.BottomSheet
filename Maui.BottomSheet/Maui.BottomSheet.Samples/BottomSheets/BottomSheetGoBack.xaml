@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<bottomsheet:BottomSheet 
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="Maui.BottomSheet.Samples.BottomSheets.BottomSheetGoBack"
+    xmlns:bottomsheet="clr-namespace:Maui.BottomSheet;assembly=Maui.BottomSheet"
+    Margin="10">
+    <bottomsheet:BottomSheet.Peek>
+        <bottomsheet:BottomSheetPeek>
+            <bottomsheet:BottomSheetPeek.PeekViewDataTemplate>
+                <DataTemplate>
+                    <VerticalStackLayout Spacing="5">
+                        <Button Text="GoBack and set caller sheet state" Command="{Binding GoBackSetCallerSheetStateCommand}"/>
+                        <Button Text="Clear sheet stack" Command="{Binding ClearSheetStackCommand}"/>
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </bottomsheet:BottomSheetPeek.PeekViewDataTemplate>
+        </bottomsheet:BottomSheetPeek>
+    </bottomsheet:BottomSheet.Peek>
+</bottomsheet:BottomSheet>

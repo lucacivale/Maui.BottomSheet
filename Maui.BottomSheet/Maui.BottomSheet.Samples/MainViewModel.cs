@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Maui.BottomSheet.Navigation;
+using Maui.BottomSheet.Samples.BottomSheets;
 using Maui.BottomSheet.Samples.Services;
 
 namespace Maui.BottomSheet.Samples;
@@ -7,10 +9,12 @@ namespace Maui.BottomSheet.Samples;
 public partial class MainViewModel : ObservableObject
 {
 	private readonly IDialogService _dialogService;
+	private readonly IBottomSheetNavigationService _bottomSheetNavigationService;
 
-	public MainViewModel(IDialogService dialogService)
+	public MainViewModel(IDialogService dialogService, IBottomSheetNavigationService bottomSheetNavigationService)
 	{
 		_dialogService = dialogService;
+		_bottomSheetNavigationService = bottomSheetNavigationService;
 	}
 
 	#region Base Sheet
@@ -157,6 +161,31 @@ public partial class MainViewModel : ObservableObject
 	private async Task ClosingCustomHeader()
 	{
 		await _dialogService.DisplayAlert("Info", "Closing", "Cancel");
+	}
+	#endregion
+
+	#region Navigation
+	[RelayCommand]
+	private void NavigateToBottomSheetNoVM()
+	{
+		_bottomSheetNavigationService.NavigateTo<BottomSheetNoVM>();
+	}
+
+	[RelayCommand]
+	private void NavigateToBottomSheetVM()
+	{
+		_bottomSheetNavigationService.NavigateTo<BottomSheetVM, BottomSheetVMViewModel>();
+	}
+
+	[RelayCommand]
+	private void NavigateToBottomSheetVMWithParameters()
+	{
+		IBottomSheetNavigationParameters parameters = new BottomSheetNavigationParameters()
+		{
+			{ nameof(IBottomSheet.SelectedSheetState), BottomSheetState.Large },
+		};
+
+		_bottomSheetNavigationService.NavigateTo<BottomSheetVM, BottomSheetVMViewModel>(parameters);
 	}
 	#endregion
 }

@@ -67,7 +67,9 @@ public partial class BottomSheetHandler : ViewHandler<IBottomSheet, MauiBottomSh
 
 	protected override MauiBottomSheet CreatePlatformView()
 	{
-		return new MauiBottomSheet(MauiContext ?? throw new NullReferenceException(nameof(MauiContext)), Context);
+		return new MauiBottomSheet(
+			MauiContext ?? throw new NullReferenceException(nameof(MauiContext)), 
+			Platform.CurrentActivity ?? throw new NullReferenceException(nameof(Platform.CurrentActivity)));
 	}
 
 	protected override void DisconnectHandler(MauiBottomSheet platformView)

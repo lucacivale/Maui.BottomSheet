@@ -13,6 +13,10 @@
         <Button Text="Open safe area sheet" Command="{Binding OpenSafeAreaSheetCommand}"/>
         <Button Text="Open custom header sheet" Command="{Binding OpenCustomHeaderCommand}"/>
 
+        <Button Text="Navigate to BottomSheetNoVM" Command="{Binding NavigateToBottomSheetNoVMCommand}"/>
+        <Button Text="Navigate to BottomSheetVM" Command="{Binding NavigateToBottomSheetVMCommand}"/>
+        <Button Text="Navigate to BottomSheetVM with parameters" Command="{Binding NavigateToBottomSheetVMWithParametersCommand}"/>
+
         <bottomsheet:BottomSheet
             x:Name="WelcomeSheet"
             HasHandle="True"

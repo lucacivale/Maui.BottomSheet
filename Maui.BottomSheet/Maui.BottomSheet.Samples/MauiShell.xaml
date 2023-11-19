@@ -5,6 +5,8 @@
     x:Class="Maui.BottomSheet.Samples.MauiShell"
     xmlns:local="clr-namespace:Maui.BottomSheet.Samples">
     <TabBar>
-        <ShellContent Title="Modal" ContentTemplate="{DataTemplate local:MainPage}"/>
+        <Tab Title="Modal Sheets">
+            <ShellContent Title="Modal" ContentTemplate="{DataTemplate local:MainPage}"/>
+        </Tab>
     </TabBar>
 </Shell>
