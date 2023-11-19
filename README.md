@@ -3,7 +3,7 @@ Show native BottomSheets with .NET MAUI!
 
 This library comes with a built-in NavigationService to make navigation between BottomSheets und Pages easy!
 
-<img src="screenshots/welcome.png?raw=true" height="400"/>
+<img src="screenshots/welcome.png?raw=true" height="400"/>  <img src="screenshots/demo.gif" height="400" />  <img src="screenshots/navigation.gif" height="400" />
 
 # Samples
 
@@ -167,4 +167,5 @@ To close a `BottomSheet` simply call `GoBack` or `ClearBottomSheetStack`(if you 
 You can pass parameters on each navigation(this follows the principle of shell navigation)
 Pass an instance of the `BottomSheetNavigationParameters` to the navigation and if the target `ViewModel` implements `IQueryAttributable` the parameters will be applied.
 
+<img src="screenshots/navigation.gif" height="400" />
 
