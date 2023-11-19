@@ -26,6 +26,7 @@
 		<PackageTags>dotnet; maui; bottomsheet;</PackageTags>
 		<PackageIcon>Icon.jpg</PackageIcon>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageId>Plugin.Maui.BottomSheet</PackageId>
 	</PropertyGroup>
 
 	<ItemGroup>
