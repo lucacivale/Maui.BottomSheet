@@ -572,8 +572,15 @@ public class MauiBottomSheet : AndroidView
 }
 
 
-public class BottomSheetLayoutChangeListener(MauiBottomSheet bottomSheet) : Java.Lang.Object(), AndroidView.IOnLayoutChangeListener
+public class BottomSheetLayoutChangeListener : Java.Lang.Object, AndroidView.IOnLayoutChangeListener
 {
+	private readonly MauiBottomSheet bottomSheet;
+
+	public BottomSheetLayoutChangeListener(MauiBottomSheet mauiBottomSheet) : base()
+	{
+		bottomSheet = mauiBottomSheet;
+	}
+
     public void OnLayoutChange(
 		AndroidView? v, 
 		int left, 

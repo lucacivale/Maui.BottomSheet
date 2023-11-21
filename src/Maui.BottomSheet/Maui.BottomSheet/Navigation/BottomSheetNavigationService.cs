@@ -1,10 +1,14 @@
 namespace Maui.BottomSheet.Navigation;
 
-public class BottomSheetNavigationService(IServiceProvider serviceProvider) : IBottomSheetNavigationService
+public class BottomSheetNavigationService : IBottomSheetNavigationService
 {
     private readonly BottomSheetStack _bottomSheetStack = new();
-    private readonly IServiceProvider _serviceProvider = serviceProvider;
+    private readonly IServiceProvider _serviceProvider;
 
+    public BottomSheetNavigationService(IServiceProvider serviceProvider)
+    {
+        _serviceProvider = serviceProvider;
+    }
     public void NavigateTo<TBottomSheet>() where TBottomSheet : IBottomSheet
     {
         NavigateTo(_serviceProvider.Resolve<IBottomSheet, TBottomSheet>());
