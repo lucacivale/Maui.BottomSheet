@@ -14,8 +14,9 @@ public partial class BottomSheetHandler
 		[nameof(IBottomSheet.HasHandle)] = MapHasHandle,
 		[nameof(IBottomSheet.SheetStates)] = MapSheetStates,
 		[nameof(IBottomSheet.Peek)] = MapPeek,
-		[nameof(IBottomSheet.SelectedSheetState)] = MapSelectedSheetState
-	};
+		[nameof(IBottomSheet.SelectedSheetState)] = MapSelectedSheetState,
+		[nameof(IBottomSheet.IsCancelable)] = MapIsCancelable
+    };
 
 	public BottomSheetHandler(IPropertyMapper? mapper, CommandMapper? commandMapper)
 		: base(mapper ?? BottomSheetMapper)

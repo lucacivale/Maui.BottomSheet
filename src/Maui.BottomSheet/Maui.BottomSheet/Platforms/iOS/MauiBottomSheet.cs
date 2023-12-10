@@ -23,10 +23,20 @@ public class MauiBottomSheet : UIView
 	{
 		this.mauiContext = mauiContext ?? throw new ArgumentNullException(nameof(mauiContext));
 	}
-	#endregion
+    #endregion
 
-	#region Mappers
-	public async Task SetIsOpen()
+    #region Mappers
+    public void SetIsCancelable()
+    {
+		if (bottomSheetUIViewController is null)
+		{
+			return;
+		}
+
+		bottomSheetUIViewController.ModalInPresentation = VirtualView?.IsCancelable == true;
+    }
+
+    public async Task SetIsOpen()
 	{
 		if (VirtualView?.IsOpen == true)
 		{

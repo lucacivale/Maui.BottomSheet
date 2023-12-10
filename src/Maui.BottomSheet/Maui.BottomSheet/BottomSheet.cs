@@ -11,8 +11,14 @@ public class BottomSheet : View, IBottomSheet
 	}
 
 
-	#region Binable Properties
-	public static readonly BindableProperty HasHandleProperty = BindableProperty.Create(
+    #region Binable Properties
+    public static readonly BindableProperty IsCancelableProperty = BindableProperty.Create(
+		nameof(IsCancelable),
+		typeof(bool),
+		typeof(BottomSheet),
+		defaultValue: true);
+
+    public static readonly BindableProperty HasHandleProperty = BindableProperty.Create(
 		nameof(HasHandle),
 		typeof(bool),
 		typeof(BottomSheet),
@@ -149,6 +155,7 @@ public class BottomSheet : View, IBottomSheet
 	public BottomSheetPeek? Peek { get => (BottomSheetPeek?)GetValue(PeekProperty); set => SetValue(PeekProperty, value); }
 	public bool HasHandle { get => (bool)GetValue(HasHandleProperty); set => SetValue(HasHandleProperty, value); }
 	public bool IsOpen { get => (bool)GetValue(IsOpenProperty); set => SetValue(IsOpenProperty, value); }
+	public bool IsCancelable { get => (bool)GetValue(IsCancelableProperty); set => SetValue(IsCancelableProperty, value); }
 	public bool IsDraggable { get => (bool)GetValue(IsDraggableProperty); set => SetValue(IsDraggableProperty, value); }
 	public bool ShowHeader { get => (bool)GetValue(ShowHeaderProperty); set => SetValue(ShowHeaderProperty, value); }
 	public BottomSheetHeaderAppearanceMode HeaderAppearance { get => (BottomSheetHeaderAppearanceMode)GetValue(HeaderAppearanceProperty); set => SetValue(HeaderAppearanceProperty, value); }

@@ -5,7 +5,8 @@ namespace Maui.BottomSheet;
 public interface IBottomSheet : IView, IBindable
 {
 	#region Appearance
-	bool HasHandle { get; set; }
+	bool IsCancelable { get; set; }
+    bool HasHandle { get; set; }
 	bool ShowHeader { get; set; }
 	bool IsOpen { get; set; }
 	bool IsDraggable { get; set; }

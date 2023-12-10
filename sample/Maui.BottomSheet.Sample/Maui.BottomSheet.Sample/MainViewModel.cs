@@ -60,8 +60,11 @@ public partial class MainViewModel : ObservableObject
 
 	[ObservableProperty]
 	private bool hasHandle = true;
-	
-	[ObservableProperty]
+
+    [ObservableProperty]
+    private bool isCancelable = false;
+
+    [ObservableProperty]
 	private bool isSimpleHeaderSheetOpen;
 
 	[ObservableProperty]
