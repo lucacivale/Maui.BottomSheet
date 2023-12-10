@@ -17,17 +17,27 @@ public class BottomSheetNavigationService : IBottomSheetNavigationService
     public void NavigateTo<TBottomSheet, TViewModel>(IBottomSheetNavigationParameters? parameters = null) where TBottomSheet : IBottomSheet
     {
         var bottomSheet = _serviceProvider.Resolve<IBottomSheet, TBottomSheet>();
-        var bottomSheetViewModel = _serviceProvider.Resolve<TViewModel>();
 
-        if (bottomSheetViewModel is not null)
-        {
-            bottomSheet.BindingContext = bottomSheetViewModel;
-        }
+        WireViewModel<TViewModel>(bottomSheet);
 
         NavigateTo(bottomSheet, parameters);
     }
 
-    private void NavigateTo(IBottomSheet bottomSheet, IBottomSheetNavigationParameters? parameters = null)
+    public void NavigateTo<TViewModel>(IBottomSheet bottomSheet, IBottomSheetNavigationParameters? parameters = null)
+    {
+        WireViewModel<TViewModel>(bottomSheet);
+
+        NavigateTo(bottomSheet, parameters);
+    }
+
+    public void NavigateTo(IBottomSheet bottomSheet, Type viewModelType, IBottomSheetNavigationParameters? parameters = null)
+    {
+        WireViewModel(bottomSheet, viewModelType);
+
+        NavigateTo(bottomSheet, parameters);
+    }
+
+    public void NavigateTo(IBottomSheet bottomSheet, IBottomSheetNavigationParameters? parameters = null)
     {
         AddBottomSheetToStack(bottomSheet);
         PrepareSheetForNavigation();
@@ -53,6 +63,16 @@ public class BottomSheetNavigationService : IBottomSheetNavigationService
         {
             GoBack();
         }
+    }
+
+    private void WireViewModel<TViewModel>(IBottomSheet bottomSheet)
+    {
+        ApplyViewModel(bottomSheet, _serviceProvider.Resolve<TViewModel>());
+    }
+
+    private void WireViewModel(IBottomSheet bottomSheet, Type viewModelType)
+    {
+        ApplyViewModel(bottomSheet,_serviceProvider.GetService(viewModelType));
     }
 
     private void AddBottomSheetToStack(IBottomSheet bottomSheet)
@@ -91,12 +111,19 @@ public class BottomSheetNavigationService : IBottomSheetNavigationService
 
     private void PrepareSheetForNavigation()
     {
-        ArgumentNullException.ThrowIfNull(Application.Current?.Handler.MauiContext);
+        ArgumentNullException.ThrowIfNull(Application.Current?.MainPage?.Handler?.MauiContext);
 
-        //Refactor as soon as #1718 is closed or Application.Current.FindMauiContext() is exposed.
-        _bottomSheetStack.Current.Handler = new BottomSheetHandler(Application.Current.Handler.MauiContext);
+        //Refactor as soon as #1718 is closed or Element.FindMauiContext() is exposed.
+        _bottomSheetStack.Current.Handler = new BottomSheetHandler(Application.Current.MainPage.Handler.MauiContext);
     }
 
+    private static void ApplyViewModel(IBottomSheet bottomSheet, object? viewModel)
+    {
+        if (viewModel is not null)
+        {
+            bottomSheet.BindingContext = viewModel;
+        }
+    }
     private void ApplyNavigationParameters(IBottomSheetNavigationParameters? parameters)
     {
         if (parameters is null)

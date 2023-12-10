@@ -53,7 +53,6 @@
 		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.3" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-		<PackageReference Include="Plugin.Maui.BottomSheet" Version="0.0.1-alpha" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -70,5 +69,16 @@
 	  <Folder Include="Services\" />
 	  <Folder Include="Platforms\Android\Services\" />
 	  <Folder Include="Platforms\iOS\Services\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\src\Maui.BottomSheet\Maui.BottomSheet\Maui.BottomSheet.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <MauiXaml Update="ContentA.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="NewPageA.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	</ItemGroup>
 </Project>
