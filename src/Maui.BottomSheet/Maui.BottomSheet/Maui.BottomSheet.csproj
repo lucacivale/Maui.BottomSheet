@@ -11,8 +11,15 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Title>.NET MAUI BottomSheet</Title>
-		<Description>.NET MAUI library for BottomSheets</Description>
-		<Version>0.0.3-alpha</Version>
+		<Description>
+Open native BottomSheets with .NET MAUI
+* Built-in NavigationService
+* Open any ContenPage or View as BottomSheet
+* Create BottomSheets in any layout
+* Configurable header
+* MVVM support
+		</Description>
+		<Version>0.0.4-alpha</Version>
 		<Owners>Luca Civale </Owners>
 		<Authors>Luca Civale</Authors>
 		<Company>Luca Civale</Company>

@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Maui.BottomSheet.Navigation;
 using Maui.BottomSheet.Samples.BottomSheets;
 using Maui.BottomSheet.Samples.Services;
+using Maui.BottomSheet.SheetBuilder;
 
 namespace Maui.BottomSheet.Samples;
 
@@ -10,11 +11,13 @@ public partial class MainViewModel : ObservableObject
 {
 	private readonly IDialogService _dialogService;
 	private readonly IBottomSheetNavigationService _bottomSheetNavigationService;
+	private readonly IBottomSheetBuilderFactory _bottomSheetBuilderFactory;
 
-	public MainViewModel(IDialogService dialogService, IBottomSheetNavigationService bottomSheetNavigationService)
+	public MainViewModel(IDialogService dialogService, IBottomSheetNavigationService bottomSheetNavigationService, IBottomSheetBuilderFactory bottomSheetBuilderFactory)
 	{
 		_dialogService = dialogService;
 		_bottomSheetNavigationService = bottomSheetNavigationService;
+		_bottomSheetBuilderFactory = bottomSheetBuilderFactory;
 	}
 
 	#region Base Sheet
@@ -187,6 +190,32 @@ public partial class MainViewModel : ObservableObject
 
 		_bottomSheetNavigationService.NavigateTo<BottomSheetVM, BottomSheetVMViewModel>(parameters);
 	}
-	#endregion
+
+    [RelayCommand]
+    private void OpenContentPageAsBottomSheet()
+	{
+		_bottomSheetBuilderFactory.Create()
+			.FromContentPage<NewPageA>()
+			.ConfigureBottomSheet((sheet) =>
+			{
+				sheet.SheetStates = BottomSheetState.All;
+			})
+			.WireTo<NewPageAViewModel>()
+			.Open();
+	}
+
+    [RelayCommand]
+    private void OpenViewAsBottomSheet()
+    {
+        _bottomSheetBuilderFactory.Create()
+            .FromView<ContentA>()
+            .ConfigureBottomSheet((sheet) =>
+            {
+                sheet.SheetStates = BottomSheetState.Medium;
+            })
+            .WireTo<ContentAViewModel>()
+            .Open();
+    }
+    #endregion
 }
 

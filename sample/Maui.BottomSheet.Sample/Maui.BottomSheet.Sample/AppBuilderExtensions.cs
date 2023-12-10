@@ -16,12 +16,16 @@ public static class AppBuilderExtensions
 		builder.Services.AddTransient<MainViewModel>();
 		builder.Services.AddTransient<BottomSheetVMViewModel>();
 		builder.Services.AddTransient<BottomSheetGoBackViewModel>();
+		builder.Services.AddTransient<NewPageAViewModel>();
+		builder.Services.AddTransient<ContentAViewModel>();
 
 		return builder;
 	}
 
 	public static MauiAppBuilder RegisterPages(this MauiAppBuilder builder)
 	{
+		builder.Services.AddTransient<MainPage>();
+		builder.Services.AddTransient<NewPageA>();
 		builder.Services.AddTransient<MainPage>();
 		builder.Services.AddTransient<IBottomSheet, BottomSheetNoVM>();
 		builder.Services.AddTransient<IBottomSheet, BottomSheetVM>();
