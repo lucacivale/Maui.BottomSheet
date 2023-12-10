@@ -416,15 +416,20 @@ public class MauiBottomSheet : AndroidView
 
 		if (VirtualView?.HasTitle() == true)
 		{
-			TextView title = new(Context)
+			Label title = new()
 			{
-				LayoutParameters = layoutParams,
-				Text = VirtualView?.TitleText,
-				TextAlignment = Android.Views.TextAlignment.Center,
-				Id = GenerateViewId()
+				HorizontalTextAlignment = Microsoft.Maui.TextAlignment.Center,
+				VerticalTextAlignment = Microsoft.Maui.TextAlignment.Center,
+				FontAttributes = FontAttributes.Bold,
+				FontSize = 20,
+				Text = VirtualView?.TitleText	
 			};
-			title.SetTypeface(title.Typeface, Android.Graphics.TypefaceStyle.Bold);
-			view = title;
+
+			AndroidView androidTitle = title.ToPlatform(mauiContext);
+			androidTitle.Id = GenerateViewId();
+			androidTitle.LayoutParameters = layoutParams;
+
+			view = androidTitle;
 		}
 		else if (((MauiView?)VirtualView?.TitleViewTemplate?.CreateContent())  is MauiView mauiTitleView)
 		{
@@ -448,9 +453,17 @@ public class MauiBottomSheet : AndroidView
 		{
 			LayoutParameters = layoutParams,
 			Text = text,
-			Id = GenerateViewId()
+			Id = GenerateViewId(),
+			Background = null,
 		};
 
+		if (Context is not null)
+		{
+			var color = new Android.Graphics.Color(ContextCompat.GetColor(Context, Resource.Color.bottomSheetHeaderButtonColor));
+			button.SetTextColor(color);
+		}
+
+		button.SetTextSize(Android.Util.ComplexUnitType.Sp, 20);
 		button.Click += clickEvent; 
 
 		return button;
