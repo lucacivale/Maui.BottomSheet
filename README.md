@@ -68,6 +68,8 @@ All properties expect `ContentTemplate`, `TitleViewTemplate` and `Peek.PeekViewD
 
 `HasHandle` Display a drag handle at top of BottomSheet
 
+`IsCancelable` Is BottomSheet cancelable
+
 #### Header
 `ShowHeader` Display a header at top of BottomSheet
 
