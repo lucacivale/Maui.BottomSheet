@@ -33,7 +33,7 @@ public class MauiBottomSheet : UIView
 			return;
 		}
 
-		bottomSheetUIViewController.ModalInPresentation = VirtualView?.IsCancelable == true;
+		bottomSheetUIViewController.ModalInPresentation = VirtualView?.IsCancelable == false;
     }
 
     public async Task SetIsOpen()
@@ -236,8 +236,9 @@ public class MauiBottomSheet : UIView
 	private void ConfigureSheet(UISheetPresentationController sheet)
 	{
 		SetSheetStates();
+		SetIsCancelable();
 
-		sheet.LargestUndimmedDetentIdentifier = UISheetPresentationControllerDetentIdentifier.Unknown;
+        sheet.LargestUndimmedDetentIdentifier = UISheetPresentationControllerDetentIdentifier.Unknown;
 		sheet.PrefersGrabberVisible = VirtualView?.HasHandle == true;
 		sheet.PrefersScrollingExpandsWhenScrolledToEdge = true;
 	}
