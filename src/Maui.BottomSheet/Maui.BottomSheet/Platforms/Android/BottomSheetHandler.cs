@@ -9,7 +9,12 @@ public partial class BottomSheetHandler : ViewHandler<IBottomSheet, MauiBottomSh
 		handler.PlatformView.SetIsOpen();
 	}
 
-	public static void MapIsDraggable(BottomSheetHandler handler, IBottomSheet view)
+    public static void MapIsCancelable(BottomSheetHandler handler, IBottomSheet view)
+    {
+        handler.PlatformView.SetIsCancelable();
+    }
+
+    public static void MapIsDraggable(BottomSheetHandler handler, IBottomSheet view)
 	{
 		handler.PlatformView.SetIsDraggable();
 	}

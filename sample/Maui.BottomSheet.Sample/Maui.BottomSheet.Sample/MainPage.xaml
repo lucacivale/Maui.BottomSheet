@@ -90,6 +90,7 @@
             Margin="10"
             HasHandle="{Binding HasHandle}"
             HeaderAppearance="{Binding SimpleHeaderAppearanceMode, Mode=TwoWay}"
+            IsCancelable="{Binding IsCancelable, Mode=TwoWay}"
             IsOpen="{Binding IsSimpleHeaderSheetOpen}"
             SelectedSheetState="{Binding SelectedState}"
             SheetStates="All"
@@ -118,6 +119,13 @@
                                         Grid.Column="1"
                                         HorizontalOptions="Start"
                                         IsToggled="{Binding HasHandle}" />
+                                </Grid>
+                                <Grid ColumnDefinitions="Auto, *" ColumnSpacing="5">
+                                    <Label Text="Is cancelable?" />
+                                    <Switch
+                                        Grid.Column="1"
+                                        HorizontalOptions="Start"
+                                        IsToggled="{Binding IsCancelable}" />
                                 </Grid>
                                 <Grid ColumnDefinitions="Auto, Auto, *" ColumnSpacing="5">
                                     <Label Text="Show title?" VerticalOptions="Center" />

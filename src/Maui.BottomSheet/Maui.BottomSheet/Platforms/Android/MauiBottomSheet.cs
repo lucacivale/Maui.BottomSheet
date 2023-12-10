@@ -42,7 +42,12 @@ public class MauiBottomSheet : AndroidView
 	#endregion
 
 	#region Mappers
-	public void SetIsOpen()
+	public void SetIsCancelable()
+	{
+		bottomSheetDialog?.SetCancelable(VirtualView?.IsCancelable == true);
+	}
+
+    public void SetIsOpen()
 	{
 		if (VirtualView?.IsOpen == true)
 		{
@@ -326,7 +331,8 @@ public class MauiBottomSheet : AndroidView
 		sheet.Behavior.PeekHeight = CalcPeekHeight();
 
 		SetSelectedSheetState();
-	}
+		SetIsCancelable();
+    }
 
 	private int CalcPeekHeight()
 	{

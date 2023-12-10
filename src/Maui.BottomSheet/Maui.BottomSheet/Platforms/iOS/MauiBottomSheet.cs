@@ -23,10 +23,20 @@ public class MauiBottomSheet : UIView
 	{
 		this.mauiContext = mauiContext ?? throw new ArgumentNullException(nameof(mauiContext));
 	}
-	#endregion
+    #endregion
 
-	#region Mappers
-	public async Task SetIsOpen()
+    #region Mappers
+    public void SetIsCancelable()
+    {
+		if (bottomSheetUIViewController is null)
+		{
+			return;
+		}
+
+		bottomSheetUIViewController.ModalInPresentation = VirtualView?.IsCancelable == false;
+    }
+
+    public async Task SetIsOpen()
 	{
 		if (VirtualView?.IsOpen == true)
 		{
@@ -226,8 +236,9 @@ public class MauiBottomSheet : UIView
 	private void ConfigureSheet(UISheetPresentationController sheet)
 	{
 		SetSheetStates();
+		SetIsCancelable();
 
-		sheet.LargestUndimmedDetentIdentifier = UISheetPresentationControllerDetentIdentifier.Unknown;
+        sheet.LargestUndimmedDetentIdentifier = UISheetPresentationControllerDetentIdentifier.Unknown;
 		sheet.PrefersGrabberVisible = VirtualView?.HasHandle == true;
 		sheet.PrefersScrollingExpandsWhenScrolledToEdge = true;
 	}
