@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34309.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maui.BottomSheet", "Maui.BottomSheet\Maui.BottomSheet.csproj", "{8ECB6EFC-8976-46E6-B8CE-9145BA7C84E3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugin.Maui.BottomSheet", "Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet.csproj", "{8ECB6EFC-8976-46E6-B8CE-9145BA7C84E3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

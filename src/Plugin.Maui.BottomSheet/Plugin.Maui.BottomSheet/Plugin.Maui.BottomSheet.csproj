@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net8.0-ios;net8.0-android;net7.0-ios;net7.0-android</TargetFrameworks>
+		<TargetFrameworks>net8.0-ios;net8.0-android</TargetFrameworks>
 		<UseMaui>true</UseMaui>
 		<SingleProject>true</SingleProject>
 		<Nullable>enable</Nullable>
@@ -19,13 +19,13 @@ Open native BottomSheets with .NET MAUI
 * Configurable header
 * MVVM support
 		</Description>
-		<Version>1.0.0</Version>
+		<Version>8.0.0-pre</Version>
 		<Owners>Luca Civale </Owners>
 		<Authors>Luca Civale</Authors>
 		<Company>Luca Civale</Company>
 		<Copyright>Luca Civale</Copyright>
-		<PackageProjectUrl>https://github.com/lucacivale/Maui.BottomSheet</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/lucacivale/Maui.BottomSheet</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/lucacivale/Plugin.Maui.BottomSheet</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/lucacivale/Plugin.Maui.BottomSheet</RepositoryUrl>
 		<NeutralLanguage>en</NeutralLanguage>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -33,17 +33,18 @@ Open native BottomSheets with .NET MAUI
 		<PackageTags>dotnet; maui; bottomsheet;</PackageTags>
 		<PackageIcon>Icon.jpg</PackageIcon>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<PackageId>Plugin.Maui.BottomSheet</PackageId>
+		<PackageId>Plugin.Plugin.Maui.BottomSheet</PackageId>
 	</PropertyGroup>
 
-	<ItemGroup Condition="'$(TargetFramework)'=='net8.0-ios' Or '$(TargetFramework)'=='net8.0-android'">
-		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.3" />
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.80" />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.80" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <AndroidResource Include="Platforms\Android\Resources\drawable\round_rect_shape.xml" />
-	  <AndroidResource Include="Platforms\Android\Resources\layout\bottomSheetDragHandle.xml" />
-	  <AndroidResource Include="Platforms\Android\Resources\values\colors.xml" />
+	  <AndroidResource Include="Resources\Android\drawable\round_rect_shape.xml" />
+	  <AndroidResource Include="Resources\Android\layout\bottomSheetDragHandle.xml" />
+	  <AndroidResource Include="Resources\Android\values\colors.xml" />
 	</ItemGroup>
 
 	<ItemGroup>
