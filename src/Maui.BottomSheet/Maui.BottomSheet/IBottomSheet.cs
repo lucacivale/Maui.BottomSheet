@@ -16,6 +16,7 @@ public interface IBottomSheet : IView, IBindable
 	string TitleText { get; set; }
 	BottomSheetState SheetStates { get; set; }
 	BottomSheetState SelectedSheetState { get; set; }
+	Color BackgroundColor { get; set; }
 	#endregion
 
 	#region Commands

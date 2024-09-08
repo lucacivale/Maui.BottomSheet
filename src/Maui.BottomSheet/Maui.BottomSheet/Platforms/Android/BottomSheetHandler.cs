@@ -13,6 +13,11 @@ public partial class BottomSheetHandler : ViewHandler<IBottomSheet, MauiBottomSh
     {
         handler.PlatformView.SetIsCancelable();
     }
+    
+    public static void MapBackgroundColor(BottomSheetHandler handler, IBottomSheet view)
+    {
+	    handler.PlatformView.SetBackgroundColor();
+    }
 
     public static void MapIsDraggable(BottomSheetHandler handler, IBottomSheet view)
 	{

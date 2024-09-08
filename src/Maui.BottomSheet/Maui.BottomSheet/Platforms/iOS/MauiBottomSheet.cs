@@ -1,7 +1,5 @@
-﻿using CoreGraphics;
-using Maui.BottomSheet.Platforms.iOS;
+﻿using Maui.BottomSheet.Platforms.iOS;
 using Microsoft.Maui.Platform;
-using System.Diagnostics.CodeAnalysis;
 using UIKit;
 
 namespace Maui.BottomSheet;
@@ -11,6 +9,7 @@ public class MauiBottomSheet : UIView
 	#region Members
 	private readonly IMauiContext mauiContext;
 	private BottomSheetUIViewController? bottomSheetUIViewController;
+	private UIViewController? bottomSheetContentPageUIViewController;
 	private View? peekView;
 	#endregion
 
@@ -45,6 +44,19 @@ public class MauiBottomSheet : UIView
 		else if (VirtualView?.IsOpen == false)
 		{
 			await DismissBottomSheet();
+		}
+	}
+
+	public void SetBackgroundColor()
+	{
+		if (bottomSheetUIViewController?.View is not null
+		    && VirtualView?.BackgroundColor is not null)
+		{
+			if (bottomSheetContentPageUIViewController is ContainerViewController container
+			    && container.CurrentPlatformView is not null)
+			{
+				container.CurrentPlatformView.BackgroundColor = VirtualView.BackgroundColor.ToPlatform();
+			}
 		}
 	}
 
@@ -237,6 +249,7 @@ public class MauiBottomSheet : UIView
 	{
 		SetSheetStates();
 		SetIsCancelable();
+		SetBackgroundColor();
 
         sheet.LargestUndimmedDetentIdentifier = UISheetPresentationControllerDetentIdentifier.Unknown;
 		sheet.PrefersGrabberVisible = VirtualView?.HasHandle == true;
@@ -334,8 +347,9 @@ public class MauiBottomSheet : UIView
 
 		bottomSheet.BindingContext = VirtualView?.BindingContext ?? null;
 		bottomSheet.Content = content;
-
-		bottomSheetUIViewController = new BottomSheetUIViewController(VirtualView, bottomSheet.ToUIViewController(mauiContext));
+		
+		bottomSheetContentPageUIViewController = bottomSheet.ToUIViewController(mauiContext);
+		bottomSheetUIViewController = new BottomSheetUIViewController(VirtualView, bottomSheetContentPageUIViewController);
 
 		if (bottomSheetUIViewController.SheetPresentationController is not null)
 		{

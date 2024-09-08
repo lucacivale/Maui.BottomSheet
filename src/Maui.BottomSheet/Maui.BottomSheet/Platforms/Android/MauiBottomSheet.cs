@@ -11,6 +11,9 @@ using AndroidX.Core.Content;
 
 namespace Maui.BottomSheet;
 
+using Android.Graphics.Drawables;
+using Microsoft.Maui.Controls.Platform;
+
 public class MauiBottomSheet : AndroidView
 {
 	#region Members
@@ -56,6 +59,17 @@ public class MauiBottomSheet : AndroidView
 		else
 		{
 			DismissBottomSheet();
+		}
+	}
+    
+	public void SetBackgroundColor()
+	{
+		if (VirtualView?.BackgroundColor is not null
+		    && sheetContainer is not null)
+		{
+			GradientDrawable shape = new();
+			shape.SetColor(VirtualView.BackgroundColor.ToPlatform());
+			sheetContainer.SetBackground(shape);
 		}
 	}
 
@@ -332,6 +346,7 @@ public class MauiBottomSheet : AndroidView
 
 		SetSelectedSheetState();
 		SetIsCancelable();
+		SetBackgroundColor();
     }
 
 	private int CalcPeekHeight()

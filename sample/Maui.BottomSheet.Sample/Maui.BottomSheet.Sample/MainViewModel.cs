@@ -9,6 +9,7 @@ namespace Maui.BottomSheet.Samples;
 
 public partial class MainViewModel : ObservableObject
 {
+	private readonly Random random = new();
 	private readonly IDialogService _dialogService;
 	private readonly IBottomSheetNavigationService _bottomSheetNavigationService;
 	private readonly IBottomSheetBuilderFactory _bottomSheetBuilderFactory;
@@ -27,6 +28,9 @@ public partial class MainViewModel : ObservableObject
 
 	[ObservableProperty]
 	private BottomSheetState baseStates;
+
+	[ObservableProperty]
+	private Color backgroundColor;
 
 	[RelayCommand]
 	private void OpenBaseSheet()
@@ -48,6 +52,13 @@ public partial class MainViewModel : ObservableObject
 	private void SetMediumAndLargeState()
 	{
 		BaseStates = BottomSheetState.All;
+	}
+	
+	[RelayCommand]
+	private void SetRandomBackgroundColor()
+	{
+		Color randomColor = Color.FromRgb(random.Next(256), random.Next(256), random.Next(256));
+		BackgroundColor = randomColor;
 	}
 	#endregion
 
