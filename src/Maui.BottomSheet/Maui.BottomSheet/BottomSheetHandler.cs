@@ -15,7 +15,8 @@ public partial class BottomSheetHandler
 		[nameof(IBottomSheet.SheetStates)] = MapSheetStates,
 		[nameof(IBottomSheet.Peek)] = MapPeek,
 		[nameof(IBottomSheet.SelectedSheetState)] = MapSelectedSheetState,
-		[nameof(IBottomSheet.IsCancelable)] = MapIsCancelable
+		[nameof(IBottomSheet.IsCancelable)] = MapIsCancelable,
+		[nameof(IBottomSheet.BackgroundColor)] = MapBackgroundColor,
     };
 
 	public BottomSheetHandler(IPropertyMapper? mapper, CommandMapper? commandMapper)

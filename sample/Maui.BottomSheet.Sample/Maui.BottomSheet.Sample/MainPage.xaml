@@ -21,7 +21,8 @@
         <Button Command="{Binding OpenViewAsBottomSheetCommand}" Text="Open View as BottomSheet" />
 
         <bottomsheet:BottomSheet
-            x:Name="WelcomeSheet"
+            x:Name="WelcomeSheet" 
+            BackgroundColor="LightGray"
             Margin="50"
             HasHandle="True"
             IsOpen="True"
@@ -60,7 +61,7 @@
 
         <bottomsheet:BottomSheet
             x:Name="BaseSheet"
-            Margin="10"
+            Margin="10" BackgroundColor="{Binding BackgroundColor}"
             IsOpen="{Binding IsBaseSheetOpen}"
             SheetStates="{Binding BaseStates, Mode=TwoWay}">
             <bottomsheet:BottomSheet.ContentTemplate>
@@ -80,6 +81,10 @@
                             Command="{Binding SetMediumAndLargeStateCommand}"
                             HorizontalOptions="Center"
                             Text="Medium and large" />
+                        <Button 
+                            Text="Set random BackgroundColor" 
+                            HorizontalOptions="Center"
+                            Command="{Binding SetRandomBackgroundColorCommand}"/>
                     </VerticalStackLayout>
                 </DataTemplate>
             </bottomsheet:BottomSheet.ContentTemplate>

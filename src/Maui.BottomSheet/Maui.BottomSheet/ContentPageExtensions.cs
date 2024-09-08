@@ -5,6 +5,7 @@ public static class ContentPageExtensions
     {
         return new BottomSheet()
         {
+            BackgroundColor = contentPage.BackgroundColor,
             ContentTemplate = new DataTemplate(() => contentPage.Content)
         };
     }
