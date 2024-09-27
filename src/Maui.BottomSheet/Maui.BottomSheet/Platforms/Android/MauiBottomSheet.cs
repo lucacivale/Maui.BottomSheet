@@ -13,6 +13,7 @@ namespace Maui.BottomSheet;
 
 using Android.Graphics.Drawables;
 using Microsoft.Maui.Controls.Platform;
+using System.Windows.Input;
 
 public class MauiBottomSheet : AndroidView
 {
@@ -547,7 +548,9 @@ public class MauiBottomSheet : AndroidView
 		CreateBottomSheet();
 
 		bottomSheetDialog?.Show();
-	}
+
+        VirtualView.OnCompleteOpenCloseAction(true);
+    }
 
 	public void DismissBottomSheet()
 	{
@@ -555,7 +558,9 @@ public class MauiBottomSheet : AndroidView
 		{
 			bottomSheetDialog.DismissEvent -= BottomSheetDialog_DismissEvent;
 			bottomSheetDialog.Dismiss();
-		}
+
+            VirtualView.OnCompleteOpenCloseAction(false);
+        }
 	}
 
 	public bool TrySetState(int state)

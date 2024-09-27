@@ -30,8 +30,7 @@ public class BottomSheet : View, IBottomSheet
 		typeof(BottomSheet),
 		defaultValue: false,
 		defaultBindingMode: BindingMode.TwoWay,
-		propertyChanging: OnIsOpenPropertyChanging,
-		propertyChanged: OnIsOpenPropertyChanged);
+		propertyChanging: OnIsOpenPropertyChanging);
 
 	public static readonly BindableProperty ShowHeaderProperty = BindableProperty.Create(
 		nameof(ShowHeader),
@@ -217,7 +216,8 @@ public class BottomSheet : View, IBottomSheet
 	#endregion
 
 	#region Events
-	private static void OnIsOpenPropertyChanging(BindableObject bindable, object oldValue, object newValue)
+	
+    private static void OnIsOpenPropertyChanging(BindableObject bindable, object oldValue, object newValue)
 		=> ((BottomSheet)bindable).OnIsOpenPropertyChanging((bool)newValue);
 
 	private void OnIsOpenPropertyChanging(bool newValue)
@@ -235,17 +235,14 @@ public class BottomSheet : View, IBottomSheet
 		}
 	}
 
-	private static void OnIsOpenPropertyChanged(BindableObject bindable, object oldValue, object newValue)
-		=> ((BottomSheet)bindable).OnIsOpenPropertyChanged((bool)newValue);
-
-	private void OnIsOpenPropertyChanged(bool newValue)
+    void IBottomSheet.OnCompleteOpenCloseAction(bool opned)
 	{
-		string eventName = newValue == true ? nameof(Opened) : nameof(Closed);
+		string eventName = opned == true ? nameof(Opened) : nameof(Closed);
 
 		eventManager.HandleEvent(this, EventArgs.Empty, eventName);
 
-		ICommand? command = newValue == true ? OpenedCommand : ClosedCommand;
-		object? commandParameter = newValue == true ? OpenedCommandParameter : ClosedCommandParameter;
+		ICommand? command = opned == true ? OpenedCommand : ClosedCommand;
+		object? commandParameter = opned == true ? OpenedCommandParameter : ClosedCommandParameter;
 
 		if (command?.CanExecute(commandParameter) == true)
 		{

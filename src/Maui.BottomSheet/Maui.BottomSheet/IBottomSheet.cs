@@ -54,5 +54,7 @@ public interface IBottomSheet : IView, IBindable
 	#region Peek
 	BottomSheetPeek? Peek { get; set; }
 	#endregion
+
+    void OnCompleteOpenCloseAction(bool opned);
 }
 

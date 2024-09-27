@@ -1,4 +1,5 @@
-﻿using UIKit;
+﻿using System.Windows.Input;
+using UIKit;
 
 namespace Maui.BottomSheet.Platforms.iOS;
 
@@ -20,9 +21,11 @@ public class BottomSheetUIViewController : UINavigationController
 		IsDismissed = false;
 
 		EnableDragging(bottomSheet?.IsDraggable == true);
-	}
 
-	public override void ViewDidDisappear(bool animated)
+        bottomSheet.OnCompleteOpenCloseAction(true);
+    }
+
+    public override void ViewDidDisappear(bool animated)
 	{
 		base.ViewDidDisappear(animated);
 
@@ -31,7 +34,9 @@ public class BottomSheetUIViewController : UINavigationController
 		{
 			bottomSheet.IsOpen = false;
 		}
-	}
+
+        bottomSheet.OnCompleteOpenCloseAction(false);
+    }
 
 	public void EnableDragging(bool enable)
 	{
