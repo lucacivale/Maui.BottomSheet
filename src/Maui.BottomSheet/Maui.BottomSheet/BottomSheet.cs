@@ -29,9 +29,7 @@ public class BottomSheet : View, IBottomSheet
 		typeof(bool),
 		typeof(BottomSheet),
 		defaultValue: false,
-		defaultBindingMode: BindingMode.TwoWay,
-		propertyChanging: OnIsOpenPropertyChanging,
-		propertyChanged: OnIsOpenPropertyChanged);
+		defaultBindingMode: BindingMode.TwoWay);
 
 	public static readonly BindableProperty ShowHeaderProperty = BindableProperty.Create(
 		nameof(ShowHeader),
@@ -217,36 +215,37 @@ public class BottomSheet : View, IBottomSheet
 	#endregion
 
 	#region Events
-	private static void OnIsOpenPropertyChanging(BindableObject bindable, object oldValue, object newValue)
-		=> ((BottomSheet)bindable).OnIsOpenPropertyChanging((bool)newValue);
-
-	private void OnIsOpenPropertyChanging(bool newValue)
+	public void OnOpeningBottomSheet()
 	{
-		string eventName = newValue == true ? nameof(Opening) : nameof(Closing);
-
-		eventManager.HandleEvent(this, EventArgs.Empty, eventName);
-
-		ICommand? command = newValue == true ? OpeningCommand : ClosingCommand;
-		object? commandParameter = newValue == true ? OpeningCommandParameter : ClosingCommandParameter;
-
-		if (command?.CanExecute(commandParameter) == true)
-		{
-			command.Execute(commandParameter);
-		}
+		RaiseEvent(nameof(Opening), EventArgs.Empty);
+		ExecuteCommand(OpeningCommand, OpeningCommandParameter);
 	}
 
-	private static void OnIsOpenPropertyChanged(BindableObject bindable, object oldValue, object newValue)
-		=> ((BottomSheet)bindable).OnIsOpenPropertyChanged((bool)newValue);
-
-	private void OnIsOpenPropertyChanged(bool newValue)
+	public void OnOpenedBottomSheet()
 	{
-		string eventName = newValue == true ? nameof(Opened) : nameof(Closed);
+		RaiseEvent(nameof(Opened), EventArgs.Empty);
+		ExecuteCommand(OpenedCommand, OpenedCommandParameter);
+	}
 
-		eventManager.HandleEvent(this, EventArgs.Empty, eventName);
+	public void OnClosingBottomSheet()
+	{
+		RaiseEvent(nameof(Closing), EventArgs.Empty);
+		ExecuteCommand(ClosingCommand, ClosingCommandParameter);
+	}
 
-		ICommand? command = newValue == true ? OpenedCommand : ClosedCommand;
-		object? commandParameter = newValue == true ? OpenedCommandParameter : ClosedCommandParameter;
+	public void OnClosedBottomSheet()
+	{
+		RaiseEvent(nameof(Closed), EventArgs.Empty);
+		ExecuteCommand(ClosedCommand, ClosedCommandParameter);
+	}
 
+	private void RaiseEvent(string eventName, EventArgs eventArgs)
+	{
+		eventManager.HandleEvent(this, eventArgs, eventName);
+	}
+
+	private static void ExecuteCommand(ICommand? command, object? commandParameter)
+	{
 		if (command?.CanExecute(commandParameter) == true)
 		{
 			command.Execute(commandParameter);

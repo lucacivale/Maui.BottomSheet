@@ -467,7 +467,9 @@ public class MauiBottomSheet : UIView
 	{
 		if (WindowStateManager.Default.GetCurrentUIViewController() is UIViewController parent)
 		{
+			VirtualView?.OnOpeningBottomSheet();
 			await parent.PresentViewControllerAsync(CreateBottomSheet(), animated: true);
+			VirtualView?.OnOpenedBottomSheet();
 		}
 	}
 
@@ -475,7 +477,9 @@ public class MauiBottomSheet : UIView
 	{
 		if (bottomSheetUIViewController is not null)
 		{
+			VirtualView?.OnClosingBottomSheet();
 			await bottomSheetUIViewController.DismissViewControllerAsync(true);
+			VirtualView?.OnClosedBottomSheet();
 		}
 	}
 }
