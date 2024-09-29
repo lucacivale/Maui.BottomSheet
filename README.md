@@ -136,7 +136,7 @@ To open/close a BottomSheet simply set `IsOpen` property to true/false. You can 
     <bottomsheet:BottomSheet.ContentTemplate>
         <DataTemplate>
             <VerticalStackLayout>
-                <Label Text="I'm a simple BottomSheet!/>
+                <Label Text="I'm a simple BottomSheet!"/>
             </VerticalStackLayout>
         </DataTemplate>
     </bottomsheet:BottomSheet.ContentTemplate>
@@ -156,7 +156,7 @@ public MainViewModel(IBottomSheetNavigationService bottomSheetNavigationService)
 }
 ```
 
-To navigate to a `BottomSheet` you have to [register](https://learn.microsoft.com/en-us/dotnet/architecture/maui/dependency-injection) `BottomSheets` and `ViewModels`
+To navigate to a `BottomSheet` you have to [register](https://learn.microsoft.com/dotnet/architecture/maui/dependency-injection) `BottomSheets` and `ViewModels`
 ```
 builder.Services.AddTransient<BottomSheetVMViewModel>();
 builder.Services.AddTransient<BottomSheetGoBackViewModel>();
