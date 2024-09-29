@@ -40,6 +40,10 @@ public interface IBottomSheet : IView, IBindable
 	#endregion
 
 	#region Event Handler
+	void OnOpeningBottomSheet();
+	void OnOpenedBottomSheet();
+	void OnClosingBottomSheet();
+	void OnClosedBottomSheet();
 	event EventHandler Closing;
 	event EventHandler Closed;
 	event EventHandler Opening;

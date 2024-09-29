@@ -546,7 +546,9 @@ public class MauiBottomSheet : AndroidView
 	{
 		CreateBottomSheet();
 
+		VirtualView?.OnOpeningBottomSheet();
 		bottomSheetDialog?.Show();
+		VirtualView?.OnOpenedBottomSheet();
 	}
 
 	public void DismissBottomSheet()
@@ -554,7 +556,9 @@ public class MauiBottomSheet : AndroidView
 		if (bottomSheetDialog is not null)
 		{
 			bottomSheetDialog.DismissEvent -= BottomSheetDialog_DismissEvent;
+			VirtualView?.OnClosingBottomSheet();
 			bottomSheetDialog.Dismiss();
+			VirtualView?.OnClosedBottomSheet();
 		}
 	}
 
