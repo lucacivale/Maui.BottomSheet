@@ -163,11 +163,14 @@ public class MauiBottomSheet : AndroidView
 
 	public void SetHasHandle()
 	{
-		if (VirtualView?.HasHandle == true
-			&& (handle is null
-				|| handle.Parent is null))
+		if (VirtualView?.HasHandle == true)
 		{
-			handle = CreateHandle();
+			if (handle is null)
+			{
+				handle = CreateHandle();
+				handle?.AddOnLayoutChangeListener(_layoutChangeListener);	
+			}
+
 			sheetContainer?.AddView(handle, 0);
 		}
 		else if (VirtualView?.HasHandle == false)
@@ -246,11 +249,14 @@ public class MauiBottomSheet : AndroidView
 			LayoutParameters = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MatchParent, LinearLayout.LayoutParams.MatchParent),
 			Orientation = Orientation.Vertical,
 		};
-
-		handle = CreateHandle();
-		handle?.AddOnLayoutChangeListener(_layoutChangeListener);
-		sheetContainer.AddView(handle);
-
+		
+		if (VirtualView?.HasHandle == true
+		    && handle is not null
+		    && handle.Parent is null)
+		{
+			sheetContainer.AddView(handle);	
+		}
+		
 		sheetLayout = new LinearLayout(Context)
 		{
 			LayoutParameters = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MatchParent, LinearLayout.LayoutParams.MatchParent)
@@ -262,7 +268,7 @@ public class MauiBottomSheet : AndroidView
 			},
 			Orientation = Orientation.Vertical
 		};
-
+		
 		if (VirtualView?.ShowHeader == true)
 		{
 			sheetLayout.AddView(CreateHeader());
@@ -288,7 +294,7 @@ public class MauiBottomSheet : AndroidView
 			content.BindingContext = VirtualView.BindingContext;
 			contentlayout.AddView(content?.ToPlatform(mauiContext));
 		}
-
+		
 		sheetLayout.AddView(contentlayout);
 
 		sheetContainer.AddView(sheetLayout);
@@ -633,4 +639,3 @@ public class BottomSheetLayoutChangeListener : Java.Lang.Object, AndroidView.IOn
 		bottomSheet.SetPeek();
     }
 }
-
