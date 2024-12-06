@@ -58,7 +58,8 @@ public sealed class MauiBottomSheet : AndroidView
     /// </summary>
     public void SetHasHandle()
     {
-        if (_virtualView?.IsOpen == false)
+        if (_virtualView?.IsOpen == false
+            || _bottomSheetContainer.IsShowing == false)
         {
             return;
         }
@@ -78,14 +79,12 @@ public sealed class MauiBottomSheet : AndroidView
     /// </summary>
     public void SetHeader()
     {
-        if (_virtualView?.Header is null)
-        {
-            _bottomSheetContainer.HideHeader();
-        }
-        else
+        if (_virtualView?.Header is not null)
         {
             _bottomSheetContainer.SetHeader(_virtualView.Header);
         }
+
+        SetShowHeader();
     }
 
     /// <summary>
@@ -93,7 +92,8 @@ public sealed class MauiBottomSheet : AndroidView
     /// </summary>
     public void SetShowHeader()
     {
-        if (_virtualView?.IsOpen == false)
+        if (_virtualView?.IsOpen == false
+            || _bottomSheetContainer.IsShowing == false)
         {
             return;
         }
@@ -164,6 +164,19 @@ public sealed class MauiBottomSheet : AndroidView
         {
             _bottomSheetContainer.SetPeek(_virtualView.Peek);
         }
+        
+        if (_virtualView?.IsOpen == true
+            && _bottomSheetContainer.IsShowing == true)
+        {
+            if (_virtualView?.Peek is not null)
+            {
+                _bottomSheetContainer.AddPeek();
+            }
+            else
+            {
+                _bottomSheetContainer.HidePeek();                
+            }
+        }
     }
 
     /// <summary>
@@ -174,6 +187,19 @@ public sealed class MauiBottomSheet : AndroidView
         if (_virtualView?.Content is not null)
         {
             _bottomSheetContainer.SetContent(_virtualView.Content);
+        }
+        
+        if (_virtualView?.IsOpen == true
+            && _bottomSheetContainer.IsShowing == true)
+        {
+            if (_virtualView?.Content is not null)
+            {
+                _bottomSheetContainer.AddContent();
+            }
+            else
+            {
+                _bottomSheetContainer.HideContent();                
+            }
         }
     }
 

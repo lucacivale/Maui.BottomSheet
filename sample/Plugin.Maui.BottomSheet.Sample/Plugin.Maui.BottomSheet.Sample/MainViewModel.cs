@@ -6,7 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 public partial class MainViewModel : ObservableObject
 {
     [ObservableProperty]
-    private bool _isBottomSheetHeaderSampleOpen;
+    private bool _isBottomSheetHeaderSampleOpen = true;
     
     [ObservableProperty]
     private List<BottomSheetState> _states = [];

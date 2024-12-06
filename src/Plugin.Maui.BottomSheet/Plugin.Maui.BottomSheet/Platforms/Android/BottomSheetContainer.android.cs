@@ -123,6 +123,14 @@ internal sealed class BottomSheetContainer : IDisposable
         }
     }
 
+    /// <summary>
+    /// Get whether BottomSheet is showing.
+    /// </summary>
+    public bool IsShowing
+    {
+        get => _bottomSheetDialog.IsShowing;
+    }
+
     // ReSharper disable once GrammarMistakeInComment
 
     /// <summary>
@@ -164,8 +172,6 @@ internal sealed class BottomSheetContainer : IDisposable
         AddPeek();
         AddContent();
 
-        _bottomSheetDialog.Behavior.PeekHeight = MeasurePeekHeight();
-        _bottomSheetDialog.Behavior.SkipCollapsed = _bottomSheetPeek is null;
         _bottomSheetDialog.Behavior.FitToContents = false;
         _bottomSheetDialog.Behavior.HalfExpandedRatio = 0.5f;
 
@@ -272,7 +278,10 @@ internal sealed class BottomSheetContainer : IDisposable
     /// </summary>
     public void AddHeader()
     {
-        ArgumentNullException.ThrowIfNull(_bottomSheetHeader);
+        if (_bottomSheetHeader is null)
+        {
+            return;
+        }
 
         _bottomSheetHeaderContainer = new ContainerView(_mauiContext);
         _bottomSheetHeaderContainer.AddView(_bottomSheetHeader.HeaderView);
@@ -286,6 +295,90 @@ internal sealed class BottomSheetContainer : IDisposable
         _headerLayoutParams.SetGravity(AGravityFlags.Fill);
 
         _sheetContainer.AddView(_bottomSheetHeaderContainer, _headerLayoutParams);
+    }
+    
+    /// <summary>
+    /// Adds the peek view.
+    /// </summary>
+    public void AddPeek()
+    {
+        if (_bottomSheetPeek is null)
+        {
+            return;
+        }
+
+        _virtualBottomSheetPeek = _bottomSheetPeek.PeekViewDataTemplate?.CreateContent() as View;
+
+        if (_virtualBottomSheetPeek is null)
+        {
+            return;
+        }
+
+        _virtualBottomSheetPeek.BindingContext = _bottomSheetPeek.BindingContext;
+        _virtualBottomSheetPeek.Parent = _bottomSheetPeek.Parent;
+
+        _platformBottomSheetPeek = _virtualBottomSheetPeek.ToPlatform(_mauiContext);
+        _platformBottomSheetPeek.LayoutParameters = new AViewGroup.LayoutParams(AViewGroup.LayoutParams.MatchParent, AViewGroup.LayoutParams.MatchParent);
+
+        _bottomSheetPeekContainer = new ContainerView(_mauiContext);
+        _bottomSheetPeekContainer.AddView(_platformBottomSheetPeek);
+        _bottomSheetPeekContainer.SetPadding(_context.ToPixels(_padding.HorizontalThickness()));
+
+        var height = _context.ToPixels(_bottomSheetPeek.PeekHeight);
+        if (height <= 0.00)
+        {
+            _bottomSheetPeekContainer.Measure(AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost), AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost));
+            height = _bottomSheetPeekContainer.MeasuredHeight;
+        }
+
+        _peekLayoutParams = new GridLayout.LayoutParams()
+        {
+            Height = Convert.ToInt32(height),
+            Width = _sheetContainer.Width,
+            RowSpec = GridLayout.InvokeSpec(PeekRow),
+        };
+        _peekLayoutParams.SetGravity(AGravityFlags.Fill);
+
+        _sheetContainer.AddView(_bottomSheetPeekContainer, _peekLayoutParams);
+
+        _bottomSheetDialog.Behavior.PeekHeight = MeasurePeekHeight();
+        _bottomSheetDialog.Behavior.SkipCollapsed = false;
+    }
+
+    /// <summary>
+    /// Adds the content view.
+    /// </summary>
+    public void AddContent()
+    {
+        if (_bottomSheetContent is null)
+        {
+            return;
+        }
+
+        _virtualBottomSheetContent = _bottomSheetContent.ContentTemplate?.CreateContent() as View;
+
+        if (_virtualBottomSheetContent is null)
+        {
+            return;
+        }
+
+        _virtualBottomSheetContent.BindingContext = _bottomSheetContent.BindingContext;
+
+        _platformBottomSheetContent = _virtualBottomSheetContent.ToPlatform(_mauiContext);
+        _platformBottomSheetContent.LayoutParameters = new AViewGroup.LayoutParams(AViewGroup.LayoutParams.MatchParent, AViewGroup.LayoutParams.MatchParent);
+
+        _bottomSheetContentContainer = new ContainerView(_mauiContext);
+        _bottomSheetContentContainer.AddView(_platformBottomSheetContent);
+        _bottomSheetContentContainer.SetPadding(_context.ToPixels(_padding.HorizontalThickness()));
+
+        _contentLayoutParams = new GridLayout.LayoutParams()
+        {
+            Width = _sheetContainer.Width,
+            RowSpec = GridLayout.InvokeSpec(ContentRow),
+        };
+        _contentLayoutParams.SetGravity(AGravityFlags.Fill);
+
+        _sheetContainer.AddView(_bottomSheetContentContainer, _contentLayoutParams);
     }
 
     /// <summary>
@@ -331,83 +424,6 @@ internal sealed class BottomSheetContainer : IDisposable
         _bottomSheetContentContainer?.RemoveFromParent();
         _contentLayoutParams?.Dispose();
         _virtualBottomSheetContent?.Handler?.DisconnectHandler();
-    }
-
-    private void AddPeek()
-    {
-        if (_bottomSheetPeek is null)
-        {
-            return;
-        }
-
-        _virtualBottomSheetPeek = _bottomSheetPeek.PeekViewDataTemplate?.CreateContent() as View;
-
-        if (_virtualBottomSheetPeek is null)
-        {
-            return;
-        }
-
-        _virtualBottomSheetPeek.BindingContext = _bottomSheetPeek.BindingContext;
-        _virtualBottomSheetPeek.Parent = _bottomSheetPeek.Parent;
-
-        _platformBottomSheetPeek = _virtualBottomSheetPeek.ToPlatform(_mauiContext);
-        _platformBottomSheetPeek.LayoutParameters = new AViewGroup.LayoutParams(AViewGroup.LayoutParams.MatchParent, AViewGroup.LayoutParams.MatchParent);
-
-        _bottomSheetPeekContainer = new ContainerView(_mauiContext);
-        _bottomSheetPeekContainer.AddView(_platformBottomSheetPeek);
-        _bottomSheetPeekContainer.SetPadding(_context.ToPixels(_padding.HorizontalThickness()));
-
-        var height = _context.ToPixels(_bottomSheetPeek.PeekHeight);
-        if (height <= 0.00)
-        {
-            _bottomSheetPeekContainer.Measure(AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost), AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost));
-            height = _bottomSheetPeekContainer.MeasuredHeight;
-        }
-
-        _peekLayoutParams = new GridLayout.LayoutParams()
-        {
-            Height = Convert.ToInt32(height),
-            Width = _sheetContainer.Width,
-            RowSpec = GridLayout.InvokeSpec(PeekRow),
-        };
-        _peekLayoutParams.SetGravity(AGravityFlags.Fill);
-
-        _sheetContainer.AddView(_bottomSheetPeekContainer, _peekLayoutParams);
-
-        _bottomSheetDialog.Behavior.SkipCollapsed = false;
-    }
-
-    private void AddContent()
-    {
-        if (_bottomSheetContent is null)
-        {
-            return;
-        }
-
-        _virtualBottomSheetContent = _bottomSheetContent.ContentTemplate?.CreateContent() as View;
-
-        if (_virtualBottomSheetContent is null)
-        {
-            return;
-        }
-
-        _virtualBottomSheetContent.BindingContext = _bottomSheetContent.BindingContext;
-
-        _platformBottomSheetContent = _virtualBottomSheetContent.ToPlatform(_mauiContext);
-        _platformBottomSheetContent.LayoutParameters = new AViewGroup.LayoutParams(AViewGroup.LayoutParams.MatchParent, AViewGroup.LayoutParams.MatchParent);
-
-        _bottomSheetContentContainer = new ContainerView(_mauiContext);
-        _bottomSheetContentContainer.AddView(_platformBottomSheetContent);
-        _bottomSheetContentContainer.SetPadding(_context.ToPixels(_padding.HorizontalThickness()));
-
-        _contentLayoutParams = new GridLayout.LayoutParams()
-        {
-            Width = _sheetContainer.Width,
-            RowSpec = GridLayout.InvokeSpec(ContentRow),
-        };
-        _contentLayoutParams.SetGravity(AGravityFlags.Fill);
-
-        _sheetContainer.AddView(_bottomSheetContentContainer, _contentLayoutParams);
     }
 
     private int MeasurePeekHeight()
