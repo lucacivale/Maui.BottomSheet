@@ -10,12 +10,22 @@ public class StringToBottomSheetStateTypeConverter : TypeConverter
 {
     /// <inheritdoc/>
     // ReSharper disable once ArrangeModifiersOrder
-    public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value)
+    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type? sourceType)
+        => sourceType == typeof(string);
+
+    /// <inheritdoc/>
+    // ReSharper disable once ArrangeModifiersOrder
+    public override bool CanConvertTo(ITypeDescriptorContext? context, Type? destinationType)
+        => destinationType == typeof(ICollection<BottomSheetState>);
+
+    /// <inheritdoc/>
+    // ReSharper disable once ArrangeModifiersOrder
+    public override object ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value)
     {
         if (value is not string stringValue
             || string.IsNullOrWhiteSpace(stringValue))
         {
-            return null;
+            return Enumerable.Empty<BottomSheetState>().ToList();
         }
 
         stringValue = stringValue.Trim();

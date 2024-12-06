@@ -7,11 +7,6 @@ namespace Plugin.Maui.BottomSheet;
 public enum BottomSheetState
 {
     /// <summary>
-    /// No state is allowed.
-    /// </summary>
-    None = 0,
-
-    /// <summary>
     /// Only <see cref="Peek"/> state is allowed. <see cref="IBottomSheet"/> height is set by <see cref="Peek"/>.
     /// </summary>
     Peek = 1,

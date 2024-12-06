@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Plugin.Maui.BottomSheet.Sample.MainPage"
+             xmlns:local="clr-namespace:Plugin.Maui.BottomSheet.Sample"
+             x:DataType="local:MainViewModel"
+             xmlns:bottomsheet="http://pluginmauibottomsheet.com">
+    <ScrollView>
+        <VerticalStackLayout
+            Padding="30,0"
+            Spacing="25">
+            <Button Text="Open BottomSheet-Header Sample" Command="{Binding OpenBottomSheetHeaderSampleCommand}"/>
+            <bottomsheet:BottomSheet
+                Padding="10"
+                x:Name="BottomSheetHeaderSample"
+                ShowHeader="True"
+                IsOpen="{Binding IsBottomSheetHeaderSampleOpen}"
+                States="{Binding States}"
+                CurrentState="{Binding CurrentState}"
+                HasHandle="True"
+                IsCancelable="True"
+                IsDraggable="True"
+                BackgroundColor="LightBlue">
+                <bottomsheet:BottomSheet.Header>
+                    <bottomsheet:BottomSheetHeader>
+                        <bottomsheet:BottomSheetHeader.HeaderDataTemplate>
+                            <DataTemplate>
+                                <Grid 
+                                    ColumnDefinitions="*,*,*"
+                                    ColumnSpacing="10">
+                                    <Button
+                                        Grid.Column="0"
+                                        Command="{Binding PeekClickedCommand}"
+                                        Text="Set Peek"/>
+                                    <Button
+                                        Grid.Column="1"
+                                        Command="{Binding MediumClickedCommand}"
+                                        Text="Set Medium"/>
+                                    <Button 
+                                        Grid.Column="2"
+                                        Command="{Binding LargeClickedCommand}"
+                                        Text="Set Large"/>  
+                                </Grid>
+                            </DataTemplate>
+                        </bottomsheet:BottomSheetHeader.HeaderDataTemplate>
+                    </bottomsheet:BottomSheetHeader>
+                </bottomsheet:BottomSheet.Header>
+                <bottomsheet:BottomSheet.Peek>
+                    <bottomsheet:BottomSheetPeek>
+                        <bottomsheet:BottomSheetPeek.PeekViewDataTemplate>
+                            <DataTemplate x:DataType="local:MainViewModel">
+                                <VerticalStackLayout HorizontalOptions="Center" Spacing="10">
+                                    <HorizontalStackLayout
+                                        HorizontalOptions="Center"
+                                        Margin="0,10,0,0"
+                                        Spacing="5">
+                                        <Button Text="Allow Peek" Command="{Binding PeekStateCommand}"/>
+                                        <Button Text="Allow Medium" Command="{Binding MediumStateCommand}"/>
+                                        <Button Text="Allow Large" Command="{Binding LargeStateCommand}"/>         
+                                    </HorizontalStackLayout>
+                                    <VerticalStackLayout Margin="0,0,0,10" Spacing="5">
+                                        <Button Text="Allow Peek-Medium" Command="{Binding PeekAndMediumStateCommand}"/>
+                                        <Button Text="Allow Peek-Large" Command="{Binding PeekAndLargeStateCommand}"/>
+                                        <Button Text="Allow Peek-Medium-Large" Command="{Binding PeekAndMediumAndLargeStateCommand}"/>
+                                        <Button Text="Allow Medium-Large" Command="{Binding MediumAndLargeStateCommand}"/>
+                                    </VerticalStackLayout>
+                                </VerticalStackLayout>
+                            </DataTemplate>
+                        </bottomsheet:BottomSheetPeek.PeekViewDataTemplate>
+                    </bottomsheet:BottomSheetPeek>
+                </bottomsheet:BottomSheet.Peek>
+                <bottomsheet:BottomSheet.Content>
+                    <bottomsheet:BottomSheetContent>
+                        <bottomsheet:BottomSheetContent.ContentTemplate>
+                            <DataTemplate x:DataType="local:MainViewModel">
+                                <VerticalStackLayout>
+                                    <Label Text="I'm some content."/>
+                                </VerticalStackLayout>
+                            </DataTemplate>
+                        </bottomsheet:BottomSheetContent.ContentTemplate>
+                    </bottomsheet:BottomSheetContent>
+                </bottomsheet:BottomSheet.Content>
+            </bottomsheet:BottomSheet>
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

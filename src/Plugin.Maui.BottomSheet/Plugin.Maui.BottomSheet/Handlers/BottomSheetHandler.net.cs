@@ -2,94 +2,74 @@ namespace Plugin.Maui.BottomSheet.Handlers;
 
 using Microsoft.Maui.Handlers;
 
-// ReSharper disable once RedundantNameQualifier
-using Plugin.Maui.BottomSheet.PlatformBottomSheets;
-
 /// <summary>
 /// <see cref="IBottomSheet"/> handler.
 /// </summary>
-public sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, MauiBottomSheet>
+public sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, object>
 {
     /// <inheritdoc/>
-    protected override void ConnectHandler(MauiBottomSheet platformView)
+    protected override object CreatePlatformView()
     {
-        base.ConnectHandler(platformView);
-        platformView.SetView(VirtualView);
-    }
-
-    /// <inheritdoc/>
-    protected override MauiBottomSheet CreatePlatformView()
-    {
-        _ = MauiContext ?? throw new InvalidOperationException("MauiContext is null, please check your MauiApplication.");
-
-        return new MauiBottomSheet(MauiContext);
-    }
-
-    /// <inheritdoc/>
-    protected override void DisconnectHandler(MauiBottomSheet platformView)
-    {
-        base.DisconnectHandler(platformView);
-
-        platformView.Cleanup();
+        throw new NotImplementedException();
     }
 
     private static void MapIsCancelable(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
-        handler.PlatformView.SetIsCancelable();
+        throw new NotImplementedException();
     }
 
     private static void MapHasHandle(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
-        handler.PlatformView.SetHasHandle();
+        throw new NotImplementedException();
     }
 
     private static void MapShowHeader(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
-        handler.PlatformView.SetHeader();
+        throw new NotImplementedException();
     }
 
     private static void MapIsOpen(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
-        handler.PlatformView.SetIsOpen();
+        throw new NotImplementedException();
     }
 
     private static void MapIsDraggable(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
-        handler.PlatformView.SetIsDraggable();
+        throw new NotImplementedException();
     }
 
     private static void MapHeader(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
-        handler.PlatformView.SetHeader();
+        throw new NotImplementedException();
     }
 
     private static void MapStates(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
-        handler.PlatformView.SetStates();
+        throw new NotImplementedException();
     }
 
     private static void MapCurrentState(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
-        handler.PlatformView.SetCurrentState();
+        throw new NotImplementedException();
     }
 
     private static void MapPeek(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
-        handler.PlatformView.SetPeek();
+        throw new NotImplementedException();
     }
 
     private static void MapContent(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
-        handler.PlatformView.SetContent();
+        throw new NotImplementedException();
     }
 
     private static void MapPadding(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
-        handler.PlatformView.SetPadding();
+        throw new NotImplementedException();
     }
 
     private static void MapBackgroundColor(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
-        handler.PlatformView.SetBottomSheetBackgroundColor();
+        throw new NotImplementedException();
     }
 }

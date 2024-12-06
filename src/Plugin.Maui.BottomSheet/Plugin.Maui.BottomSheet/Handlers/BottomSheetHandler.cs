@@ -19,8 +19,29 @@ public sealed partial class BottomSheetHandler
         [nameof(IBottomSheet.States)] = MapStates,
         [nameof(IBottomSheet.CurrentState)] = MapCurrentState,
         [nameof(IBottomSheet.Peek)] = MapPeek,
-        [nameof(IBottomSheet.ContentTemplate)] = MapContentTemplate,
+        [nameof(IBottomSheet.Content)] = MapContent,
+        [nameof(IBottomSheet.Padding)] = MapPadding,
+        [nameof(IBottomSheet.BackgroundColor)] = MapBackgroundColor,
     };
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BottomSheetHandler"/> class.
+    /// </summary>
+    /// <param name="mapper"><see cref="IPropertyMapper{TVirtualView,TViewHandler}"/>.</param>
+    /// <param name="commandMapper"><see cref="CommandMapper"/>.</param>
+    // ReSharper disable once UnusedParameter.Local
+    public BottomSheetHandler(IPropertyMapper? mapper, CommandMapper? commandMapper)
+        : base(mapper ?? BottomSheetMapper)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BottomSheetHandler"/> class.
+    /// </summary>
+    public BottomSheetHandler()
+        : base(BottomSheetMapper)
+    {
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheetHandler"/> class.

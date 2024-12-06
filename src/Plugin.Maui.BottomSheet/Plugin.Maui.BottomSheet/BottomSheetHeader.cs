@@ -1,59 +1,89 @@
 namespace Plugin.Maui.BottomSheet;
 
-using global::Maui.BindableProperty.Generator.Core;
 using Microsoft.Maui.Controls;
 
 /// <summary>
 /// The header shown at the top of <see cref="IBottomSheet"/>.
 /// </summary>
-public sealed partial class BottomSheetHeader : BindableObject
+public sealed class BottomSheetHeader : BindableObject
 {
+    /// <summary>
+    /// Bindable property.
+    /// </summary>
+    // ReSharper disable once MemberCanBePrivate.Global
+    public static readonly BindableProperty TitleTextProperty =
+        BindableProperty.Create(
+            nameof(TitleText),
+            typeof(string),
+            typeof(BottomSheetHeader));
+
+    /// <summary>
+    /// Bindable property.
+    /// </summary>
+    // ReSharper disable once MemberCanBePrivate.Global
+    public static readonly BindableProperty TopLeftButtonProperty =
+        BindableProperty.Create(
+            nameof(TopLeftButton),
+            typeof(Button),
+            typeof(BottomSheetHeader));
+
+    /// <summary>
+    /// Bindable property.
+    /// </summary>
+    // ReSharper disable once MemberCanBePrivate.Global
+    public static readonly BindableProperty TopRightButtonProperty =
+        BindableProperty.Create(
+            nameof(TopRightButton),
+            typeof(Button),
+            typeof(BottomSheetHeader));
+
+    /// <summary>
+    /// Bindable property.
+    /// </summary>
+    // ReSharper disable once MemberCanBePrivate.Global
+    public static readonly BindableProperty HeaderDataTemplateProperty =
+        BindableProperty.Create(
+            nameof(HeaderDataTemplate),
+            typeof(DataTemplate),
+            typeof(BottomSheetHeader));
+
+    /// <summary>
+    /// Bindable property.
+    /// </summary>
+    // ReSharper disable once MemberCanBePrivate.Global
+    public static readonly BindableProperty HeaderAppearanceProperty =
+        BindableProperty.Create(
+            nameof(HeaderAppearance),
+            typeof(BottomSheetHeaderButtonAppearanceMode),
+            typeof(BottomSheetHeader));
+
     /// <summary>
     /// Gets or sets title text.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CS0169:Field is never used.", Justification = "Field used for code generation.")]
-    [AutoBindable]
-    private string? _titleText;
-
-    /// <summary>
-    /// Gets or sets title <see cref="View"/>.
-    /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CS0169:Field is never used.", Justification = "Field used for code generation.")]
-    [AutoBindable]
-    private View? _titleView;
-
-    /// <summary>
-    /// Gets or sets title <see cref="DataTemplate"/>.
-    /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CS0169:Field is never used.", Justification = "Field used for code generation.")]
-    [AutoBindable]
-    private DataTemplate? _titleDataTemplate;
+    public string? TitleText { get => (string?)GetValue(TitleTextProperty); set => SetValue(TitleTextProperty, value); }
 
     /// <summary>
     /// Gets or sets the <see cref="Button"/> at the top left in the <see cref="BottomSheetHeader"/>.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CS0169:Field is never used.", Justification = "Field used for code generation.")]
-    [AutoBindable]
-    private Button? _topLeftButton;
+    public Button? TopLeftButton { get => (Button?)GetValue(TopLeftButtonProperty); set => SetValue(TopLeftButtonProperty, value); }
 
     /// <summary>
     /// Gets or sets the <see cref="Button"/> at the top right in the <see cref="BottomSheetHeader"/>.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CS0169:Field is never used.", Justification = "Field used for code generation.")]
-    [AutoBindable]
-    private Button? _topRightButton;
+    public Button? TopRightButton { get => (Button?)GetValue(TopRightButtonProperty); set => SetValue(TopRightButtonProperty, value); }
 
     /// <summary>
     /// Gets or sets a custom header <see cref="View"/>.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CS0169:Field is never used.", Justification = "Field used for code generation.")]
-    [AutoBindable]
-    private View? _headerView;
+    public DataTemplate? HeaderDataTemplate { get => (DataTemplate?)GetValue(HeaderDataTemplateProperty); set => SetValue(HeaderDataTemplateProperty, value); }
 
     /// <summary>
     /// Gets or sets the <see cref="BottomSheetHeaderButtonAppearanceMode"/>.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CS0169:Field is never used.", Justification = "Field used for code generation.")]
-    [AutoBindable]
-    private BottomSheetHeaderButtonAppearanceMode _headerAppearance;
+    public BottomSheetHeaderButtonAppearanceMode HeaderAppearance { get => (BottomSheetHeaderButtonAppearanceMode)GetValue(HeaderAppearanceProperty); set => SetValue(HeaderAppearanceProperty, value); }
+
+    /// <summary>
+    /// Gets or sets the parent <see cref="Element"/> of this element.
+    /// </summary>
+    public Element? Parent { get; set; }
 }

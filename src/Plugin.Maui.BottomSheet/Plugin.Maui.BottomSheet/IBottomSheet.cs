@@ -8,7 +8,7 @@ using Microsoft.Maui.Controls;
 /// <summary>
 /// Bottom sheets are surfaces containing supplementary content that are anchored to the bottom of the screen.
 /// </summary>
-public interface IBottomSheet : IView, IBindable
+public interface IBottomSheet : IView, IPadding
 {
     /// <summary>
     /// Event will be invoked when <see cref="IBottomSheet"/> is closing.
@@ -57,6 +57,11 @@ public interface IBottomSheet : IView, IBindable
     bool IsDraggable { get; set; }
 
     /// <summary>
+    /// Gets or sets the Color which will fill the background of an element. This is a bindable property.
+    /// </summary>
+    Color BackgroundColor { get; set; }
+
+    /// <summary>
     /// Gets or sets the <see cref="BottomSheetHeader"/>.
     /// </summary>
     BottomSheetHeader? Header { get; set; }
@@ -64,12 +69,11 @@ public interface IBottomSheet : IView, IBindable
     /// <summary>
     /// Gets or sets allowed <see cref="IBottomSheet"/> states.
     /// </summary>
-    ICollection<BottomSheetState>? States { get; set; }
+    ICollection<BottomSheetState> States { get; set; }
 
     /// <summary>
     /// Gets or sets current <see cref="IBottomSheet"/> state.
     /// </summary>
-    /// <remarks><see cref="BottomSheetState.None"/> if state is unknown.</remarks>
     BottomSheetState CurrentState { get; set; }
 
     /// <summary>
@@ -120,5 +124,25 @@ public interface IBottomSheet : IView, IBindable
     /// <summary>
     /// Gets or sets the content <see cref="DataTemplate"/>.
     /// </summary>
-    DataTemplate? ContentTemplate { get; set; }
+    BottomSheetContent? Content { get; set; }
+
+    /// <summary>
+    /// Raise <see cref="Opening"/> event.
+    /// </summary>
+    void OnOpeningBottomSheet();
+
+    /// <summary>
+    /// Raise <see cref="Opened"/> event.
+    /// </summary>
+    void OnOpenedBottomSheet();
+
+    /// <summary>
+    /// Raise <see cref="Closing"/> event.
+    /// </summary>
+    void OnClosingBottomSheet();
+
+    /// <summary>
+    /// Raise <see cref="Closed"/> event.
+    /// </summary>
+    void OnClosedBottomSheet();
 }
