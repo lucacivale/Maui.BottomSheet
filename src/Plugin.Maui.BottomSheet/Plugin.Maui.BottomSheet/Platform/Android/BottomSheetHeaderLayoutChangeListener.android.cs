@@ -2,8 +2,7 @@
 using AView = Android.Views;
 #pragma warning restore SA1200
 
-// ReSharper disable once CheckNamespace
-namespace Plugin.Maui.BottomSheet.Platforms.Android;
+namespace Plugin.Maui.BottomSheet.Platform.Android;
 
 /// <summary>
 /// <see cref="IBottomSheet"/> layout change callback.

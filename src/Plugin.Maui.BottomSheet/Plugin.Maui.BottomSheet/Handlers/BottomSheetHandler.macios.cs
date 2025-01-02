@@ -1,32 +1,30 @@
 namespace Plugin.Maui.BottomSheet.Handlers;
 
+using AsyncAwaitBestPractices;
 using Microsoft.Maui.Handlers;
-
-// ReSharper disable once RedundantNameQualifier
-using Plugin.Maui.BottomSheet.PlatformBottomSheets;
 
 /// <summary>
 /// <see cref="IBottomSheet"/> handler.
 /// </summary>
-public sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, MauiBottomSheet>
+internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Platform.MaciOS.MauiBottomSheet>
 {
     /// <inheritdoc/>
-    protected override void ConnectHandler(MauiBottomSheet platformView)
+    protected override void ConnectHandler(Platform.MaciOS.MauiBottomSheet platformView)
     {
         base.ConnectHandler(platformView);
         platformView.SetView(VirtualView);
     }
 
     /// <inheritdoc/>
-    protected override MauiBottomSheet CreatePlatformView()
+    protected override Platform.MaciOS.MauiBottomSheet CreatePlatformView()
     {
         _ = MauiContext ?? throw new InvalidOperationException("MauiContext is null, please check your MauiApplication.");
 
-        return new MauiBottomSheet(MauiContext);
+        return new Platform.MaciOS.MauiBottomSheet(MauiContext);
     }
 
     /// <inheritdoc/>
-    protected override void DisconnectHandler(MauiBottomSheet platformView)
+    protected override void DisconnectHandler(Platform.MaciOS.MauiBottomSheet platformView)
     {
         base.DisconnectHandler(platformView);
 
@@ -45,12 +43,12 @@ public sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, MauiB
 
     private static void MapShowHeader(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
-        handler.PlatformView.SetHeader();
+        handler.PlatformView.SetShowHeader();
     }
 
     private static void MapIsOpen(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
-        handler.PlatformView.SetIsOpen();
+        handler.PlatformView.SetIsOpenAsync().SafeFireAndForget(continueOnCapturedContext: false);
     }
 
     private static void MapIsDraggable(BottomSheetHandler handler, IBottomSheet bottomSheet)
@@ -91,5 +89,10 @@ public sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, MauiB
     private static void MapBackgroundColor(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
         handler.PlatformView.SetBottomSheetBackgroundColor();
+    }
+
+    private static void MapIgnoreSafeArea(BottomSheetHandler handler, IBottomSheet bottomSheet)
+    {
+        handler.PlatformView.SetIgnoreSafeArea();
     }
 }

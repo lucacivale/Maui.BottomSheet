@@ -48,6 +48,11 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="AsyncAwaitBestPractices" Version="9.0.0" />
+        <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.12.19">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="SonarAnalyzer.CSharp" Version="9.32.0.97167">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -58,23 +63,19 @@
         </PackageReference>
     </ItemGroup>
 
-    <ItemGroup Condition="$(TargetFramework.Equals('net8.0'))">
+    <ItemGroup Condition="$(TargetFramework.StartsWith('net8.0'))">
         <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.7" />
         <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.7" />
     </ItemGroup>
 
-    <ItemGroup Condition="$(TargetFramework.Equals('net9.0'))">
-        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.0" />
-        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.0" />
-    </ItemGroup>
-    
-    <ItemGroup Condition="$(TargetFramework.StartsWith('net8.0-'))">
-        <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.7" />
-        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.7" />
+    <ItemGroup Condition="$(TargetFramework.StartsWith('net9.0'))">
+        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.21" />
     </ItemGroup>
 
-    <ItemGroup Condition="$(TargetFramework.StartsWith('net9.0-'))">
-        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.0" />
-        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.0" />
+    <ItemGroup Condition="$(TargetFramework.EndsWith('-android'))">
+        <AndroidResource Include="Platform\Android\Resources\drawable\round_rect_shape.xml" />
+        <AndroidResource Include="Platform\Android\Resources\layout\bottomSheetDragHandle.xml" />
+        <AndroidResource Include="Platform\Android\Resources\values\colors.xml" />
     </ItemGroup>
+
 </Project>

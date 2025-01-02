@@ -9,7 +9,7 @@ public partial class MainViewModel : ObservableObject
     private bool _isBottomSheetHeaderSampleOpen = true;
     
     [ObservableProperty]
-    private List<BottomSheetState> _states = [];
+    private List<BottomSheetState> _states = [BottomSheetState.Peek, BottomSheetState.Medium, BottomSheetState.Large];
 
     [ObservableProperty]
     private BottomSheetState _currentState;

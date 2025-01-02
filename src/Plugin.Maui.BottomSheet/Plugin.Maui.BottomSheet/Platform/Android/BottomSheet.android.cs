@@ -8,15 +8,14 @@ using AView = Android.Views.View;
 using AViewGroup = Android.Views.ViewGroup;
 #pragma warning restore SA1200
 
-// ReSharper disable once CheckNamespace
-namespace Plugin.Maui.BottomSheet.Platforms.Android;
+namespace Plugin.Maui.BottomSheet.Platform.Android;
 
 using Microsoft.Maui.Platform;
 
 /// <summary>
 /// BottomSheet container view including Handle, Header and Content.
 /// </summary>
-internal sealed class BottomSheetContainer : IDisposable
+internal sealed class BottomSheet : IDisposable
 {
     private const int HandleRow = 0;
     private const int HeaderRow = 1;
@@ -54,11 +53,11 @@ internal sealed class BottomSheetContainer : IDisposable
     private Thickness _padding;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="BottomSheetContainer"/> class.
+    /// Initializes a new instance of the <see cref="BottomSheet"/> class.
     /// </summary>
     /// <param name="context"><see cref="Context"/>.</param>
     /// <param name="mauiContext"><see cref="IMauiContext"/>.</param>
-    public BottomSheetContainer(Context context, IMauiContext mauiContext)
+    public BottomSheet(Context context, IMauiContext mauiContext)
     {
         _context = context;
         _mauiContext = mauiContext;
@@ -81,9 +80,9 @@ internal sealed class BottomSheetContainer : IDisposable
     }
 
     /// <summary>
-    /// Finalizes an instance of the <see cref="BottomSheetContainer"/> class.
+    /// Finalizes an instance of the <see cref="BottomSheet"/> class.
     /// </summary>
-    ~BottomSheetContainer()
+    ~BottomSheet()
     {
         Dispose(false);
     }
@@ -96,7 +95,7 @@ internal sealed class BottomSheetContainer : IDisposable
         add => _eventManager.AddEventHandler(value);
         remove => _eventManager.RemoveEventHandler(value);
     }
-    
+
     /// <summary>
     /// BottomSheet state changed.
     /// </summary>
@@ -124,17 +123,15 @@ internal sealed class BottomSheetContainer : IDisposable
     }
 
     /// <summary>
-    /// Get whether BottomSheet is showing.
+    /// Gets a value indicating whether BottomSheet is showing.
     /// </summary>
     public bool IsShowing
     {
         get => _bottomSheetDialog.IsShowing;
     }
 
-    // ReSharper disable once GrammarMistakeInComment
-
     /// <summary>
-    /// Gets or sets the Color which will fill the background of an element. This is a bindable property.
+    /// Gets or sets the Color which will fill the background of an element.
     /// </summary>
     public Color BackgroundColor
     {
@@ -243,7 +240,17 @@ internal sealed class BottomSheetContainer : IDisposable
     /// <param name="peek">Peek.</param>
     public void SetPeek(BottomSheetPeek peek)
     {
+        if (_bottomSheetPeek is not null)
+        {
+            _bottomSheetPeek.PropertyChanged -= BottomSheetPeekOnPropertyChanged;
+        }
+
         _bottomSheetPeek = peek;
+
+        if (_bottomSheetPeek is not null)
+        {
+            _bottomSheetPeek.PropertyChanged += BottomSheetPeekOnPropertyChanged;
+        }
     }
 
     /// <summary>
@@ -296,7 +303,7 @@ internal sealed class BottomSheetContainer : IDisposable
 
         _sheetContainer.AddView(_bottomSheetHeaderContainer, _headerLayoutParams);
     }
-    
+
     /// <summary>
     /// Adds the peek view.
     /// </summary>
@@ -341,7 +348,15 @@ internal sealed class BottomSheetContainer : IDisposable
 
         _sheetContainer.AddView(_bottomSheetPeekContainer, _peekLayoutParams);
 
-        _bottomSheetDialog.Behavior.PeekHeight = MeasurePeekHeight();
+        if (double.IsNaN(_bottomSheetPeek.PeekHeight))
+        {
+            _bottomSheetDialog.Behavior.PeekHeight = MeasurePeekHeight();
+        }
+        else
+        {
+            _bottomSheetDialog.Behavior.PeekHeight = Convert.ToInt32(_bottomSheetPeek.PeekHeight);
+        }
+
         _bottomSheetDialog.Behavior.SkipCollapsed = false;
     }
 
@@ -363,6 +378,7 @@ internal sealed class BottomSheetContainer : IDisposable
         }
 
         _virtualBottomSheetContent.BindingContext = _bottomSheetContent.BindingContext;
+        _virtualBottomSheetContent.Parent = _bottomSheetContent.Parent;
 
         _platformBottomSheetContent = _virtualBottomSheetContent.ToPlatform(_mauiContext);
         _platformBottomSheetContent.LayoutParameters = new AViewGroup.LayoutParams(AViewGroup.LayoutParams.MatchParent, AViewGroup.LayoutParams.MatchParent);
@@ -411,7 +427,11 @@ internal sealed class BottomSheetContainer : IDisposable
         _platformBottomSheetPeek?.RemoveFromParent();
         _bottomSheetPeekContainer?.RemoveFromParent();
         _peekLayoutParams?.Dispose();
+#if NET9_0_OR_GREATER
+        _virtualBottomSheetPeek?.DisconnectHandlers();
+#else
         _virtualBottomSheetPeek?.Handler?.DisconnectHandler();
+#endif
         BottomSheetPeekLayoutChanged();
     }
 
@@ -423,7 +443,11 @@ internal sealed class BottomSheetContainer : IDisposable
         _platformBottomSheetContent?.RemoveFromParent();
         _bottomSheetContentContainer?.RemoveFromParent();
         _contentLayoutParams?.Dispose();
+#if NET9_0_OR_GREATER
+        _virtualBottomSheetContent?.DisconnectHandlers();
+#else
         _virtualBottomSheetContent?.Handler?.DisconnectHandler();
+#endif
     }
 
     private int MeasurePeekHeight()
@@ -434,7 +458,7 @@ internal sealed class BottomSheetContainer : IDisposable
 
         return _bottomSheetHandle.Handle.MeasuredHeight
                + (_bottomSheetHeaderContainer?.MeasuredHeight ?? 0)
-               + (_bottomSheetPeekContainer?.MeasuredHeight ?? 0);
+               + PeekHeight();
     }
 
     private void BottomSheetHeaderLayoutChanged(object? sender, EventArgs e)
@@ -443,7 +467,7 @@ internal sealed class BottomSheetContainer : IDisposable
 
         var height = _bottomSheetHandle.Handle.MeasuredHeight
             + (_bottomSheetHeaderContainer?.MeasuredHeight ?? 0)
-            + (_bottomSheetPeekContainer?.MeasuredHeight ?? 0);
+            + PeekHeight();
 
         _bottomSheetDialog.Behavior.PeekHeight = height;
     }
@@ -454,7 +478,7 @@ internal sealed class BottomSheetContainer : IDisposable
 
         var height = _bottomSheetHandle.Handle.MeasuredHeight
              + (_bottomSheetHeaderContainer?.MeasuredHeight ?? 0)
-             + (_bottomSheetPeekContainer?.MeasuredHeight ?? 0);
+             + PeekHeight();
 
         _bottomSheetDialog.Behavior.PeekHeight = height;
     }
@@ -465,9 +489,22 @@ internal sealed class BottomSheetContainer : IDisposable
 
         var height = _bottomSheetHandle.Handle.MeasuredHeight
              + (_bottomSheetHeaderContainer?.MeasuredHeight ?? 0)
-             + (_bottomSheetPeekContainer?.MeasuredHeight ?? 0);
+             + PeekHeight();
 
         _bottomSheetDialog.Behavior.PeekHeight = height;
+    }
+
+    private int PeekHeight()
+    {
+        if (_bottomSheetPeek is not null
+            && !double.IsNaN(_bottomSheetPeek.PeekHeight))
+        {
+            return Convert.ToInt32(_bottomSheetPeek.PeekHeight);
+        }
+        else
+        {
+            return _bottomSheetPeekContainer?.MeasuredHeight ?? 0;
+        }
     }
 
     private void Dispose(bool disposing)
@@ -505,6 +542,19 @@ internal sealed class BottomSheetContainer : IDisposable
         _contentLayoutParams = null;
 
         _bottomSheetCallback.Dispose();
+    }
+
+    private void BottomSheetPeekOnPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (_bottomSheetPeek is null)
+        {
+            return;
+        }
+
+        if (e.PropertyName == nameof(BottomSheetPeek.PeekHeight))
+        {
+            _bottomSheetDialog.Behavior.PeekHeight = Convert.ToInt32(_bottomSheetPeek.PeekHeight);
+        }
     }
 
     private void BottomSheetCallbackOnStateChanged(object? sender, BottomSheetStateChangedEventArgs e)

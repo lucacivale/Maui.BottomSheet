@@ -5,7 +5,7 @@ using Plugin.Maui.BottomSheet;
 /// <summary>
 /// <see cref="IBottomSheet"/> handler.
 /// </summary>
-public sealed partial class BottomSheetHandler
+internal sealed partial class BottomSheetHandler
 {
     // ReSharper disable once ArrangeModifiersOrder
     private static readonly IPropertyMapper<IBottomSheet, BottomSheetHandler> BottomSheetMapper = new PropertyMapper<IBottomSheet, BottomSheetHandler>(ElementMapper)
@@ -22,6 +22,7 @@ public sealed partial class BottomSheetHandler
         [nameof(IBottomSheet.Content)] = MapContent,
         [nameof(IBottomSheet.Padding)] = MapPadding,
         [nameof(IBottomSheet.BackgroundColor)] = MapBackgroundColor,
+        [nameof(IBottomSheet.IgnoreSafeArea)] = MapIgnoreSafeArea,
     };
 
     /// <summary>

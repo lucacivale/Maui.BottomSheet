@@ -3,13 +3,12 @@ namespace Plugin.Maui.BottomSheet.Handlers;
 using Microsoft.Maui.Handlers;
 using Plugin.Maui.BottomSheet;
 
-// ReSharper disable once RedundantNameQualifier
-using Plugin.Maui.BottomSheet.Platforms.Android;
+using Plugin.Maui.BottomSheet.Platform.Android;
 
 /// <summary>
 /// <see cref="IBottomSheet"/> handler.
 /// </summary>
-public sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, MauiBottomSheet>
+internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, MauiBottomSheet>
 {
     /// <inheritdoc/>
     protected override void ConnectHandler(MauiBottomSheet platformView)
@@ -67,7 +66,7 @@ public sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, MauiB
 
     private static void MapStates(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
-        handler.PlatformView.SetStates();
+        MauiBottomSheet.SetStates();
     }
 
     private static void MapCurrentState(BottomSheetHandler handler, IBottomSheet bottomSheet)
@@ -93,5 +92,10 @@ public sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, MauiB
     private static void MapBackgroundColor(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
         handler.PlatformView.SetBottomSheetBackgroundColor();
+    }
+
+    private static void MapIgnoreSafeArea(BottomSheetHandler handler, IBottomSheet bottomSheet)
+    {
+        // Method intentionally left empty.
     }
 }

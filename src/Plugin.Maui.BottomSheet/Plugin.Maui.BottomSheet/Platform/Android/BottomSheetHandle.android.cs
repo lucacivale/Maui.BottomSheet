@@ -5,8 +5,7 @@ using ALayoutInflater = Android.Views.LayoutInflater;
 using AView = Android.Views.View;
 #pragma warning restore SA1200
 
-// ReSharper disable once CheckNamespace
-namespace Plugin.Maui.BottomSheet.Platforms.Android;
+namespace Plugin.Maui.BottomSheet.Platform.Android;
 
 using _Microsoft.Android.Resource.Designer;
 using Microsoft.Maui.Platform;
@@ -14,7 +13,7 @@ using Microsoft.Maui.Platform;
 /// <summary>
 /// Handle view.
 /// </summary>
-public sealed class BottomSheetHandle : IDisposable
+internal sealed class BottomSheetHandle : IDisposable
 {
     private readonly AContext.Context _context;
 
@@ -46,7 +45,7 @@ public sealed class BottomSheetHandle : IDisposable
         {
             if (_handle is null
                 && ALayoutInflater.FromContext(_context) is ALayoutInflater inflater
-                && inflater.Inflate(Resource.Layout.bottomSheetDragHandle, null) is AView view)
+                && inflater.Inflate(Resource.Layout.bottomsheetdraghandle, null) is AView view)
             {
                 _handle = view;
                 _handle.Background = AContextCompat.GetDrawable(_context, Resource.Drawable.round_rect_shape);

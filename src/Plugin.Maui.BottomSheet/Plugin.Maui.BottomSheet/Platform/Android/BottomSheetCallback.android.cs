@@ -1,11 +1,15 @@
+#pragma warning disable SA1200
 using AView = Android.Views.View;
+#pragma warning restore SA1200
 
-// ReSharper disable once CheckNamespace
-namespace Plugin.Maui.BottomSheet.Platforms.Android;
+namespace Plugin.Maui.BottomSheet.Platform.Android;
 
 using Google.Android.Material.BottomSheet;
 
-public sealed class BottomSheetCallback : BottomSheetBehavior.BottomSheetCallback
+/// <summary>
+/// Callback for Bottom sheet state changes.
+/// </summary>
+internal sealed class BottomSheetCallback : BottomSheetBehavior.BottomSheetCallback
 {
     private readonly WeakEventManager _eventManager = new();
 

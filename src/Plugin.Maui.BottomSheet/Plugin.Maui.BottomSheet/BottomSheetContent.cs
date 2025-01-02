@@ -3,12 +3,11 @@ namespace Plugin.Maui.BottomSheet;
 /// <summary>
 /// <see cref="BottomSheet"/> content.
 /// </summary>
-public class BottomSheetContent : BindableObject
+public sealed class BottomSheetContent : BindableObject
 {
     /// <summary>
     /// Bindable property.
     /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
     public static readonly BindableProperty ContentTemplateProperty =
         BindableProperty.Create(
             nameof(ContentTemplate),

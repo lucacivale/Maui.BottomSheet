@@ -3,13 +3,12 @@ using Android.Content;
 using AndroidView = Android.Views.View;
 #pragma warning restore SA1200
 
-// ReSharper disable once CheckNamespace
-namespace Plugin.Maui.BottomSheet.Platforms.Android;
+namespace Plugin.Maui.BottomSheet.Platform.Android;
 
 /// <inheritdoc />
-public sealed class MauiBottomSheet : AndroidView
+internal sealed class MauiBottomSheet : AndroidView
 {
-    private readonly BottomSheetContainer _bottomSheetContainer;
+    private readonly BottomSheet _bottomSheet;
 
     private IBottomSheet? _virtualView;
 
@@ -21,9 +20,18 @@ public sealed class MauiBottomSheet : AndroidView
     public MauiBottomSheet(IMauiContext mauiContext, Context context)
         : base(context)
     {
-        _bottomSheetContainer = new BottomSheetContainer(context, mauiContext);
-        _bottomSheetContainer.Closed += BottomSheetContainerOnClosed;
-        _bottomSheetContainer.StateChanged += BottomSheetContainerOnStateChanged;
+        _bottomSheet = new BottomSheet(context, mauiContext);
+        _bottomSheet.Closed += BottomSheetOnClosed;
+        _bottomSheet.StateChanged += BottomSheetOnStateChanged;
+    }
+
+    /// <summary>
+    /// Set allowed bottom sheet states.
+    /// </summary>
+    public static void SetStates()
+    {
+        // Method intentionally left empty.
+        // On iOS and mac states must be set.
     }
 
     /// <summary>
@@ -40,9 +48,9 @@ public sealed class MauiBottomSheet : AndroidView
     /// </summary>
     public void Cleanup()
     {
-        _bottomSheetContainer.Closed -= BottomSheetContainerOnClosed;
-        _bottomSheetContainer.StateChanged -= BottomSheetContainerOnStateChanged;
-        _bottomSheetContainer.Dispose();
+        _bottomSheet.Closed -= BottomSheetOnClosed;
+        _bottomSheet.StateChanged -= BottomSheetOnStateChanged;
+        _bottomSheet.Dispose();
     }
 
     /// <summary>
@@ -50,7 +58,7 @@ public sealed class MauiBottomSheet : AndroidView
     /// </summary>
     public void SetIsCancelable()
     {
-        _bottomSheetContainer.SetIsCancelable(_virtualView?.IsCancelable ?? false);
+        _bottomSheet.SetIsCancelable(_virtualView?.IsCancelable ?? false);
     }
 
     /// <summary>
@@ -59,18 +67,18 @@ public sealed class MauiBottomSheet : AndroidView
     public void SetHasHandle()
     {
         if (_virtualView?.IsOpen == false
-            || _bottomSheetContainer.IsShowing == false)
+            || !_bottomSheet.IsShowing)
         {
             return;
         }
 
         if (_virtualView?.HasHandle == false)
         {
-            _bottomSheetContainer.HideHandle();
+            _bottomSheet.HideHandle();
         }
         else
         {
-            _bottomSheetContainer.AddHandle();
+            _bottomSheet.AddHandle();
         }
     }
 
@@ -81,7 +89,7 @@ public sealed class MauiBottomSheet : AndroidView
     {
         if (_virtualView?.Header is not null)
         {
-            _bottomSheetContainer.SetHeader(_virtualView.Header);
+            _bottomSheet.SetHeader(_virtualView.Header);
         }
 
         SetShowHeader();
@@ -93,18 +101,18 @@ public sealed class MauiBottomSheet : AndroidView
     public void SetShowHeader()
     {
         if (_virtualView?.IsOpen == false
-            || _bottomSheetContainer.IsShowing == false)
+            || !_bottomSheet.IsShowing)
         {
             return;
         }
 
         if (_virtualView?.ShowHeader == false)
         {
-            _bottomSheetContainer.HideHeader();
+            _bottomSheet.HideHeader();
         }
         else
         {
-            _bottomSheetContainer.AddHeader();
+            _bottomSheet.AddHeader();
         }
     }
 
@@ -116,13 +124,13 @@ public sealed class MauiBottomSheet : AndroidView
         if (_virtualView?.IsOpen == true)
         {
             _virtualView.OnOpeningBottomSheet();
-            _bottomSheetContainer.Open(_virtualView);
+            _bottomSheet.Open(_virtualView);
             _virtualView.OnOpenedBottomSheet();
         }
         else
         {
             _virtualView?.OnClosingBottomSheet();
-            _bottomSheetContainer.Close();
+            _bottomSheet.Close();
             _virtualView?.OnClosedBottomSheet();
         }
     }
@@ -132,14 +140,7 @@ public sealed class MauiBottomSheet : AndroidView
     /// </summary>
     public void SetIsDraggable()
     {
-        _bottomSheetContainer.SetIsDraggable(_virtualView?.IsDraggable ?? false);
-    }
-
-    /// <summary>
-    /// Set allowed bottom sheet states.
-    /// </summary>
-    public void SetStates()
-    {
+        _bottomSheet.SetIsDraggable(_virtualView?.IsDraggable ?? false);
     }
 
     /// <summary>
@@ -152,7 +153,7 @@ public sealed class MauiBottomSheet : AndroidView
             return;
         }
 
-        _bottomSheetContainer.SetState(_virtualView.CurrentState);
+        _bottomSheet.SetState(_virtualView.CurrentState);
     }
 
     /// <summary>
@@ -162,19 +163,19 @@ public sealed class MauiBottomSheet : AndroidView
     {
         if (_virtualView?.Peek is not null)
         {
-            _bottomSheetContainer.SetPeek(_virtualView.Peek);
+            _bottomSheet.SetPeek(_virtualView.Peek);
         }
-        
+
         if (_virtualView?.IsOpen == true
-            && _bottomSheetContainer.IsShowing == true)
+            && _bottomSheet.IsShowing)
         {
-            if (_virtualView?.Peek is not null)
+            if (_virtualView.Peek is not null)
             {
-                _bottomSheetContainer.AddPeek();
+                _bottomSheet.AddPeek();
             }
             else
             {
-                _bottomSheetContainer.HidePeek();                
+                _bottomSheet.HidePeek();
             }
         }
     }
@@ -186,19 +187,19 @@ public sealed class MauiBottomSheet : AndroidView
     {
         if (_virtualView?.Content is not null)
         {
-            _bottomSheetContainer.SetContent(_virtualView.Content);
+            _bottomSheet.SetContent(_virtualView.Content);
         }
-        
+
         if (_virtualView?.IsOpen == true
-            && _bottomSheetContainer.IsShowing == true)
+            && _bottomSheet.IsShowing)
         {
-            if (_virtualView?.Content is not null)
+            if (_virtualView.Content is not null)
             {
-                _bottomSheetContainer.AddContent();
+                _bottomSheet.AddContent();
             }
             else
             {
-                _bottomSheetContainer.HideContent();                
+                _bottomSheet.HideContent();
             }
         }
     }
@@ -210,7 +211,7 @@ public sealed class MauiBottomSheet : AndroidView
     {
         if (_virtualView is not null)
         {
-            _bottomSheetContainer.Padding = _virtualView.Padding;
+            _bottomSheet.Padding = _virtualView.Padding;
         }
     }
 
@@ -221,7 +222,7 @@ public sealed class MauiBottomSheet : AndroidView
     {
         if (_virtualView?.BackgroundColor is not null)
         {
-            _bottomSheetContainer.BackgroundColor = _virtualView.BackgroundColor;
+            _bottomSheet.BackgroundColor = _virtualView.BackgroundColor;
         }
     }
 
@@ -238,7 +239,7 @@ public sealed class MauiBottomSheet : AndroidView
         Cleanup();
     }
 
-    private void BottomSheetContainerOnClosed(object? sender, EventArgs e)
+    private void BottomSheetOnClosed(object? sender, EventArgs e)
     {
         if (_virtualView is not null)
         {
@@ -246,7 +247,7 @@ public sealed class MauiBottomSheet : AndroidView
         }
     }
 
-    private void BottomSheetContainerOnStateChanged(object? sender, BottomSheetStateChangedEventArgs e)
+    private void BottomSheetOnStateChanged(object? sender, BottomSheetStateChangedEventArgs e)
     {
         if (_virtualView is null)
         {
@@ -258,7 +259,7 @@ public sealed class MauiBottomSheet : AndroidView
         if (!_virtualView.States.IsStateAllowed(state))
         {
             state = _virtualView.CurrentState;
-            _bottomSheetContainer.SetState(state);
+            _bottomSheet.SetState(state);
         }
 
         _virtualView.CurrentState = state;

@@ -6,7 +6,7 @@ using System.Globalization;
 /// <summary>
 /// Convert a comma seperated list of <see cref="BottomSheetState"/> values to a <see cref="ICollection{T}"/>.
 /// </summary>
-public class StringToBottomSheetStateTypeConverter : TypeConverter
+internal sealed class StringToBottomSheetStateTypeConverter : TypeConverter
 {
     /// <inheritdoc/>
     // ReSharper disable once ArrangeModifiersOrder

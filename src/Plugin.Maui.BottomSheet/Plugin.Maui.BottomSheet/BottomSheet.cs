@@ -1,16 +1,23 @@
 namespace Plugin.Maui.BottomSheet;
 
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Windows.Input;
 
 /// <inheritdoc cref="IBottomSheet" />
-public class BottomSheet : View, IBottomSheet
+public sealed class BottomSheet : View, IBottomSheet
 {
     /// <summary>
     /// Bindable property.
     /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
+    public static readonly BindableProperty IgnoreSafeAreaProperty =
+        BindableProperty.Create(
+            nameof(IgnoreSafeArea),
+            typeof(bool),
+            typeof(BottomSheet));
+
+    /// <summary>
+    /// Bindable property.
+    /// </summary>
     public static readonly BindableProperty StatesProperty =
         BindableProperty.Create(
             nameof(States),
@@ -29,7 +36,6 @@ public class BottomSheet : View, IBottomSheet
     /// <summary>
     /// Bindable property.
     /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
     public static readonly BindableProperty CurrentStateProperty =
         BindableProperty.Create(
             nameof(CurrentState),
@@ -53,7 +59,6 @@ public class BottomSheet : View, IBottomSheet
     /// <summary>
     /// Bindable property.
     /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
     public static readonly BindableProperty IsCancelableProperty =
         BindableProperty.Create(
             nameof(IsCancelable),
@@ -65,7 +70,6 @@ public class BottomSheet : View, IBottomSheet
     /// <summary>
     /// Bindable property.
     /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
     public static readonly BindableProperty HasHandleProperty =
         BindableProperty.Create(
             nameof(HasHandle),
@@ -77,7 +81,6 @@ public class BottomSheet : View, IBottomSheet
     /// <summary>
     /// Bindable property.
     /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
     public static readonly BindableProperty ShowHeaderProperty =
         BindableProperty.Create(
             nameof(ShowHeader),
@@ -88,7 +91,6 @@ public class BottomSheet : View, IBottomSheet
     /// <summary>
     /// Bindable property.
     /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
     public static readonly BindableProperty IsOpenProperty =
         BindableProperty.Create(
             nameof(IsOpen),
@@ -99,7 +101,6 @@ public class BottomSheet : View, IBottomSheet
     /// <summary>
     /// Bindable property.
     /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
     public static readonly BindableProperty IsDraggableProperty =
         BindableProperty.Create(
             nameof(IsDraggable),
@@ -111,7 +112,6 @@ public class BottomSheet : View, IBottomSheet
     /// <summary>
     /// Bindable property.
     /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
     public static readonly BindableProperty PeekProperty =
         BindableProperty.Create(
             nameof(Peek),
@@ -122,7 +122,6 @@ public class BottomSheet : View, IBottomSheet
     /// <summary>
     /// Bindable property.
     /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
     public static readonly BindableProperty HeaderProperty =
         BindableProperty.Create(
             nameof(Header),
@@ -133,7 +132,6 @@ public class BottomSheet : View, IBottomSheet
     /// <summary>
     /// Bindable property.
     /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
     public static readonly BindableProperty ContentProperty =
         BindableProperty.Create(
             nameof(Content),
@@ -144,7 +142,6 @@ public class BottomSheet : View, IBottomSheet
     /// <summary>
     /// Bindable property.
     /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
     public static readonly BindableProperty PaddingProperty =
         BindableProperty.Create(
             nameof(Peek),
@@ -155,7 +152,6 @@ public class BottomSheet : View, IBottomSheet
     /// <summary>
     /// Bindable property.
     /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
     public static readonly BindableProperty ClosingCommandProperty =
         BindableProperty.Create(
             nameof(ClosingCommand),
@@ -165,7 +161,6 @@ public class BottomSheet : View, IBottomSheet
     /// <summary>
     /// Bindable property.
     /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
     public static readonly BindableProperty ClosingCommandParameterProperty =
         BindableProperty.Create(
             nameof(ClosingCommandParameter),
@@ -175,7 +170,6 @@ public class BottomSheet : View, IBottomSheet
     /// <summary>
     /// Bindable property.
     /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
     public static readonly BindableProperty ClosedCommandProperty =
         BindableProperty.Create(
             nameof(ClosedCommand),
@@ -185,7 +179,6 @@ public class BottomSheet : View, IBottomSheet
     /// <summary>
     /// Bindable property.
     /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
     public static readonly BindableProperty ClosedCommandParameterProperty =
         BindableProperty.Create(
             nameof(ClosedCommandParameter),
@@ -195,7 +188,6 @@ public class BottomSheet : View, IBottomSheet
     /// <summary>
     /// Bindable property.
     /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
     public static readonly BindableProperty OpeningCommandProperty =
         BindableProperty.Create(
             nameof(OpeningCommand),
@@ -205,7 +197,6 @@ public class BottomSheet : View, IBottomSheet
     /// <summary>
     /// Bindable property.
     /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
     public static readonly BindableProperty OpeningCommandParameterProperty =
         BindableProperty.Create(
             nameof(OpeningCommandParameter),
@@ -215,7 +206,6 @@ public class BottomSheet : View, IBottomSheet
     /// <summary>
     /// Bindable property.
     /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
     public static readonly BindableProperty OpenedCommandProperty =
         BindableProperty.Create(
             nameof(OpenedCommand),
@@ -225,7 +215,6 @@ public class BottomSheet : View, IBottomSheet
     /// <summary>
     /// Bindable property.
     /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
     public static readonly BindableProperty OpenedCommandParameterProperty =
         BindableProperty.Create(
             nameof(OpenedCommandParameter),
@@ -261,6 +250,11 @@ public class BottomSheet : View, IBottomSheet
         add => _eventManager.AddEventHandler(value);
         remove => _eventManager.RemoveEventHandler(value);
     }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the <see cref="IBottomSheet"/> ignores safe areas.
+    /// </summary>
+    public bool IgnoreSafeArea { get => (bool)GetValue(IgnoreSafeAreaProperty); set => SetValue(IgnoreSafeAreaProperty, value); }
 
     /// <inheritdoc/>
     public bool IsCancelable { get => (bool)GetValue(IsCancelableProperty); set => SetValue(IsCancelableProperty, value); }
@@ -325,28 +319,28 @@ public class BottomSheet : View, IBottomSheet
     }
 
     /// <inheritdoc/>
-    public void OnOpeningBottomSheet()
+    void IBottomSheet.OnOpeningBottomSheet()
     {
         RaiseEvent(nameof(Opening), EventArgs.Empty);
         ExecuteCommand(OpeningCommand, OpeningCommandParameter);
     }
 
     /// <inheritdoc/>
-    public void OnOpenedBottomSheet()
+    void IBottomSheet.OnOpenedBottomSheet()
     {
         RaiseEvent(nameof(Opened), EventArgs.Empty);
         ExecuteCommand(OpenedCommand, OpenedCommandParameter);
     }
 
     /// <inheritdoc/>
-    public void OnClosingBottomSheet()
+    void IBottomSheet.OnClosingBottomSheet()
     {
         RaiseEvent(nameof(Closing), EventArgs.Empty);
         ExecuteCommand(ClosingCommand, ClosingCommandParameter);
     }
 
     /// <inheritdoc/>
-    public void OnClosedBottomSheet()
+    void IBottomSheet.OnClosedBottomSheet()
     {
         RaiseEvent(nameof(Closed), EventArgs.Empty);
         ExecuteCommand(ClosedCommand, ClosedCommandParameter);
@@ -402,7 +396,12 @@ public class BottomSheet : View, IBottomSheet
     {
         if (!newvalue.IsStateAllowed(CurrentState))
         {
-            CurrentState = newvalue.First();
+            CurrentState = newvalue[0];
+        }
+
+        if (newvalue.Count == 0)
+        {
+            IsDraggable = false;
         }
     }
 

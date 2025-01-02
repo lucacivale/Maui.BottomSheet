@@ -8,7 +8,7 @@ using Microsoft.Maui.Controls;
 /// <summary>
 /// Bottom sheets are surfaces containing supplementary content that are anchored to the bottom of the screen.
 /// </summary>
-public interface IBottomSheet : IView, IPadding
+public interface IBottomSheet : IView, IPadding, ISafeAreaView
 {
     /// <summary>
     /// Event will be invoked when <see cref="IBottomSheet"/> is closing.
@@ -129,20 +129,20 @@ public interface IBottomSheet : IView, IPadding
     /// <summary>
     /// Raise <see cref="Opening"/> event.
     /// </summary>
-    void OnOpeningBottomSheet();
+    internal void OnOpeningBottomSheet();
 
     /// <summary>
     /// Raise <see cref="Opened"/> event.
     /// </summary>
-    void OnOpenedBottomSheet();
+    internal void OnOpenedBottomSheet();
 
     /// <summary>
     /// Raise <see cref="Closing"/> event.
     /// </summary>
-    void OnClosingBottomSheet();
+    internal void OnClosingBottomSheet();
 
     /// <summary>
     /// Raise <see cref="Closed"/> event.
     /// </summary>
-    void OnClosedBottomSheet();
+    internal void OnClosedBottomSheet();
 }

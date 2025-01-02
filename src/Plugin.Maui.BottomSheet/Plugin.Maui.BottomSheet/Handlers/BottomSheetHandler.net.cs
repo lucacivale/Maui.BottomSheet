@@ -5,7 +5,7 @@ using Microsoft.Maui.Handlers;
 /// <summary>
 /// <see cref="IBottomSheet"/> handler.
 /// </summary>
-public sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, object>
+internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, object>
 {
     /// <inheritdoc/>
     protected override object CreatePlatformView()
@@ -69,6 +69,11 @@ public sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, objec
     }
 
     private static void MapBackgroundColor(BottomSheetHandler handler, IBottomSheet bottomSheet)
+    {
+        throw new NotImplementedException();
+    }
+
+    private static void MapIgnoreSafeArea(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
         throw new NotImplementedException();
     }

@@ -1,12 +1,11 @@
-// ReSharper disable once CheckNamespace
-namespace Plugin.Maui.BottomSheet.Platforms.Android;
+namespace Plugin.Maui.BottomSheet.Platform.Android;
 
 using Google.Android.Material.BottomSheet;
 
 /// <summary>
 /// <see cref="BottomSheetState"/> extension methods.
 /// </summary>
-public static class BottomSheetStateExtensions
+internal static class BottomSheetStateExtensions
 {
     /// <summary>
     /// Get <see cref="BottomSheetBehavior"/> state constant from <see cref="BottomSheetState"/> enum.

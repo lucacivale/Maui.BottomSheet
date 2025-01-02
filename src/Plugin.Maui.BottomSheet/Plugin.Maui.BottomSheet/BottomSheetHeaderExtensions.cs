@@ -3,7 +3,7 @@ namespace Plugin.Maui.BottomSheet;
 /// <summary>
 /// Common extensions.
 /// </summary>
-public static class BottomSheetHeaderExtensions
+internal static class BottomSheetHeaderExtensions
 {
     /// <summary>
     /// Is <see cref="BottomSheetHeader"/> top left button configured.

@@ -10,38 +10,21 @@ public sealed class BottomSheetPeek : BindableObject
     /// <summary>
     /// Bindable property.
     /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
-    public static readonly BindableProperty IgnoreSafeAreaProperty =
-        BindableProperty.Create(
-            nameof(IgnoreSafeArea),
-            typeof(bool),
-            typeof(BottomSheetPeek));
-
-    /// <summary>
-    /// Bindable property.
-    /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
     public static readonly BindableProperty PeekHeightProperty =
         BindableProperty.Create(
             nameof(PeekHeight),
             typeof(double),
-            typeof(BottomSheetPeek));
+            typeof(BottomSheetPeek),
+            defaultValue: double.NaN);
 
     /// <summary>
     /// Bindable property.
     /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
     public static readonly BindableProperty PeekViewDataTemplateProperty =
         BindableProperty.Create(
             nameof(PeekViewDataTemplateProperty),
             typeof(DataTemplate),
             typeof(BottomSheetPeek));
-
-    /// <summary>
-    /// Gets or sets a value indicating whether the bottom safe area is ignored. If ignored the peek view can be inside the safe area.
-    /// If not peek view will be above the safe area.
-    /// </summary>
-    public bool IgnoreSafeArea { get => (bool)GetValue(IgnoreSafeAreaProperty); set => SetValue(IgnoreSafeAreaProperty, value); }
 
     /// <summary>
     /// Gets or sets peek height.

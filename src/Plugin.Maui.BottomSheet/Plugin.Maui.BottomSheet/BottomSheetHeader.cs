@@ -10,7 +10,6 @@ public sealed class BottomSheetHeader : BindableObject
     /// <summary>
     /// Bindable property.
     /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
     public static readonly BindableProperty TitleTextProperty =
         BindableProperty.Create(
             nameof(TitleText),
@@ -20,7 +19,6 @@ public sealed class BottomSheetHeader : BindableObject
     /// <summary>
     /// Bindable property.
     /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
     public static readonly BindableProperty TopLeftButtonProperty =
         BindableProperty.Create(
             nameof(TopLeftButton),

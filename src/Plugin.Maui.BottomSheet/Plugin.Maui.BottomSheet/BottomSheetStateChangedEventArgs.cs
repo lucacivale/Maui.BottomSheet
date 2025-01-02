@@ -1,7 +1,9 @@
-// ReSharper disable once CheckNamespace
-namespace Plugin.Maui.BottomSheet.Platforms.Android;
+namespace Plugin.Maui.BottomSheet;
 
-public sealed class BottomSheetStateChangedEventArgs : EventArgs
+/// <summary>
+/// Event args for bottom sheet state changes.
+/// </summary>
+internal sealed class BottomSheetStateChangedEventArgs : EventArgs
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheetStateChangedEventArgs"/> class.

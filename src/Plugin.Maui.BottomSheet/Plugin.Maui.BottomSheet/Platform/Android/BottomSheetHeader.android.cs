@@ -7,8 +7,7 @@ using AView = Android.Views.View;
 using AViewGroup = Android.Views.ViewGroup;
 #pragma warning restore SA1200
 
-// ReSharper disable once CheckNamespace
-namespace Plugin.Maui.BottomSheet.Platforms.Android;
+namespace Plugin.Maui.BottomSheet.Platform.Android;
 
 using System.ComponentModel;
 using System.Globalization;
@@ -155,6 +154,8 @@ internal sealed class BottomSheetHeader : IDisposable
     /// </summary>
     public void Remove()
     {
+        _bottomSheetHeader.PropertyChanged -= BottomSheetHeaderOnPropertyChanged;
+
         RemoveFromParent(_headerLayout);
         RemoveView(ref _topLeftView, _bottomSheetHeader.TopLeftButton);
         RemoveView(ref _topRightView, _bottomSheetHeader.TopRightButton);
@@ -192,7 +193,11 @@ internal sealed class BottomSheetHeader : IDisposable
         RemoveFromParent(view);
         view?.LayoutParameters?.Dispose();
 
+#if NET9_0_OR_GREATER
+        mauiView?.DisconnectHandlers();
+#else
         mauiView?.Handler?.DisconnectHandler();
+#endif
         view?.Dispose();
     }
 

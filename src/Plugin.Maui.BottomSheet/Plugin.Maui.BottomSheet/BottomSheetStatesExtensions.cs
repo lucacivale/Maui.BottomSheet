@@ -1,9 +1,9 @@
 namespace Plugin.Maui.BottomSheet;
 
 /// <summary>
-/// Bottom sheet states collection extensions
+/// Bottom sheet states collection extensions.
 /// </summary>
-public static class BottomSheetStatesExtensions
+internal static class BottomSheetStatesExtensions
 {
     /// <summary>
     /// Is bottom sheet state allowed.

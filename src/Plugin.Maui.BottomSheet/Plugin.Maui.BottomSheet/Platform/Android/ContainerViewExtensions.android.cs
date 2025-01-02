@@ -1,12 +1,11 @@
-// ReSharper disable once CheckNamespace
-namespace Plugin.Maui.BottomSheet.Platforms.Android;
+namespace Plugin.Maui.BottomSheet.Platform.Android;
 
 using Microsoft.Maui.Platform;
 
 /// <summary>
 /// <see cref="ContainerView"/> extension methods.
 /// </summary>
-public static class ContainerViewExtensions
+internal static class ContainerViewExtensions
 {
     /// <summary>
     /// Set padding.
