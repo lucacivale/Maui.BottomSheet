@@ -101,11 +101,15 @@ internal sealed class MauiBottomSheet : UIView
     {
         if (_virtualView?.IsOpen == true)
         {
-            await _bottomSheet.OpenAsync(_virtualView).ConfigureAwait(false);
+            _virtualView.OnOpeningBottomSheet();
+            await _bottomSheet.OpenAsync(_virtualView).ConfigureAwait(true);
+            _virtualView.OnOpenedBottomSheet();
         }
         else
         {
-            _bottomSheet.Close();
+            _virtualView?.OnClosingBottomSheet();
+            await _bottomSheet.CloseAsync().ConfigureAwait(true);
+            _virtualView?.OnClosedBottomSheet();
         }
     }
 

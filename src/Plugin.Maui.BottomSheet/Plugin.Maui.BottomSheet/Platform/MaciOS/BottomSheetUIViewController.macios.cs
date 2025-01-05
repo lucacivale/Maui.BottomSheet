@@ -37,6 +37,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     private UISheetPresentationControllerDetentIdentifier _previousIdentifier = UISheetPresentationControllerDetentIdentifier.Unknown;
 
     private BottomSheetHeader? _bottomSheetHeader;
+    private BottomSheetPeek? _bottomSheetPeek;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheetUIViewController"/> class.
@@ -92,11 +93,6 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         add => _eventManager.AddEventHandler(value);
         remove => _eventManager.RemoveEventHandler(value);
     }
-
-    /// <summary>
-    /// Gets or sets a value indicating whether peek height should be calculated.
-    /// </summary>
-    public bool CalculatePeekHeight { get; set; }
 
     /// <summary>
     /// Gets peek detent.
@@ -194,8 +190,10 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     /// <summary>
     /// Close the bottom sheet.
     /// </summary>
-    public void Close()
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    public async Task CloseAsync()
     {
+        await DismissViewControllerAsync(true).ConfigureAwait(true);
         _virtualBottomSheetLayout.Clear();
 
 #if NET9_0_OR_GREATER
@@ -236,6 +234,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         }
 
         _virtualBottomSheetLayout.Add(_bottomSheetHeader.View);
+        _bottomSheetHeader.SizeChanged += BottomSheetHeaderOnSizeChanged;
     }
 
     /// <summary>
@@ -249,6 +248,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         }
 
         _bottomSheetHeader.Hide();
+        _bottomSheetHeader.SizeChanged -= BottomSheetHeaderOnSizeChanged;
     }
 
     /// <summary>
@@ -263,7 +263,6 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         }
 
         _bottomSheetHeader = new BottomSheetHeader(header);
-        _bottomSheetHeader.SizeChanged += BottomSheetHeaderOnSizeChanged;
     }
 
     /// <summary>
@@ -272,21 +271,28 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     /// <param name="peek">Peek.</param>
     public void AddPeek(BottomSheetPeek? peek)
     {
-        if (peek is null
-            || _bottomSheetUIViewController.View is null)
+        if (peek is null)
         {
             return;
         }
 
-        _virtualBottomSheetPeek = peek.PeekViewDataTemplate?.CreateContent() as View;
+        _bottomSheetPeek = peek;
+
+        if (_virtualBottomSheetPeek is not null)
+        {
+            _virtualBottomSheetPeek.SizeChanged -= BottomSheetPeekOnSizeChanged;
+        }
+
+        _virtualBottomSheetPeek = _bottomSheetPeek.PeekViewDataTemplate?.CreateContent() as View;
 
         if (_virtualBottomSheetPeek is null)
         {
             return;
         }
 
-        _virtualBottomSheetPeek.BindingContext = peek.BindingContext;
-        _virtualBottomSheetPeek.Parent = peek.Parent;
+        _virtualBottomSheetPeek.BindingContext = _bottomSheetPeek.BindingContext;
+        _virtualBottomSheetPeek.Parent = _bottomSheetPeek.Parent;
+        _virtualBottomSheetPeek.SizeChanged += BottomSheetPeekOnSizeChanged;
 
         _virtualBottomSheetLayout.Add(
             _virtualBottomSheetPeek,
@@ -295,10 +301,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
 
         _virtualBottomSheetPeekMargin = _virtualBottomSheetPeek.Margin;
 
-        CalculatePeekHeight = double.IsNaN(peek.PeekHeight);
-
-        SetPeekRowHeight(CalculatePeekRowHeight(true));
-        SetPeekDetentHeight(CalculatePeekHeight ? _peekRowHeight : peek.PeekHeight);
+        LayoutPeek(true);
     }
 
     /// <summary>
@@ -340,104 +343,50 @@ internal sealed class BottomSheetUIViewController : UINavigationController
             SheetPresentationController.AnimateChanges(() =>
             {
                 SheetPresentationController.SelectedDetentIdentifier = identifier;
-
-                SetPeekRowHeight(CalculatePeekRowHeight());
-                SetPeekDetentHeight(CalculatePeekHeight ? _peekRowHeight : _peekDetentHeight);
-
+                LayoutPeek();
                 _previousIdentifier = identifier;
             });
         }
     }
 
-    /// <summary>
-    /// Sets peek height.
-    /// </summary>
-    /// <param name="peekHeight">Height.</param>
-    public void SetPeekDetentHeight(double peekHeight)
+    private void LayoutPeek(bool force = false)
     {
-        _peekDetentHeight = peekHeight;
-    }
-
-    /// <summary>
-    /// Sets peek row height.
-    /// </summary>
-    /// <param name="peekRowHeight">Row height.</param>
-    public void SetPeekRowHeight(double peekRowHeight)
-    {
-        _virtualBottomSheetLayout.RowDefinitions[1].Height = new GridLength(peekRowHeight);
-    }
-
-    /// <summary>
-    /// Calculate peek view height.
-    /// </summary>
-    /// <param name="force">Force calculation. Won't override <see cref="CalculatePeekHeight"/>.</param>
-    /// <returns>Calculated peek height.</returns>
-    public double CalculatePeekRowHeight(bool force = false)
-    {
-        var height = _peekRowHeight;
-
-        if (SheetPresentationController is null)
+        if (SheetPresentationController is null
+            || (SheetPresentationController.SelectedDetentIdentifier == _previousIdentifier
+                && force == false)
+            || _virtualBottomSheetPeek is null)
         {
-            return height;
+            return;
         }
+        
+        var insets = WindowUtils.CurrentSafeAreaInsets();
+        var safeAreaBottom = 0.00;
 
-        if ((SheetPresentationController.SelectedDetentIdentifier != _previousIdentifier
-                || force)
-            && _virtualBottomSheetPeek is not null)
+        if (!_virtualBottomSheetLayout.IgnoreSafeArea)
         {
-            var insets = WindowUtils.CurrentSafeAreaInsets();
-            var safeAreaBottom = 0.00;
-
-            if (!_virtualBottomSheetLayout.IgnoreSafeArea
-                && CalculatePeekHeight)
-            {
-                safeAreaBottom = insets.Bottom;
-            }
-
-            if (_previousIdentifier == UISheetPresentationControllerDetentIdentifier.Unknown
+            safeAreaBottom = insets.Bottom;
+        }
+        
+        if ((_previousIdentifier == UISheetPresentationControllerDetentIdentifier.Unknown
                 && SheetPresentationController.SelectedDetentIdentifier != UISheetPresentationControllerDetentIdentifier.Unknown)
-            {
-                if (_virtualBottomSheetPeek.Margin.BottomContainsSafeArea(_virtualBottomSheetPeekMargin))
-                {
-                    _virtualBottomSheetPeek.Margin = new Thickness(
-                        _virtualBottomSheetPeek.Margin.Left,
-                        _virtualBottomSheetPeek.Margin.Top,
-                        _virtualBottomSheetPeek.Margin.Right,
-                        _virtualBottomSheetPeek.Margin.Bottom - safeAreaBottom);
-                }
-
+                || SheetPresentationController.Detents.Any(x => x.Identifier == PeekDetentId) == false) 
+        {
 #if NET9_0_OR_GREATER
-                var peekViewHeight = _virtualBottomSheetPeek.Measure(double.PositiveInfinity, double.PositiveInfinity).Height;
-                height = peekViewHeight;
+            var peekViewHeight = _virtualBottomSheetPeek.Measure(double.PositiveInfinity, double.PositiveInfinity).Height;
 #else
-                var peekViewHeight = _virtualBottomSheetPeek.Measure(double.PositiveInfinity, double.PositiveInfinity).Request.Height;
-                height = peekViewHeight;
+            var peekViewHeight = _virtualBottomSheetPeek.Measure(double.PositiveInfinity, double.PositiveInfinity).Request.Height;
 #endif
-            }
-            else if (SheetPresentationController.SelectedDetentIdentifier == UISheetPresentationControllerDetentIdentifier.Unknown)
-            {
-                if (_virtualBottomSheetPeek.Margin.Equals(_virtualBottomSheetPeekMargin))
-                {
-                    _virtualBottomSheetPeek.Margin = new Thickness(
-                        _virtualBottomSheetPeek.Margin.Left,
-                        _virtualBottomSheetPeek.Margin.Top,
-                        _virtualBottomSheetPeek.Margin.Right,
-                        _virtualBottomSheetPeek.Margin.Bottom + safeAreaBottom);
-                }
-
-#if NET9_0_OR_GREATER
-                var peekViewHeight = _virtualBottomSheetPeek.Measure(double.PositiveInfinity, double.PositiveInfinity).Height;
-                height = peekViewHeight;
-#else
-                var peekViewHeight = _virtualBottomSheetPeek.Measure(double.PositiveInfinity, double.PositiveInfinity).Request.Height;
-                height = peekViewHeight;
-#endif
-            }
+            _virtualBottomSheetLayout.RowDefinitions[1].Height = new GridLength(peekViewHeight);
         }
-
-        _peekRowHeight = height;
-
-        return height;
+        else if (SheetPresentationController.SelectedDetentIdentifier == UISheetPresentationControllerDetentIdentifier.Unknown)
+        {
+#if NET9_0_OR_GREATER
+            var peekViewHeight = _virtualBottomSheetPeek.Measure(double.PositiveInfinity, double.PositiveInfinity).Height;
+#else
+            var peekViewHeight = _virtualBottomSheetPeek.Measure(double.PositiveInfinity, double.PositiveInfinity).Request.Height;
+#endif
+            _virtualBottomSheetLayout.RowDefinitions[1].Height = new GridLength(peekViewHeight + safeAreaBottom);
+        }
     }
 
     /// <summary>
@@ -493,6 +442,8 @@ internal sealed class BottomSheetUIViewController : UINavigationController
             _virtualBottomSheetContent?.Handler?.DisconnectHandler();
             _virtualBottomSheetPeek?.Handler?.DisconnectHandler();
 #endif
+            HideHeader();
+
             _bottomSheetControllerDelegate.Dispose();
             _bottomSheetUIViewController.Dispose();
 
@@ -525,12 +476,39 @@ internal sealed class BottomSheetUIViewController : UINavigationController
 
     private void BottomSheetHeaderOnSizeChanged(object? sender, EventArgs e)
     {
-        if (_bottomSheetHeader is null)
+        _peekDetentHeight = (_bottomSheetHeader?.View.Height ?? 0)
+            + PeekHeight();
+        
+        SheetPresentationController?.InvalidateDetents();
+    }
+    
+    private void BottomSheetPeekOnSizeChanged(object? sender, EventArgs e)
+    {
+        LayoutPeek(true);
+#if NET9_0_OR_GREATER
+        var peekViewHeight = _virtualBottomSheetPeek?.Measure(double.PositiveInfinity, double.PositiveInfinity).Height ?? 0;
+#else
+        var peekViewHeight = _virtualBottomSheetPeek?.Measure(double.PositiveInfinity, double.PositiveInfinity).Request.Height ?? 0;
+#endif
+        
+        _peekDetentHeight = (_bottomSheetHeader?.View.Height ?? 0)
+            + (DeviceInfo.Idiom == DeviceIdiom.Tablet ? PeekHeight() : peekViewHeight);
+        SheetPresentationController?.InvalidateDetents();
+    }
+    
+    private double PeekHeight()
+    {
+        if (_bottomSheetPeek is not null
+            && !double.IsNaN(_bottomSheetPeek.PeekHeight))
         {
-            return;
+            return _bottomSheetPeek.PeekHeight;
         }
-
-        _peekDetentHeight += _bottomSheetHeader.View.Height;
+        else
+        {
+            return DeviceInfo.Idiom == DeviceIdiom.Tablet ? 
+                _virtualBottomSheetLayout.RowDefinitions[1].Height.Value 
+                : _virtualBottomSheetPeek?.Height ?? 0;
+        }
     }
 
     private void BottomSheetControllerDelegateOnStateChanged(object? sender, BottomSheetStateChangedEventArgs e)

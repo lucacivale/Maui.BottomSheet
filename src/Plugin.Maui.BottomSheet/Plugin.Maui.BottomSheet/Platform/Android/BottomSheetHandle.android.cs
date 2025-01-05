@@ -45,7 +45,7 @@ internal sealed class BottomSheetHandle : IDisposable
         {
             if (_handle is null
                 && ALayoutInflater.FromContext(_context) is ALayoutInflater inflater
-                && inflater.Inflate(Resource.Layout.bottomsheetdraghandle, null) is AView view)
+                && inflater.Inflate(Resource.Layout.bottomSheetDragHandle, null) is AView view)
             {
                 _handle = view;
                 _handle.Background = AContextCompat.GetDrawable(_context, Resource.Drawable.round_rect_shape);

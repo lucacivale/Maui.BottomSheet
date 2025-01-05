@@ -1,20 +1,17 @@
 #pragma warning disable SA1200
 using Android.Content;
 using Android.Widget;
-using AGravityFlags = Android.Views.GravityFlags;
-using ASpec = Android.Widget.GridLayout.Spec;
 using AView = Android.Views.View;
 using AViewGroup = Android.Views.ViewGroup;
+using ATextAlignment = Android.Views.TextAlignment;
 #pragma warning restore SA1200
 
 namespace Plugin.Maui.BottomSheet.Platform.Android;
 
 using System.ComponentModel;
-using System.Globalization;
 using Microsoft.Maui.Platform;
 
 // ReSharper disable RedundantNameQualifier
-using TextAlignment = Microsoft.Maui.TextAlignment;
 using View = Microsoft.Maui.Controls.View;
 
 // ReSharper restore RedundantNameQualifier
@@ -24,8 +21,6 @@ using View = Microsoft.Maui.Controls.View;
 /// </summary>
 internal sealed class BottomSheetHeader : IDisposable
 {
-    private const int TitleViewHorizontalMargin = 40;
-
     private readonly WeakEventManager _eventManager = new();
 
     private readonly Context _context;
@@ -33,17 +28,13 @@ internal sealed class BottomSheetHeader : IDisposable
     private readonly Plugin.Maui.BottomSheet.BottomSheetHeader _bottomSheetHeader;
     private readonly BottomSheetHeaderLayoutChangeListener _headerLayoutChangeListener;
 
-    private GridLayout? _headerLayout;
+    private RelativeLayout? _headerLayout;
     private AView? _topLeftView;
     private AView? _topRightView;
     private AView? _titleView;
     private AView? _headerView;
 
     private View? _virtualHeaderView;
-
-    private AViewGroup.LayoutParams? _titleViewLayoutParams;
-    private AViewGroup.LayoutParams? _topLeftViewLayoutParams;
-    private AViewGroup.LayoutParams? _topRightViewLayoutParams;
 
     private string _titleText = string.Empty;
 
@@ -64,7 +55,6 @@ internal sealed class BottomSheetHeader : IDisposable
         _mauiContext = mauiContext;
 
         _bottomSheetHeader = bottomSheetHeader;
-        _bottomSheetHeader.PropertyChanged += BottomSheetHeaderOnPropertyChanged;
     }
 
     /// <summary>
@@ -96,13 +86,6 @@ internal sealed class BottomSheetHeader : IDisposable
             {
                 _headerView = CreateHeader(_bottomSheetHeader);
             }
-            else
-            {
-                if (_headerLayout is not null)
-                {
-                    ConfigureHeader(_headerLayout);
-                }
-            }
 
             return _headerView;
         }
@@ -113,7 +96,24 @@ internal sealed class BottomSheetHeader : IDisposable
     /// </summary>
     public void RaiseLayoutChangedEvent()
     {
+        if (_titleView?.LayoutParameters is RelativeLayout.LayoutParams relativeLayoutParams
+            && relativeLayoutParams.Width !=  Convert.ToInt32(_headerLayout?.Width * 0.50))
+        {
+            relativeLayoutParams.Width = Convert.ToInt32(_headerLayout?.Width * 0.50);
+            _titleView.RequestLayout();
+        }
         _eventManager.HandleEvent(this, EventArgs.Empty, nameof(LayoutChanged));
+    }
+
+    /// <summary>
+    /// Create header view.
+    /// </summary>
+    public AView CreateHeader()
+    {
+        _headerView = CreateHeader(_bottomSheetHeader);
+        ConfigureHeader();
+
+        return _headerView;
     }
 
     /// <summary>
@@ -144,8 +144,8 @@ internal sealed class BottomSheetHeader : IDisposable
             && _headerLayout is not null)
         {
             _titleView = CreateTitleView(_titleText);
-            _titleViewLayoutParams = CreateTitleViewLayoutParams();
-            _headerLayout.AddView(_titleView, _titleViewLayoutParams);
+            _titleView.LayoutParameters = CreateTitleViewLayoutParams();
+            _headerLayout.AddView(_titleView);
         }
     }
 
@@ -156,15 +156,20 @@ internal sealed class BottomSheetHeader : IDisposable
     {
         _bottomSheetHeader.PropertyChanged -= BottomSheetHeaderOnPropertyChanged;
 
-        RemoveFromParent(_headerLayout);
+        _headerView?.RemoveOnLayoutChangeListener(_headerLayoutChangeListener);
+        if (_headerLayout is not null)
+        {
+            RemoveView(_headerLayout, null);
+            _headerView = null;
+        }
+        else
+        {
+            RemoveView(_headerView, _virtualHeaderView);
+        }
+
         RemoveView(ref _topLeftView, _bottomSheetHeader.TopLeftButton);
         RemoveView(ref _topRightView, _bottomSheetHeader.TopRightButton);
         RemoveView(ref _titleView, null);
-
-        if (_bottomSheetHeader.HasHeaderView())
-        {
-            RemoveView(ref _headerView, _virtualHeaderView);
-        }
 
         RaiseLayoutChangedEvent();
     }
@@ -182,7 +187,7 @@ internal sealed class BottomSheetHeader : IDisposable
         view = null;
     }
 
-    private static void RemoveView(ref GridLayout? view, View? mauiView)
+    private static void RemoveView(ref RelativeLayout? view, View? mauiView)
     {
         RemoveView(view, mauiView);
         view = null;
@@ -209,46 +214,32 @@ internal sealed class BottomSheetHeader : IDisposable
         }
     }
 
-    private static GridLayout.LayoutParams CreateHeaderViewLayoutParams(
-        AGravityFlags gravity,
-        ASpec? rowSpec,
-        ASpec? columnSpec,
-        int width)
+    private static RelativeLayout.LayoutParams CreateHeaderViewLayoutParams(LayoutRules layoutRule)
     {
-        var gridParams = new GridLayout.LayoutParams()
-        {
-            Width = width,
-            RowSpec = rowSpec,
-            ColumnSpec = columnSpec,
-        };
+        var layoutParams = new RelativeLayout.LayoutParams(AViewGroup.LayoutParams.WrapContent, AViewGroup.LayoutParams.WrapContent);
+        layoutParams.AddRule(layoutRule);
 
-        gridParams.SetGravity(gravity);
-
-        return gridParams;
+        return layoutParams;
     }
 
-    private GridLayout.LayoutParams CreateTitleViewLayoutParams()
+    private RelativeLayout.LayoutParams CreateTitleViewLayoutParams()
     {
-        var layoutParams = CreateHeaderViewLayoutParams(
-            AGravityFlags.Center,
-            GridLayout.InvokeSpec(0),
-            GridLayout.InvokeSpec(1),
-            Convert.ToInt32((_headerLayout?.Width * 0.50) - _context.ToPixels(TitleViewHorizontalMargin), CultureInfo.CurrentCulture));
-
-        layoutParams.LeftMargin = Convert.ToInt32(_context.ToPixels(Convert.ToDouble(TitleViewHorizontalMargin) / 2));
-        layoutParams.RightMargin = Convert.ToInt32(_context.ToPixels(Convert.ToDouble(TitleViewHorizontalMargin) / 2));
-
-        if (!_bottomSheetHeader.HasTopLeftButton())
+        var layoutParams = new RelativeLayout.LayoutParams(AViewGroup.LayoutParams.WrapContent, AViewGroup.LayoutParams.WrapContent)
         {
-            layoutParams.LeftMargin += HeaderButtonWidth();
-        }
-
+            LeftMargin = 20,
+            RightMargin = 20,
+        };
+        
+        layoutParams.AddRule(LayoutRules.CenterInParent);
+        
         return layoutParams;
     }
 
     private AView CreateHeader(Plugin.Maui.BottomSheet.BottomSheetHeader? bottomSheetHeader)
     {
         ArgumentNullException.ThrowIfNull(bottomSheetHeader);
+
+        _bottomSheetHeader.PropertyChanged += BottomSheetHeaderOnPropertyChanged;
 
         if (bottomSheetHeader.HasHeaderView()
             && bottomSheetHeader.HeaderDataTemplate!.CreateContent() is View headerView)
@@ -260,13 +251,13 @@ internal sealed class BottomSheetHeader : IDisposable
 
             var view = headerView.ToPlatform(_mauiContext);
             view.LayoutParameters = new AViewGroup.LayoutParams(AViewGroup.LayoutParams.MatchParent, AViewGroup.LayoutParams.WrapContent);
-
+            view.AddOnLayoutChangeListener(_headerLayoutChangeListener);
             return view;
         }
 
         _headerLayout = CreateHeaderLayout();
 
-        ConfigureHeader(_headerLayout);
+        ConfigureHeader();
 
         return _headerLayout;
     }
@@ -275,8 +266,6 @@ internal sealed class BottomSheetHeader : IDisposable
     {
         Label title = new()
         {
-            HorizontalTextAlignment = TextAlignment.Center,
-            VerticalTextAlignment = TextAlignment.Center,
             FontAttributes = FontAttributes.Bold,
             FontSize = 20,
             Text = titleText ?? string.Empty,
@@ -285,6 +274,11 @@ internal sealed class BottomSheetHeader : IDisposable
         var view = title.ToPlatform(_mauiContext);
         view.Id = AView.GenerateViewId();
 
+        if (view is TextView textView)
+        {
+            textView.TextAlignment = ATextAlignment.Center;
+        }
+
         return (view as TextView)!;
     }
 
@@ -292,10 +286,14 @@ internal sealed class BottomSheetHeader : IDisposable
     {
         view.BindingContext = _bottomSheetHeader.BindingContext;
         view.Parent = _bottomSheetHeader.Parent;
-        return view.ToPlatform(_mauiContext);
+        
+        var platformView = view.ToPlatform(_mauiContext);
+        platformView.Id = AView.GenerateViewId();
+        
+        return platformView;
     }
 
-    private void ConfigureHeader(GridLayout headerLayout)
+    private void ConfigureHeader()
     {
         RemoveView(ref _topLeftView, _bottomSheetHeader.TopLeftButton);
         RemoveView(ref _titleView, null);
@@ -304,54 +302,38 @@ internal sealed class BottomSheetHeader : IDisposable
         if (_bottomSheetHeader.HasTopLeftButton())
         {
             _topLeftView = CreatePlatformView(_bottomSheetHeader.TopLeftButton!);
-
-            _topLeftViewLayoutParams = CreateHeaderViewLayoutParams(
-                AGravityFlags.Left,
-                GridLayout.InvokeSpec(0),
-                GridLayout.InvokeSpec(0),
-                HeaderButtonWidth());
-
-            headerLayout.AddView(_topLeftView, _topLeftViewLayoutParams);
+            _topLeftView.LayoutParameters = CreateHeaderViewLayoutParams(LayoutRules.AlignParentLeft);
+    
+            _headerLayout?.AddView(_topLeftView);   
         }
 
         if (_bottomSheetHeader.HasTitle())
         {
             _titleView = CreateTitleView(_bottomSheetHeader.TitleText);
-            _titleViewLayoutParams = CreateTitleViewLayoutParams();
-            headerLayout.AddView(_titleView, _titleViewLayoutParams);
+            _titleView.LayoutParameters = CreateTitleViewLayoutParams();
+
+            _headerLayout?.AddView(_titleView);
         }
 
         if (_bottomSheetHeader.HasTopRightButton())
         {
             _topRightView = CreatePlatformView(_bottomSheetHeader.TopRightButton!);
+            _topRightView.LayoutParameters = CreateHeaderViewLayoutParams(LayoutRules.AlignParentRight);
 
-            _topRightViewLayoutParams = CreateHeaderViewLayoutParams(
-                AGravityFlags.Right,
-                GridLayout.InvokeSpec(0),
-                GridLayout.InvokeSpec(2),
-                HeaderButtonWidth());
-
-            headerLayout.AddView(_topRightView, _topRightViewLayoutParams);
+            _headerLayout?.AddView(_topRightView);   
         }
     }
 
-    private GridLayout CreateHeaderLayout()
+    private RelativeLayout CreateHeaderLayout()
     {
-        var grid = new GridLayout(_context)
+        var linearLayout = new RelativeLayout(_context)
         {
-            RowCount = 1,
-            ColumnCount = 3,
-            LayoutParameters = new AViewGroup.MarginLayoutParams(AViewGroup.LayoutParams.MatchParent, AViewGroup.LayoutParams.WrapContent),
+            LayoutParameters = new LinearLayout.LayoutParams(AViewGroup.LayoutParams.MatchParent, AViewGroup.LayoutParams.WrapContent),
         };
+        
+        linearLayout.AddOnLayoutChangeListener(_headerLayoutChangeListener);
 
-        grid.AddOnLayoutChangeListener(_headerLayoutChangeListener);
-
-        return grid;
-    }
-
-    private int HeaderButtonWidth()
-    {
-        return Convert.ToInt32(_headerLayout?.Width * 0.50, CultureInfo.CurrentCulture) / 2;
+        return linearLayout;
     }
 
     private void BottomSheetHeaderOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -369,7 +351,7 @@ internal sealed class BottomSheetHeader : IDisposable
                 if (!_bottomSheetHeader.HasHeaderView())
                 {
                     _headerLayout ??= CreateHeaderLayout();
-                    ConfigureHeader(_headerLayout);
+                    ConfigureHeader();
                 }
 
                 break;
@@ -389,13 +371,5 @@ internal sealed class BottomSheetHeader : IDisposable
         _headerView = null;
 
         _headerLayoutChangeListener.Dispose();
-
-        _titleViewLayoutParams?.Dispose();
-        _topLeftViewLayoutParams?.Dispose();
-        _topRightViewLayoutParams?.Dispose();
-
-        _titleViewLayoutParams = null;
-        _topLeftViewLayoutParams = null;
-        _topRightViewLayoutParams = null;
     }
 }

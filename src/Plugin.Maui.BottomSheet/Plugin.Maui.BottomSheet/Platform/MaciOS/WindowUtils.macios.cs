@@ -13,6 +13,16 @@ internal static class WindowUtils
     /// <returns>Safe area insets.</returns>
     public static UIEdgeInsets CurrentSafeAreaInsets()
     {
-        return WindowStateManager.Default.GetCurrentUIViewController()?.View?.SafeAreaInsets ?? UIEdgeInsets.Zero;
+        if (DeviceInfo.Idiom == DeviceIdiom.Tablet)
+        {
+            using var scenes = UIApplication.SharedApplication.ConnectedScenes;
+            var windowScene = scenes.ToArray().OfType<UIWindowScene>().FirstOrDefault(scene =>
+                scene.Session.Role == UIWindowSceneSessionRole.Application);
+            return windowScene?.Windows.FirstOrDefault()?.SafeAreaInsets ?? UIEdgeInsets.Zero;
+        }
+        else
+        {
+            return WindowStateManager.Default.GetCurrentUIViewController()?.View?.SafeAreaInsets ?? UIEdgeInsets.Zero;
+        }
     }
 }

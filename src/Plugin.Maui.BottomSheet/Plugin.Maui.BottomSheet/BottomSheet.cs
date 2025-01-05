@@ -27,11 +27,20 @@ public sealed class BottomSheet : View, IBottomSheet
             defaultBindingMode: BindingMode.TwoWay,
             defaultValueCreator: _ => new List<BottomSheetState>()
             {
-                BottomSheetState.Peek,
-                BottomSheetState.Medium,
                 BottomSheetState.Large,
             },
-            validateValue: (_, value) => ((List<BottomSheetState>)value).Count > 0);
+            validateValue: (_, value) =>
+            {
+                var result = true;
+                var states = (List<BottomSheetState>)value;
+
+                if (states.Count == 0)
+                {
+                    result = false;
+                }
+
+                return result;
+            });
 
     /// <summary>
     /// Bindable property.
@@ -344,6 +353,27 @@ public sealed class BottomSheet : View, IBottomSheet
     {
         RaiseEvent(nameof(Closed), EventArgs.Empty);
         ExecuteCommand(ClosedCommand, ClosedCommandParameter);
+    }
+
+    /// <inheritdoc/>
+    protected override void OnParentChanged()
+    {
+        base.OnParentChanged();
+
+        if (Header is not null)
+        {
+            Header.Parent = Parent;
+        }
+
+        if (Peek is not null)
+        {
+            Peek.Parent = Parent;
+        }
+
+        if (Content is not null)
+        {
+            Content.Parent = Parent;
+        }
     }
 
     /// <inheritdoc/>

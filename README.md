@@ -7,18 +7,24 @@
 * MVVM support
 <br>
 
-
-<img src="screenshots/welcome.png?raw=true" height="400"/>  <img src="screenshots/demo.gif" height="400" />  <img src="screenshots/navigation.gif" height="400" />
-
 # Samples
 
-<strong>Check out sample project to explore all features!</strong>.
+<strong>Check out sample project to see the API in action!</strong>.
 
-## Prerequisites
+## Platforms
+
+`MacCatalyst` [implementation details](https://developer.apple.com/design/human-interface-guidelines/sheets)
 
 `iOS` at least iOS 15
 
 `Android` at least API 21
+
+<img src="screenshots/iOS/Showcase.gif" />
+<img src="screenshots/iPad/Showcase.gif" />
+<img src="screenshots/MacCatalyst/Showcase.gif" />
+<br>
+<img src="screenshots/Android/Showcase.gif" />
+<img src="screenshots/Android/Tablet/Showcase.gif" />
 
 # Setup
 
@@ -45,64 +51,60 @@ builder.Logging.AddDebug();
 return builder.Build();
 ```
 
-# Bottom Sheet Control
+# API
 
-## Properties
-All properties expect `ContentTemplate`, `TitleViewTemplate` and `Peek.PeekViewDataTemplate` are `BindableProperties`
+| Type                                        | Name | Description                                                                    |
+|---------------------------------------------|-----|--------------------------------------------------------------------------------|
+| bool                                        | IsCancelable    | Can be closed by user either through gestures or clicking in background        |
+| bool                                        | HasHandle    | Show handle                                                                    |
+| bool                                        | ShowHeader    | Show header                                                                    |
+| bool                                        | IsOpen    | Open or close                                                                  |
+| bool                                        | IsDraggable    | Can be dragged(Useful if drawing gestures are made inside bottom sheet)        |
+| List<[BottomSheetState](#bottomSheetState)> | States    | Allowed states. CurrentState must be a value of this collection.               |
+| [BottomSheetState](#bottomSheetState)       | CurrentState    | Current state                                                                  |
+| [BottomSheetHeader](#bottomSheetHeader)     | Header    | Configure header                                                               |
+| [BottomSheetPeek](#bottomSheetPeek)         | Peek    | Configure peek(requieres at least iOS 16 -- all other platforms are supported) |
+| [BottomSheetContent](#bottomSheetContent)   | Content    | Configure content                                                              |
+| double                                      | Padding    | Padding                                                                        |
+| Colors                                      | BackgroundColor    | Background color                                                               |
+| bool                                        | IgnoreSafeArea    | Ignore safe area(currently only implemented in iOS)                            |
 
-`IsOpen` Open or close BottomSheet
+### BottomSheetState
+| Name   | Description        |
+|--------|--------------------|
+| Peek   | Fractional height  |
+| Medium | Half screen height |
+| Large  | Full screen height |
 
-`ContentTemplate` Content of BottomSheet.
+### BottomSheetHeader
+| Type                                                                            | Name           | Description                                                                                |
+|---------------------------------------------------------------------------------|----------------|--------------------------------------------------------------------------------------------|
+| string                                                                          | TitleText      | Title text                                                                                 |
+| Button                                                                          | TopLeftButton  | Top left button                                                                            |
+| Button                                                                          | TopRightButton | Top right button                                                                           |
+| DataTemplate                                                                    | HeaderDataTemplate | Custom view. If set HeaderAppearance, TitleText and TopLeft-and Right buttons are ignored. |
+| [BottomSheetHeaderButtonAppearanceMode](#bottomSheetHeaderButtonAppearanceMode) | HeaderAppearance | Set wich buttons should be displayed.                                                      |
 
-`Peek` Peek settings (<strong>available from iOS 16</strong>)
+### BottomSheetHeaderButtonAppearanceMode
+| Name | Description         |
+|------|---------------------|
+| None | Don't show a button |
+| LeftAndRightButton | Show a button on the left and right |
+| LeftButton | Show a button on the left |
+| RightButton | Show a button on the right |
 
-| Setting  | Description  |
-|---|---|
-| IgnoreSafeArea  | Bottom safe area will either be ignored or not  |
-| PeekHeight  | Fixed value for peek height  |
-| PeekViewDataTemplate  |  If set view will be placed above `ContentTemplate` and it's height will be set as peek height |
+### BottomSheetPeek
+| Type   | Name | Description                                                              |
+|--------|------|--------------------------------------------------------------------------|
+| double | PeekHeight | Fixed peek detent height                                                 |
+| DataTemplate | PeekViewDataTemplate | Peek view. Height will be calculated automatically if PeekHeight is NaN. |
 
-### Appearance
+### BottomSheetContent
+| Type   | Name | Description   |
+|--------|------|---------------|
+| DataTemplate | ContentTemplate | Content view. |
 
-`IsDraggable` Disable/Enable dragging(especially usefull if drawing gestures are made inside bottom sheet)
-
-`HasHandle` Display a drag handle at top of BottomSheet
-
-`IsCancelable` Is BottomSheet cancelable
-
-#### Header
-`ShowHeader` Display a header at top of BottomSheet
-
-`TopLeftButtonText` Text of top left button
-
-`TopRightButtonText` Text of top right button
-
-`TitleText` BottomSheet title
-
-`TitleViewTemplate` Custom title view.
-
-`HeaderAppearance` Define look of header
-
-| BottomSheetHeaderAppearanceMode    | Decription |
-| --- | --- |
-| None  | Do not show a button |
-| LeftAndRightButton | Show a button at top lef and at top right     |
-| LeftButton    | Show a button at top left    |
-| RightButton    | Show a button at top right    |
-
-#### States
-`SheetStates` Allowed states of BottomSheet
-| BottomSheetState    | Decription |
-| -------- | ------- |
-| Unknown  | BottomSheet can be all available states |
-| Peek | Only `BottomSheet.Peek` is visible. Expanding not allowed     |
-| Medium    | BottomSheet height will be half of sceen. Expanding/collapsing not allowed    |
-| Large    | BottomSheet will be display in full screen. Expanding/collapsing not allowed    |
-| All    | BottomSheet can be all available states    |
-
-`SelectedSheetState` Change current Sheet state. Sheet will be expanded/collapsed if selected state is allowed.
-
-### Interaction
+## Interaction
 
 #### Commands
 `TopRightButtonCommand` `TopRightButtonCommandParameter`
@@ -128,19 +130,71 @@ All properties expect `ContentTemplate`, `TitleViewTemplate` and `Peek.PeekViewD
 In order to make use of sheet within XAML you can use this namespace:
 
 'xmlns:bottomsheet="clr-namespace:Maui.BottomSheet;assembly=Maui.BottomSheet"'
+<br> <strong>or</strong> <br>
+xmlns:bottomsheet="http://pluginmauibottomsheet.com"</strong>
 
 `BottomSheet` is a `View` and can be added in any layout or control which accepts `View`.
 To open/close a BottomSheet simply set `IsOpen` property to true/false. You can have <strong>multiple</strong> BottomSheets on one page.
 ```
-<bottomsheet:BottomSheet IsOpen="True">
-    <bottomsheet:BottomSheet.ContentTemplate>
-        <DataTemplate>
-            <VerticalStackLayout>
-                <Label Text="I'm a simple BottomSheet!/>
-            </VerticalStackLayout>
-        </DataTemplate>
-    </bottomsheet:BottomSheet.ContentTemplate>
-</bottomsheet:BottomSheet>
+    <bottomsheet:BottomSheet
+        Padding="20"
+        IsOpen="{Binding IsOpen}"
+        States="Peek,Medium,Large"
+        HasHandle="{Binding HasHandle}"
+        IsCancelable="{Binding IsCancelable}"
+        ShowHeader="{Binding ShowHeader}"
+        IsDraggable="{Binding IsDraggable}">
+        <bottomsheet:BottomSheet.Header>
+            <bottomsheet:BottomSheetHeader 
+                TitleText="{Binding Title}"
+                HeaderAppearance="{Binding HeaderButtonAppearanceMode}">
+                <bottomsheet:BottomSheetHeader.TopLeftButton>
+                    <Button Text="Top left"  Command="{Binding TopLefButtonCommand}"></Button>
+                </bottomsheet:BottomSheetHeader.TopLeftButton>
+                <bottomsheet:BottomSheetHeader.TopRightButton>
+                    <Button Text="Top right" Command="{Binding TopRightButtonCommand}"></Button>
+                </bottomsheet:BottomSheetHeader.TopRightButton>
+            </bottomsheet:BottomSheetHeader>
+        </bottomsheet:BottomSheet.Header>
+        <bottomsheet:BottomSheet.Peek>
+            <bottomsheet:BottomSheetPeek>
+                <bottomsheet:BottomSheetPeek.PeekViewDataTemplate>
+                    <DataTemplate x:DataType="local:ShowCaseViewModel">
+                        <Grid Margin="0,10,0,10"
+                            ColumnSpacing="10"
+                            RowSpacing="10" 
+                            RowDefinitions="40,40,40" 
+                            ColumnDefinitions="*,*">
+                            <Label VerticalTextAlignment="Center" Grid.Row="0" Text="Title"/>
+                            <Entry Grid.Row="0" Grid.Column="1" Text="{Binding Title}"/>
+                            <Button Grid.Row="1" Text="None" Command="{Binding HeaderButtonAppearanceModeNoneCommand}"></Button>
+                            <Button Grid.Row="1" Grid.Column="1" Text="Left" Command="{Binding HeaderButtonAppearanceModeLeftCommand}"></Button>
+                            <Button Grid.Row="2" Text="Right" Command="{Binding HeaderButtonAppearanceModeRightCommand}"></Button>
+                            <Button Grid.Row="2" Grid.Column="1" Text="LeftAndRight" Command="{Binding HeaderButtonAppearanceModeLeftAndRightCommand}"></Button>
+                        </Grid>
+                    </DataTemplate>
+                </bottomsheet:BottomSheetPeek.PeekViewDataTemplate>
+            </bottomsheet:BottomSheetPeek>
+        </bottomsheet:BottomSheet.Peek>
+        <bottomsheet:BottomSheet.Content>
+            <bottomsheet:BottomSheetContent>
+                <bottomsheet:BottomSheetContent.ContentTemplate>
+                    <DataTemplate x:DataType="local:ShowCaseViewModel">
+                        <Grid RowDefinitions="40,40,40,40" RowSpacing="10" ColumnDefinitions="*, 50">
+                            <Label Text="Has handle?"></Label>
+                            <Label Grid.Row="1" Text="Is cancelable?"></Label>
+                            <Label Grid.Row="2" Text="Show header?"></Label>
+                            <Label Grid.Row="3" Text="Is draggable?"></Label>
+                            <Switch Grid.Column="1" IsToggled="{Binding HasHandle}"></Switch>
+                            <Switch Grid.Row="1" Grid.Column="1" IsToggled="{Binding IsCancelable}"></Switch>
+                            <Switch Grid.Row="2" Grid.Column="1" IsToggled="{Binding ShowHeader}"></Switch>
+                            <Switch Grid.Row="3" Grid.Column="1" IsToggled="{Binding IsDraggable}"></Switch>
+                        </Grid>
+                    </DataTemplate>
+                </bottomsheet:BottomSheetContent.ContentTemplate>
+            </bottomsheet:BottomSheetContent>
+        </bottomsheet:BottomSheet.Content>
+    </bottomsheet:BottomSheet>
 ```
 
 # Navigation

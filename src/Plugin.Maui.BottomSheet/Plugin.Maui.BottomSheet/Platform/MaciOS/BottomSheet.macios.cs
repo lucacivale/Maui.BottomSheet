@@ -11,8 +11,8 @@ internal sealed class BottomSheet : IDisposable
     private readonly BottomSheetUIViewController _bottomSheetUIViewController;
     private readonly WeakEventManager _eventManager = new();
 
-    private BottomSheetPeek? _bottomSheetPeek;
     private BottomSheetContent? _bottomSheetContent;
+    private BottomSheetPeek? _bottomSheetPeek;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheet"/> class.
@@ -79,7 +79,6 @@ internal sealed class BottomSheet : IDisposable
 
         if (bottomSheet.ShowHeader)
         {
-            _bottomSheetUIViewController.AddHeader(bottomSheet.Header);
             ShowHeader();
         }
 
@@ -112,9 +111,10 @@ internal sealed class BottomSheet : IDisposable
     /// <summary>
     /// Close the bottom sheet.
     /// </summary>
-    public void Close()
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    public async Task CloseAsync()
     {
-        _bottomSheetUIViewController.Close();
+        await _bottomSheetUIViewController.CloseAsync().ConfigureAwait(true);
     }
 
     /// <summary>
@@ -132,17 +132,7 @@ internal sealed class BottomSheet : IDisposable
     /// <param name="peek">Peek.</param>
     public void SetPeek(BottomSheetPeek? peek)
     {
-        if (_bottomSheetPeek is not null)
-        {
-            _bottomSheetPeek.PropertyChanged -= BottomSheetPeekOnPropertyChanged;
-        }
-
         _bottomSheetPeek = peek;
-
-        if (_bottomSheetPeek is not null)
-        {
-            _bottomSheetPeek.PropertyChanged += BottomSheetPeekOnPropertyChanged;
-        }
     }
 
     /// <summary>
@@ -298,25 +288,7 @@ internal sealed class BottomSheet : IDisposable
             return;
         }
 
-        if (_bottomSheetPeek is not null)
-        {
-            _bottomSheetPeek.PropertyChanged -= BottomSheetPeekOnPropertyChanged;
-        }
-
         _bottomSheetUIViewController.Dispose();
-    }
-
-    private void BottomSheetPeekOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (_bottomSheetPeek is null)
-        {
-            return;
-        }
-
-        if (e.PropertyName == nameof(BottomSheetPeek.PeekHeight))
-        {
-            _bottomSheetUIViewController.SetPeekDetentHeight(_bottomSheetPeek.PeekHeight);
-        }
     }
 
     private void BottomSheetUIViewControllerOnStateChanged(object? sender, BottomSheetStateChangedEventArgs e)

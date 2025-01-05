@@ -1,6 +1,6 @@
 ﻿namespace Plugin.Maui.BottomSheet.Sample;
 
-public partial class App : Application
+public partial class App
 {
     public App()
     {

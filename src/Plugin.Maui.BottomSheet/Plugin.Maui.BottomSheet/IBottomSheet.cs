@@ -31,6 +31,16 @@ public interface IBottomSheet : IView, IPadding, ISafeAreaView
     event EventHandler Opened;
 
     /// <summary>
+    /// Gets or sets parent.
+    /// </summary>
+    new Element Parent { get; set; }
+
+    /// <summary>
+    /// Gets or sets binding context.
+    /// </summary>
+    object? BindingContext { get; set; }
+
+    /// <summary>
     /// Gets or sets a value indicating whether the <see cref="IBottomSheet"/> can be closed with gestures or manually.
     /// </summary>
     bool IsCancelable { get; set; }

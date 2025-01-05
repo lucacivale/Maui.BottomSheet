@@ -9,14 +9,21 @@ public static class MauiAppBuilderExtensions
     /// Register all required services for the plugin.
     /// </summary>
     /// <param name="builder"><see cref="MauiAppBuilder"/>.</param>
+    /// <param name="configuration">Plugin configuration.</param>
     /// <returns>Builder.</returns>
-    public static MauiAppBuilder UseBottomSheet(this MauiAppBuilder builder)
+    public static MauiAppBuilder UseBottomSheet(this MauiAppBuilder builder, Action<Configuration>? configuration = null)
     {
-        builder.ConfigureMauiHandlers(x =>
-        {
-            x.AddHandler<BottomSheet, Handlers.BottomSheetHandler>();
-        });
+        var config = new Configuration();
+        configuration?.Invoke(config);
 
+        builder
+            .ConfigureMauiHandlers(x =>
+            {
+                x.AddHandler<BottomSheet, Handlers.BottomSheetHandler>();
+            })
+            .Services
+                .AddSingleton<Navigation.IBottomSheetNavigationService, Navigation.BottomSheetNavigationService>()
+                .AddSingleton(config);
         return builder;
     }
 }

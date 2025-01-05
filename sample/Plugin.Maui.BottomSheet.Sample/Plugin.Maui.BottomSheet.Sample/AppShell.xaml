@@ -4,12 +4,15 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Plugin.Maui.BottomSheet.Sample"
-    Shell.FlyoutBehavior="Disabled"
+    Shell.FlyoutBehavior="Disabled" Shell.NavBarIsVisible="False"
     Title="Plugin.Maui.BottomSheet.Sample">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
-
+    <TabBar>
+        <Tab Title="Notes">
+            <ShellContent ContentTemplate="{DataTemplate local:NotesPage}" />
+        </Tab>
+        <Tab Title="Showcase">
+            <ShellContent ContentTemplate="{DataTemplate local:ShowCasePage}" />
+        </Tab>
+    </TabBar>
 </Shell>

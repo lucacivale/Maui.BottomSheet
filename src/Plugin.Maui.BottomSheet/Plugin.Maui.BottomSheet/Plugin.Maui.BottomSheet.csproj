@@ -30,7 +30,7 @@
             * Configurable header
             * MVVM support
         </Description>
-        <Version>8.0.0-pre</Version>
+        <Version>9.0.0-pre</Version>
         <Owners>Luca Civale </Owners>
         <Authors>Luca Civale</Authors>
         <Company>Luca Civale</Company>
@@ -42,9 +42,9 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryType>git</RepositoryType>
         <PackageTags>dotnet; maui; bottomsheet;</PackageTags>
-        <!--<PackageIcon>Icon.jpg</PackageIcon>
+        <PackageIcon>Icon.jpg</PackageIcon>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageId>Plugin.Plugin.Maui.BottomSheet</PackageId>-->
+        <PackageId>Plugin.Plugin.Maui.BottomSheet</PackageId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -72,10 +72,15 @@
         <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.21" />
     </ItemGroup>
 
-    <ItemGroup Condition="$(TargetFramework.EndsWith('-android'))">
-        <AndroidResource Include="Platform\Android\Resources\drawable\round_rect_shape.xml" />
-        <AndroidResource Include="Platform\Android\Resources\layout\bottomSheetDragHandle.xml" />
-        <AndroidResource Include="Platform\Android\Resources\values\colors.xml" />
+    <ItemGroup>
+        <None Include="..\..\..\Icon.jpg">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+        <None Include="..\..\..\README.md">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
     </ItemGroup>
 
 </Project>

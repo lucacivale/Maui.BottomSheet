@@ -11,6 +11,8 @@ using AViewGroup = Android.Views.ViewGroup;
 namespace Plugin.Maui.BottomSheet.Platform.Android;
 
 using Microsoft.Maui.Platform;
+// ReSharper disable once RedundantNameQualifier
+using View = Microsoft.Maui.Controls.View;
 
 /// <summary>
 /// BottomSheet container view including Handle, Header and Content.
@@ -34,10 +36,6 @@ internal sealed class BottomSheet : IDisposable
     private BottomSheetPeek? _bottomSheetPeek;
     private BottomSheetContent? _bottomSheetContent;
 
-    private ContainerView? _bottomSheetHeaderContainer;
-    private ContainerView? _bottomSheetPeekContainer;
-    private ContainerView? _bottomSheetContentContainer;
-
     private GridLayout.LayoutParams? _handleLayoutParams;
     private GridLayout.LayoutParams? _headerLayoutParams;
     private GridLayout.LayoutParams? _peekLayoutParams;
@@ -52,6 +50,8 @@ internal sealed class BottomSheet : IDisposable
     private Color? _backgroundColor;
     private Thickness _padding;
 
+    private int _handleMargin;
+    private int _headerMargin;
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheet"/> class.
     /// </summary>
@@ -66,11 +66,18 @@ internal sealed class BottomSheet : IDisposable
         _bottomSheetCallback = new BottomSheetCallback();
         _bottomSheetCallback.StateChanged += BottomSheetCallbackOnStateChanged;
 
+        _handleMargin = Convert.ToInt32(_context.ToPixels(5));
+        _headerMargin = Convert.ToInt32(_context.ToPixels(5));
+
         _sheetContainer = new GridLayout(context)
         {
             Orientation = GridOrientation.Vertical,
             RowCount = 4,
-            LayoutParameters = new AViewGroup.LayoutParams(AViewGroup.LayoutParams.MatchParent, AViewGroup.LayoutParams.MatchParent),
+            LayoutParameters = new AViewGroup.MarginLayoutParams(AViewGroup.LayoutParams.MatchParent, AViewGroup.LayoutParams.WrapContent)
+            {
+                LeftMargin = Convert.ToInt32(_context.ToPixels(_padding.Left)),
+                RightMargin = Convert.ToInt32(_context.ToPixels(_padding.Right)),
+            },
         };
         _sheetContainer.SetMinimumHeight(_context.Resources?.DisplayMetrics?.HeightPixels ?? 0);
 
@@ -115,10 +122,11 @@ internal sealed class BottomSheet : IDisposable
         {
             _padding = value;
 
-            var pixelPadding = _context.ToPixels(_padding.HorizontalThickness());
-            _bottomSheetHeaderContainer.SetPadding(pixelPadding);
-            _bottomSheetPeekContainer.SetPadding(pixelPadding);
-            _bottomSheetContentContainer.SetPadding(pixelPadding);
+            if (_sheetContainer.LayoutParameters is AViewGroup.MarginLayoutParams layoutParams)
+            {
+                layoutParams.LeftMargin = Convert.ToInt32(_context.ToPixels(_padding.Left));
+                layoutParams.RightMargin = Convert.ToInt32(_context.ToPixels(_padding.Right));
+            }
         }
     }
 
@@ -165,7 +173,6 @@ internal sealed class BottomSheet : IDisposable
         {
             AddHeader();
         }
-
         AddPeek();
         AddContent();
 
@@ -185,6 +192,18 @@ internal sealed class BottomSheet : IDisposable
     /// </summary>
     public void Close()
     {
+        _bottomSheetDialog.DismissEvent += BottomSheetDialogOnDismissEvent;
+        _bottomSheetCallback.StateChanged += BottomSheetCallbackOnStateChanged;
+
+        if (_bottomSheetPeek is not null)
+        {
+            _bottomSheetPeek.PropertyChanged -= BottomSheetPeekOnPropertyChanged;
+        }
+
+        if (_bottomSheetHeader is not null)
+        {
+            _bottomSheetHeader.LayoutChanged += BottomSheetHeaderLayoutChanged;
+        }
         _bottomSheetDialog.Dismiss();
         _sheetContainer.RemoveFromParent();
 
@@ -269,7 +288,7 @@ internal sealed class BottomSheet : IDisposable
     {
         _handleLayoutParams = new GridLayout.LayoutParams()
         {
-            TopMargin = Convert.ToInt32(_context.ToPixels(5)),
+            TopMargin = _handleMargin,
             Width = Convert.ToInt32(_context.ToPixels(30)),
             Height = Convert.ToInt32(_context.ToPixels(5)),
             RowSpec = GridLayout.InvokeSpec(HandleRow),
@@ -290,18 +309,13 @@ internal sealed class BottomSheet : IDisposable
             return;
         }
 
-        _bottomSheetHeaderContainer = new ContainerView(_mauiContext);
-        _bottomSheetHeaderContainer.AddView(_bottomSheetHeader.HeaderView);
-        _bottomSheetHeaderContainer.SetPadding(_context.ToPixels(_padding.HorizontalThickness()));
-
         _headerLayoutParams = new GridLayout.LayoutParams()
         {
-            TopMargin = Convert.ToInt32(_context.ToPixels(5)),
+            TopMargin = _headerMargin,
             RowSpec = GridLayout.InvokeSpec(HeaderRow),
         };
         _headerLayoutParams.SetGravity(AGravityFlags.Fill);
-
-        _sheetContainer.AddView(_bottomSheetHeaderContainer, _headerLayoutParams);
+        _sheetContainer.AddView(_bottomSheetHeader.CreateHeader(), _headerLayoutParams);
     }
 
     /// <summary>
@@ -325,38 +339,24 @@ internal sealed class BottomSheet : IDisposable
         _virtualBottomSheetPeek.Parent = _bottomSheetPeek.Parent;
 
         _platformBottomSheetPeek = _virtualBottomSheetPeek.ToPlatform(_mauiContext);
-        _platformBottomSheetPeek.LayoutParameters = new AViewGroup.LayoutParams(AViewGroup.LayoutParams.MatchParent, AViewGroup.LayoutParams.MatchParent);
-
-        _bottomSheetPeekContainer = new ContainerView(_mauiContext);
-        _bottomSheetPeekContainer.AddView(_platformBottomSheetPeek);
-        _bottomSheetPeekContainer.SetPadding(_context.ToPixels(_padding.HorizontalThickness()));
 
         var height = _context.ToPixels(_bottomSheetPeek.PeekHeight);
-        if (height <= 0.00)
+        if (double.IsNaN(height))
         {
-            _bottomSheetPeekContainer.Measure(AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost), AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost));
-            height = _bottomSheetPeekContainer.MeasuredHeight;
+            _platformBottomSheetPeek.Measure(AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost), AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost));
+            height = _platformBottomSheetPeek.MeasuredHeight;
         }
 
         _peekLayoutParams = new GridLayout.LayoutParams()
         {
             Height = Convert.ToInt32(height),
-            Width = _sheetContainer.Width,
             RowSpec = GridLayout.InvokeSpec(PeekRow),
         };
         _peekLayoutParams.SetGravity(AGravityFlags.Fill);
 
-        _sheetContainer.AddView(_bottomSheetPeekContainer, _peekLayoutParams);
+        _sheetContainer.AddView(_platformBottomSheetPeek, _peekLayoutParams);
 
-        if (double.IsNaN(_bottomSheetPeek.PeekHeight))
-        {
-            _bottomSheetDialog.Behavior.PeekHeight = MeasurePeekHeight();
-        }
-        else
-        {
-            _bottomSheetDialog.Behavior.PeekHeight = Convert.ToInt32(_bottomSheetPeek.PeekHeight);
-        }
-
+        _bottomSheetDialog.Behavior.PeekHeight = double.IsNaN(_bottomSheetPeek.PeekHeight) ? MeasurePeekHeight() : Convert.ToInt32(_bottomSheetPeek.PeekHeight);
         _bottomSheetDialog.Behavior.SkipCollapsed = false;
     }
 
@@ -381,20 +381,14 @@ internal sealed class BottomSheet : IDisposable
         _virtualBottomSheetContent.Parent = _bottomSheetContent.Parent;
 
         _platformBottomSheetContent = _virtualBottomSheetContent.ToPlatform(_mauiContext);
-        _platformBottomSheetContent.LayoutParameters = new AViewGroup.LayoutParams(AViewGroup.LayoutParams.MatchParent, AViewGroup.LayoutParams.MatchParent);
-
-        _bottomSheetContentContainer = new ContainerView(_mauiContext);
-        _bottomSheetContentContainer.AddView(_platformBottomSheetContent);
-        _bottomSheetContentContainer.SetPadding(_context.ToPixels(_padding.HorizontalThickness()));
 
         _contentLayoutParams = new GridLayout.LayoutParams()
         {
-            Width = _sheetContainer.Width,
             RowSpec = GridLayout.InvokeSpec(ContentRow),
         };
         _contentLayoutParams.SetGravity(AGravityFlags.Fill);
 
-        _sheetContainer.AddView(_bottomSheetContentContainer, _contentLayoutParams);
+        _sheetContainer.AddView(_platformBottomSheetContent, _contentLayoutParams);
     }
 
     /// <summary>
@@ -404,7 +398,10 @@ internal sealed class BottomSheet : IDisposable
     {
         _bottomSheetHandle.Remove();
         _handleLayoutParams?.Dispose();
-        BottomSheetHandleLayoutChanged();
+        if (_bottomSheetDialog.IsShowing)
+        {
+            BottomSheetHandleLayoutChanged();
+        }
     }
 
     /// <summary>
@@ -414,7 +411,6 @@ internal sealed class BottomSheet : IDisposable
     {
         _bottomSheetHeader?.Remove();
         _headerLayoutParams?.Dispose();
-        _bottomSheetHeaderContainer?.RemoveFromParent();
     }
 
     /// <summary>
@@ -425,14 +421,16 @@ internal sealed class BottomSheet : IDisposable
         _bottomSheetDialog.Behavior.SkipCollapsed = true;
 
         _platformBottomSheetPeek?.RemoveFromParent();
-        _bottomSheetPeekContainer?.RemoveFromParent();
         _peekLayoutParams?.Dispose();
 #if NET9_0_OR_GREATER
         _virtualBottomSheetPeek?.DisconnectHandlers();
 #else
         _virtualBottomSheetPeek?.Handler?.DisconnectHandler();
 #endif
-        BottomSheetPeekLayoutChanged();
+        if (_bottomSheetDialog.IsShowing)
+        {
+            BottomSheetPeekLayoutChanged();
+        }
     }
 
     /// <summary>
@@ -441,7 +439,6 @@ internal sealed class BottomSheet : IDisposable
     public void HideContent()
     {
         _platformBottomSheetContent?.RemoveFromParent();
-        _bottomSheetContentContainer?.RemoveFromParent();
         _contentLayoutParams?.Dispose();
 #if NET9_0_OR_GREATER
         _virtualBottomSheetContent?.DisconnectHandlers();
@@ -453,23 +450,28 @@ internal sealed class BottomSheet : IDisposable
     private int MeasurePeekHeight()
     {
         _bottomSheetHandle.Handle.Measure(AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost), AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost));
-        _bottomSheetHeaderContainer?.Measure(AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost), AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost));
-        _bottomSheetPeekContainer?.Measure(AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost), AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost));
+        _bottomSheetHeader?.HeaderView.Measure(AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost), AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost));
+        _platformBottomSheetPeek?.Measure(AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost), AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost));
 
         return _bottomSheetHandle.Handle.MeasuredHeight
-               + (_bottomSheetHeaderContainer?.MeasuredHeight ?? 0)
-               + PeekHeight();
+            + (_bottomSheetHeader?.HeaderView.MeasuredHeight ?? 0)
+            - _handleMargin
+            - _headerMargin
+            + PeekHeight();
     }
 
     private void BottomSheetHeaderLayoutChanged(object? sender, EventArgs e)
     {
-        _bottomSheetHeaderContainer?.Measure(AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost), AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost));
+        _bottomSheetHeader?.HeaderView.Measure(AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost), AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost));
 
         var height = _bottomSheetHandle.Handle.MeasuredHeight
-            + (_bottomSheetHeaderContainer?.MeasuredHeight ?? 0)
+            + (_bottomSheetHeader?.HeaderView.MeasuredHeight ?? 0)
+            - _handleMargin
+            - _headerMargin
             + PeekHeight();
 
-        _bottomSheetDialog.Behavior.PeekHeight = height;
+        _bottomSheetDialog.Behavior.PeekHeight = height
+            + _bottomSheetDialog.Window?.DecorView.RootView?.RootWindowInsets?.SystemWindowInsetBottom ?? 0;
     }
 
     private void BottomSheetHandleLayoutChanged()
@@ -477,21 +479,27 @@ internal sealed class BottomSheet : IDisposable
         _bottomSheetHandle.Handle.Measure(AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost), AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost));
 
         var height = _bottomSheetHandle.Handle.MeasuredHeight
-             + (_bottomSheetHeaderContainer?.MeasuredHeight ?? 0)
+             + (_bottomSheetHeader?.HeaderView.MeasuredHeight ?? 0)
+             - _handleMargin
+             - _headerMargin
              + PeekHeight();
 
-        _bottomSheetDialog.Behavior.PeekHeight = height;
+        _bottomSheetDialog.Behavior.PeekHeight = height
+            + _bottomSheetDialog.Window?.DecorView.RootView?.RootWindowInsets?.SystemWindowInsetBottom ?? 0;
     }
 
     private void BottomSheetPeekLayoutChanged()
     {
-        _bottomSheetPeekContainer?.Measure(AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost), AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost));
+        _platformBottomSheetPeek?.Measure(AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost), AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost));
 
         var height = _bottomSheetHandle.Handle.MeasuredHeight
-             + (_bottomSheetHeaderContainer?.MeasuredHeight ?? 0)
+             + (_bottomSheetHeader?.HeaderView.MeasuredHeight ?? 0)
+             - _handleMargin
+             - _headerMargin
              + PeekHeight();
 
-        _bottomSheetDialog.Behavior.PeekHeight = height;
+        _bottomSheetDialog.Behavior.PeekHeight = height
+            + _bottomSheetDialog.Window?.DecorView.RootView?.RootWindowInsets?.SystemWindowInsetBottom ?? 0;
     }
 
     private int PeekHeight()
@@ -503,7 +511,7 @@ internal sealed class BottomSheet : IDisposable
         }
         else
         {
-            return _bottomSheetPeekContainer?.MeasuredHeight ?? 0;
+            return _platformBottomSheetPeek?.MeasuredHeight ?? 0;
         }
     }
 
@@ -521,12 +529,6 @@ internal sealed class BottomSheet : IDisposable
         _bottomSheetHandle.Dispose();
         _bottomSheetHeader?.Dispose();
         _bottomSheetHeader = null;
-        _bottomSheetHeaderContainer?.Dispose();
-        _bottomSheetHeaderContainer = null;
-        _bottomSheetPeekContainer?.Dispose();
-        _bottomSheetPeekContainer = null;
-        _bottomSheetContentContainer?.Dispose();
-        _bottomSheetContentContainer = null;
         _platformBottomSheetPeek?.Dispose();
         _platformBottomSheetPeek = null;
         _platformBottomSheetContent?.Dispose();
@@ -543,7 +545,7 @@ internal sealed class BottomSheet : IDisposable
 
         _bottomSheetCallback.Dispose();
     }
-
+    
     private void BottomSheetPeekOnPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
         if (_bottomSheetPeek is null)
@@ -553,7 +555,7 @@ internal sealed class BottomSheet : IDisposable
 
         if (e.PropertyName == nameof(BottomSheetPeek.PeekHeight))
         {
-            _bottomSheetDialog.Behavior.PeekHeight = Convert.ToInt32(_bottomSheetPeek.PeekHeight);
+            _bottomSheetDialog.Behavior.PeekHeight = Convert.ToInt32(_context.ToPixels(_bottomSheetPeek.PeekHeight));
         }
     }
 

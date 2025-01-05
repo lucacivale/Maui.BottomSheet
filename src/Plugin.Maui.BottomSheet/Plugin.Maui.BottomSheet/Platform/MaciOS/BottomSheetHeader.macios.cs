@@ -59,6 +59,11 @@ internal sealed class BottomSheetHeader : IDisposable
     {
         _bottomSheetHeader.PropertyChanged -= BottomSheetHeaderOnPropertyChanged;
 
+        if (_virtualHeaderView is not null)
+        {
+            _virtualHeaderView.SizeChanged -= VirtualHeaderViewOnSizeChanged;
+        }
+
         Remove(ref _virtualHeaderView);
         Remove(ref _virtualTitleView);
         Remove(ref _virtualHeaderGridView);
@@ -153,6 +158,11 @@ internal sealed class BottomSheetHeader : IDisposable
 
     private View CreateVirtualHeaderView()
     {
+        if (_virtualHeaderView is not null)
+        {
+            _virtualHeaderView.SizeChanged -= VirtualHeaderViewOnSizeChanged;
+        }
+
         if (_bottomSheetHeader.HasHeaderView()
             && _bottomSheetHeader.HeaderDataTemplate is not null)
         {
@@ -171,6 +181,7 @@ internal sealed class BottomSheetHeader : IDisposable
         _virtualHeaderView.BindingContext = _bottomSheetHeader.BindingContext;
         _virtualHeaderView.Parent = _bottomSheetHeader.Parent;
         _virtualHeaderView.SizeChanged += VirtualHeaderViewOnSizeChanged;
+        _bottomSheetHeader.PropertyChanged += BottomSheetHeaderOnPropertyChanged;
 
         return _virtualHeaderView;
     }
@@ -182,9 +193,13 @@ internal sealed class BottomSheetHeader : IDisposable
             return;
         }
 
+        Remove(_virtualTopLeftButton);
+        Remove(_virtualTopRightButton);
+        Remove(_virtualTitleView);
         if (_bottomSheetHeader.HasTopLeftButton())
         {
-            _virtualHeaderGridView.Add(_bottomSheetHeader.TopLeftButton);
+            _virtualTopLeftButton = _bottomSheetHeader.TopLeftButton;
+            _virtualHeaderGridView.Add(_virtualTopLeftButton);
         }
 
         if (_bottomSheetHeader.HasTitle())
@@ -195,7 +210,8 @@ internal sealed class BottomSheetHeader : IDisposable
 
         if (_bottomSheetHeader.HasTopRightButton())
         {
-            _virtualHeaderGridView.Add(_bottomSheetHeader.TopRightButton, 2);
+            _virtualTopRightButton = _bottomSheetHeader.TopRightButton;
+            _virtualHeaderGridView.Add(_virtualTopRightButton, 2);
         }
     }
 

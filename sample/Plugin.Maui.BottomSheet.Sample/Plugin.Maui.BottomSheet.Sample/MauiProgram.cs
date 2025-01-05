@@ -4,6 +4,9 @@ namespace Plugin.Maui.BottomSheet.Sample;
 
 using CommunityToolkit.Maui;
 using Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Maui.Controls.Hosting;
+using Microsoft.Maui.Hosting;
 
 public static class MauiProgram
 {
@@ -19,10 +22,10 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             })
-            .UseBottomSheet();
+            .UseBottomSheet(config => config.CopyPagePropertiesToBottomSheet = true);
 
-        builder.Services.AddTransient<MainPage>();
-        builder.Services.AddTransient<MainViewModel>();
+        builder.Services.AddTransient<ShowCasePage>();
+        builder.Services.AddTransient<ShowCaseViewModel>();
 
 #if DEBUG
         builder.Logging.AddDebug();
