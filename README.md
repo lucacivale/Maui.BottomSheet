@@ -13,16 +13,19 @@
 
 ## Platforms
 
-`MacCatalyst` [implementation details](https://developer.apple.com/design/human-interface-guidelines/sheets)
-
 `iOS` at least iOS 15
-
-`Android` at least API 21
-
 <img src="screenshots/iOS/Showcase.gif" />
+<br>
+
+`iPad`
 <img src="screenshots/iPad/Showcase.gif" />
+<br>
+
+`MacCatalyst` [implementation details](https://developer.apple.com/design/human-interface-guidelines/sheets)
 <img src="screenshots/MacCatalyst/Showcase.gif" />
 <br>
+
+`Android` at least API 21
 <img src="screenshots/Android/Showcase.gif" />
 <img src="screenshots/Android/Tablet/Showcase.gif" />
 
