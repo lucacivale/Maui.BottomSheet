@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Windows.Input;
 
 /// <inheritdoc cref="IBottomSheet" />
-public sealed class BottomSheet : View, IBottomSheet
+public class BottomSheet : View, IBottomSheet
 {
     /// <summary>
     /// Bindable property.
@@ -327,6 +327,7 @@ public sealed class BottomSheet : View, IBottomSheet
         set => SetValue(StatesProperty, value);
     }
 
+#pragma warning disable CA1033
     /// <inheritdoc/>
     void IBottomSheet.OnOpeningBottomSheet()
     {
@@ -354,6 +355,7 @@ public sealed class BottomSheet : View, IBottomSheet
         RaiseEvent(nameof(Closed), EventArgs.Empty);
         ExecuteCommand(ClosedCommand, ClosedCommandParameter);
     }
+#pragma warning restore CA1033
 
     /// <inheritdoc/>
     protected override void OnParentChanged()

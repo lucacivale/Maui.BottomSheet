@@ -8,9 +8,6 @@
     Title="Plugin.Maui.BottomSheet.Sample">
 
     <TabBar>
-        <Tab Title="Notes">
-            <ShellContent ContentTemplate="{DataTemplate local:NotesPage}" />
-        </Tab>
         <Tab Title="Showcase">
             <ShellContent ContentTemplate="{DataTemplate local:ShowCasePage}" />
         </Tab>

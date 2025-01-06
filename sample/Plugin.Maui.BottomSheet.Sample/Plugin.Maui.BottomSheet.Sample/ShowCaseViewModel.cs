@@ -3,9 +3,17 @@ namespace Plugin.Maui.BottomSheet.Sample;
 using AsyncAwaitBestPractices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Navigation;
 
 public sealed partial class ShowCaseViewModel : ObservableObject
 {
+    private readonly IBottomSheetNavigationService _bottomSheetNavigationService;
+
+    public ShowCaseViewModel(IBottomSheetNavigationService bottomSheetNavigationService)
+    {
+        _bottomSheetNavigationService = bottomSheetNavigationService;
+    }
+
     [ObservableProperty]
     private BottomSheetHeaderButtonAppearanceMode _headerButtonAppearanceMode = BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton;
     
@@ -67,5 +75,17 @@ public sealed partial class ShowCaseViewModel : ObservableObject
     private void OpenShowcase()
     {
         IsOpen = true;
+    }
+    
+    [RelayCommand]
+    private void OpenShowcasePageAsBottomSheet()
+    {
+        _bottomSheetNavigationService.NavigateTo("Showcase");
+    }
+    
+    [RelayCommand]
+    private void OpenCustomHeaderShowcaseViewAsBottomSheet()
+    {
+        _bottomSheetNavigationService.NavigateTo<CustomHeaderShowcaseViewModel>("CustomHeaderShowcase");
     }
 }

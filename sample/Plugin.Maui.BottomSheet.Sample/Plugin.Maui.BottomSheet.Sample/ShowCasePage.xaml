@@ -5,10 +5,14 @@
              xmlns:bottomsheet="http://pluginmauibottomsheet.com"
              x:Class="Plugin.Maui.BottomSheet.Sample.ShowCasePage"
              xmlns:local="clr-namespace:Plugin.Maui.BottomSheet.Sample"
-             x:DataType="local:ShowCaseViewModel">
+             x:DataType="local:ShowCaseViewModel" 
+             Title="Showcase"
+             Padding="20">
     <ContentPage.Content>
-        <VerticalStackLayout Margin="10">
+        <VerticalStackLayout Spacing="20">
             <Button HorizontalOptions="Center" Text="Open showcase" Command="{Binding OpenShowcaseCommand}"/>
+            <Button HorizontalOptions="Center" Text="Open showcase page as BottomSheet" Command="{Binding OpenShowcasePageAsBottomSheetCommand}"/>
+            <Button LineBreakMode="WordWrap" HorizontalOptions="Center" Text="Open custom header showcase view as BottomSheet" Command="{Binding OpenCustomHeaderShowcaseViewAsBottomSheetCommand}"/>
             <bottomsheet:BottomSheet
                 Padding="20"
                 IsOpen="{Binding IsOpen}"

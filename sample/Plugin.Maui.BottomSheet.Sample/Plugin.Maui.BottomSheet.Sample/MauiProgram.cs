@@ -26,6 +26,24 @@ public static class MauiProgram
 
         builder.Services.AddTransient<ShowCasePage>();
         builder.Services.AddTransient<ShowCaseViewModel>();
+        builder.Services.AddTransient<CustomHeaderShowcaseViewModel>();
+
+        builder.Services.AddBottomSheet<CustomHeaderShowcase>("CustomHeaderShowcase",
+            (sheet, _) =>
+            {
+                sheet.States = [BottomSheetState.Medium, BottomSheetState.Large];
+            });
+        builder.Services.AddBottomSheet<ShowCasePage>("Showcase",
+            (sheet, page) =>
+            {
+                sheet.States = [BottomSheetState.Medium, BottomSheetState.Large];
+                sheet.CurrentState = BottomSheetState.Large;
+                sheet.ShowHeader = true;
+                sheet.Header = new BottomSheetHeader()
+                {
+                    TitleText = page.Title,
+                };
+            });
 
 #if DEBUG
         builder.Logging.AddDebug();

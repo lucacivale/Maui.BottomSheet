@@ -1,4 +1,3 @@
-#pragma warning disable SA1200
 using Android.Content;
 using Android.Widget;
 using Google.Android.Material.BottomSheet;
@@ -6,7 +5,7 @@ using AGravityFlags = Android.Views.GravityFlags;
 using AMeasureSpecMode = Android.Views.MeasureSpecMode;
 using AView = Android.Views.View;
 using AViewGroup = Android.Views.ViewGroup;
-#pragma warning restore SA1200
+using AWindowInsets = Android.Views.WindowInsets;
 
 namespace Plugin.Maui.BottomSheet.Platform.Android;
 

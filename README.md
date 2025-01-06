@@ -202,7 +202,7 @@ To open/close a BottomSheet simply set `IsOpen` property to true/false. You can 
 
 # Navigation
 
-`IBottomSheetNavigationService` is be registered automatically and can be resolved by `DI`. 
+`IBottomSheetNavigationService` is be registered automatically and can be resolved. 
 
 ```
 private readonly IBottomSheetNavigationService _bottomSheetNavigationService;
@@ -213,81 +213,54 @@ public MainViewModel(IBottomSheetNavigationService bottomSheetNavigationService)
 }
 ```
 
-To navigate to a `BottomSheet` you have to [register](https://learn.microsoft.com/en-us/dotnet/architecture/maui/dependency-injection) `BottomSheets` and `ViewModels`
-```
-builder.Services.AddTransient<BottomSheetVMViewModel>();
-builder.Services.AddTransient<BottomSheetGoBackViewModel>();
+You have to register your View as BottomSheet to enable navigation.
+If the `BindingContext` of `View` is assigned during initialization it will be assigned to the `BottomSheet`. [Reference](https://learn.microsoft.com/en-us/dotnet/architecture/maui/dependency-injection)
 
-builder.Services.AddTransient<IBottomSheet, BottomSheetNoVM>();
-builder.Services.AddTransient<IBottomSheet, BottomSheetVM>();
-builder.Services.AddTransient<IBottomSheet, BottomSheetGoBack>();
-```
-Navigate to a `BottomSheet` and wire it automatically to specified `ViewModel` or navigate to a `BottomSheet` without a `ViewModel`
+`builder.Services.AddBottomSheet<ShowCasePage>("Showcase");`
+
+This will add a named "Showcase" `BottomSheet` to the container
+To open it simply call `_bottomSheetNavigationService.NavigateTo("Showcase");`
+
+You can also add a default `BottomSheet` navigation configuration
+`.UseBottomSheet(config => config.CopyPagePropertiesToBottomSheet = true);` will copy all applicable properties from registered `Pages` to the `BottomSheet`
 
 ```
-_bottomSheetNavigationService.NavigateTo<BottomSheetNoVM>();
-_bottomSheetNavigationService.NavigateTo<BottomSheetVM, BottomSheetVMViewModel>();
+builder.Services.AddBottomSheet<ShowCasePage>("Showcase",
+    (sheet, page) =>
+    {
+        sheet.States = [BottomSheetState.Medium, BottomSheetState.Large];
+        sheet.CurrentState = BottomSheetState.Large;
+        sheet.ShowHeader = true;
+        sheet.Header = new BottomSheetHeader()
+        {
+            TitleText = page.Title,
+        };
+    });
 ```
-To close a `BottomSheet` simply call `GoBack` or `ClearBottomSheetStack`(if you have multiple sheets open and want to close all of them)
+To override the default configuration
+```
+_bottomSheetNavigationService.NavigateTo("Showcase", configure: (sheet) =>
+{
+    sheet.Header.TitleText = "My new title";
+});
+```
 
 You can pass parameters on each navigation(this follows principle of shell navigation)
 Pass an instance of `BottomSheetNavigationParameters` to navigation and if target `ViewModel` implements `IQueryAttributable` parameters will be applied.
-
-<img src="screenshots/navigation.gif" height="400" />
-
-# BottomSheet Builder
-
-<strong>Open any ContentPage or View as BottomSheet</strong>
-
-Use `IBottomSheetBuilder` to build a `BottomSheet` from a `ContentPage` or `View`.
-Use `IBottomSheetBuilderFactory` to create a new instance of `IBottomSheetBuilder`.
-By default both instance types are registered and can be resolved by `DI`(<strong>may change in future if custom services are needed!</strong>)
-
-## API
-
-| Method    | Decription |
-| --- | --- |
-| FromView  | Build View as BottomSheet |
-| FromContentPage | Build ContentPage as BottomSheet    |
-| ConfigureBottomSheet    | Configure BottomSheet with known API    |
-| WithParameters    | Create NavigationParameters    |
-| WireTo    | Wire BottomSheet to a specified ViewModel    |
-| TryAutoWire    | Set BindingContext of ContentPage as BindingContext of BottomSheet   |
-| Open    | Open built BottomSheet  |
-
-## Usage
 ```
-public MainViewModel(IBottomSheetBuilderFactory bottomSheetBuilderFactory)
+_bottomSheetNavigationService.NavigateTo("Showcase", new BottomSheetNavigationParameters()
 {
-    _bottomSheetBuilderFactory = bottomSheetBuilderFactory;
-}
+    ["SomeKey"] = "SomeValue",
+});
 ```
 
+To manually set the `ViewModel` it has to be available in the container
 ```
-private void OpenContentPageAsBottomSheet()
-{
-    _bottomSheetBuilderFactory.Create()
-	.FromContentPage<NewPageA>()
-	.ConfigureBottomSheet((sheet) =>
-	{
-	    sheet.SheetStates = BottomSheetState.All;
-	})
-	.WireTo<NewPageAViewModel>()
-	.Open();
-}
+builder.Services.AddTransient<SomeViewModel>();
+
+_bottomSheetNavigationService.NavigateTo<SomeViewModel>("Showcase");
 ```
 
-```
-private void OpenViewAsBottomSheet()
-{
-    _bottomSheetBuilderFactory.Create()
-        .FromView<ContentA>()
-        .ConfigureBottomSheet((sheet) =>
-        {
-            sheet.SheetStates = BottomSheetState.Medium;
-        })
-        .WireTo<ContentAViewModel>()
-        .Open();
-}
-```
+To close a `BottomSheet` simply call `GoBack` or `ClearBottomSheetStack`(if you have multiple sheets open and want to close all of them)
+
 

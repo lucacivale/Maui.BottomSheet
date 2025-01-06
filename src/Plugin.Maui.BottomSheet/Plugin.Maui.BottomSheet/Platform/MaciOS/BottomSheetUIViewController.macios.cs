@@ -27,11 +27,9 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     private UISheetPresentationControllerDetent? _mediumDetent;
     private UISheetPresentationControllerDetent? _largeDetent;
 
-    private double _peekRowHeight;
     private double _peekDetentHeight;
 
     private View? _virtualBottomSheetPeek;
-    private Thickness _virtualBottomSheetPeekMargin = new(0);
     private View? _virtualBottomSheetContent;
 
     private UISheetPresentationControllerDetentIdentifier _previousIdentifier = UISheetPresentationControllerDetentIdentifier.Unknown;
@@ -299,8 +297,6 @@ internal sealed class BottomSheetUIViewController : UINavigationController
             0,
             1);
 
-        _virtualBottomSheetPeekMargin = _virtualBottomSheetPeek.Margin;
-
         LayoutPeek(true);
     }
 
@@ -346,46 +342,6 @@ internal sealed class BottomSheetUIViewController : UINavigationController
                 LayoutPeek();
                 _previousIdentifier = identifier;
             });
-        }
-    }
-
-    private void LayoutPeek(bool force = false)
-    {
-        if (SheetPresentationController is null
-            || (SheetPresentationController.SelectedDetentIdentifier == _previousIdentifier
-                && force == false)
-            || _virtualBottomSheetPeek is null)
-        {
-            return;
-        }
-        
-        var insets = WindowUtils.CurrentSafeAreaInsets();
-        var safeAreaBottom = 0.00;
-
-        if (!_virtualBottomSheetLayout.IgnoreSafeArea)
-        {
-            safeAreaBottom = insets.Bottom;
-        }
-        
-        if ((_previousIdentifier == UISheetPresentationControllerDetentIdentifier.Unknown
-                && SheetPresentationController.SelectedDetentIdentifier != UISheetPresentationControllerDetentIdentifier.Unknown)
-                || SheetPresentationController.Detents.Any(x => x.Identifier == PeekDetentId) == false) 
-        {
-#if NET9_0_OR_GREATER
-            var peekViewHeight = _virtualBottomSheetPeek.Measure(double.PositiveInfinity, double.PositiveInfinity).Height;
-#else
-            var peekViewHeight = _virtualBottomSheetPeek.Measure(double.PositiveInfinity, double.PositiveInfinity).Request.Height;
-#endif
-            _virtualBottomSheetLayout.RowDefinitions[1].Height = new GridLength(peekViewHeight);
-        }
-        else if (SheetPresentationController.SelectedDetentIdentifier == UISheetPresentationControllerDetentIdentifier.Unknown)
-        {
-#if NET9_0_OR_GREATER
-            var peekViewHeight = _virtualBottomSheetPeek.Measure(double.PositiveInfinity, double.PositiveInfinity).Height;
-#else
-            var peekViewHeight = _virtualBottomSheetPeek.Measure(double.PositiveInfinity, double.PositiveInfinity).Request.Height;
-#endif
-            _virtualBottomSheetLayout.RowDefinitions[1].Height = new GridLength(peekViewHeight + safeAreaBottom);
         }
     }
 
@@ -457,6 +413,100 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         base.Dispose(disposing);
     }
 
+    private void LayoutPeek(bool force = false)
+    {
+        if (SheetPresentationController is null
+            || (SheetPresentationController.SelectedDetentIdentifier == _previousIdentifier
+                && !force)
+            || _virtualBottomSheetPeek is null)
+        {
+            return;
+        }
+
+        var insets = WindowUtils.CurrentSafeAreaInsets();
+        var safeAreaBottom = 0.00;
+
+        if (!_virtualBottomSheetLayout.IgnoreSafeArea)
+        {
+            safeAreaBottom = insets.Bottom;
+        }
+
+        if ((_previousIdentifier == UISheetPresentationControllerDetentIdentifier.Unknown
+                && SheetPresentationController.SelectedDetentIdentifier != UISheetPresentationControllerDetentIdentifier.Unknown)
+            || !ExistPeekDetent())
+        {
+#if NET9_0_OR_GREATER
+            var peekViewHeight = _virtualBottomSheetPeek.Measure(double.PositiveInfinity, double.PositiveInfinity).Height;
+#else
+            var peekViewHeight = _virtualBottomSheetPeek.Measure(double.PositiveInfinity, double.PositiveInfinity).Request.Height;
+#endif
+            _virtualBottomSheetLayout.RowDefinitions[1].Height = new GridLength(peekViewHeight);
+        }
+        else if (SheetPresentationController.SelectedDetentIdentifier == UISheetPresentationControllerDetentIdentifier.Unknown)
+        {
+#if NET9_0_OR_GREATER
+            var peekViewHeight = _virtualBottomSheetPeek.Measure(double.PositiveInfinity, double.PositiveInfinity).Height;
+#else
+            var peekViewHeight = _virtualBottomSheetPeek.Measure(double.PositiveInfinity, double.PositiveInfinity).Request.Height;
+#endif
+            _virtualBottomSheetLayout.RowDefinitions[1].Height = new GridLength(peekViewHeight + safeAreaBottom);
+        }
+    }
+
+    [SuppressMessage("Major Bug", "S6605", Justification = "False positive")]
+    private bool ExistPeekDetent()
+    {
+        if (OperatingSystem.IsMacCatalyst()
+            || (OperatingSystem.IsIOS()
+                && OperatingSystem.IsIOSVersionAtLeast(16)))
+        {
+#pragma warning disable CA1416
+            return SheetPresentationController?.Detents.Any(x => x.Identifier == PeekDetentId) == true;
+#pragma warning restore CA1416
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private void BottomSheetHeaderOnSizeChanged(object? sender, EventArgs e)
+    {
+        _peekDetentHeight = (_bottomSheetHeader?.View.Height ?? 0)
+            + PeekHeight();
+
+        if (OperatingSystem.IsMacCatalyst()
+            || (OperatingSystem.IsIOS()
+                && OperatingSystem.IsIOSVersionAtLeast(16)))
+        {
+#pragma warning disable CA1416
+            SheetPresentationController?.InvalidateDetents();
+#pragma warning restore CA1416
+        }
+    }
+
+    private void BottomSheetPeekOnSizeChanged(object? sender, EventArgs e)
+    {
+        LayoutPeek(true);
+#if NET9_0_OR_GREATER
+        var peekViewHeight = _virtualBottomSheetPeek?.Measure(double.PositiveInfinity, double.PositiveInfinity).Height ?? 0;
+#else
+        var peekViewHeight = _virtualBottomSheetPeek?.Measure(double.PositiveInfinity, double.PositiveInfinity).Request.Height ?? 0;
+#endif
+
+        _peekDetentHeight = (_bottomSheetHeader?.View.Height ?? 0)
+            + (DeviceInfo.Idiom == DeviceIdiom.Tablet ? PeekHeight() : peekViewHeight);
+
+        if (OperatingSystem.IsMacCatalyst()
+            || (OperatingSystem.IsIOS()
+                && OperatingSystem.IsIOSVersionAtLeast(16)))
+        {
+#pragma warning disable CA1416
+            SheetPresentationController?.InvalidateDetents();
+#pragma warning restore CA1416
+        }
+    }
+
     [SuppressMessage("Major Bug", "S1244:Floating point numbers should not be tested for equality", Justification = "False positive")]
     private nfloat PeekHeight(IUISheetPresentationControllerDetentResolutionContext arg)
     {
@@ -474,28 +524,6 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         }
     }
 
-    private void BottomSheetHeaderOnSizeChanged(object? sender, EventArgs e)
-    {
-        _peekDetentHeight = (_bottomSheetHeader?.View.Height ?? 0)
-            + PeekHeight();
-        
-        SheetPresentationController?.InvalidateDetents();
-    }
-    
-    private void BottomSheetPeekOnSizeChanged(object? sender, EventArgs e)
-    {
-        LayoutPeek(true);
-#if NET9_0_OR_GREATER
-        var peekViewHeight = _virtualBottomSheetPeek?.Measure(double.PositiveInfinity, double.PositiveInfinity).Height ?? 0;
-#else
-        var peekViewHeight = _virtualBottomSheetPeek?.Measure(double.PositiveInfinity, double.PositiveInfinity).Request.Height ?? 0;
-#endif
-        
-        _peekDetentHeight = (_bottomSheetHeader?.View.Height ?? 0)
-            + (DeviceInfo.Idiom == DeviceIdiom.Tablet ? PeekHeight() : peekViewHeight);
-        SheetPresentationController?.InvalidateDetents();
-    }
-    
     private double PeekHeight()
     {
         if (_bottomSheetPeek is not null
@@ -505,8 +533,8 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         }
         else
         {
-            return DeviceInfo.Idiom == DeviceIdiom.Tablet ? 
-                _virtualBottomSheetLayout.RowDefinitions[1].Height.Value 
+            return DeviceInfo.Idiom == DeviceIdiom.Tablet ?
+                _virtualBottomSheetLayout.RowDefinitions[1].Height.Value
                 : _virtualBottomSheetPeek?.Height ?? 0;
         }
     }

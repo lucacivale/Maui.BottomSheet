@@ -57,6 +57,12 @@ public static class IServiceCollectionExtensions
     private static (BottomSheet BottomSheet, T Element) BottomSheetFactory<T>(IServiceProvider serviceProvider)
         where T : class, IView
     {
+        if (typeof(IBottomSheet).IsAssignableFrom(typeof(T)))
+        {
+            var sheet = serviceProvider.GetRequiredService<T>();
+            return ((sheet as BottomSheet)!, sheet);
+        }
+
         var element = serviceProvider.GetRequiredService<T>();
         IView view = element;
         object? bindingContext = null;
