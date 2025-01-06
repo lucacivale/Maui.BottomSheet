@@ -1,6 +1,7 @@
 namespace Plugin.Maui.BottomSheet.Hosting;
 
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Diagnostics.CodeAnalysis;
 
 /// <summary>
 /// <see cref="IServiceCollection"/> extension methods.
@@ -15,7 +16,7 @@ public static class IServiceCollectionExtensions
     /// <param name="name"><see cref="BottomSheet"/> name.</param>
     /// <typeparam name="T">ContentPage which will be registered as <see cref="BottomSheet"/>.</typeparam>
     /// <returns>Updated <see cref="IServiceCollection"/>.</returns>
-    public static IServiceCollection AddBottomSheet<T>(this IServiceCollection services, string name)
+    public static IServiceCollection AddBottomSheet<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(this IServiceCollection services, string name)
         where T : class, IView
     {
         services.TryAddTransient<T>();
@@ -35,7 +36,7 @@ public static class IServiceCollectionExtensions
     /// <param name="configure">Action to configure <see cref="BottomSheet"/>.</param>
     /// <typeparam name="T">ContentPage which will be registered as <see cref="BottomSheet"/>.</typeparam>
     /// <returns>Updated <see cref="IServiceCollection"/>.</returns>
-    public static IServiceCollection AddBottomSheet<T>(this IServiceCollection services, string name, Action<IBottomSheet, T> configure)
+    public static IServiceCollection AddBottomSheet<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(this IServiceCollection services, string name, Action<IBottomSheet, T> configure)
         where T : class, IView
     {
         services.TryAddTransient<T>();

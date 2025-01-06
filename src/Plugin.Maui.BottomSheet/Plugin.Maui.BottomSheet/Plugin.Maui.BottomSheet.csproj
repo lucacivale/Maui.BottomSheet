@@ -19,7 +19,7 @@
         <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
         <RunAnalyzers>true</RunAnalyzers>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
-        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">23.0</SupportedOSPlatformVersion>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <Title>.NET MAUI BottomSheet</Title>
         <Description>
@@ -45,6 +45,7 @@
         <PackageIcon>Icon.jpg</PackageIcon>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageId>Plugin.Plugin.Maui.BottomSheet</PackageId>
+		<IsAotCompatible>true</IsAotCompatible>
     </PropertyGroup>
 
     <ItemGroup>

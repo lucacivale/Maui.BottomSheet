@@ -5,11 +5,11 @@ using AGravityFlags = Android.Views.GravityFlags;
 using AMeasureSpecMode = Android.Views.MeasureSpecMode;
 using AView = Android.Views.View;
 using AViewGroup = Android.Views.ViewGroup;
-using AWindowInsets = Android.Views.WindowInsets;
 
 namespace Plugin.Maui.BottomSheet.Platform.Android;
 
 using Microsoft.Maui.Platform;
+
 // ReSharper disable once RedundantNameQualifier
 using View = Microsoft.Maui.Controls.View;
 
@@ -30,6 +30,8 @@ internal sealed class BottomSheet : IDisposable
     private readonly BottomSheetDialog _bottomSheetDialog;
     private readonly BottomSheetHandle _bottomSheetHandle;
     private readonly BottomSheetCallback _bottomSheetCallback;
+    private readonly int _handleMargin;
+    private readonly int _headerMargin;
 
     private BottomSheetHeader? _bottomSheetHeader;
     private BottomSheetPeek? _bottomSheetPeek;
@@ -49,8 +51,6 @@ internal sealed class BottomSheet : IDisposable
     private Color? _backgroundColor;
     private Thickness _padding;
 
-    private int _handleMargin;
-    private int _headerMargin;
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheet"/> class.
     /// </summary>
@@ -172,6 +172,7 @@ internal sealed class BottomSheet : IDisposable
         {
             AddHeader();
         }
+
         AddPeek();
         AddContent();
 
@@ -203,6 +204,7 @@ internal sealed class BottomSheet : IDisposable
         {
             _bottomSheetHeader.LayoutChanged += BottomSheetHeaderLayoutChanged;
         }
+
         _bottomSheetDialog.Dismiss();
         _sheetContainer.RemoveFromParent();
 
@@ -459,6 +461,7 @@ internal sealed class BottomSheet : IDisposable
             + PeekHeight();
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1422:Validate platform compatibility", Justification = "Validated.")]
     private void BottomSheetHeaderLayoutChanged(object? sender, EventArgs e)
     {
         _bottomSheetHeader?.HeaderView.Measure(AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost), AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost));
@@ -473,6 +476,7 @@ internal sealed class BottomSheet : IDisposable
             + _bottomSheetDialog.Window?.DecorView.RootView?.RootWindowInsets?.SystemWindowInsetBottom ?? 0;
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1422:Validate platform compatibility", Justification = "Validated.")]
     private void BottomSheetHandleLayoutChanged()
     {
         _bottomSheetHandle.Handle.Measure(AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost), AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost));
@@ -487,6 +491,7 @@ internal sealed class BottomSheet : IDisposable
             + _bottomSheetDialog.Window?.DecorView.RootView?.RootWindowInsets?.SystemWindowInsetBottom ?? 0;
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1422:Validate platform compatibility", Justification = "Validated.")]
     private void BottomSheetPeekLayoutChanged()
     {
         _platformBottomSheetPeek?.Measure(AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost), AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost));
@@ -544,7 +549,7 @@ internal sealed class BottomSheet : IDisposable
 
         _bottomSheetCallback.Dispose();
     }
-    
+
     private void BottomSheetPeekOnPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
         if (_bottomSheetPeek is null)

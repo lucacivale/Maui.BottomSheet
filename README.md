@@ -28,7 +28,7 @@
 <img src="screenshots/MacCatalyst/Showcase.gif" />
 <br>
 
-`Android` at least API 21
+`Android` at least API 23
 <br>
 <img src="screenshots/Android/Showcase.gif" />
 <img src="screenshots/Android/Tablet/Showcase.gif" />

@@ -1,10 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
-
-namespace Plugin.Maui.BottomSheet.Sample;
+﻿namespace Plugin.Maui.BottomSheet.Sample;
 
 using CommunityToolkit.Maui;
 using Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Controls.Hosting;
 using Microsoft.Maui.Hosting;
 

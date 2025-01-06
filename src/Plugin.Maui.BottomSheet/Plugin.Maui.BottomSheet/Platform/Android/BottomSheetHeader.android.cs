@@ -1,10 +1,8 @@
-#pragma warning disable SA1200
 using Android.Content;
 using Android.Widget;
+using ATextAlignment = Android.Views.TextAlignment;
 using AView = Android.Views.View;
 using AViewGroup = Android.Views.ViewGroup;
-using ATextAlignment = Android.Views.TextAlignment;
-#pragma warning restore SA1200
 
 namespace Plugin.Maui.BottomSheet.Platform.Android;
 
@@ -97,17 +95,19 @@ internal sealed class BottomSheetHeader : IDisposable
     public void RaiseLayoutChangedEvent()
     {
         if (_titleView?.LayoutParameters is RelativeLayout.LayoutParams relativeLayoutParams
-            && relativeLayoutParams.Width !=  Convert.ToInt32(_headerLayout?.Width * 0.50))
+            && relativeLayoutParams.Width != Convert.ToInt32(_headerLayout?.Width * 0.50, System.Globalization.CultureInfo.CurrentCulture))
         {
-            relativeLayoutParams.Width = Convert.ToInt32(_headerLayout?.Width * 0.50);
+            relativeLayoutParams.Width = Convert.ToInt32(_headerLayout?.Width * 0.50, System.Globalization.CultureInfo.CurrentCulture);
             _titleView.RequestLayout();
         }
+
         _eventManager.HandleEvent(this, EventArgs.Empty, nameof(LayoutChanged));
     }
 
     /// <summary>
     /// Create header view.
     /// </summary>
+    /// <returns>Created header.</returns>
     public AView CreateHeader()
     {
         _headerView = CreateHeader(_bottomSheetHeader);
@@ -222,16 +222,16 @@ internal sealed class BottomSheetHeader : IDisposable
         return layoutParams;
     }
 
-    private RelativeLayout.LayoutParams CreateTitleViewLayoutParams()
+    private static RelativeLayout.LayoutParams CreateTitleViewLayoutParams()
     {
         var layoutParams = new RelativeLayout.LayoutParams(AViewGroup.LayoutParams.WrapContent, AViewGroup.LayoutParams.WrapContent)
         {
             LeftMargin = 20,
             RightMargin = 20,
         };
-        
+
         layoutParams.AddRule(LayoutRules.CenterInParent);
-        
+
         return layoutParams;
     }
 
@@ -286,10 +286,10 @@ internal sealed class BottomSheetHeader : IDisposable
     {
         view.BindingContext = _bottomSheetHeader.BindingContext;
         view.Parent = _bottomSheetHeader.Parent;
-        
+
         var platformView = view.ToPlatform(_mauiContext);
         platformView.Id = AView.GenerateViewId();
-        
+
         return platformView;
     }
 
@@ -303,8 +303,8 @@ internal sealed class BottomSheetHeader : IDisposable
         {
             _topLeftView = CreatePlatformView(_bottomSheetHeader.TopLeftButton!);
             _topLeftView.LayoutParameters = CreateHeaderViewLayoutParams(LayoutRules.AlignParentLeft);
-    
-            _headerLayout?.AddView(_topLeftView);   
+
+            _headerLayout?.AddView(_topLeftView);
         }
 
         if (_bottomSheetHeader.HasTitle())
@@ -320,7 +320,7 @@ internal sealed class BottomSheetHeader : IDisposable
             _topRightView = CreatePlatformView(_bottomSheetHeader.TopRightButton!);
             _topRightView.LayoutParameters = CreateHeaderViewLayoutParams(LayoutRules.AlignParentRight);
 
-            _headerLayout?.AddView(_topRightView);   
+            _headerLayout?.AddView(_topRightView);
         }
     }
 
@@ -330,7 +330,7 @@ internal sealed class BottomSheetHeader : IDisposable
         {
             LayoutParameters = new LinearLayout.LayoutParams(AViewGroup.LayoutParams.MatchParent, AViewGroup.LayoutParams.WrapContent),
         };
-        
+
         linearLayout.AddOnLayoutChangeListener(_headerLayoutChangeListener);
 
         return linearLayout;
