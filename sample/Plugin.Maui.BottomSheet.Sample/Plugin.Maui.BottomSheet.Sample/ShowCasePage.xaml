@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:bottomsheet="http://pluginmauibottomsheet.com"
+             x:Class="Plugin.Maui.BottomSheet.Sample.ShowCasePage"
+             xmlns:local="clr-namespace:Plugin.Maui.BottomSheet.Sample"
+             x:DataType="local:ShowCaseViewModel" 
+             Title="Showcase"
+             Padding="20">
+    <ContentPage.Content>
+        <VerticalStackLayout Spacing="20">
+            <Button HorizontalOptions="Center" Text="Open showcase" Command="{Binding OpenShowcaseCommand}"/>
+            <Button HorizontalOptions="Center" Text="Open showcase page as BottomSheet" Command="{Binding OpenShowcasePageAsBottomSheetCommand}"/>
+            <Button LineBreakMode="WordWrap" HorizontalOptions="Center" Text="Open custom header showcase view as BottomSheet" Command="{Binding OpenCustomHeaderShowcaseViewAsBottomSheetCommand}"/>
+            <bottomsheet:BottomSheet
+                Padding="20"
+                IsOpen="{Binding IsOpen}"
+                States="Peek,Medium,Large"
+                HasHandle="{Binding HasHandle}"
+                IsCancelable="{Binding IsCancelable}"
+                ShowHeader="{Binding ShowHeader}"
+                IsDraggable="{Binding IsDraggable}">
+                <bottomsheet:BottomSheet.Header>
+                    <bottomsheet:BottomSheetHeader 
+                        TitleText="{Binding Title}"
+                        HeaderAppearance="{Binding HeaderButtonAppearanceMode}">
+                        <bottomsheet:BottomSheetHeader.TopLeftButton>
+                            <Button Text="Top left"  Command="{Binding TopLefButtonCommand}"></Button>
+                        </bottomsheet:BottomSheetHeader.TopLeftButton>
+                        <bottomsheet:BottomSheetHeader.TopRightButton>
+                            <Button Text="Top right" Command="{Binding TopRightButtonCommand}"></Button>
+                        </bottomsheet:BottomSheetHeader.TopRightButton>
+                    </bottomsheet:BottomSheetHeader>
+                </bottomsheet:BottomSheet.Header>
+                <bottomsheet:BottomSheet.Peek>
+                    <bottomsheet:BottomSheetPeek>
+                        <bottomsheet:BottomSheetPeek.PeekViewDataTemplate>
+                            <DataTemplate x:DataType="local:ShowCaseViewModel">
+                                <ContentView>
+                                    <Grid Margin="0,10,0,10"
+                                          ColumnSpacing="10"
+                                          RowSpacing="10" 
+                                          RowDefinitions="40,40,40" 
+                                          ColumnDefinitions="*,*">
+                                        <Label VerticalTextAlignment="Center" Grid.Row="0" Text="Title"/>
+                                        <Entry Grid.Row="0" Grid.Column="1" Text="{Binding Title}"/>
+                                        <Button Grid.Row="1" Text="None" Command="{Binding HeaderButtonAppearanceModeNoneCommand}"></Button>
+                                        <Button Grid.Row="1" Grid.Column="1" Text="Left" Command="{Binding HeaderButtonAppearanceModeLeftCommand}"></Button>
+                                        <Button Grid.Row="2" Text="Right" Command="{Binding HeaderButtonAppearanceModeRightCommand}"></Button>
+                                        <Button Grid.Row="2" Grid.Column="1" Text="LeftAndRight" Command="{Binding HeaderButtonAppearanceModeLeftAndRightCommand}"></Button>
+                                    </Grid>
+                                </ContentView>
+                            </DataTemplate>
+                        </bottomsheet:BottomSheetPeek.PeekViewDataTemplate>
+                    </bottomsheet:BottomSheetPeek>
+                </bottomsheet:BottomSheet.Peek>
+                <bottomsheet:BottomSheet.Content>
+                    <bottomsheet:BottomSheetContent>
+                        <bottomsheet:BottomSheetContent.ContentTemplate>
+                            <DataTemplate x:DataType="local:ShowCaseViewModel">
+                                <Grid RowDefinitions="40,40,40,40" RowSpacing="10" ColumnDefinitions="*, 50">
+                                    <Label Text="Has handle?"></Label>
+                                    <Label Grid.Row="1" Text="Is cancelable?"></Label>
+                                    <Label Grid.Row="2" Text="Show header?"></Label>
+                                    <Label Grid.Row="3" Text="Is draggable?"></Label>
+                                    <Switch Grid.Column="1" IsToggled="{Binding HasHandle}"></Switch>
+                                    <Switch Grid.Row="1" Grid.Column="1" IsToggled="{Binding IsCancelable}"></Switch>
+                                    <Switch Grid.Row="2" Grid.Column="1" IsToggled="{Binding ShowHeader}"></Switch>
+                                    <Switch Grid.Row="3" Grid.Column="1" IsToggled="{Binding IsDraggable}"></Switch>
+                                </Grid>
+                            </DataTemplate>
+                        </bottomsheet:BottomSheetContent.ContentTemplate>
+                    </bottomsheet:BottomSheetContent>
+                </bottomsheet:BottomSheet.Content>
+            </bottomsheet:BottomSheet>
+        </VerticalStackLayout>
+    </ContentPage.Content>
+</ContentPage>

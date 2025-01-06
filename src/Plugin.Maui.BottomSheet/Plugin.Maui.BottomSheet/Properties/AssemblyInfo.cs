@@ -1,0 +1,1 @@
+[assembly: XmlnsDefinition("http://pluginmauibottomsheet.com", "Plugin.Maui.BottomSheet")]
