@@ -44,7 +44,7 @@
         <PackageTags>dotnet; maui; bottomsheet;</PackageTags>
         <PackageIcon>Icon.jpg</PackageIcon>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageId>Plugin.Plugin.Maui.BottomSheet</PackageId>
+        <PackageId>Plugin.Maui.BottomSheet</PackageId>
 		<IsAotCompatible>true</IsAotCompatible>
     </PropertyGroup>
 
