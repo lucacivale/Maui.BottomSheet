@@ -297,7 +297,7 @@ internal sealed class BottomSheet : IDisposable
         _handleLayoutParams.SetGravity(AGravityFlags.CenterHorizontal);
 
         _sheetContainer.AddView(_bottomSheetHandle.Handle, _handleLayoutParams);
-        BottomSheetHandleLayoutChanged();
+        BottomSheetLayoutChanged();
     }
 
     /// <summary>
@@ -401,7 +401,7 @@ internal sealed class BottomSheet : IDisposable
         _handleLayoutParams?.Dispose();
         if (_bottomSheetDialog.IsShowing)
         {
-            BottomSheetHandleLayoutChanged();
+            BottomSheetLayoutChanged();
         }
     }
 
@@ -430,7 +430,7 @@ internal sealed class BottomSheet : IDisposable
 #endif
         if (_bottomSheetDialog.IsShowing)
         {
-            BottomSheetPeekLayoutChanged();
+            BottomSheetLayoutChanged();
         }
     }
 
@@ -471,20 +471,7 @@ internal sealed class BottomSheet : IDisposable
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1422:Validate platform compatibility", Justification = "Validated.")]
-    private void BottomSheetHandleLayoutChanged()
-    {
-        var height = _bottomSheetHandle.Handle.Height
-             + (_bottomSheetHeader?.HeaderView.Height ?? 0)
-             - _handleMargin
-             - _headerMargin
-             + PeekHeight();
-
-        _bottomSheetDialog.Behavior.PeekHeight = height
-            + _bottomSheetDialog.Window?.DecorView.RootView?.RootWindowInsets?.SystemWindowInsetBottom ?? 0;
-    }
-
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1422:Validate platform compatibility", Justification = "Validated.")]
-    private void BottomSheetPeekLayoutChanged()
+    private void BottomSheetLayoutChanged()
     {
         var height = _bottomSheetHandle.Handle.Height
              + (_bottomSheetHeader?.HeaderView.Height ?? 0)

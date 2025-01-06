@@ -55,7 +55,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
             Content = _virtualBottomSheetLayout,
         };
         _bottomSheetUIViewController = _virtualBottomSheet.ToUIViewController(mauiContext);
-        
+
         SetViewControllers([_bottomSheetUIViewController], true);
         SetNavigationBarHidden(true, true);
 
@@ -178,7 +178,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         {
             _previousIdentifier = SheetPresentationController.SelectedDetentIdentifier;
         }
-        
+
         if (WindowStateManager.Default.GetCurrentUIViewController() is UIViewController parent)
         {
             await parent.PresentViewControllerAsync(this, true).ConfigureAwait(true);
