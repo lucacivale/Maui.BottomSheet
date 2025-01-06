@@ -450,12 +450,8 @@ internal sealed class BottomSheet : IDisposable
 
     private int MeasurePeekHeight()
     {
-        _bottomSheetHandle.Handle.Measure(AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost), AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost));
-        _bottomSheetHeader?.HeaderView.Measure(AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost), AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost));
-        _platformBottomSheetPeek?.Measure(AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost), AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost));
-
-        return _bottomSheetHandle.Handle.MeasuredHeight
-            + (_bottomSheetHeader?.HeaderView.MeasuredHeight ?? 0)
+        return _bottomSheetHandle.Handle.Height
+            + (_bottomSheetHeader?.HeaderView.Height ?? 0)
             - _handleMargin
             - _headerMargin
             + PeekHeight();
@@ -464,10 +460,8 @@ internal sealed class BottomSheet : IDisposable
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1422:Validate platform compatibility", Justification = "Validated.")]
     private void BottomSheetHeaderLayoutChanged(object? sender, EventArgs e)
     {
-        _bottomSheetHeader?.HeaderView.Measure(AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost), AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost));
-
-        var height = _bottomSheetHandle.Handle.MeasuredHeight
-            + (_bottomSheetHeader?.HeaderView.MeasuredHeight ?? 0)
+        var height = _bottomSheetHandle.Handle.Height
+            + (_bottomSheetHeader?.HeaderView.Height ?? 0)
             - _handleMargin
             - _headerMargin
             + PeekHeight();
@@ -479,10 +473,8 @@ internal sealed class BottomSheet : IDisposable
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1422:Validate platform compatibility", Justification = "Validated.")]
     private void BottomSheetHandleLayoutChanged()
     {
-        _bottomSheetHandle.Handle.Measure(AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost), AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost));
-
-        var height = _bottomSheetHandle.Handle.MeasuredHeight
-             + (_bottomSheetHeader?.HeaderView.MeasuredHeight ?? 0)
+        var height = _bottomSheetHandle.Handle.Height
+             + (_bottomSheetHeader?.HeaderView.Height ?? 0)
              - _handleMargin
              - _headerMargin
              + PeekHeight();
@@ -494,10 +486,8 @@ internal sealed class BottomSheet : IDisposable
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1422:Validate platform compatibility", Justification = "Validated.")]
     private void BottomSheetPeekLayoutChanged()
     {
-        _platformBottomSheetPeek?.Measure(AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost), AView.MeasureSpec.MakeMeasureSpec(int.MaxValue, AMeasureSpecMode.AtMost));
-
-        var height = _bottomSheetHandle.Handle.MeasuredHeight
-             + (_bottomSheetHeader?.HeaderView.MeasuredHeight ?? 0)
+        var height = _bottomSheetHandle.Handle.Height
+             + (_bottomSheetHeader?.HeaderView.Height ?? 0)
              - _handleMargin
              - _headerMargin
              + PeekHeight();
@@ -515,7 +505,7 @@ internal sealed class BottomSheet : IDisposable
         }
         else
         {
-            return _platformBottomSheetPeek?.MeasuredHeight ?? 0;
+            return _platformBottomSheetPeek?.Height ?? 0;
         }
     }
 
@@ -529,7 +519,6 @@ internal sealed class BottomSheet : IDisposable
         _bottomSheetDialog.DismissEvent -= BottomSheetDialogOnDismissEvent;
 
         _sheetContainer.Dispose();
-        _bottomSheetDialog.Dispose();
         _bottomSheetHandle.Dispose();
         _bottomSheetHeader?.Dispose();
         _bottomSheetHeader = null;
@@ -537,6 +526,8 @@ internal sealed class BottomSheet : IDisposable
         _platformBottomSheetPeek = null;
         _platformBottomSheetContent?.Dispose();
         _platformBottomSheetContent = null;
+
+        _bottomSheetDialog.Dispose();
 
         _handleLayoutParams?.Dispose();
         _handleLayoutParams = null;
