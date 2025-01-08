@@ -5,6 +5,7 @@ using Google.Android.Material.BottomSheet;
 using AGravityFlags = Android.Views.GravityFlags;
 using AView = Android.Views.View;
 using AViewGroup = Android.Views.ViewGroup;
+using AWindowInsets = Android.Views.WindowInsets;
 #pragma warning disable SA1200
 
 namespace Plugin.Maui.BottomSheet.Platform.Android;
@@ -68,6 +69,7 @@ internal sealed class BottomSheet : IDisposable
 
         _bottomSheetDialog = new BottomSheetDialog(context);
         _bottomSheetDialog.Behavior.AddBottomSheetCallback(_bottomSheetCallback);
+        _bottomSheetDialog.Behavior.MaxHeight = MaxHeight();
         _bottomSheetDialog.DismissEvent += BottomSheetDialogOnDismissEvent;
 
         _bottomSheetHandle = new BottomSheetHandle(context);
@@ -85,7 +87,8 @@ internal sealed class BottomSheet : IDisposable
                 RightMargin = Convert.ToInt32(_context.ToPixels(_padding.Right)),
             },
         };
-        _sheetContainer.SetMinimumHeight(_context.Resources?.DisplayMetrics?.HeightPixels ?? 0);
+
+        _sheetContainer.SetMinimumHeight(_bottomSheetDialog.Behavior.MaxHeight);
         _handleMargin = Convert.ToInt32(_context.ToPixels(5));
         _headerMargin = Convert.ToInt32(_context.ToPixels(5));
     }
@@ -182,6 +185,7 @@ internal sealed class BottomSheet : IDisposable
         AddContent();
 
         _bottomSheetDialog.Behavior.FitToContents = false;
+        _bottomSheetDialog.Behavior.HalfExpandedRatio = 0.5f;
         _bottomSheetDialog.Behavior.HalfExpandedRatio = 0.5f;
 
         SetState(bottomSheet.CurrentState);
@@ -457,10 +461,10 @@ internal sealed class BottomSheet : IDisposable
             + (_bottomSheetHeader?.HeaderView.Height ?? 0)
             - _handleMargin
             - _headerMargin
-            + PeekHeight();
+            + PeekHeight()
+            + BottomInset();
 
-        _bottomSheetDialog.Behavior.PeekHeight = height
-            + _bottomSheetDialog.Window?.DecorView.RootView?.RootWindowInsets?.SystemWindowInsetBottom ?? 0;
+        _bottomSheetDialog.Behavior.PeekHeight = height > _bottomSheetDialog.Behavior.MaxHeight ? _bottomSheetDialog.Behavior.MaxHeight : height;
     }
 
     private int PeekHeight()
@@ -474,6 +478,79 @@ internal sealed class BottomSheet : IDisposable
         {
             return _platformBottomSheetPeek?.Height ?? 0;
         }
+    }
+
+    private void BottomSheetPeekOnPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (_bottomSheetPeek is null)
+        {
+            return;
+        }
+
+        if (e.PropertyName == nameof(BottomSheetPeek.PeekHeight))
+        {
+            _bottomSheetDialog.Behavior.PeekHeight = PeekHeight() > _bottomSheetDialog.Behavior.MaxHeight ? _bottomSheetDialog.Behavior.PeekHeight : PeekHeight();
+        }
+    }
+
+    private void BottomSheetCallbackOnStateChanged(object? sender, BottomSheetStateChangedEventArgs e)
+    {
+        _eventManager.HandleEvent(
+            this,
+            new BottomSheetStateChangedEventArgs(e.State),
+            nameof(StateChanged));
+    }
+
+    private void BottomSheetDialogOnDismissEvent(object? sender, EventArgs e)
+    {
+        _eventManager.HandleEvent(this, EventArgs.Empty, nameof(Closed));
+    }
+
+    private int TopInset()
+    {
+        int top;
+
+        if (OperatingSystem.IsAndroidVersionAtLeast(30))
+        {
+            var cutoutInsets = _bottomSheetDialog.Window?.DecorView.RootView?.RootWindowInsets?.GetInsetsIgnoringVisibility(AWindowInsets.Type.DisplayCutout());
+
+            top = cutoutInsets?.Top ?? 0;
+        }
+        else
+        {
+            var systemWindowInsets = _bottomSheetDialog.Window?.DecorView.RootView?.RootWindowInsets?.ConsumeSystemWindowInsets();
+
+            top = systemWindowInsets?.SystemWindowInsetTop ?? 0;
+        }
+
+        return top;
+    }
+
+    private int BottomInset()
+    {
+        int bottom;
+
+        if (OperatingSystem.IsAndroidVersionAtLeast(30))
+        {
+            var navigationBars = _bottomSheetDialog.Window?.DecorView.RootView?.RootWindowInsets?.GetInsetsIgnoringVisibility(AWindowInsets.Type.NavigationBars());
+
+            bottom = navigationBars?.Bottom ?? 0;
+        }
+        else
+        {
+            var systemWindowInsets = _bottomSheetDialog.Window?.DecorView.RootView?.RootWindowInsets?.ConsumeSystemWindowInsets();
+
+            bottom = systemWindowInsets?.SystemWindowInsetBottom ?? 0;
+        }
+
+        return bottom;
+    }
+
+    private int MaxHeight()
+    {
+        return _context.Resources?.DisplayMetrics?.HeightPixels ?? 0
+            - TopInset()
+            - BottomInset();
     }
 
     private void Dispose(bool disposing)
@@ -508,31 +585,5 @@ internal sealed class BottomSheet : IDisposable
 
         _bottomSheetDialog.DismissEvent -= BottomSheetDialogOnDismissEvent;
         _bottomSheetDialog.Dispose();
-    }
-
-    private void BottomSheetPeekOnPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-    {
-        if (_bottomSheetPeek is null)
-        {
-            return;
-        }
-
-        if (e.PropertyName == nameof(BottomSheetPeek.PeekHeight))
-        {
-            _bottomSheetDialog.Behavior.PeekHeight = PeekHeight();
-        }
-    }
-
-    private void BottomSheetCallbackOnStateChanged(object? sender, BottomSheetStateChangedEventArgs e)
-    {
-        _eventManager.HandleEvent(
-            this,
-            new BottomSheetStateChangedEventArgs(e.State),
-            nameof(StateChanged));
-    }
-
-    private void BottomSheetDialogOnDismissEvent(object? sender, EventArgs e)
-    {
-        _eventManager.HandleEvent(this, EventArgs.Empty, nameof(Closed));
     }
 }
