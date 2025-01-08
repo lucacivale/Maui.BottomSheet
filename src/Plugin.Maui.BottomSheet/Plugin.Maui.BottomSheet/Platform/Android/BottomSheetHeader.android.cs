@@ -159,12 +159,12 @@ internal sealed class BottomSheetHeader : IDisposable
         _headerView?.RemoveOnLayoutChangeListener(_headerLayoutChangeListener);
         if (_headerLayout is not null)
         {
-            RemoveView(_headerLayout, null);
+            RemoveView(ref _headerLayout, null);
             _headerView = null;
         }
         else
         {
-            RemoveView(_headerView, _virtualHeaderView);
+            RemoveView(ref _headerView, _virtualHeaderView);
         }
 
         RemoveView(ref _topLeftView, _bottomSheetHeader.TopLeftButton);
@@ -366,9 +366,6 @@ internal sealed class BottomSheetHeader : IDisposable
         }
 
         Remove();
-
-        RemoveView(ref _headerLayout, null);
-        _headerView = null;
 
         _headerLayoutChangeListener.Dispose();
     }
