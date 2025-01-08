@@ -54,30 +54,7 @@ internal sealed class BottomSheetNavigationService : IBottomSheetNavigationServi
     {
         Dispatch(() =>
         {
-            var parent = _bottomSheetStack.Current.Parent;
-
-            _bottomSheetStack.Current.Closed -= OnClose;
-            _bottomSheetStack.Current.IsOpen = false;
-            _bottomSheetStack.Current.Handler?.DisconnectHandler();
-            _bottomSheetStack.Remove();
-
-            IQueryAttributable? queryAttributable = null;
-
-            if (_bottomSheetStack.IsEmpty
-                && parent.BindingContext is IQueryAttributable parentBindingContext)
-            {
-                queryAttributable = parentBindingContext;
-            }
-            else if (_bottomSheetStack is { IsEmpty: false, Current.BindingContext: IQueryAttributable sheetBindingContext })
-            {
-                queryAttributable = sheetBindingContext;
-            }
-
-            if (parameters is not null
-                && queryAttributable is not null)
-            {
-                queryAttributable.ApplyQueryAttributes(parameters);
-            }
+            DoGoBack(parameters);
         });
     }
 
@@ -88,17 +65,52 @@ internal sealed class BottomSheetNavigationService : IBottomSheetNavigationServi
         {
             while (!_bottomSheetStack.IsEmpty)
             {
-                GoBack();
+                DoGoBack();
             }
         });
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA1826:Use property instead of Linq Enumerable method", Justification = "Validated.")]
-    private static void Dispatch(Action action)
+    private void Dispatch(Action action)
     {
-        var page = Application.Current?.Windows.LastOrDefault()?.Page ?? throw new InvalidOperationException("Application.Current?.Windows.LastOrDefault()?.Page cannot be null.");
+        var dispatcher = _bottomSheetStack is { IsEmpty: false, Current: BindableObject bindable } ? bindable.Dispatcher : Application.Current?.Windows.LastOrDefault()?.Page?.Dispatcher;
 
-        page.Dispatcher.Dispatch(action);
+        ArgumentNullException.ThrowIfNull(dispatcher);
+
+        dispatcher.Dispatch(action);
+    }
+
+    private void DoGoBack(IBottomSheetNavigationParameters? parameters = null)
+    {
+        if (_bottomSheetStack.IsEmpty)
+        {
+            return;
+        }
+
+        var parent = _bottomSheetStack.Current.Parent;
+
+        _bottomSheetStack.Current.Closed -= OnClose;
+        _bottomSheetStack.Current.IsOpen = false;
+        _bottomSheetStack.Current.Handler?.DisconnectHandler();
+        _bottomSheetStack.Remove();
+
+        IQueryAttributable? queryAttributable = null;
+
+        if (_bottomSheetStack.IsEmpty
+            && parent.BindingContext is IQueryAttributable parentBindingContext)
+        {
+            queryAttributable = parentBindingContext;
+        }
+        else if (_bottomSheetStack is { IsEmpty: false, Current.BindingContext: IQueryAttributable sheetBindingContext })
+        {
+            queryAttributable = sheetBindingContext;
+        }
+
+        if (parameters is not null
+            && queryAttributable is not null)
+        {
+            queryAttributable.ApplyQueryAttributes(parameters);
+        }
     }
 
     private void OnClose(object? sender, EventArgs e)

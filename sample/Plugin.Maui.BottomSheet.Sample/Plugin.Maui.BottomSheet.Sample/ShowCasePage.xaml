@@ -12,6 +12,8 @@
         <VerticalStackLayout Spacing="20">
             <Button HorizontalOptions="Center" Text="Open showcase" Command="{Binding OpenShowcaseCommand}"/>
             <Button HorizontalOptions="Center" Text="Open showcase page as BottomSheet" Command="{Binding OpenShowcasePageAsBottomSheetCommand}"/>
+            <Button HorizontalOptions="Center" Text="Close all open sheets" Command="{Binding CloseAllOpenSheetsCommand}"/>
+            <Button HorizontalOptions="Center" Text="Close current open sheet" Command="{Binding CloseCurrentSheetCommand}"/>
             <Button LineBreakMode="WordWrap" HorizontalOptions="Center" Text="Open custom header showcase view as BottomSheet" Command="{Binding OpenCustomHeaderShowcaseViewAsBottomSheetCommand}"/>
             <bottomsheet:BottomSheet
                 Padding="20"
