@@ -176,6 +176,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     {
         if (SheetPresentationController is not null)
         {
+            SheetPresentationController.PrefersEdgeAttachedInCompactHeight = true;
             _previousIdentifier = SheetPresentationController.SelectedDetentIdentifier;
         }
 
