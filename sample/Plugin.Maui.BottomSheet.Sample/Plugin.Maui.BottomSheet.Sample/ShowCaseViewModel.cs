@@ -88,4 +88,16 @@ public sealed partial class ShowCaseViewModel : ObservableObject
     {
         _bottomSheetNavigationService.NavigateTo<CustomHeaderShowcaseViewModel>("CustomHeaderShowcase");
     }
+
+    [RelayCommand]
+    private void CloseAllOpenSheets()
+    {
+        _bottomSheetNavigationService.ClearBottomSheetStack();
+    }
+
+    [RelayCommand]
+    private void CloseCurrentSheet()
+    {
+        _bottomSheetNavigationService.GoBack();
+    }
 }
