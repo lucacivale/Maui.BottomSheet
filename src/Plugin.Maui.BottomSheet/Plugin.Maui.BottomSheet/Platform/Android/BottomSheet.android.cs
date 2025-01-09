@@ -32,7 +32,8 @@ internal sealed class BottomSheet : IDisposable
     private readonly BottomSheetDialog _bottomSheetDialog;
     private readonly BottomSheetHandle _bottomSheetHandle;
     private readonly BottomSheetCallback _bottomSheetCallback;
-    private readonly BottomSheetLayoutChangeListener _bottomSheetLayoutChangeListener;
+    private readonly BottomSheetLayoutChangeListener _bottomSheetContentChangeListener;
+    private readonly BottomSheetLayoutChangeListener _bottomSheetContainerChangeListener;
     private readonly int _handleMargin;
     private readonly int _headerMargin;
 
@@ -69,13 +70,15 @@ internal sealed class BottomSheet : IDisposable
 
         _bottomSheetDialog = new BottomSheetDialog(context);
         _bottomSheetDialog.Behavior.AddBottomSheetCallback(_bottomSheetCallback);
-        _bottomSheetDialog.Behavior.MaxHeight = MaxHeight();
         _bottomSheetDialog.DismissEvent += BottomSheetDialogOnDismissEvent;
 
         _bottomSheetHandle = new BottomSheetHandle(context);
 
-        _bottomSheetLayoutChangeListener = new BottomSheetLayoutChangeListener();
-        _bottomSheetLayoutChangeListener.LayoutChange += BottomSheetLayoutChanged;
+        _bottomSheetContentChangeListener = new BottomSheetLayoutChangeListener();
+        _bottomSheetContentChangeListener.LayoutChange += BottomSheetContentChanged;
+
+        _bottomSheetContainerChangeListener = new BottomSheetLayoutChangeListener();
+        _bottomSheetContainerChangeListener.LayoutChange += BottomSheetContainerChangeListenerOnLayoutChange;
 
         _sheetContainer = new GridLayout(_context)
         {
@@ -87,8 +90,9 @@ internal sealed class BottomSheet : IDisposable
                 RightMargin = Convert.ToInt32(_context.ToPixels(_padding.Right)),
             },
         };
+        _sheetContainer.AddOnLayoutChangeListener(_bottomSheetContainerChangeListener);
+        _sheetContainer.SetMinimumHeight(MaxHeight());
 
-        _sheetContainer.SetMinimumHeight(_bottomSheetDialog.Behavior.MaxHeight);
         _handleMargin = Convert.ToInt32(_context.ToPixels(5));
         _headerMargin = Convert.ToInt32(_context.ToPixels(5));
     }
@@ -202,14 +206,14 @@ internal sealed class BottomSheet : IDisposable
     /// </summary>
     public void Close()
     {
-        _bottomSheetHandle.Handle.RemoveOnLayoutChangeListener(_bottomSheetLayoutChangeListener);
+        _bottomSheetHandle.Handle.RemoveOnLayoutChangeListener(_bottomSheetContentChangeListener);
 
         if (_bottomSheetHeader is not null)
         {
-            _bottomSheetHeader.LayoutChanged -= BottomSheetLayoutChanged;
+            _bottomSheetHeader.LayoutChanged -= BottomSheetContentChanged;
         }
 
-        _platformBottomSheetPeek?.RemoveOnLayoutChangeListener(_bottomSheetLayoutChangeListener);
+        _platformBottomSheetPeek?.RemoveOnLayoutChangeListener(_bottomSheetContentChangeListener);
 
         _bottomSheetCallback.StateChanged -= BottomSheetCallbackOnStateChanged;
         _bottomSheetDialog.Behavior.RemoveBottomSheetCallback(_bottomSheetCallback);
@@ -262,7 +266,7 @@ internal sealed class BottomSheet : IDisposable
             _context,
             _mauiContext,
             header);
-        _bottomSheetHeader.LayoutChanged += BottomSheetLayoutChanged;
+        _bottomSheetHeader.LayoutChanged += BottomSheetContentChanged;
     }
 
     /// <summary>
@@ -306,7 +310,7 @@ internal sealed class BottomSheet : IDisposable
             RowSpec = GridLayout.InvokeSpec(HandleRow),
         };
         _handleLayoutParams.SetGravity(AGravityFlags.CenterHorizontal);
-        _bottomSheetHandle.Handle.AddOnLayoutChangeListener(_bottomSheetLayoutChangeListener);
+        _bottomSheetHandle.Handle.AddOnLayoutChangeListener(_bottomSheetContentChangeListener);
         _sheetContainer.AddView(_bottomSheetHandle.Handle, _handleLayoutParams);
     }
 
@@ -357,7 +361,7 @@ internal sealed class BottomSheet : IDisposable
         };
         _peekLayoutParams.SetGravity(AGravityFlags.Fill);
 
-        _platformBottomSheetPeek.AddOnLayoutChangeListener(_bottomSheetLayoutChangeListener);
+        _platformBottomSheetPeek.AddOnLayoutChangeListener(_bottomSheetContentChangeListener);
         _sheetContainer.AddView(_platformBottomSheetPeek, _peekLayoutParams);
 
         _bottomSheetDialog.Behavior.SkipCollapsed = false;
@@ -399,7 +403,7 @@ internal sealed class BottomSheet : IDisposable
     /// </summary>
     public void HideHandle()
     {
-        _bottomSheetHandle.Handle.RemoveOnLayoutChangeListener(_bottomSheetLayoutChangeListener);
+        _bottomSheetHandle.Handle.RemoveOnLayoutChangeListener(_bottomSheetContentChangeListener);
         _bottomSheetHandle.Remove();
         _handleLayoutParams?.Dispose();
     }
@@ -411,7 +415,7 @@ internal sealed class BottomSheet : IDisposable
     {
         if (_bottomSheetHeader is not null)
         {
-            _bottomSheetHeader.LayoutChanged -= BottomSheetLayoutChanged;
+            _bottomSheetHeader.LayoutChanged -= BottomSheetContentChanged;
         }
 
         _bottomSheetHeader?.Remove();
@@ -428,7 +432,7 @@ internal sealed class BottomSheet : IDisposable
             _bottomSheetPeek.PropertyChanged -= BottomSheetPeekOnPropertyChanged;
         }
 
-        _platformBottomSheetPeek?.RemoveOnLayoutChangeListener(_bottomSheetLayoutChangeListener);
+        _platformBottomSheetPeek?.RemoveOnLayoutChangeListener(_bottomSheetContentChangeListener);
         _bottomSheetDialog.Behavior.SkipCollapsed = true;
 
         _platformBottomSheetPeek?.RemoveFromParent();
@@ -455,7 +459,7 @@ internal sealed class BottomSheet : IDisposable
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1422:Validate platform compatibility", Justification = "Validated.")]
-    private void BottomSheetLayoutChanged(object? sender, EventArgs e)
+    private void BottomSheetContentChanged(object? sender, EventArgs e)
     {
         var height = _bottomSheetHandle.Handle.Height
             + (_bottomSheetHeader?.HeaderView.Height ?? 0)
@@ -506,33 +510,13 @@ internal sealed class BottomSheet : IDisposable
         _eventManager.HandleEvent(this, EventArgs.Empty, nameof(Closed));
     }
 
-    private int TopInset()
-    {
-        int top;
-
-        if (OperatingSystem.IsAndroidVersionAtLeast(30))
-        {
-            var cutoutInsets = _bottomSheetDialog.Window?.DecorView.RootView?.RootWindowInsets?.GetInsetsIgnoringVisibility(AWindowInsets.Type.DisplayCutout());
-
-            top = cutoutInsets?.Top ?? 0;
-        }
-        else
-        {
-            var systemWindowInsets = _bottomSheetDialog.Window?.DecorView.RootView?.RootWindowInsets?.ConsumeSystemWindowInsets();
-
-            top = systemWindowInsets?.SystemWindowInsetTop ?? 0;
-        }
-
-        return top;
-    }
-
     private int BottomInset()
     {
         int bottom;
 
         if (OperatingSystem.IsAndroidVersionAtLeast(30))
         {
-            var navigationBars = _bottomSheetDialog.Window?.DecorView.RootView?.RootWindowInsets?.GetInsetsIgnoringVisibility(AWindowInsets.Type.NavigationBars());
+            var navigationBars = _bottomSheetDialog.Window?.DecorView.RootView?.RootWindowInsets?.GetInsetsIgnoringVisibility(AWindowInsets.Type.SystemBars());
 
             bottom = navigationBars?.Bottom ?? 0;
         }
@@ -546,10 +530,14 @@ internal sealed class BottomSheet : IDisposable
         return bottom;
     }
 
+    private void BottomSheetContainerChangeListenerOnLayoutChange(object? sender, EventArgs e)
+    {
+        _bottomSheetDialog.Behavior.MaxHeight = MaxHeight();
+    }
+
     private int MaxHeight()
     {
-        return _context.Resources?.DisplayMetrics?.HeightPixels ?? 0
-            - TopInset()
+        return (_context.Resources?.DisplayMetrics?.HeightPixels ?? 0)
             - BottomInset();
     }
 
@@ -576,9 +564,12 @@ internal sealed class BottomSheet : IDisposable
         _platformBottomSheetPeek = null;
         _platformBottomSheetContent?.Dispose();
         _platformBottomSheetContent = null;
+
+        _sheetContainer.RemoveOnLayoutChangeListener(_bottomSheetContainerChangeListener);
+        _bottomSheetContainerChangeListener.Dispose();
         _sheetContainer.Dispose();
 
-        _bottomSheetLayoutChangeListener.Dispose();
+        _bottomSheetContentChangeListener.Dispose();
 
         _bottomSheetCallback.StateChanged -= BottomSheetCallbackOnStateChanged;
         _bottomSheetCallback.Dispose();
