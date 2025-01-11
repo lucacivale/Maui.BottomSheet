@@ -35,7 +35,7 @@
 
 # Setup
 
-Install Package [Plugin.Maui.BottomSheet](https://www.nuget.org/packages/Plugin.Maui.BottomSheet/9.0.1-pre)
+Install package [Plugin.Maui.BottomSheet](https://www.nuget.org/packages/Plugin.Maui.BottomSheet/9.0.1-pre)
 Enable this plugin by calling `UseBottomSheet()` in your `MauiProgram.cs`
 
 ```cs
