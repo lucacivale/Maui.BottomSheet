@@ -5,7 +5,6 @@ using Google.Android.Material.BottomSheet;
 using AGravityFlags = Android.Views.GravityFlags;
 using AView = Android.Views.View;
 using AViewGroup = Android.Views.ViewGroup;
-using AWindowInsets = Android.Views.WindowInsets;
 #pragma warning disable SA1200
 
 namespace Plugin.Maui.BottomSheet.Platform.Android;
@@ -188,6 +187,7 @@ internal sealed class BottomSheet : IDisposable
         AddPeek();
         AddContent();
 
+        _bottomSheetDialog.Behavior.GestureInsetBottomIgnored = true;
         _bottomSheetDialog.Behavior.FitToContents = false;
         _bottomSheetDialog.Behavior.HalfExpandedRatio = 0.5f;
         _bottomSheetDialog.Behavior.HalfExpandedRatio = 0.5f;
@@ -463,10 +463,9 @@ internal sealed class BottomSheet : IDisposable
     {
         var height = _bottomSheetHandle.Handle.Height
             + (_bottomSheetHeader?.HeaderView.Height ?? 0)
-            - _handleMargin
-            - _headerMargin
-            + PeekHeight()
-            + BottomInset();
+            + _handleMargin
+            + _headerMargin
+            + PeekHeight();
 
         _bottomSheetDialog.Behavior.PeekHeight = height > _bottomSheetDialog.Behavior.MaxHeight ? _bottomSheetDialog.Behavior.MaxHeight : height;
     }
@@ -510,26 +509,6 @@ internal sealed class BottomSheet : IDisposable
         _eventManager.HandleEvent(this, EventArgs.Empty, nameof(Closed));
     }
 
-    private int BottomInset()
-    {
-        int bottom;
-
-        if (OperatingSystem.IsAndroidVersionAtLeast(30))
-        {
-            var navigationBars = _bottomSheetDialog.Window?.DecorView.RootView?.RootWindowInsets?.GetInsetsIgnoringVisibility(AWindowInsets.Type.SystemBars());
-
-            bottom = navigationBars?.Bottom ?? 0;
-        }
-        else
-        {
-            var systemWindowInsets = _bottomSheetDialog.Window?.DecorView.RootView?.RootWindowInsets?.ConsumeSystemWindowInsets();
-
-            bottom = systemWindowInsets?.SystemWindowInsetBottom ?? 0;
-        }
-
-        return bottom;
-    }
-
     private void BottomSheetContainerChangeListenerOnLayoutChange(object? sender, EventArgs e)
     {
         _bottomSheetDialog.Behavior.MaxHeight = MaxHeight();
@@ -537,8 +516,7 @@ internal sealed class BottomSheet : IDisposable
 
     private int MaxHeight()
     {
-        return (_context.Resources?.DisplayMetrics?.HeightPixels ?? 0)
-            - BottomInset();
+        return _context.Resources?.DisplayMetrics?.HeightPixels ?? 0;
     }
 
     private void Dispose(bool disposing)
