@@ -136,10 +136,7 @@ return builder.Build();
 # XAML usage
 
 In order to make use of sheet within XAML you can use this namespace:
-
-'xmlns:bottomsheet="clr-namespace:Maui.BottomSheet;assembly=Maui.BottomSheet"'
-<br> <strong>or</strong> <br>
-xmlns:bottomsheet="http://pluginmauibottomsheet.com"</strong>
+xmlns:bottomsheet="http://pluginmauibottomsheet.com"
 
 `BottomSheet` is a `View` and can be added in any layout or control which accepts `View`.
 To open/close a BottomSheet simply set `IsOpen` property to true/false. You can have <strong>multiple</strong> BottomSheets on one page.
