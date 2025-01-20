@@ -35,8 +35,8 @@
         <Authors>Luca Civale</Authors>
         <Company>Luca Civale</Company>
         <Copyright>Luca Civale</Copyright>
-        <PackageProjectUrl>https://github.com/lucacivale/Plugin.Maui.BottomSheet</PackageProjectUrl>
-        <RepositoryUrl>https://github.com/lucacivale/Plugin.Maui.BottomSheet</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/lucacivale/Maui.BottomSheet</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/lucacivale/Maui.BottomSheet</RepositoryUrl>
         <NeutralLanguage>en</NeutralLanguage>
         <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -45,7 +45,7 @@
         <PackageIcon>Icon.jpg</PackageIcon>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageId>Plugin.Maui.BottomSheet</PackageId>
-		<IsAotCompatible>true</IsAotCompatible>
+	<IsAotCompatible>true</IsAotCompatible>
     </PropertyGroup>
 
     <ItemGroup>
