@@ -2,6 +2,8 @@
 using Android.Content;
 using Android.Widget;
 using Google.Android.Material.BottomSheet;
+using AColor = Android.Graphics.Color;
+using AColorDrawable = Android.Graphics.Drawables.ColorDrawable;
 using AGravityFlags = Android.Views.GravityFlags;
 using AView = Android.Views.View;
 using AViewGroup = Android.Views.ViewGroup;
@@ -9,6 +11,7 @@ using AViewGroup = Android.Views.ViewGroup;
 
 namespace Plugin.Maui.BottomSheet.Platform.Android;
 
+using _Microsoft.Android.Resource.Designer;
 using Microsoft.Maui.Platform;
 
 // ReSharper disable once RedundantNameQualifier
@@ -34,6 +37,7 @@ internal sealed class BottomSheet : IDisposable
     private readonly BottomSheetLayoutChangeListener _bottomSheetContentChangeListener;
     private readonly int _handleMargin;
     private readonly int _headerMargin;
+    private readonly AColorDrawable _backgroundColorDrawable;
 
     private BottomSheetHeader? _bottomSheetHeader;
     private BottomSheetPeek? _bottomSheetPeek;
@@ -63,10 +67,15 @@ internal sealed class BottomSheet : IDisposable
         _context = context;
         _mauiContext = mauiContext;
 
+        _backgroundColorDrawable = new AColorDrawable();
+        _backgroundColorDrawable.Color = AColor.Black;
+        _backgroundColorDrawable.SetAlpha(80);
+
         _bottomSheetCallback = new BottomSheetCallback();
         _bottomSheetCallback.StateChanged += BottomSheetCallbackOnStateChanged;
 
-        _bottomSheetDialog = new BottomSheetDialog(context);
+        _bottomSheetDialog = new BottomSheetDialog(context, Resource.Style.ThemeOverlay_App_BottomSheetDialog);
+        _bottomSheetDialog.Window?.SetBackgroundDrawable(_backgroundColorDrawable);
         _bottomSheetDialog.Behavior.AddBottomSheetCallback(_bottomSheetCallback);
         _bottomSheetDialog.Behavior.MaxHeight = MaxHeight();
         _bottomSheetDialog.DismissEvent += BottomSheetDialogOnDismissEvent;
@@ -537,6 +546,8 @@ internal sealed class BottomSheet : IDisposable
         _sheetContainer.Dispose();
 
         _bottomSheetContentChangeListener.Dispose();
+
+        _backgroundColorDrawable.Dispose();
 
         _bottomSheetCallback.StateChanged -= BottomSheetCallbackOnStateChanged;
         _bottomSheetCallback.Dispose();
