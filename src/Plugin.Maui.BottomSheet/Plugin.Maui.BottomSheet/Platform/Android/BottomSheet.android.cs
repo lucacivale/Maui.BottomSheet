@@ -32,7 +32,6 @@ internal sealed class BottomSheet : IDisposable
     private readonly BottomSheetHandle _bottomSheetHandle;
     private readonly BottomSheetCallback _bottomSheetCallback;
     private readonly BottomSheetLayoutChangeListener _bottomSheetContentChangeListener;
-    private readonly BottomSheetLayoutChangeListener _bottomSheetContainerChangeListener;
     private readonly int _handleMargin;
     private readonly int _headerMargin;
 
@@ -69,15 +68,13 @@ internal sealed class BottomSheet : IDisposable
 
         _bottomSheetDialog = new BottomSheetDialog(context);
         _bottomSheetDialog.Behavior.AddBottomSheetCallback(_bottomSheetCallback);
+        _bottomSheetDialog.Behavior.MaxHeight = MaxHeight();
         _bottomSheetDialog.DismissEvent += BottomSheetDialogOnDismissEvent;
 
         _bottomSheetHandle = new BottomSheetHandle(context);
 
         _bottomSheetContentChangeListener = new BottomSheetLayoutChangeListener();
         _bottomSheetContentChangeListener.LayoutChange += BottomSheetContentChanged;
-
-        _bottomSheetContainerChangeListener = new BottomSheetLayoutChangeListener();
-        _bottomSheetContainerChangeListener.LayoutChange += BottomSheetContainerChangeListenerOnLayoutChange;
 
         _sheetContainer = new GridLayout(_context)
         {
@@ -89,8 +86,7 @@ internal sealed class BottomSheet : IDisposable
                 RightMargin = Convert.ToInt32(_context.ToPixels(_padding.Right)),
             },
         };
-        _sheetContainer.AddOnLayoutChangeListener(_bottomSheetContainerChangeListener);
-        _sheetContainer.SetMinimumHeight(MaxHeight());
+        _sheetContainer.SetMinimumHeight(_bottomSheetDialog.Behavior.MaxHeight);
 
         _handleMargin = Convert.ToInt32(_context.ToPixels(5));
         _headerMargin = Convert.ToInt32(_context.ToPixels(5));
@@ -509,11 +505,6 @@ internal sealed class BottomSheet : IDisposable
         _eventManager.HandleEvent(this, EventArgs.Empty, nameof(Closed));
     }
 
-    private void BottomSheetContainerChangeListenerOnLayoutChange(object? sender, EventArgs e)
-    {
-        _bottomSheetDialog.Behavior.MaxHeight = MaxHeight();
-    }
-
     private int MaxHeight()
     {
         return _context.Resources?.DisplayMetrics?.HeightPixels ?? 0;
@@ -543,8 +534,6 @@ internal sealed class BottomSheet : IDisposable
         _platformBottomSheetContent?.Dispose();
         _platformBottomSheetContent = null;
 
-        _sheetContainer.RemoveOnLayoutChangeListener(_bottomSheetContainerChangeListener);
-        _bottomSheetContainerChangeListener.Dispose();
         _sheetContainer.Dispose();
 
         _bottomSheetContentChangeListener.Dispose();
