@@ -216,6 +216,14 @@ internal sealed class MauiBottomSheet : UIView
         _bottomSheet.SetCornerRadius(_virtualView?.CornerRadius ?? 0);
     }
 
+    /// <summary>
+    /// Sets window background color.
+    /// </summary>
+    public void SetWindowBackgroundColor()
+    {
+        _bottomSheet.SetWindowBackgroundColor(_virtualView?.WindowBackgroundColor ?? Colors.Transparent);
+    }
+
     /// <inheritdoc/>
     protected override void Dispose(bool disposing)
     {

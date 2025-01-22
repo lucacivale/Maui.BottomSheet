@@ -4,11 +4,16 @@ using AsyncAwaitBestPractices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Navigation;
-using System;
 
 public sealed partial class ShowCaseViewModel : ObservableObject
 {
-    private readonly Random _random = new();
+    private readonly List<string> _colors = 
+    [
+        "#ffaf83aa",
+        "#803983aa",
+        "#ff398340",
+        "#66b98340"
+    ];
     private readonly IBottomSheetNavigationService _bottomSheetNavigationService;
 
     public ShowCaseViewModel(IBottomSheetNavigationService bottomSheetNavigationService)
@@ -31,7 +36,10 @@ public sealed partial class ShowCaseViewModel : ObservableObject
     [RelayCommand]
     private void ChangeWindowBackgroundColor()
     {
-        WindowBackgroundColor = Color.FromArgb(string.Format("#{0:X6}", _random.Next(0x1000000)));
+        var colorIndex = _colors.IndexOf(WindowBackgroundColor.ToArgbHex(true).ToLower());
+        var elementAt = colorIndex == _colors.Count - 1 ? 0 : colorIndex + 1;
+
+        WindowBackgroundColor = Color.FromArgb(_colors.ElementAt(elementAt));
     }
 
     [RelayCommand]

@@ -103,6 +103,6 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
 
     private static void MapWindowBackgroundColor(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
-        //handler.PlatformView.SetWindowBackgroundColor();
+        handler.PlatformView.SetWindowBackgroundColor();
     }
 }
