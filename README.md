@@ -61,21 +61,22 @@ return builder.Build();
 
 # API
 
-| Type                                        | Name | Description                                                                    |
-|---------------------------------------------|-----|--------------------------------------------------------------------------------|
+| Type                                        | Name            | Description                                                                    |
+|---------------------------------------------|-----------------|--------------------------------------------------------------------------------|
 | bool                                        | IsCancelable    | Can be closed by user either through gestures or clicking in background        |
-| bool                                        | HasHandle    | Show handle                                                                    |
-| bool                                        | ShowHeader    | Show header                                                                    |
-| bool                                        | IsOpen    | Open or close                                                                  |
-| bool                                        | IsDraggable    | Can be dragged(Useful if drawing gestures are made inside bottom sheet)        |
-| List<[BottomSheetState](#bottomSheetState)> | States    | Allowed states. CurrentState must be a value of this collection.               |
+| bool                                        | HasHandle       | Show handle                                                                    |
+| bool                                        | ShowHeader      | Show header                                                                    |
+| bool                                        | IsOpen          | Open or close                                                                  |
+| bool                                        | IsDraggable     | Can be dragged(Useful if drawing gestures are made inside bottom sheet)        |
+| List<[BottomSheetState](#bottomSheetState)> | States          | Allowed states. CurrentState must be a value of this collection.               |
 | [BottomSheetState](#bottomSheetState)       | CurrentState    | Current state                                                                  |
-| [BottomSheetHeader](#bottomSheetHeader)     | Header    | Configure header                                                               |
-| [BottomSheetPeek](#bottomSheetPeek)         | Peek    | Configure peek(requieres at least iOS 16 -- all other platforms are supported) |
-| [BottomSheetContent](#bottomSheetContent)   | Content    | Configure content                                                              |
-| double                                      | Padding    | Padding                                                                        |
-| Colors                                      | BackgroundColor    | Background color                                                               |
-| bool                                        | IgnoreSafeArea    | Ignore safe area(currently only implemented in iOS)                            |
+| [BottomSheetHeader](#bottomSheetHeader)     | Header          | Configure header                                                               |
+| [BottomSheetPeek](#bottomSheetPeek)         | Peek            | Configure peek(requieres at least iOS 16 -- all other platforms are supported) |
+| [BottomSheetContent](#bottomSheetContent)   | Content         | Configure content                                                              |
+| double                                      | Padding         | Padding                                                                        |
+| Colors                                      | BackgroundColor | Background color                                                               |
+| bool                                        | IgnoreSafeArea  | Ignore safe area(currently only implemented in iOS)                            |
+| float                                       | CornerRadius    | Top left and top right corner radius                                           |
 
 ### BottomSheetState
 | Name   | Description        |

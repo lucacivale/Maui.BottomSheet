@@ -359,6 +359,18 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     }
 
     /// <summary>
+    /// Sets corner radius.
+    /// </summary>
+    /// <param name="cornerRadius">Corner radius.</param>
+    public void SetCornerRadius(float cornerRadius)
+    {
+        if (SheetPresentationController is not null)
+        {
+            SheetPresentationController.PreferredCornerRadius = cornerRadius;
+        }
+    }
+
+    /// <summary>
     /// Sets the background color.
     /// </summary>
     /// <param name="color">Color.</param>

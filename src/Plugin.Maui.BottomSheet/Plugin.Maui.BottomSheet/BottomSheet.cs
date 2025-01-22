@@ -9,6 +9,16 @@ public class BottomSheet : View, IBottomSheet
     /// <summary>
     /// Bindable property.
     /// </summary>
+    public static readonly BindableProperty CornerRadiusProperty =
+        BindableProperty.Create(
+            nameof(CornerRadius),
+            typeof(float),
+            typeof(BottomSheet),
+            defaultValue: 20.0f);
+
+    /// <summary>
+    /// Bindable property.
+    /// </summary>
     public static readonly BindableProperty IgnoreSafeAreaProperty =
         BindableProperty.Create(
             nameof(IgnoreSafeArea),
@@ -279,6 +289,9 @@ public class BottomSheet : View, IBottomSheet
 
     /// <inheritdoc/>
     public bool IsDraggable { get => (bool)GetValue(IsDraggableProperty); set => SetValue(IsDraggableProperty, value); }
+
+    /// <inheritdoc/>
+    public float CornerRadius { get => (float)GetValue(CornerRadiusProperty); set => SetValue(CornerRadiusProperty, value); }
 
     /// <inheritdoc/>
     public BottomSheetPeek? Peek { get => (BottomSheetPeek?)GetValue(PeekProperty); set => SetValue(PeekProperty, value); }

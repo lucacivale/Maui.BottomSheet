@@ -98,4 +98,9 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Mau
     {
         // Method intentionally left empty.
     }
+
+    private static void MapCornerRadius(BottomSheetHandler handler, IBottomSheet bottomSheet)
+    {
+        handler.PlatformView.SetCornerRadius();
+    }
 }

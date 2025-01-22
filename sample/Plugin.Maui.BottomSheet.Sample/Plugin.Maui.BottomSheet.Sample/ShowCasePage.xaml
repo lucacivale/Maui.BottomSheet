@@ -22,6 +22,7 @@
                 HasHandle="{Binding HasHandle}"
                 IsCancelable="{Binding IsCancelable}"
                 ShowHeader="{Binding ShowHeader}"
+                CornerRadius="{Binding CornerRadius}"
                 IsDraggable="{Binding IsDraggable}">
                 <bottomsheet:BottomSheet.Header>
                     <bottomsheet:BottomSheetHeader 
@@ -43,14 +44,20 @@
                                     <Grid Margin="0,10,0,10"
                                           ColumnSpacing="10"
                                           RowSpacing="10" 
-                                          RowDefinitions="40,40,40" 
-                                          ColumnDefinitions="*,*">
+                                          ColumnDefinitions="*,*"
+                                          RowDefinitions="40,40,40,40">
                                         <Label VerticalTextAlignment="Center" Grid.Row="0" Text="Title"/>
                                         <Entry Grid.Row="0" Grid.Column="1" Text="{Binding Title}"/>
                                         <Button Grid.Row="1" Text="None" Command="{Binding HeaderButtonAppearanceModeNoneCommand}"></Button>
                                         <Button Grid.Row="1" Grid.Column="1" Text="Left" Command="{Binding HeaderButtonAppearanceModeLeftCommand}"></Button>
                                         <Button Grid.Row="2" Text="Right" Command="{Binding HeaderButtonAppearanceModeRightCommand}"></Button>
                                         <Button Grid.Row="2" Grid.Column="1" Text="LeftAndRight" Command="{Binding HeaderButtonAppearanceModeLeftAndRightCommand}"></Button>
+                                        <Label VerticalOptions="Center" Text="Corner radius" Grid.Row="3"/>
+                                        <Slider 
+                                            VerticalOptions="Center"
+                                            Minimum="0" 
+                                            Maximum="50"
+                                            Value="{Binding CornerRadius}" Grid.Row="3" Grid.Column="1"/>
                                     </Grid>
                                 </ContentView>
                             </DataTemplate>

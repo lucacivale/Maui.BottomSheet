@@ -77,4 +77,9 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, obj
     {
         throw new NotImplementedException();
     }
+
+    private static void MapCornerRadius(BottomSheetHandler handler, IBottomSheet bottomSheet)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -75,6 +75,7 @@ internal sealed class BottomSheet : IDisposable
         SetHeader(bottomSheet.Header);
         SetPeek(bottomSheet.Peek);
         SetContent(bottomSheet.Content);
+        SetCornerRadius(bottomSheet.CornerRadius);
 
         if (bottomSheet.ShowHeader)
         {
@@ -159,6 +160,15 @@ internal sealed class BottomSheet : IDisposable
     public void SetHasHandle(bool hasHandle)
     {
         _bottomSheetUIViewController.SetPrefersGrabberVisible(hasHandle);
+    }
+
+    /// <summary>
+    /// Sets corner radius.
+    /// </summary>
+    /// <param name="cornerRadius">Corner radius.</param>
+    public void SetCornerRadius(float cornerRadius)
+    {
+        _bottomSheetUIViewController.SetCornerRadius(cornerRadius);
     }
 
     /// <summary>
