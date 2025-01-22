@@ -4,9 +4,11 @@ using AsyncAwaitBestPractices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Navigation;
+using System;
 
 public sealed partial class ShowCaseViewModel : ObservableObject
 {
+    private readonly Random _random = new();
     private readonly IBottomSheetNavigationService _bottomSheetNavigationService;
 
     public ShowCaseViewModel(IBottomSheetNavigationService bottomSheetNavigationService)
@@ -22,7 +24,16 @@ public sealed partial class ShowCaseViewModel : ObservableObject
     
     [ObservableProperty]
     private float _cornerRadius = 20;
-    
+
+    [ObservableProperty]
+    private Color _windowBackgroundColor = Colors.Transparent;
+
+    [RelayCommand]
+    private void ChangeWindowBackgroundColor()
+    {
+        WindowBackgroundColor = Color.FromArgb(string.Format("#{0:X6}", _random.Next(0x1000000)));
+    }
+
     [RelayCommand]
     private static void TopLefButton()
     {

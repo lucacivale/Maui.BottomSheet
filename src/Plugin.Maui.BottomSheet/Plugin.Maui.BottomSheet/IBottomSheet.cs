@@ -92,6 +92,11 @@ public interface IBottomSheet : IView, IPadding, ISafeAreaView
     float CornerRadius { get; set; }
 
     /// <summary>
+    /// Gets or sets the <see cref="IBottomSheet"/> background color.
+    /// </summary>
+    Color WindowBackgroundColor { get; set; }
+
+    /// <summary>
     /// Gets or sets the <see cref="BottomSheetPeek"/>.
     /// </summary>
     BottomSheetPeek? Peek { get; set; }

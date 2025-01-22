@@ -82,4 +82,9 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, obj
     {
         throw new NotImplementedException();
     }
+
+    private static void MapWindowBackgroundColor(BottomSheetHandler handler, IBottomSheet bottomSheet)
+    {
+        throw new NotImplementedException();
+    }
 }

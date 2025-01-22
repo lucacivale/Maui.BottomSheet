@@ -2,7 +2,6 @@
 using Android.Content;
 using Android.Widget;
 using Google.Android.Material.BottomSheet;
-using AColor = Android.Graphics.Color;
 using AColorDrawable = Android.Graphics.Drawables.ColorDrawable;
 using AGravityFlags = Android.Views.GravityFlags;
 using AView = Android.Views.View;
@@ -69,9 +68,7 @@ internal sealed class BottomSheet : IDisposable
         _context = context;
         _mauiContext = mauiContext;
 
-        _backgroundColorDrawable = new AColorDrawable();
-        _backgroundColorDrawable.Color = AColor.Black;
-        _backgroundColorDrawable.SetAlpha(80);
+        _backgroundColorDrawable = new();
 
         _bottomSheetCallback = new BottomSheetCallback();
         _bottomSheetCallback.StateChanged += BottomSheetCallbackOnStateChanged;
@@ -79,7 +76,6 @@ internal sealed class BottomSheet : IDisposable
         _bottomSheetDialog = new BottomSheetDialog(context, Resource.Style.ThemeOverlay_App_BottomSheetDialog);
         _bottomSheetDialog.Window?.SetBackgroundDrawable(_backgroundColorDrawable);
         _bottomSheetDialog.Behavior.MaxHeight = MaxHeight();
-        _bottomSheetDialog.DismissEvent += BottomSheetDialogOnDismissEvent;
 
         _bottomSheetHandle = new BottomSheetHandle(context);
 
@@ -196,13 +192,13 @@ internal sealed class BottomSheet : IDisposable
         _bottomSheetDialog.Behavior.GestureInsetBottomIgnored = true;
         _bottomSheetDialog.Behavior.FitToContents = false;
         _bottomSheetDialog.Behavior.HalfExpandedRatio = 0.5f;
-        _bottomSheetDialog.Behavior.HalfExpandedRatio = 0.5f;
         _bottomSheetDialog.Behavior.AddBottomSheetCallback(_bottomSheetCallback);
 
         SetState(bottomSheet.CurrentState);
         SetIsCancelable(bottomSheet.IsCancelable);
         SetIsDraggable(bottomSheet.IsDraggable);
         SetCornerRadius(bottomSheet.CornerRadius);
+        SetWindowBackgroundColor(bottomSheet.WindowBackgroundColor);
 
         _bottomSheetDialog.ShowEvent += BottomSheetDialogOnShowEvent;
         _bottomSheetDialog.DismissEvent += BottomSheetDialogOnDismissEvent;
@@ -315,6 +311,11 @@ internal sealed class BottomSheet : IDisposable
         _cornerRadius = radius;
 
         ApplyCornerRadius();
+    }
+
+    public void SetWindowBackgroundColor(Color color)
+    {
+        _backgroundColorDrawable.Color = color.ToPlatform();
     }
 
     /// <summary>
