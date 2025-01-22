@@ -12,6 +12,7 @@ using AViewGroup = Android.Views.ViewGroup;
 namespace Plugin.Maui.BottomSheet.Platform.Android;
 
 using _Microsoft.Android.Resource.Designer;
+using Google.Android.Material.Shape;
 using Microsoft.Maui.Platform;
 
 // ReSharper disable once RedundantNameQualifier
@@ -56,6 +57,7 @@ internal sealed class BottomSheet : IDisposable
 
     private Color? _backgroundColor;
     private Thickness _padding;
+    private float _cornerRadius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheet"/> class.
@@ -200,7 +202,9 @@ internal sealed class BottomSheet : IDisposable
         SetState(bottomSheet.CurrentState);
         SetIsCancelable(bottomSheet.IsCancelable);
         SetIsDraggable(bottomSheet.IsDraggable);
+        SetCornerRadius(bottomSheet.CornerRadius);
 
+        _bottomSheetDialog.ShowEvent += BottomSheetDialogOnShowEvent;
         _bottomSheetDialog.DismissEvent += BottomSheetDialogOnDismissEvent;
         _bottomSheetDialog.SetContentView(_sheetContainer);
         _bottomSheetDialog.Show();
@@ -224,6 +228,7 @@ internal sealed class BottomSheet : IDisposable
 
         _bottomSheetDialog.Dismiss();
         _bottomSheetDialog.DismissEvent -= BottomSheetDialogOnDismissEvent;
+        _bottomSheetDialog.ShowEvent -= BottomSheetDialogOnShowEvent;
 
         _sheetContainer.RemoveFromParent();
 
@@ -299,6 +304,17 @@ internal sealed class BottomSheet : IDisposable
     public void SetContent(BottomSheetContent content)
     {
         _bottomSheetContent = content;
+    }
+
+    /// <summary>
+    /// Set the corner radius.
+    /// </summary>
+    /// <param name="radius">Corner radius.</param>
+    public void SetCornerRadius(float radius)
+    {
+        _cornerRadius = radius;
+
+        ApplyCornerRadius();
     }
 
     /// <summary>
@@ -462,6 +478,15 @@ internal sealed class BottomSheet : IDisposable
 #endif
     }
 
+    private void ApplyCornerRadius()
+    {
+        if (_sheetContainer.Parent is AView parent
+            && parent.Background is MaterialShapeDrawable shapeDrawable)
+        {
+            shapeDrawable.SetCornerSize(_context.ToPixels(_cornerRadius));
+        }
+    }
+
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1422:Validate platform compatibility", Justification = "Validated.")]
     private void BottomSheetContentChanged(object? sender, EventArgs e)
     {
@@ -508,6 +533,11 @@ internal sealed class BottomSheet : IDisposable
             nameof(StateChanged));
     }
 
+    private void BottomSheetDialogOnShowEvent(object? sender, EventArgs e)
+    {
+        ApplyCornerRadius();
+    }
+
     private void BottomSheetDialogOnDismissEvent(object? sender, EventArgs e)
     {
         _eventManager.HandleEvent(this, EventArgs.Empty, nameof(Closed));
@@ -552,6 +582,7 @@ internal sealed class BottomSheet : IDisposable
         _bottomSheetCallback.Dispose();
 
         _bottomSheetDialog.DismissEvent -= BottomSheetDialogOnDismissEvent;
+        _bottomSheetDialog.ShowEvent -= BottomSheetDialogOnShowEvent;
         _bottomSheetDialog.Dispose();
     }
 }

@@ -23,6 +23,7 @@ internal sealed partial class BottomSheetHandler
         [nameof(IBottomSheet.Padding)] = MapPadding,
         [nameof(IBottomSheet.BackgroundColor)] = MapBackgroundColor,
         [nameof(IBottomSheet.IgnoreSafeArea)] = MapIgnoreSafeArea,
+        [nameof(IBottomSheet.CornerRadius)] = MapCornerRadius,
     };
 
     /// <summary>

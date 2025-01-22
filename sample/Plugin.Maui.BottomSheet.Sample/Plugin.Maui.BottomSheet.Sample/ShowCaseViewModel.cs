@@ -20,6 +20,9 @@ public sealed partial class ShowCaseViewModel : ObservableObject
     [ObservableProperty]
     private string _title = "My Title";
     
+    [ObservableProperty]
+    private float _cornerRadius = 20;
+    
     [RelayCommand]
     private static void TopLefButton()
     {

@@ -87,6 +87,11 @@ public interface IBottomSheet : IView, IPadding, ISafeAreaView
     BottomSheetState CurrentState { get; set; }
 
     /// <summary>
+    /// Gets or sets current corner radius.
+    /// </summary>
+    float CornerRadius { get; set; }
+
+    /// <summary>
     /// Gets or sets the <see cref="BottomSheetPeek"/>.
     /// </summary>
     BottomSheetPeek? Peek { get; set; }

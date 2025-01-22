@@ -226,6 +226,14 @@ internal sealed class MauiBottomSheet : AndroidView
         }
     }
 
+    /// <summary>
+    /// Set corner radius.
+    /// </summary>
+    public void SetCornerRadius()
+    {
+        _bottomSheet.SetCornerRadius(_virtualView?.CornerRadius ?? 0);
+    }
+
     /// <inheritdoc/>
     protected override void Dispose(bool disposing)
     {

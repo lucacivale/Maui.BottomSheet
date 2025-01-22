@@ -95,4 +95,9 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
     {
         handler.PlatformView.SetIgnoreSafeArea();
     }
+
+    private static void MapCornerRadius(BottomSheetHandler handler, IBottomSheet bottomSheet)
+    {
+        handler.PlatformView.SetCornerRadius();
+    }
 }
