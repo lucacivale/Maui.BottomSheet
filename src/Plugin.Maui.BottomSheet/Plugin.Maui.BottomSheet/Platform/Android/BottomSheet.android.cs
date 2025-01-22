@@ -76,7 +76,6 @@ internal sealed class BottomSheet : IDisposable
 
         _bottomSheetDialog = new BottomSheetDialog(context, Resource.Style.ThemeOverlay_App_BottomSheetDialog);
         _bottomSheetDialog.Window?.SetBackgroundDrawable(_backgroundColorDrawable);
-        _bottomSheetDialog.Behavior.AddBottomSheetCallback(_bottomSheetCallback);
         _bottomSheetDialog.Behavior.MaxHeight = MaxHeight();
         _bottomSheetDialog.DismissEvent += BottomSheetDialogOnDismissEvent;
 
@@ -196,6 +195,7 @@ internal sealed class BottomSheet : IDisposable
         _bottomSheetDialog.Behavior.FitToContents = false;
         _bottomSheetDialog.Behavior.HalfExpandedRatio = 0.5f;
         _bottomSheetDialog.Behavior.HalfExpandedRatio = 0.5f;
+        _bottomSheetDialog.Behavior.AddBottomSheetCallback(_bottomSheetCallback);
 
         SetState(bottomSheet.CurrentState);
         SetIsCancelable(bottomSheet.IsCancelable);
@@ -220,7 +220,6 @@ internal sealed class BottomSheet : IDisposable
 
         _platformBottomSheetPeek?.RemoveOnLayoutChangeListener(_bottomSheetContentChangeListener);
 
-        _bottomSheetCallback.StateChanged -= BottomSheetCallbackOnStateChanged;
         _bottomSheetDialog.Behavior.RemoveBottomSheetCallback(_bottomSheetCallback);
 
         _bottomSheetDialog.Dismiss();
