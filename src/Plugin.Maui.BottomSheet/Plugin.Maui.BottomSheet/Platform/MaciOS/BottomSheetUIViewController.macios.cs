@@ -19,6 +19,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     private readonly BottomSheetControllerDelegate _bottomSheetControllerDelegate = new();
 
     private readonly UIViewController _bottomSheetUIViewController;
+    private readonly UIView _backgroudView;
 
     private readonly ContentPage _virtualBottomSheet;
     private readonly Grid _virtualBottomSheetLayout;
@@ -64,6 +65,8 @@ internal sealed class BottomSheetUIViewController : UINavigationController
             _bottomSheetControllerDelegate.Dismissed += BottomSheetControllerDelegateOnDismissed;
             _bottomSheetControllerDelegate.StateChanged += BottomSheetControllerDelegateOnStateChanged;
         }
+
+        _backgroudView = new UIView();
     }
 
     /// <summary>
@@ -208,6 +211,28 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         _virtualBottomSheetPeek?.Handler?.DisconnectHandler();
         _virtualBottomSheetPeek = null;
 #endif
+    }
+
+    /// <inheritdoc/>
+    public override void ViewIsAppearing(bool animated)
+    {
+        if (PresentingViewController?.View is null)
+        {
+            return;
+        }
+
+        _backgroudView.Frame = PresentingViewController.View.Frame;
+        PresentingViewController.Add(_backgroudView);
+
+        base.ViewIsAppearing(animated);
+    }
+
+    /// <inheritdoc/>
+    public override void ViewWillDisappear(bool animated)
+    {
+        _backgroudView.RemoveFromSuperview();
+
+        base.ViewWillDisappear(animated);
     }
 
     /// <summary>
@@ -371,6 +396,15 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     }
 
     /// <summary>
+    /// Sets window background color.
+    /// </summary>
+    /// <param name="color">Color.</param>
+    public void SetWindowBackgroundColor(Color color)
+    {
+        _backgroudView.BackgroundColor = color.ToPlatform();
+    }
+
+    /// <summary>
     /// Sets the background color.
     /// </summary>
     /// <param name="color">Color.</param>
@@ -413,6 +447,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
 #endif
             HideHeader();
 
+            _backgroudView.Dispose();
             _bottomSheetControllerDelegate.Dispose();
             _bottomSheetUIViewController.Dispose();
 

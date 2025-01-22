@@ -76,6 +76,7 @@ internal sealed class BottomSheet : IDisposable
         SetPeek(bottomSheet.Peek);
         SetContent(bottomSheet.Content);
         SetCornerRadius(bottomSheet.CornerRadius);
+        SetBackgroundColor(bottomSheet.BackgroundColor);
 
         if (bottomSheet.ShowHeader)
         {
@@ -169,6 +170,15 @@ internal sealed class BottomSheet : IDisposable
     public void SetCornerRadius(float cornerRadius)
     {
         _bottomSheetUIViewController.SetCornerRadius(cornerRadius);
+    }
+
+    /// <summary>
+    /// Sets window background color.
+    /// </summary>
+    /// <param name="color">Color.</param>
+    public void SetWindowBackgroundColor(Color color)
+    {
+        _bottomSheetUIViewController.SetWindowBackgroundColor(color);
     }
 
     /// <summary>

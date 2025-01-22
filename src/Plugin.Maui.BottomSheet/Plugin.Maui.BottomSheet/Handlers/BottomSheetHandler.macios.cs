@@ -100,4 +100,9 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
     {
         handler.PlatformView.SetCornerRadius();
     }
+
+    private static void MapWindowBackgroundColor(BottomSheetHandler handler, IBottomSheet bottomSheet)
+    {
+        handler.PlatformView.SetWindowBackgroundColor();
+    }
 }

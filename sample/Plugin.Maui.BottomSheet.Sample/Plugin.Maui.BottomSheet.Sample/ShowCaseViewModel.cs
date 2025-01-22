@@ -7,6 +7,13 @@ using Navigation;
 
 public sealed partial class ShowCaseViewModel : ObservableObject
 {
+    private readonly List<string> _colors = 
+    [
+        "#ffaf83aa",
+        "#803983aa",
+        "#ff398340",
+        "#66b98340"
+    ];
     private readonly IBottomSheetNavigationService _bottomSheetNavigationService;
 
     public ShowCaseViewModel(IBottomSheetNavigationService bottomSheetNavigationService)
@@ -22,7 +29,19 @@ public sealed partial class ShowCaseViewModel : ObservableObject
     
     [ObservableProperty]
     private float _cornerRadius = 20;
-    
+
+    [ObservableProperty]
+    private Color _windowBackgroundColor = Colors.Transparent;
+
+    [RelayCommand]
+    private void ChangeWindowBackgroundColor()
+    {
+        var colorIndex = _colors.IndexOf(WindowBackgroundColor.ToArgbHex(true).ToLower());
+        var elementAt = colorIndex == _colors.Count - 1 ? 0 : colorIndex + 1;
+
+        WindowBackgroundColor = Color.FromArgb(_colors.ElementAt(elementAt));
+    }
+
     [RelayCommand]
     private static void TopLefButton()
     {

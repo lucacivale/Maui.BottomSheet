@@ -19,6 +19,16 @@ public class BottomSheet : View, IBottomSheet
     /// <summary>
     /// Bindable property.
     /// </summary>
+    public static readonly BindableProperty WindowBackgroundColorProperty =
+        BindableProperty.Create(
+            nameof(WindowBackgroundColor),
+            typeof(Color),
+            typeof(BottomSheet),
+            defaultValueCreator: _ => Color.FromArgb("#80000000"));
+
+    /// <summary>
+    /// Bindable property.
+    /// </summary>
     public static readonly BindableProperty IgnoreSafeAreaProperty =
         BindableProperty.Create(
             nameof(IgnoreSafeArea),
@@ -292,6 +302,9 @@ public class BottomSheet : View, IBottomSheet
 
     /// <inheritdoc/>
     public float CornerRadius { get => (float)GetValue(CornerRadiusProperty); set => SetValue(CornerRadiusProperty, value); }
+
+    /// <inheritdoc/>
+    public Color WindowBackgroundColor { get => (Color)GetValue(WindowBackgroundColorProperty); set => SetValue(WindowBackgroundColorProperty, value); }
 
     /// <inheritdoc/>
     public BottomSheetPeek? Peek { get => (BottomSheetPeek?)GetValue(PeekProperty); set => SetValue(PeekProperty, value); }

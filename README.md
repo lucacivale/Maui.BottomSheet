@@ -77,6 +77,7 @@ return builder.Build();
 | Colors                                      | BackgroundColor | Background color                                                               |
 | bool                                        | IgnoreSafeArea  | Ignore safe area(currently only implemented in iOS)                            |
 | float                                       | CornerRadius    | Top left and top right corner radius                                           |
+| Color                                       | WindowBackgroundColor    | Window background color                                        |
 
 ### BottomSheetState
 | Name   | Description        |
