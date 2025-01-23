@@ -30,7 +30,7 @@
             * Configurable header
             * MVVM support
         </Description>
-        <Version>9.0.4-pre</Version>
+        <Version>9.0.5-pre</Version>
         <Owners>Luca Civale </Owners>
         <Authors>Luca Civale</Authors>
         <Company>Luca Civale</Company>
@@ -45,7 +45,7 @@
         <PackageIcon>Icon.jpg</PackageIcon>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageId>Plugin.Maui.BottomSheet</PackageId>
-	<IsAotCompatible>true</IsAotCompatible>
+	    <IsAotCompatible>true</IsAotCompatible>
     </PropertyGroup>
 
     <ItemGroup>
