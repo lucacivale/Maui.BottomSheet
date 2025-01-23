@@ -15,7 +15,20 @@ internal static class BottomSheetHeaderExtensions
         return bottomSheetHeader is not null
             && bottomSheetHeader.HeaderAppearance is BottomSheetHeaderButtonAppearanceMode.LeftButton
                 or BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton
-            && bottomSheetHeader.TopLeftButton is not null;
+            && bottomSheetHeader.TopLeftButton is not null
+            && bottomSheetHeader.HasTopLeftCloseButton() == false;
+    }
+
+    /// <summary>
+    /// Is <see cref="BottomSheetHeader"/> top left close button configured.
+    /// </summary>
+    /// <param name="bottomSheetHeader"><see cref="BottomSheetHeader"/>.</param>
+    /// <returns>Is button configured.</returns>
+    public static bool HasTopLeftCloseButton(this BottomSheetHeader? bottomSheetHeader)
+    {
+        return bottomSheetHeader is not null
+            && bottomSheetHeader.ShowCloseButton
+            && bottomSheetHeader.CloseButtonPosition == CloseButtonPosition.TopLeft;
     }
 
     /// <summary>
@@ -28,7 +41,20 @@ internal static class BottomSheetHeaderExtensions
         return bottomSheetHeader is not null
             && bottomSheetHeader.HeaderAppearance is BottomSheetHeaderButtonAppearanceMode.RightButton
                or BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton
-            && bottomSheetHeader.TopRightButton is not null;
+            && bottomSheetHeader.TopRightButton is not null
+            && bottomSheetHeader.HasTopRightCloseButton() == false;
+    }
+
+    /// <summary>
+    /// Is <see cref="BottomSheetHeader"/> top right close button configured.
+    /// </summary>
+    /// <param name="bottomSheetHeader"><see cref="BottomSheetHeader"/>.</param>
+    /// <returns>Is button configured.</returns>
+    public static bool HasTopRightCloseButton(this BottomSheetHeader? bottomSheetHeader)
+    {
+        return bottomSheetHeader is not null
+            && bottomSheetHeader.ShowCloseButton
+            && bottomSheetHeader.CloseButtonPosition == CloseButtonPosition.TopRight;
     }
 
     /// <summary>
