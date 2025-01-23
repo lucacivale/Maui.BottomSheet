@@ -233,6 +233,12 @@ If the `BindingContext` of `View` is assigned during initialization it will be a
 This will add a named "Showcase" `BottomSheet` to the container
 To open it simply call `_bottomSheetNavigationService.NavigateTo("Showcase");`
 
+You can map your `BottomSheet` to a `ViewModel` to simplify navigation.
+`builder.Services.AddBottomSheet<SomeBottomSheet, SomeViewModel>("SomeBottomSheet");`
+This adds a named `BottomSheet` _SomeBottomSheet_ which will be wired to `SomeViewModel` during navigation.
+To navigate to _SomeBottomSheet_ just execute `_bottomSheetNavigationService.NavigateTo("SomeBottomSheet");`
+The `BindingContext` of `SomeBottomSheet` will be `SomeViewModel`.
+
 You can also add a default `BottomSheet` navigation configuration
 `.UseBottomSheet(config => config.CopyPagePropertiesToBottomSheet = true);` will copy all applicable properties from registered `Pages` to the `BottomSheet`
 

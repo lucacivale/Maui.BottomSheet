@@ -27,6 +27,7 @@ public static class MauiProgram
         builder.Services.AddTransient<ShowCaseViewModel>();
         builder.Services.AddTransient<CustomHeaderShowcaseViewModel>();
 
+        builder.Services.AddBottomSheet<SomeBottomSheet, SomeViewModel>("SomeBottomSheet");
         builder.Services.AddBottomSheet<CustomHeaderShowcase>("CustomHeaderShowcase",
             (sheet, _) =>
             {

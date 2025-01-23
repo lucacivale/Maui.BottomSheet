@@ -4,7 +4,7 @@ namespace Plugin.Maui.BottomSheet.Navigation;
 /// <see cref="IBottomSheetNavigationService"/> extension methods.
 /// </summary>
 // ReSharper disable once InconsistentNaming
-public static class IBottomSheetNavigationExtensions
+public static class IBottomSheetNavigationServiceExtensions
 {
     /// <summary>
     /// Open a <see cref="BottomSheet"/>.
@@ -19,7 +19,14 @@ public static class IBottomSheetNavigationExtensions
 
         var bottomSheet = navigationService.ServiceProvider.GetRequiredKeyedService<IBottomSheet>(name);
 
-        navigationService.NavigateTo(bottomSheet, null, parameters, configure);
+        object? viewModel = null;
+
+        if (IBottomSheetNavigationService.BottomSheetToViewModelMapping.TryGetValue(name, out var viewModelType))
+        {
+            viewModel = navigationService.ServiceProvider.GetService(viewModelType);
+        }
+
+        navigationService.NavigateTo(bottomSheet, viewModel, parameters, configure);
     }
 
     /// <summary>
