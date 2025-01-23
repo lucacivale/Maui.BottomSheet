@@ -38,6 +38,25 @@ public sealed class BottomSheetHeader : BindableObject
     /// <summary>
     /// Bindable property.
     /// </summary>
+    public static readonly BindableProperty ShowCloseButtonProperty =
+        BindableProperty.Create(
+            nameof(ShowCloseButton),
+            typeof(bool),
+            typeof(BottomSheetHeader));
+
+    /// <summary>
+    /// Bindable property.
+    /// </summary>
+    public static readonly BindableProperty CloseButtonPositionProperty =
+        BindableProperty.Create(
+            nameof(CloseButtonPosition),
+            typeof(CloseButtonPosition),
+            typeof(BottomSheetHeader),
+            defaultValue: CloseButtonPosition.TopRight);
+
+    /// <summary>
+    /// Bindable property.
+    /// </summary>
     // ReSharper disable once MemberCanBePrivate.Global
     public static readonly BindableProperty HeaderDataTemplateProperty =
         BindableProperty.Create(
@@ -69,6 +88,17 @@ public sealed class BottomSheetHeader : BindableObject
     /// Gets or sets the <see cref="Button"/> at the top right in the <see cref="BottomSheetHeader"/>.
     /// </summary>
     public Button? TopRightButton { get => (Button?)GetValue(TopRightButtonProperty); set => SetValue(TopRightButtonProperty, value); }
+
+    /// <summary>
+    /// Gets or sets the <see cref="CloseButtonPosition"/>. Default is <see cref="CloseButtonPosition.TopRight"/>.
+    /// </summary>
+    public CloseButtonPosition CloseButtonPosition { get => (CloseButtonPosition)GetValue(CloseButtonPositionProperty); set => SetValue(CloseButtonPositionProperty, value); }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether to show the close button.
+    /// The close button will replace either top left or top right button based on <see cref="CloseButtonPosition"/>.
+    /// </summary>
+    public bool ShowCloseButton { get => (bool)GetValue(ShowCloseButtonProperty); set => SetValue(ShowCloseButtonProperty, value); }
 
     /// <summary>
     /// Gets or sets a custom header <see cref="View"/>.

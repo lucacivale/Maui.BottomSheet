@@ -74,6 +74,8 @@ internal sealed class BottomSheet : IDisposable
         _bottomSheetCallback.StateChanged += BottomSheetCallbackOnStateChanged;
 
         _bottomSheetDialog = new BottomSheetDialog(context, Resource.Style.ThemeOverlay_App_BottomSheetDialog);
+        _bottomSheetDialog.ShowEvent += BottomSheetDialogOnShowEvent;
+        _bottomSheetDialog.DismissEvent += BottomSheetDialogOnDismissEvent;
         _bottomSheetDialog.Window?.SetBackgroundDrawable(_backgroundColorDrawable);
         _bottomSheetDialog.Behavior.MaxHeight = MaxHeight();
 
@@ -86,11 +88,7 @@ internal sealed class BottomSheet : IDisposable
         {
             Orientation = GridOrientation.Vertical,
             RowCount = 4,
-            LayoutParameters = new AViewGroup.MarginLayoutParams(AViewGroup.LayoutParams.MatchParent, AViewGroup.LayoutParams.WrapContent)
-            {
-                LeftMargin = Convert.ToInt32(_context.ToPixels(_padding.Left)),
-                RightMargin = Convert.ToInt32(_context.ToPixels(_padding.Right)),
-            },
+            LayoutParameters = new AViewGroup.LayoutParams(AViewGroup.LayoutParams.MatchParent, AViewGroup.LayoutParams.WrapContent),
         };
         _sheetContainer.SetMinimumHeight(_bottomSheetDialog.Behavior.MaxHeight);
 
@@ -133,12 +131,7 @@ internal sealed class BottomSheet : IDisposable
         set
         {
             _padding = value;
-
-            if (_sheetContainer.LayoutParameters is AViewGroup.MarginLayoutParams layoutParams)
-            {
-                layoutParams.LeftMargin = Convert.ToInt32(_context.ToPixels(_padding.Left));
-                layoutParams.RightMargin = Convert.ToInt32(_context.ToPixels(_padding.Right));
-            }
+            ApplyPadding();
         }
     }
 
@@ -200,8 +193,6 @@ internal sealed class BottomSheet : IDisposable
         SetCornerRadius(bottomSheet.CornerRadius);
         SetWindowBackgroundColor(bottomSheet.WindowBackgroundColor);
 
-        _bottomSheetDialog.ShowEvent += BottomSheetDialogOnShowEvent;
-        _bottomSheetDialog.DismissEvent += BottomSheetDialogOnDismissEvent;
         _bottomSheetDialog.SetContentView(_sheetContainer);
         _bottomSheetDialog.Show();
     }
@@ -216,6 +207,7 @@ internal sealed class BottomSheet : IDisposable
         if (_bottomSheetHeader is not null)
         {
             _bottomSheetHeader.LayoutChanged -= BottomSheetContentChanged;
+            _bottomSheetHeader.CloseButtonClicked -= BottomSheetHeaderCloseButtonClicked;
         }
 
         _platformBottomSheetPeek?.RemoveOnLayoutChangeListener(_bottomSheetContentChangeListener);
@@ -223,8 +215,6 @@ internal sealed class BottomSheet : IDisposable
         _bottomSheetDialog.Behavior.RemoveBottomSheetCallback(_bottomSheetCallback);
 
         _bottomSheetDialog.Dismiss();
-        _bottomSheetDialog.DismissEvent -= BottomSheetDialogOnDismissEvent;
-        _bottomSheetDialog.ShowEvent -= BottomSheetDialogOnShowEvent;
 
         _sheetContainer.RemoveFromParent();
 
@@ -271,7 +261,6 @@ internal sealed class BottomSheet : IDisposable
             _context,
             _mauiContext,
             header);
-        _bottomSheetHeader.LayoutChanged += BottomSheetContentChanged;
     }
 
     /// <summary>
@@ -313,6 +302,10 @@ internal sealed class BottomSheet : IDisposable
         ApplyCornerRadius();
     }
 
+    /// <summary>
+    /// Set window background color.
+    /// </summary>
+    /// <param name="color">Color.</param>
     public void SetWindowBackgroundColor(Color color)
     {
         _backgroundColorDrawable.Color = color.ToPlatform();
@@ -344,6 +337,9 @@ internal sealed class BottomSheet : IDisposable
         {
             return;
         }
+
+        _bottomSheetHeader.LayoutChanged += BottomSheetContentChanged;
+        _bottomSheetHeader.CloseButtonClicked += BottomSheetHeaderCloseButtonClicked;
 
         _headerLayoutParams = new GridLayout.LayoutParams()
         {
@@ -437,6 +433,7 @@ internal sealed class BottomSheet : IDisposable
         if (_bottomSheetHeader is not null)
         {
             _bottomSheetHeader.LayoutChanged -= BottomSheetContentChanged;
+            _bottomSheetHeader.CloseButtonClicked -= BottomSheetHeaderCloseButtonClicked;
         }
 
         _bottomSheetHeader?.Remove();
@@ -486,6 +483,15 @@ internal sealed class BottomSheet : IDisposable
         {
             shapeDrawable.SetCornerSize(_context.ToPixels(_cornerRadius));
         }
+    }
+
+    private void ApplyPadding()
+    {
+        _sheetContainer.SetPadding(
+            Convert.ToInt32(_context.ToPixels(_padding.Left)),
+            0,
+            Convert.ToInt32(_context.ToPixels(_padding.Right)),
+            0);
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1422:Validate platform compatibility", Justification = "Validated.")]
@@ -542,6 +548,11 @@ internal sealed class BottomSheet : IDisposable
     private void BottomSheetDialogOnDismissEvent(object? sender, EventArgs e)
     {
         _eventManager.HandleEvent(this, EventArgs.Empty, nameof(Closed));
+    }
+
+    private void BottomSheetHeaderCloseButtonClicked(object? sender, EventArgs e)
+    {
+        Close();
     }
 
     private int MaxHeight()

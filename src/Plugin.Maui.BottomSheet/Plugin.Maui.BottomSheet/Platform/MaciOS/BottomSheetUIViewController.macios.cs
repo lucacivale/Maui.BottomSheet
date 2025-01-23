@@ -19,7 +19,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     private readonly BottomSheetControllerDelegate _bottomSheetControllerDelegate = new();
 
     private readonly UIViewController _bottomSheetUIViewController;
-    private readonly UIView _backgroudView;
+    private readonly UIView _backgroundView;
 
     private readonly ContentPage _virtualBottomSheet;
     private readonly Grid _virtualBottomSheetLayout;
@@ -60,13 +60,10 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         SetViewControllers([_bottomSheetUIViewController], true);
         SetNavigationBarHidden(true, true);
 
-        if (SheetPresentationController is not null)
-        {
-            _bottomSheetControllerDelegate.Dismissed += BottomSheetControllerDelegateOnDismissed;
-            _bottomSheetControllerDelegate.StateChanged += BottomSheetControllerDelegateOnStateChanged;
-        }
+        _bottomSheetControllerDelegate.Dismissed += RaiseDismissed;
+        _bottomSheetControllerDelegate.StateChanged += BottomSheetControllerDelegateOnStateChanged;
 
-        _backgroudView = new UIView();
+        _backgroundView = new UIView();
     }
 
     /// <summary>
@@ -221,8 +218,8 @@ internal sealed class BottomSheetUIViewController : UINavigationController
             return;
         }
 
-        _backgroudView.Frame = PresentingViewController.View.Frame;
-        PresentingViewController.Add(_backgroudView);
+        _backgroundView.Frame = PresentingViewController.View.Frame;
+        PresentingViewController.Add(_backgroundView);
 
         base.ViewIsAppearing(animated);
     }
@@ -230,7 +227,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     /// <inheritdoc/>
     public override void ViewWillDisappear(bool animated)
     {
-        _backgroudView.RemoveFromSuperview();
+        _backgroundView.RemoveFromSuperview();
 
         base.ViewWillDisappear(animated);
     }
@@ -259,6 +256,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
 
         _virtualBottomSheetLayout.Add(_bottomSheetHeader.View);
         _bottomSheetHeader.SizeChanged += BottomSheetHeaderOnSizeChanged;
+        _bottomSheetHeader.CloseButtonClicked += RaiseDismissed;
     }
 
     /// <summary>
@@ -273,6 +271,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
 
         _bottomSheetHeader.Hide();
         _bottomSheetHeader.SizeChanged -= BottomSheetHeaderOnSizeChanged;
+        _bottomSheetHeader.CloseButtonClicked -= RaiseDismissed;
     }
 
     /// <summary>
@@ -401,7 +400,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     /// <param name="color">Color.</param>
     public void SetWindowBackgroundColor(Color color)
     {
-        _backgroudView.BackgroundColor = color.ToPlatform();
+        _backgroundView.BackgroundColor = color.ToPlatform();
     }
 
     /// <summary>
@@ -447,7 +446,10 @@ internal sealed class BottomSheetUIViewController : UINavigationController
 #endif
             HideHeader();
 
-            _backgroudView.Dispose();
+            _backgroundView.Dispose();
+
+            _bottomSheetControllerDelegate.Dismissed -= RaiseDismissed;
+            _bottomSheetControllerDelegate.StateChanged -= BottomSheetControllerDelegateOnStateChanged;
             _bottomSheetControllerDelegate.Dispose();
             _bottomSheetUIViewController.Dispose();
 
@@ -595,7 +597,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
             nameof(StateChanged));
     }
 
-    private void BottomSheetControllerDelegateOnDismissed(object? sender, EventArgs e)
+    private void RaiseDismissed(object? sender, EventArgs e)
     {
         _eventManager.HandleEvent(
             this,

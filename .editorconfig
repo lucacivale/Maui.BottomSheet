@@ -72,6 +72,7 @@ dotnet_diagnostic.CA1812.severity = none
 dotnet_diagnostic.IDE0005.severity = warning
 dotnet_diagnostic.CA1507.severity = warning
 dotnet_diagnostic.RS1036.severity = none
+dotnet_diagnostic.S1125.severity = none
 
 [*.{cs,vb}]
 dotnet_naming_rule.private_members_with_underscore.symbols  = private_fields

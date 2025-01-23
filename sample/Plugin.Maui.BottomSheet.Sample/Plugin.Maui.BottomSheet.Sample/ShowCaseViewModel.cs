@@ -33,6 +33,24 @@ public sealed partial class ShowCaseViewModel : ObservableObject
     [ObservableProperty]
     private Color _windowBackgroundColor = Colors.Transparent;
 
+    [ObservableProperty]
+    private bool _showCloseButton;
+
+    [ObservableProperty]
+    private CloseButtonPosition _closeButtonPosition = CloseButtonPosition.TopRight;
+
+    [RelayCommand]
+    private void TopLeftCloseButton()
+    {
+        CloseButtonPosition = CloseButtonPosition.TopLeft;
+    }
+
+    [RelayCommand]
+    private void TopRightCloseButton()
+    {
+        CloseButtonPosition = CloseButtonPosition.TopRight;
+    }
+
     [RelayCommand]
     private void ChangeWindowBackgroundColor()
     {

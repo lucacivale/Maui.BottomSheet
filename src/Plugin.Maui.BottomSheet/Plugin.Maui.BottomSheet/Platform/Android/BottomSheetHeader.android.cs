@@ -1,12 +1,18 @@
+#pragma warning disable SA1200
 using Android.Content;
 using Android.Widget;
+using AColor = Android.Graphics.Color;
+using AColorStateList = Android.Content.Res.ColorStateList;
 using ATextAlignment = Android.Views.TextAlignment;
 using AView = Android.Views.View;
 using AViewGroup = Android.Views.ViewGroup;
+#pragma warning restore SA1200
 
 namespace Plugin.Maui.BottomSheet.Platform.Android;
 
 using System.ComponentModel;
+using _Microsoft.Android.Resource.Designer;
+using Google.Android.Material.Button;
 using Microsoft.Maui.Platform;
 
 // ReSharper disable RedundantNameQualifier
@@ -73,6 +79,15 @@ internal sealed class BottomSheetHeader : IDisposable
     }
 
     /// <summary>
+    /// Close button clicked
+    /// </summary>
+    public event EventHandler CloseButtonClicked
+    {
+        add => _eventManager.AddEventHandler(value);
+        remove => _eventManager.RemoveEventHandler(value);
+    }
+
+    /// <summary>
     /// Gets header view.
     /// </summary>
     public AView HeaderView
@@ -98,7 +113,7 @@ internal sealed class BottomSheetHeader : IDisposable
             && relativeLayoutParams.Width != Convert.ToInt32(_headerLayout?.Width * 0.50, System.Globalization.CultureInfo.CurrentCulture))
         {
             relativeLayoutParams.Width = Convert.ToInt32(_headerLayout?.Width * 0.50, System.Globalization.CultureInfo.CurrentCulture);
-            _titleView.RequestLayout();
+            _titleView.Post(_titleView.RequestLayout);
         }
 
         _eventManager.HandleEvent(this, EventArgs.Empty, nameof(LayoutChanged));
@@ -181,31 +196,6 @@ internal sealed class BottomSheetHeader : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    private static void RemoveView(ref AView? view, View? mauiView)
-    {
-        RemoveView(view, mauiView);
-        view = null;
-    }
-
-    private static void RemoveView(ref RelativeLayout? view, View? mauiView)
-    {
-        RemoveView(view, mauiView);
-        view = null;
-    }
-
-    private static void RemoveView(AView? view, View? mauiView)
-    {
-        RemoveFromParent(view);
-        view?.LayoutParameters?.Dispose();
-
-#if NET9_0_OR_GREATER
-        mauiView?.DisconnectHandlers();
-#else
-        mauiView?.Handler?.DisconnectHandler();
-#endif
-        view?.Dispose();
-    }
-
     private static void RemoveFromParent(AView? view)
     {
         if (view?.Parent is not null)
@@ -233,6 +223,36 @@ internal sealed class BottomSheetHeader : IDisposable
         layoutParams.AddRule(LayoutRules.CenterInParent);
 
         return layoutParams;
+    }
+
+    private void RemoveView(ref AView? view, View? mauiView)
+    {
+        RemoveView(view, mauiView);
+        view = null;
+    }
+
+    private void RemoveView(ref RelativeLayout? view, View? mauiView)
+    {
+        RemoveView(view, mauiView);
+        view = null;
+    }
+
+    private void RemoveView(AView? view, View? mauiView)
+    {
+        if (view is MaterialButton)
+        {
+            view.Click -= RaiseCloseButtonClicked;
+        }
+
+        RemoveFromParent(view);
+        view?.LayoutParameters?.Dispose();
+
+#if NET9_0_OR_GREATER
+        mauiView?.DisconnectHandlers();
+#else
+        mauiView?.Handler?.DisconnectHandler();
+#endif
+        view?.Dispose();
     }
 
     private AView CreateHeader(Plugin.Maui.BottomSheet.BottomSheetHeader? bottomSheetHeader)
@@ -307,6 +327,14 @@ internal sealed class BottomSheetHeader : IDisposable
             _headerLayout?.AddView(_topLeftView);
         }
 
+        if (_bottomSheetHeader.HasTopLeftCloseButton())
+        {
+            _topLeftView = CreateCloseButton();
+            _topLeftView.LayoutParameters = CreateHeaderViewLayoutParams(LayoutRules.AlignParentLeft);
+
+            _headerLayout?.AddView(_topLeftView);
+        }
+
         if (_bottomSheetHeader.HasTitle())
         {
             _titleView = CreateTitleView(_bottomSheetHeader.TitleText);
@@ -322,6 +350,31 @@ internal sealed class BottomSheetHeader : IDisposable
 
             _headerLayout?.AddView(_topRightView);
         }
+
+        if (_bottomSheetHeader.HasTopRightCloseButton())
+        {
+            _topRightView = CreateCloseButton();
+            _topRightView.LayoutParameters = CreateHeaderViewLayoutParams(LayoutRules.AlignParentRight);
+
+            _headerLayout?.AddView(_topRightView);
+        }
+    }
+
+    private MaterialButton CreateCloseButton()
+    {
+        var closeButton = new MaterialButton(_context);
+        closeButton.SetIconResource(Resource.Drawable.mtrl_ic_cancel);
+        closeButton.IconGravity = MaterialButton.IconGravityTextStart;
+        closeButton.IconPadding = 0;
+        closeButton.IconSize = Convert.ToInt32(_context.ToPixels(30));
+        closeButton.IconTint = AColorStateList.ValueOf(AColor.Gray);
+        closeButton.BackgroundTintList = AColorStateList.ValueOf(AColor.Transparent);
+        closeButton.Click += RaiseCloseButtonClicked;
+
+        var pixelPadding = Convert.ToInt32(_context.ToPixels(5));
+        closeButton.SetPadding(pixelPadding, pixelPadding, pixelPadding, pixelPadding);
+
+        return closeButton;
     }
 
     private RelativeLayout CreateHeaderLayout()
@@ -336,6 +389,11 @@ internal sealed class BottomSheetHeader : IDisposable
         return linearLayout;
     }
 
+    private void RaiseCloseButtonClicked(object? sender, EventArgs e)
+    {
+        _eventManager.HandleEvent(this, EventArgs.Empty, nameof(CloseButtonClicked));
+    }
+
     private void BottomSheetHeaderOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         switch (e.PropertyName)
@@ -348,6 +406,14 @@ internal sealed class BottomSheetHeader : IDisposable
 
                 break;
             case nameof(Maui.BottomSheet.BottomSheetHeader.HeaderAppearance):
+            case nameof(Maui.BottomSheet.BottomSheetHeader.ShowCloseButton):
+            case nameof(Maui.BottomSheet.BottomSheetHeader.CloseButtonPosition):
+                if (e.PropertyName == nameof(CloseButtonPosition)
+                    && _bottomSheetHeader.ShowCloseButton == false)
+                {
+                    return;
+                }
+
                 if (!_bottomSheetHeader.HasHeaderView())
                 {
                     _headerLayout ??= CreateHeaderLayout();

@@ -20,6 +20,9 @@ public static class MauiAppBuilderExtensions
             .ConfigureMauiHandlers(x =>
             {
                 x.AddHandler<BottomSheet, Handlers.BottomSheetHandler>();
+#if IOS || MACCATALYST
+                x.AddHandler<Platform.MaciOS.CloseButton, Handlers.CloseButtonHandler>();
+#endif
             })
             .Services
                 .AddSingleton<Navigation.IBottomSheetNavigationService, Navigation.BottomSheetNavigationService>()

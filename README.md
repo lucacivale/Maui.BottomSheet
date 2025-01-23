@@ -61,23 +61,23 @@ return builder.Build();
 
 # API
 
-| Type                                        | Name            | Description                                                                    |
-|---------------------------------------------|-----------------|--------------------------------------------------------------------------------|
-| bool                                        | IsCancelable    | Can be closed by user either through gestures or clicking in background        |
-| bool                                        | HasHandle       | Show handle                                                                    |
-| bool                                        | ShowHeader      | Show header                                                                    |
-| bool                                        | IsOpen          | Open or close                                                                  |
-| bool                                        | IsDraggable     | Can be dragged(Useful if drawing gestures are made inside bottom sheet)        |
-| List<[BottomSheetState](#bottomSheetState)> | States          | Allowed states. CurrentState must be a value of this collection.               |
-| [BottomSheetState](#bottomSheetState)       | CurrentState    | Current state                                                                  |
-| [BottomSheetHeader](#bottomSheetHeader)     | Header          | Configure header                                                               |
-| [BottomSheetPeek](#bottomSheetPeek)         | Peek            | Configure peek(requieres at least iOS 16 -- all other platforms are supported) |
-| [BottomSheetContent](#bottomSheetContent)   | Content         | Configure content                                                              |
-| double                                      | Padding         | Padding                                                                        |
-| Colors                                      | BackgroundColor | Background color                                                               |
-| bool                                        | IgnoreSafeArea  | Ignore safe area(currently only implemented in iOS)                            |
-| float                                       | CornerRadius    | Top left and top right corner radius                                           |
-| Color                                       | WindowBackgroundColor    | Window background color                                        |
+| Type                                        | Name                  | Description                                                                    |
+|---------------------------------------------|-----------------------|--------------------------------------------------------------------------------|
+| bool                                        | IsCancelable          | Can be closed by user either through gestures or clicking in background        |
+| bool                                        | HasHandle             | Show handle                                                                    |
+| bool                                        | ShowHeader            | Show header                                                                    |
+| bool                                        | IsOpen                | Open or close                                                                  |
+| bool                                        | IsDraggable           | Can be dragged(Useful if drawing gestures are made inside bottom sheet)        |
+| List<[BottomSheetState](#bottomSheetState)> | States                | Allowed states. CurrentState must be a value of this collection.               |
+| [BottomSheetState](#bottomSheetState)       | CurrentState          | Current state                                                                  |
+| [BottomSheetHeader](#bottomSheetHeader)     | Header                | Configure header                                                               |
+| [BottomSheetPeek](#bottomSheetPeek)         | Peek                  | Configure peek(requieres at least iOS 16 -- all other platforms are supported) |
+| [BottomSheetContent](#bottomSheetContent)   | Content               | Configure content                                                              |
+| double                                      | Padding               | Padding                                                                        |
+| Colors                                      | BackgroundColor       | Background color                                                               |
+| bool                                        | IgnoreSafeArea        | Ignore safe area(currently only implemented in iOS)                            |
+| float                                       | CornerRadius          | Top left and top right corner radius                                           |
+| Color                                       | WindowBackgroundColor | Window background color                                                        |
 
 ### BottomSheetState
 | Name   | Description        |
@@ -87,31 +87,39 @@ return builder.Build();
 | Large  | Full screen height |
 
 ### BottomSheetHeader
-| Type                                                                            | Name           | Description                                                                                |
-|---------------------------------------------------------------------------------|----------------|--------------------------------------------------------------------------------------------|
-| string                                                                          | TitleText      | Title text                                                                                 |
-| Button                                                                          | TopLeftButton  | Top left button                                                                            |
-| Button                                                                          | TopRightButton | Top right button                                                                           |
-| DataTemplate                                                                    | HeaderDataTemplate | Custom view. If set HeaderAppearance, TitleText and TopLeft-and Right buttons are ignored. |
-| [BottomSheetHeaderButtonAppearanceMode](#bottomSheetHeaderButtonAppearanceMode) | HeaderAppearance | Set wich buttons should be displayed.                                                      |
+| Type                                                                            | Name                | Description                                                                                          |
+|---------------------------------------------------------------------------------|---------------------|------------------------------------------------------------------------------------------------------|
+| string                                                                          | TitleText           | Title text                                                                                           |
+| Button                                                                          | TopLeftButton       | Top left button                                                                                      |
+| Button                                                                          | TopRightButton      | Top right button                                                                                     |
+| DataTemplate                                                                    | HeaderDataTemplate  | Custom view. If set HeaderAppearance, TitleText and TopLeft-and Right buttons are ignored.           |
+| [BottomSheetHeaderButtonAppearanceMode](#bottomSheetHeaderButtonAppearanceMode) | HeaderAppearance    | Set which buttons should be displayed.                                                               |
+| bool                                                                            | ShowCloseButton     | Built in button to close the BottomSheet. Build in Button will replace top right or top left button. |
+| [CloseButtonPosition](#closeButtonPosition)                                     | CloseButtonPosition | Show button on the left or right                                                                     |
 
 ### BottomSheetHeaderButtonAppearanceMode
-| Name | Description         |
-|------|---------------------|
-| None | Don't show a button |
+| Name               | Description                         |
+|--------------------|-------------------------------------|
+| None               | Don't show a button                 |
 | LeftAndRightButton | Show a button on the left and right |
-| LeftButton | Show a button on the left |
-| RightButton | Show a button on the right |
+| LeftButton         | Show a button on the left           |
+| RightButton        | Show a button on the right          |
+
+### CloseButtonPosition
+| Name  | Description              |
+|-------|--------------------------|
+| Left  | Show button on the left  |
+| Right | Show button on the right |
 
 ### BottomSheetPeek
-| Type   | Name | Description                                                              |
-|--------|------|--------------------------------------------------------------------------|
-| double | PeekHeight | Fixed peek detent height                                                 |
+| Type         | Name                 | Description                                                              |
+|--------------|----------------------|--------------------------------------------------------------------------|
+| double       | PeekHeight           | Fixed peek detent height                                                 |
 | DataTemplate | PeekViewDataTemplate | Peek view. Height will be calculated automatically if PeekHeight is NaN. |
 
 ### BottomSheetContent
-| Type   | Name | Description   |
-|--------|------|---------------|
+| Type         | Name            | Description   |
+|--------------|-----------------|---------------|
 | DataTemplate | ContentTemplate | Content view. |
 
 ## Interaction

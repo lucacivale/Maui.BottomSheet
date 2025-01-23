@@ -307,6 +307,8 @@ internal sealed class BottomSheet : IDisposable
             return;
         }
 
+        _bottomSheetUIViewController.Dismissed -= BottomSheetUIViewControllerOnDismissed;
+        _bottomSheetUIViewController.StateChanged -= BottomSheetUIViewControllerOnStateChanged;
         _bottomSheetUIViewController.Dispose();
     }
 

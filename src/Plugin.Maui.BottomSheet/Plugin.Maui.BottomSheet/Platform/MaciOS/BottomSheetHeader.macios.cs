@@ -24,7 +24,6 @@ internal sealed class BottomSheetHeader : IDisposable
     public BottomSheetHeader(Plugin.Maui.BottomSheet.BottomSheetHeader bottomSheetHeader)
     {
         _bottomSheetHeader = bottomSheetHeader;
-        _bottomSheetHeader.PropertyChanged += BottomSheetHeaderOnPropertyChanged;
     }
 
     /// <summary>
@@ -36,9 +35,18 @@ internal sealed class BottomSheetHeader : IDisposable
     }
 
     /// <summary>
-    /// Header size changed
+    /// Header size changed.
     /// </summary>
     public event EventHandler SizeChanged
+    {
+        add => _eventManager.AddEventHandler(value);
+        remove => _eventManager.RemoveEventHandler(value);
+    }
+
+    /// <summary>
+    /// Header close button clicked.
+    /// </summary>
+    public event EventHandler CloseButtonClicked
     {
         add => _eventManager.AddEventHandler(value);
         remove => _eventManager.RemoveEventHandler(value);
@@ -124,29 +132,34 @@ internal sealed class BottomSheetHeader : IDisposable
         };
     }
 
-    private static void Remove(ref View? view)
+    private void Remove(ref View? view)
     {
         Remove(view);
         view = null;
     }
 
-    private static void Remove(ref Grid? view)
+    private void Remove(ref Grid? view)
     {
         Remove(view);
         view = null;
     }
 
-    private static void Remove(ref Label? view)
+    private void Remove(ref Label? view)
     {
         Remove(view);
         view = null;
     }
 
-    private static void Remove(View? view)
+    private void Remove(View? view)
     {
         if (view?.Parent is Layout parent)
         {
             parent.Remove(view);
+        }
+
+        if (view is CloseButton closeButton)
+        {
+            closeButton.Clicked -= OnClosedButtonClicked;
         }
 
 #if NET9_0_OR_GREATER
@@ -154,6 +167,26 @@ internal sealed class BottomSheetHeader : IDisposable
 #else
         view?.Handler?.DisconnectHandler();
 #endif
+    }
+
+    private CloseButton CreateCloseButton(LayoutOptions layoutOptions)
+    {
+        var button = new CloseButton()
+        {
+            HorizontalOptions = layoutOptions,
+        };
+
+        button.Clicked += OnClosedButtonClicked;
+
+        return button;
+    }
+
+    private void OnClosedButtonClicked(object? sender, EventArgs e)
+    {
+        _eventManager.HandleEvent(
+            this,
+            EventArgs.Empty,
+            nameof(CloseButtonClicked));
     }
 
     private View CreateVirtualHeaderView()
@@ -193,12 +226,19 @@ internal sealed class BottomSheetHeader : IDisposable
             return;
         }
 
-        Remove(_virtualTopLeftButton);
-        Remove(_virtualTopRightButton);
-        Remove(_virtualTitleView);
+        Remove(ref _virtualTopLeftButton);
+        Remove(ref _virtualTopRightButton);
+        Remove(ref _virtualTitleView);
+
         if (_bottomSheetHeader.HasTopLeftButton())
         {
             _virtualTopLeftButton = _bottomSheetHeader.TopLeftButton;
+            _virtualHeaderGridView.Add(_virtualTopLeftButton);
+        }
+
+        if (_bottomSheetHeader.HasTopLeftCloseButton())
+        {
+            _virtualTopLeftButton = CreateCloseButton(LayoutOptions.Start);
             _virtualHeaderGridView.Add(_virtualTopLeftButton);
         }
 
@@ -211,6 +251,12 @@ internal sealed class BottomSheetHeader : IDisposable
         if (_bottomSheetHeader.HasTopRightButton())
         {
             _virtualTopRightButton = _bottomSheetHeader.TopRightButton;
+            _virtualHeaderGridView.Add(_virtualTopRightButton, 2);
+        }
+
+        if (_bottomSheetHeader.HasTopRightCloseButton())
+        {
+            _virtualTopRightButton = CreateCloseButton(LayoutOptions.End);
             _virtualHeaderGridView.Add(_virtualTopRightButton, 2);
         }
     }
@@ -256,6 +302,14 @@ internal sealed class BottomSheetHeader : IDisposable
 
                 break;
             case nameof(Maui.BottomSheet.BottomSheetHeader.HeaderAppearance):
+            case nameof(Maui.BottomSheet.BottomSheetHeader.ShowCloseButton):
+            case nameof(Maui.BottomSheet.BottomSheetHeader.CloseButtonPosition):
+                if (e.PropertyName == nameof(CloseButtonPosition)
+                    && _bottomSheetHeader.ShowCloseButton == false)
+                {
+                    return;
+                }
+
                 if (!_bottomSheetHeader.HasHeaderView())
                 {
                     _virtualHeaderGridView ??= CreateHeaderGrid();
