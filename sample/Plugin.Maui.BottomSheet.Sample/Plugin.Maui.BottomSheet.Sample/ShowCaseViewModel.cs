@@ -130,6 +130,12 @@ public sealed partial class ShowCaseViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private void OpenSomeBottomSheet()
+    {
+        _bottomSheetNavigationService.NavigateTo("SomeBottomSheet");
+    }
+
+    [RelayCommand]
     private void CloseAllOpenSheets()
     {
         _bottomSheetNavigationService.ClearBottomSheetStack();

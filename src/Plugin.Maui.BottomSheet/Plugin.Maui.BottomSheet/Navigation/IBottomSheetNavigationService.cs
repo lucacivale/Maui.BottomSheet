@@ -11,6 +11,11 @@ public interface IBottomSheetNavigationService
     internal IServiceProvider ServiceProvider { get; }
 
     /// <summary>
+    /// Gets BottomSheet ViewModel mapping.
+    /// </summary>
+    internal static Dictionary<string, Type> BottomSheetToViewModelMapping { get; } = [];
+
+    /// <summary>
     /// Open a <see cref="BottomSheet"/>.
     /// If <paramref name="viewModel"/> isn't null it'll be assigned to BindingContext.
     /// If <paramref name="viewModel"/> implements <see cref="IQueryAttributable"/> <paramref name="parameters"/> will be applied on navigation.

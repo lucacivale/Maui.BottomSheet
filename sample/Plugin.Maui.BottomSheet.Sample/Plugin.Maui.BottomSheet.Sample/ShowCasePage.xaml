@@ -32,6 +32,10 @@
                 HorizontalOptions="Center"
                 LineBreakMode="WordWrap"
                 Text="Open custom header showcase view as BottomSheet" />
+            <Button
+                Command="{Binding OpenSomeBottomSheetCommand}"
+                HorizontalOptions="Center"
+                Text="Open some bottom sheet" />
             <bottomsheet:BottomSheet
                 Padding="20"
                 CornerRadius="{Binding CornerRadius}"
