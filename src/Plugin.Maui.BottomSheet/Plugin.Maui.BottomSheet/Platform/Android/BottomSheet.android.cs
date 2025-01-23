@@ -88,11 +88,7 @@ internal sealed class BottomSheet : IDisposable
         {
             Orientation = GridOrientation.Vertical,
             RowCount = 4,
-            LayoutParameters = new AViewGroup.MarginLayoutParams(AViewGroup.LayoutParams.MatchParent, AViewGroup.LayoutParams.WrapContent)
-            {
-                LeftMargin = Convert.ToInt32(_context.ToPixels(_padding.Left)),
-                RightMargin = Convert.ToInt32(_context.ToPixels(_padding.Right)),
-            },
+            LayoutParameters = new AViewGroup.LayoutParams(AViewGroup.LayoutParams.MatchParent, AViewGroup.LayoutParams.WrapContent),
         };
         _sheetContainer.SetMinimumHeight(_bottomSheetDialog.Behavior.MaxHeight);
 
@@ -135,12 +131,7 @@ internal sealed class BottomSheet : IDisposable
         set
         {
             _padding = value;
-
-            if (_sheetContainer.LayoutParameters is AViewGroup.MarginLayoutParams layoutParams)
-            {
-                layoutParams.LeftMargin = Convert.ToInt32(_context.ToPixels(_padding.Left));
-                layoutParams.RightMargin = Convert.ToInt32(_context.ToPixels(_padding.Right));
-            }
+            ApplyPadding();
         }
     }
 
@@ -311,6 +302,10 @@ internal sealed class BottomSheet : IDisposable
         ApplyCornerRadius();
     }
 
+    /// <summary>
+    /// Set window background color.
+    /// </summary>
+    /// <param name="color">Color.</param>
     public void SetWindowBackgroundColor(Color color)
     {
         _backgroundColorDrawable.Color = color.ToPlatform();
@@ -488,6 +483,15 @@ internal sealed class BottomSheet : IDisposable
         {
             shapeDrawable.SetCornerSize(_context.ToPixels(_cornerRadius));
         }
+    }
+
+    private void ApplyPadding()
+    {
+        _sheetContainer.SetPadding(
+            Convert.ToInt32(_context.ToPixels(_padding.Left)),
+            0,
+            Convert.ToInt32(_context.ToPixels(_padding.Right)),
+            0);
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1422:Validate platform compatibility", Justification = "Validated.")]

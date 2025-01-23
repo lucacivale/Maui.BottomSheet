@@ -1,3 +1,4 @@
+#pragma warning disable SA1200
 using Android.Content;
 using Android.Widget;
 using AColor = Android.Graphics.Color;
@@ -5,10 +6,12 @@ using AColorStateList = Android.Content.Res.ColorStateList;
 using ATextAlignment = Android.Views.TextAlignment;
 using AView = Android.Views.View;
 using AViewGroup = Android.Views.ViewGroup;
+#pragma warning restore SA1200
 
 namespace Plugin.Maui.BottomSheet.Platform.Android;
 
 using System.ComponentModel;
+using _Microsoft.Android.Resource.Designer;
 using Google.Android.Material.Button;
 using Microsoft.Maui.Platform;
 
@@ -405,6 +408,12 @@ internal sealed class BottomSheetHeader : IDisposable
             case nameof(Maui.BottomSheet.BottomSheetHeader.HeaderAppearance):
             case nameof(Maui.BottomSheet.BottomSheetHeader.ShowCloseButton):
             case nameof(Maui.BottomSheet.BottomSheetHeader.CloseButtonPosition):
+                if (e.PropertyName == nameof(CloseButtonPosition)
+                    && _bottomSheetHeader.ShowCloseButton == false)
+                {
+                    return;
+                }
+
                 if (!_bottomSheetHeader.HasHeaderView())
                 {
                     _headerLayout ??= CreateHeaderLayout();
