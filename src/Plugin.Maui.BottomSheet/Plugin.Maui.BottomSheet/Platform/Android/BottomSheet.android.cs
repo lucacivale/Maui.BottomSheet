@@ -11,7 +11,6 @@ using AViewGroup = Android.Views.ViewGroup;
 namespace Plugin.Maui.BottomSheet.Platform.Android;
 
 using _Microsoft.Android.Resource.Designer;
-using AndroidX.AppCompat.App;
 using AndroidX.CoordinatorLayout.Widget;
 using Google.Android.Material.Shape;
 using Microsoft.Maui.Platform;
@@ -33,15 +32,16 @@ internal sealed class BottomSheet : IDisposable
     private readonly IMauiContext _mauiContext;
     private readonly Context _context;
     private readonly GridLayout _sheetContainer;
-    private readonly BottomSheetDialog _bottomSheetDialog;
     private readonly BottomSheetHandle _bottomSheetHandle;
     private readonly BottomSheetCallback _bottomSheetCallback;
     private readonly BottomSheetLayoutChangeListener _bottomSheetContentChangeListener;
     private readonly int _handleMargin;
     private readonly int _headerMargin;
     private readonly AColorDrawable _backgroundColorDrawable;
-    private readonly CoordinatorLayout _coordinatorLayout;
-    private readonly BottomSheetBehavior _bottomSheetBehavior;
+
+    private BottomSheetDialog? _bottomSheetDialog;
+    private CoordinatorLayout? _bottomSheetLayout;
+    private BottomSheetBehavior? _bottomSheetBehavior;
 
     private BottomSheetHeader? _bottomSheetHeader;
     private BottomSheetPeek? _bottomSheetPeek;
@@ -76,19 +76,7 @@ internal sealed class BottomSheet : IDisposable
 
         _bottomSheetCallback = new BottomSheetCallback();
         _bottomSheetCallback.StateChanged += BottomSheetCallbackOnStateChanged;
-
-        _bottomSheetDialog = new BottomSheetDialog(context, Resource.Style.ThemeOverlay_App_BottomSheetDialog);
-        _bottomSheetDialog.ShowEvent += BottomSheetDialogOnShowEvent;
-        _bottomSheetDialog.DismissEvent += BottomSheetDialogOnDismissEvent;
-        _bottomSheetDialog.Window?.SetBackgroundDrawable(_backgroundColorDrawable);
-
-        _bottomSheetBehavior = new BottomSheetBehavior();
-        _bottomSheetBehavior.MaxHeight = MaxHeight();
-
-        _coordinatorLayout = new CoordinatorLayout(_context)
-        {
-            LayoutParameters = new CoordinatorLayout.LayoutParams(AViewGroup.LayoutParams.MatchParent, AViewGroup.LayoutParams.MatchParent),
-        };
+        _bottomSheetCallback.Closed += BottomSheetClosed;
 
         _bottomSheetHandle = new BottomSheetHandle(context);
 
@@ -99,9 +87,8 @@ internal sealed class BottomSheet : IDisposable
         {
             Orientation = GridOrientation.Vertical,
             RowCount = 4,
-            LayoutParameters = new AViewGroup.LayoutParams(AViewGroup.LayoutParams.MatchParent, AViewGroup.LayoutParams.WrapContent),
+            LayoutParameters = new AViewGroup.LayoutParams(AViewGroup.LayoutParams.MatchParent, AViewGroup.LayoutParams.MatchParent),
         };
-        _sheetContainer.SetMinimumHeight(_bottomSheetBehavior.MaxHeight);
 
         _handleMargin = Convert.ToInt32(_context.ToPixels(5));
         _headerMargin = Convert.ToInt32(_context.ToPixels(5));
@@ -151,7 +138,7 @@ internal sealed class BottomSheet : IDisposable
     /// </summary>
     public bool IsShowing
     {
-        get => _bottomSheetDialog.IsShowing;
+        get => _sheetContainer.IsAttachedToWindow;
     }
 
     /// <summary>
@@ -180,6 +167,9 @@ internal sealed class BottomSheet : IDisposable
     /// <param name="bottomSheet">Virtual view.</param>
     public void Open(IBottomSheet bottomSheet)
     {
+        _bottomSheetDialog = new BottomSheetDialog(_context, Resource.Style.ThemeOverlay_MaterialComponents_BottomSheetDialog);
+        _bottomSheetBehavior = _bottomSheetDialog.Behavior;
+
         if (bottomSheet.HasHandle)
         {
             AddHandle();
@@ -204,24 +194,27 @@ internal sealed class BottomSheet : IDisposable
         SetCornerRadius(bottomSheet.CornerRadius);
         SetWindowBackgroundColor(bottomSheet.WindowBackgroundColor);
 
-        var frame = new FrameLayout(_context)
-        {
-            LayoutParameters = new CoordinatorLayout.LayoutParams(AViewGroup.LayoutParams.MatchParent, AViewGroup.LayoutParams.MatchParent)
-            {
-                Behavior = _bottomSheetBehavior,
-            },
-        };
-        frame.AddView(_sheetContainer);
-        var shapeDrawable = new MaterialShapeDrawable(_context, null, 0, Resource.Style.ThemeOverlay_App_BottomSheetDialog);
-        frame.Background = shapeDrawable;
-        _coordinatorLayout.AddView(frame);
-        
-        var pixelPadding = Convert.ToInt32(_context.ToPixels(50));
-        _coordinatorLayout.SetPadding(0, pixelPadding, 0, pixelPadding);
-        ((AViewGroup)((AppCompatActivity)_context).Window.DecorView).AddView(_coordinatorLayout);
+        _sheetContainer.ViewAttachedToWindow += SheetContainerOnViewAttachedToWindow;
+        _bottomSheetDialog.SetContentView(_sheetContainer);
 
-        //_bottomSheetDialog.SetContentView(_sheetContainer);
-        //_bottomSheetDialog.Show();
+        if (_sheetContainer.Parent?.Parent is CoordinatorLayout layout)
+        {
+            _bottomSheetLayout = layout;
+        }
+
+        if (bottomSheet.IsModal == false
+            && _context is AndroidX.AppCompat.App.AppCompatActivity activity
+            && activity.Window?.DecorView is AViewGroup viewGroup)
+        {
+            _bottomSheetLayout?.RemoveFromParent();
+            viewGroup.AddView(_bottomSheetLayout);
+        }
+        else
+        {
+            _bottomSheetDialog.DismissEvent += BottomSheetClosed;
+            _bottomSheetDialog.SetContentView(_sheetContainer);
+            _bottomSheetDialog.Show();
+        }
     }
 
     /// <summary>
@@ -229,26 +222,35 @@ internal sealed class BottomSheet : IDisposable
     /// </summary>
     public void Close()
     {
+        _sheetContainer.ViewAttachedToWindow -= SheetContainerOnViewAttachedToWindow;
         _bottomSheetHandle.Handle.RemoveOnLayoutChangeListener(_bottomSheetContentChangeListener);
 
         if (_bottomSheetHeader is not null)
         {
             _bottomSheetHeader.LayoutChanged -= BottomSheetContentChanged;
-            _bottomSheetHeader.CloseButtonClicked -= BottomSheetHeaderCloseButtonClicked;
+            _bottomSheetHeader.CloseButtonClicked -= BottomSheetClosed;
         }
 
         _platformBottomSheetPeek?.RemoveOnLayoutChangeListener(_bottomSheetContentChangeListener);
 
-        _bottomSheetBehavior.RemoveBottomSheetCallback(_bottomSheetCallback);
+        _bottomSheetBehavior?.RemoveBottomSheetCallback(_bottomSheetCallback);
 
-        _bottomSheetDialog.Dismiss();
+        if (_bottomSheetDialog is not null)
+        {
+            _bottomSheetDialog.DismissEvent -= BottomSheetClosed;
+        }
 
+        _bottomSheetDialog?.Dismiss();
+        _bottomSheetLayout?.RemoveFromParent();
+        _bottomSheetLayout?.Dispose();
         _sheetContainer.RemoveFromParent();
 
         HideHandle();
         HideHeader();
         HidePeek();
         HideContent();
+
+        _eventManager.HandleEvent(this, EventArgs.Empty, nameof(Closed));
     }
 
     /// <summary>
@@ -257,7 +259,7 @@ internal sealed class BottomSheet : IDisposable
     /// <param name="isCancelable">Whether the dialog should be canceled when touched outside the window or by slide.</param>
     public void SetIsCancelable(bool isCancelable)
     {
-        _bottomSheetDialog.SetCancelable(isCancelable);
+        _bottomSheetDialog?.SetCancelable(isCancelable);
     }
 
     /// <summary>
@@ -266,6 +268,11 @@ internal sealed class BottomSheet : IDisposable
     /// <param name="state">State to apply.</param>
     public void SetState(BottomSheetState state)
     {
+        if (_bottomSheetBehavior is null)
+        {
+            return;
+        }
+
         _bottomSheetBehavior.State = state.ToPlatformState();
     }
 
@@ -275,6 +282,11 @@ internal sealed class BottomSheet : IDisposable
     /// <param name="isDraggable">Whether the dialog should is draggable.</param>
     public void SetIsDraggable(bool isDraggable)
     {
+        if (_bottomSheetBehavior is null)
+        {
+            return;
+        }
+
         _bottomSheetBehavior.Draggable = isDraggable;
     }
 
@@ -366,7 +378,7 @@ internal sealed class BottomSheet : IDisposable
         }
 
         _bottomSheetHeader.LayoutChanged += BottomSheetContentChanged;
-        _bottomSheetHeader.CloseButtonClicked += BottomSheetHeaderCloseButtonClicked;
+        _bottomSheetHeader.CloseButtonClicked += BottomSheetClosed;
 
         _headerLayoutParams = new GridLayout.LayoutParams()
         {
@@ -408,7 +420,10 @@ internal sealed class BottomSheet : IDisposable
         _platformBottomSheetPeek.AddOnLayoutChangeListener(_bottomSheetContentChangeListener);
         _sheetContainer.AddView(_platformBottomSheetPeek, _peekLayoutParams);
 
-        _bottomSheetBehavior.SkipCollapsed = false;
+        if (_bottomSheetBehavior is not null)
+        {
+            _bottomSheetBehavior.SkipCollapsed = false;
+        }
     }
 
     /// <summary>
@@ -460,7 +475,7 @@ internal sealed class BottomSheet : IDisposable
         if (_bottomSheetHeader is not null)
         {
             _bottomSheetHeader.LayoutChanged -= BottomSheetContentChanged;
-            _bottomSheetHeader.CloseButtonClicked -= BottomSheetHeaderCloseButtonClicked;
+            _bottomSheetHeader.CloseButtonClicked -= BottomSheetClosed;
         }
 
         _bottomSheetHeader?.Remove();
@@ -478,7 +493,11 @@ internal sealed class BottomSheet : IDisposable
         }
 
         _platformBottomSheetPeek?.RemoveOnLayoutChangeListener(_bottomSheetContentChangeListener);
-        _bottomSheetBehavior.SkipCollapsed = true;
+
+        if (_bottomSheetBehavior is not null)
+        {
+            _bottomSheetBehavior.SkipCollapsed = true;
+        }
 
         _platformBottomSheetPeek?.RemoveFromParent();
         _peekLayoutParams?.Dispose();
@@ -521,16 +540,39 @@ internal sealed class BottomSheet : IDisposable
             0);
     }
 
+    private void PrepareBottomSheetContainer()
+    {
+        if (_sheetContainer.Parent is not AView parent)
+        {
+            return;
+        }
+
+        if (parent.LayoutParameters is not null)
+        {
+            parent.LayoutParameters.Height = AViewGroup.LayoutParams.MatchParent;
+        }
+
+        if (_bottomSheetLayout is not null)
+        {
+            _bottomSheetLayout.Background = _backgroundColorDrawable;
+        }
+    }
+
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1422:Validate platform compatibility", Justification = "Validated.")]
     private void BottomSheetContentChanged(object? sender, EventArgs e)
     {
+        if (_bottomSheetBehavior is null)
+        {
+            return;
+        }
+
         var height = _bottomSheetHandle.Handle.Height
             + (_bottomSheetHeader?.HeaderView.Height ?? 0)
             + _handleMargin
             + _headerMargin
             + PeekHeight();
 
-        _bottomSheetBehavior.PeekHeight = height > _bottomSheetBehavior.MaxHeight ? _bottomSheetBehavior.MaxHeight : height;
+        _bottomSheetBehavior.PeekHeight = height;
     }
 
     private int PeekHeight()
@@ -553,9 +595,10 @@ internal sealed class BottomSheet : IDisposable
             return;
         }
 
-        if (e.PropertyName == nameof(BottomSheetPeek.PeekHeight))
+        if (e.PropertyName == nameof(BottomSheetPeek.PeekHeight)
+            && _bottomSheetBehavior is not null)
         {
-            _bottomSheetBehavior.PeekHeight = PeekHeight() > _bottomSheetBehavior.MaxHeight ? _bottomSheetBehavior.PeekHeight : PeekHeight();
+            _bottomSheetBehavior.PeekHeight = PeekHeight();
         }
     }
 
@@ -567,24 +610,15 @@ internal sealed class BottomSheet : IDisposable
             nameof(StateChanged));
     }
 
-    private void BottomSheetDialogOnShowEvent(object? sender, EventArgs e)
-    {
-        ApplyCornerRadius();
-    }
-
-    private void BottomSheetDialogOnDismissEvent(object? sender, EventArgs e)
-    {
-        _eventManager.HandleEvent(this, EventArgs.Empty, nameof(Closed));
-    }
-
-    private void BottomSheetHeaderCloseButtonClicked(object? sender, EventArgs e)
+    private void BottomSheetClosed(object? sender, EventArgs e)
     {
         Close();
     }
 
-    private int MaxHeight()
+    private void SheetContainerOnViewAttachedToWindow(object? sender, AView.ViewAttachedToWindowEventArgs e)
     {
-        return _context.Resources?.DisplayMetrics?.HeightPixels ?? 0;
+        ApplyCornerRadius();
+        PrepareBottomSheetContainer();
     }
 
     private void Dispose(bool disposing)
@@ -618,10 +652,9 @@ internal sealed class BottomSheet : IDisposable
         _backgroundColorDrawable.Dispose();
 
         _bottomSheetCallback.StateChanged -= BottomSheetCallbackOnStateChanged;
+        _bottomSheetCallback.Closed -= BottomSheetClosed;
         _bottomSheetCallback.Dispose();
 
-        _bottomSheetDialog.DismissEvent -= BottomSheetDialogOnDismissEvent;
-        _bottomSheetDialog.ShowEvent -= BottomSheetDialogOnShowEvent;
-        _bottomSheetDialog.Dispose();
+        _bottomSheetDialog?.Dispose();
     }
 }

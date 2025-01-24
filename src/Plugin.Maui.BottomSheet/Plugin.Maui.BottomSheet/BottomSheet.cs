@@ -298,6 +298,9 @@ public class BottomSheet : View, IBottomSheet
     public bool IsOpen { get => (bool)GetValue(IsOpenProperty); set => SetValue(IsOpenProperty, value); }
 
     /// <inheritdoc/>
+    public bool IsModal { get; set; } = true;
+
+    /// <inheritdoc/>
     public bool IsDraggable { get => (bool)GetValue(IsDraggableProperty); set => SetValue(IsDraggableProperty, value); }
 
     /// <inheritdoc/>

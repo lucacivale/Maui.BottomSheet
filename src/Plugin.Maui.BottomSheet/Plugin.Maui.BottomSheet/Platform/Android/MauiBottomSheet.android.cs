@@ -129,9 +129,12 @@ internal sealed class MauiBottomSheet : AndroidView
         }
         else
         {
-            _virtualView?.OnClosingBottomSheet();
-            _bottomSheet.Close();
-            _virtualView?.OnClosedBottomSheet();
+            if (_bottomSheet.IsShowing)
+            {
+                _virtualView?.OnClosingBottomSheet();
+                _bottomSheet.Close();
+                _virtualView?.OnClosedBottomSheet();
+            }
         }
     }
 

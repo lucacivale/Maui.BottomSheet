@@ -100,6 +100,9 @@ public sealed partial class ShowCaseViewModel : ObservableObject
     private bool _isOpen;
     
     [ObservableProperty]
+    private bool _isNonModalOpen;
+    
+    [ObservableProperty]
     private bool _hasHandle = true;
     
     [ObservableProperty]
@@ -115,6 +118,12 @@ public sealed partial class ShowCaseViewModel : ObservableObject
     private void OpenShowcase()
     {
         IsOpen = true;
+    }
+
+    [RelayCommand]
+    private void OpenNonModalShowcase()
+    {
+        IsNonModalOpen = true;
     }
     
     [RelayCommand]
