@@ -2,6 +2,7 @@
 using Android.Content;
 using Android.Widget;
 using Google.Android.Material.BottomSheet;
+using AColor = Android.Graphics.Color;
 using AColorDrawable = Android.Graphics.Drawables.ColorDrawable;
 using AGravityFlags = Android.Views.GravityFlags;
 using AView = Android.Views.View;
@@ -10,10 +11,13 @@ using AViewGroup = Android.Views.ViewGroup;
 
 namespace Plugin.Maui.BottomSheet.Platform.Android;
 
-using _Microsoft.Android.Resource.Designer;
 using AndroidX.CoordinatorLayout.Widget;
+using AndroidX.Core.View;
 using Google.Android.Material.Shape;
 using Microsoft.Maui.Platform;
+#pragma warning disable SA1135
+using PlatformConfiguration.AndroidSpecific;
+#pragma warning restore SA1135
 
 // ReSharper disable once RedundantNameQualifier
 using View = Microsoft.Maui.Controls.View;
@@ -38,6 +42,8 @@ internal sealed class BottomSheet : IDisposable
     private readonly int _handleMargin;
     private readonly int _headerMargin;
     private readonly AColorDrawable _backgroundColorDrawable;
+    private readonly bool _windowAppearanceLightStatusBars;
+    private readonly bool _windowAppearanceLightNavigationBars;
 
     private BottomSheetDialog? _bottomSheetDialog;
     private CoordinatorLayout? _bottomSheetLayout;
@@ -61,6 +67,7 @@ internal sealed class BottomSheet : IDisposable
     private Color? _backgroundColor;
     private Thickness _padding;
     private float _cornerRadius;
+    private bool _isModal;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheet"/> class.
@@ -71,6 +78,14 @@ internal sealed class BottomSheet : IDisposable
     {
         _context = context;
         _mauiContext = mauiContext;
+
+        if (_context is AndroidX.AppCompat.App.AppCompatActivity activity
+            && activity.Window is not null)
+        {
+            var controller = WindowCompat.GetInsetsController(activity.Window, activity.Window.DecorView);
+            _windowAppearanceLightStatusBars = controller.AppearanceLightStatusBars;
+            _windowAppearanceLightNavigationBars = controller.AppearanceLightNavigationBars;
+        }
 
         _backgroundColorDrawable = new AColorDrawable();
 
@@ -167,7 +182,8 @@ internal sealed class BottomSheet : IDisposable
     /// <param name="bottomSheet">Virtual view.</param>
     public void Open(IBottomSheet bottomSheet)
     {
-        _bottomSheetDialog = new BottomSheetDialog(_context, Resource.Style.ThemeOverlay_MaterialComponents_BottomSheetDialog);
+        _isModal = bottomSheet.IsModal;
+        _bottomSheetDialog = new BottomSheetDialog(_context, bottomSheet.GetTheme());
         _bottomSheetBehavior = _bottomSheetDialog.Behavior;
 
         if (bottomSheet.HasHandle)
@@ -202,17 +218,27 @@ internal sealed class BottomSheet : IDisposable
             _bottomSheetLayout = layout;
         }
 
-        if (bottomSheet.IsModal == false
+        if (_isModal == false
             && _context is AndroidX.AppCompat.App.AppCompatActivity activity
-            && activity.Window?.DecorView is AViewGroup viewGroup)
+            && activity.Window?.DecorView is AViewGroup viewGroup
+            && _bottomSheetLayout is not null)
         {
-            _bottomSheetLayout?.RemoveFromParent();
+            WindowCompat.SetDecorFitsSystemWindows(activity.Window, !_bottomSheetDialog.EdgeToEdgeEnabled);
+            WindowCompat.GetInsetsController(activity.Window, activity.Window.DecorView).AppearanceLightStatusBars = true;
+
+            _bottomSheetLayout.RemoveFromParent();
             viewGroup.AddView(_bottomSheetLayout);
         }
         else
         {
+            if (_bottomSheetDialog.EdgeToEdgeEnabled
+                && _bottomSheetDialog.Window is not null
+                && AColor.GetAlphaComponent(_bottomSheetDialog.Window.NavigationBarColor) == 255)
+            {
+                _bottomSheetDialog.Window?.SetNavigationBarColor(AColor.Transparent);
+            }
+
             _bottomSheetDialog.DismissEvent += BottomSheetClosed;
-            _bottomSheetDialog.SetContentView(_sheetContainer);
             _bottomSheetDialog.Show();
         }
     }
@@ -222,6 +248,15 @@ internal sealed class BottomSheet : IDisposable
     /// </summary>
     public void Close()
     {
+        if (_context is AndroidX.AppCompat.App.AppCompatActivity activity
+            && activity.Window is not null)
+        {
+            var controller = WindowCompat.GetInsetsController(activity.Window, activity.Window.DecorView);
+
+            controller.AppearanceLightStatusBars = _windowAppearanceLightStatusBars;
+            controller.AppearanceLightNavigationBars = _windowAppearanceLightNavigationBars;
+        }
+
         _sheetContainer.ViewAttachedToWindow -= SheetContainerOnViewAttachedToWindow;
         _bottomSheetHandle.Handle.RemoveOnLayoutChangeListener(_bottomSheetContentChangeListener);
 
@@ -240,10 +275,12 @@ internal sealed class BottomSheet : IDisposable
             _bottomSheetDialog.DismissEvent -= BottomSheetClosed;
         }
 
-        _bottomSheetDialog?.Dismiss();
         _bottomSheetLayout?.RemoveFromParent();
         _bottomSheetLayout?.Dispose();
         _sheetContainer.RemoveFromParent();
+
+        _bottomSheetDialog?.Dismiss();
+        _bottomSheetDialog?.Dispose();
 
         HideHandle();
         HideHeader();
@@ -552,7 +589,8 @@ internal sealed class BottomSheet : IDisposable
             parent.LayoutParameters.Height = AViewGroup.LayoutParams.MatchParent;
         }
 
-        if (_bottomSheetLayout is not null)
+        if (_bottomSheetLayout is not null
+            && _isModal)
         {
             _bottomSheetLayout.Background = _backgroundColorDrawable;
         }
@@ -655,6 +693,7 @@ internal sealed class BottomSheet : IDisposable
         _bottomSheetCallback.Closed -= BottomSheetClosed;
         _bottomSheetCallback.Dispose();
 
+        _bottomSheetBehavior?.Dispose();
         _bottomSheetDialog?.Dispose();
     }
 }

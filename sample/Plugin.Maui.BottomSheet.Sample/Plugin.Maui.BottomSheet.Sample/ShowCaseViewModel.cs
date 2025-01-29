@@ -31,7 +31,7 @@ public sealed partial class ShowCaseViewModel : ObservableObject
     private float _cornerRadius = 20;
 
     [ObservableProperty]
-    private Color _windowBackgroundColor = Colors.Transparent;
+    private Color _windowBackgroundColor = Color.FromArgb("#80000000");
 
     [ObservableProperty]
     private bool _showCloseButton;

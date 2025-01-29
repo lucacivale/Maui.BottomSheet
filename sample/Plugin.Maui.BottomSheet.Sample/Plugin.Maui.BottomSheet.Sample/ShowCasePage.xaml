@@ -42,6 +42,7 @@
                 Text="Open some bottom sheet" />
             <bottomsheet:BottomSheet
                 Padding="20"
+                x:Name="ModalBottomSheet"
                 CornerRadius="{Binding CornerRadius}"
                 HasHandle="{Binding HasHandle}"
                 IsCancelable="{Binding IsCancelable}"
@@ -171,6 +172,7 @@
                 </bottomsheet:BottomSheet.Content>
             </bottomsheet:BottomSheet>
             <bottomsheet:BottomSheet
+                x:Name="NonModalBottomSheet"
                 Padding="20"
                 CornerRadius="{Binding CornerRadius}"
                 HasHandle="{Binding HasHandle}"
@@ -179,8 +181,8 @@
                 IsOpen="{Binding IsNonModalOpen}"
                 ShowHeader="{Binding ShowHeader}"
                 States="Peek,Medium,Large"
-                IsModal="False"
-                WindowBackgroundColor="{Binding WindowBackgroundColor, Mode=TwoWay}">
+                WindowBackgroundColor="{Binding WindowBackgroundColor, Mode=TwoWay}"
+                IsModal="False">
                 <bottomsheet:BottomSheet.Header>
                     <bottomsheet:BottomSheetHeader
                         CloseButtonPosition="{Binding CloseButtonPosition}"
