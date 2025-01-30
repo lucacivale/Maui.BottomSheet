@@ -179,7 +179,7 @@ internal sealed class MauiBottomSheet : UIView
     /// </summary>
     public void SetIsModal()
     {
-
+        _bottomSheet.SetIsModal(_virtualView?.IsModal == true);
     }
 
     /// <summary>

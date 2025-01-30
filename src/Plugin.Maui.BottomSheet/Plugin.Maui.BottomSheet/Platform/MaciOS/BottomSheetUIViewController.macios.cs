@@ -150,6 +150,20 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         }
     }
 
+    public bool IsModal
+    {
+        get => SheetPresentationController?.LargestUndimmedDetentIdentifier == UISheetPresentationControllerDetentIdentifier.Unknown;
+        set
+        {
+            if (SheetPresentationController is not null)
+            {
+                SheetPresentationController.LargestUndimmedDetentIdentifier = value ? UISheetPresentationControllerDetentIdentifier.Unknown : UISheetPresentationControllerDetentIdentifier.Large;
+            }
+
+            PrepareBottomSheetWindowBackground();
+        }
+    }
+
     /// <summary>
     /// Gets or sets available detents.
     /// </summary>
@@ -218,8 +232,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
             return;
         }
 
-        _backgroundView.Frame = PresentingViewController.View.Frame;
-        PresentingViewController.Add(_backgroundView);
+        PrepareBottomSheetWindowBackground();
 
         base.ViewIsAppearing(animated);
     }
@@ -586,6 +599,24 @@ internal sealed class BottomSheetUIViewController : UINavigationController
             return DeviceInfo.Idiom == DeviceIdiom.Tablet ?
                 _virtualBottomSheetLayout.RowDefinitions[1].Height.Value
                 : _virtualBottomSheetPeek?.Height ?? 0;
+        }
+    }
+
+    private void PrepareBottomSheetWindowBackground()
+    {
+        if (PresentingViewController?.View is null)
+        {
+            return;
+        }
+
+        if (IsModal)
+        {
+            _backgroundView.Frame = PresentingViewController.View.Frame;
+            PresentingViewController.Add(_backgroundView);
+        }
+        else
+        {
+            _backgroundView.RemoveFromSuperview();
         }
     }
 

@@ -61,23 +61,24 @@ return builder.Build();
 
 # API
 
-| Type                                        | Name                  | Description                                                                    |
-|---------------------------------------------|-----------------------|--------------------------------------------------------------------------------|
-| bool                                        | IsCancelable          | Can be closed by user either through gestures or clicking in background        |
-| bool                                        | HasHandle             | Show handle                                                                    |
-| bool                                        | ShowHeader            | Show header                                                                    |
-| bool                                        | IsOpen                | Open or close                                                                  |
-| bool                                        | IsDraggable           | Can be dragged(Useful if drawing gestures are made inside bottom sheet)        |
-| List<[BottomSheetState](#bottomSheetState)> | States                | Allowed states. CurrentState must be a value of this collection.               |
-| [BottomSheetState](#bottomSheetState)       | CurrentState          | Current state                                                                  |
-| [BottomSheetHeader](#bottomSheetHeader)     | Header                | Configure header                                                               |
-| [BottomSheetPeek](#bottomSheetPeek)         | Peek                  | Configure peek(requieres at least iOS 16 -- all other platforms are supported) |
-| [BottomSheetContent](#bottomSheetContent)   | Content               | Configure content                                                              |
-| double                                      | Padding               | Padding                                                                        |
-| Colors                                      | BackgroundColor       | Background color                                                               |
-| bool                                        | IgnoreSafeArea        | Ignore safe area(currently only implemented in iOS)                            |
-| float                                       | CornerRadius          | Top left and top right corner radius                                           |
-| Color                                       | WindowBackgroundColor | Window background color                                                        |
+| Type                                        | Name                  | Description                                                                     |
+|---------------------------------------------|-----------------------|---------------------------------------------------------------------------------|
+| bool                                        | IsModal               | Is interaction with content under BottomSheet enabled                           |
+| bool                                        | IsCancelable          | Can be closed by user either through gestures or clicking in background         |
+| bool                                        | HasHandle             | Show handle                                                                     |
+| bool                                        | ShowHeader            | Show header                                                                     |
+| bool                                        | IsOpen                | Open or close                                                                   |
+| bool                                        | IsDraggable           | Can be dragged(Useful if drawing gestures are made inside bottom sheet)         |
+| List<[BottomSheetState](#bottomSheetState)> | States                | Allowed states. CurrentState must be a value of this collection.                |
+| [BottomSheetState](#bottomSheetState)       | CurrentState          | Current state                                                                   |
+| [BottomSheetHeader](#bottomSheetHeader)     | Header                | Configure header                                                                |
+| [BottomSheetPeek](#bottomSheetPeek)         | Peek                  | Configure peek(requieres at least iOS 16 -- all other platforms are supported)  |
+| [BottomSheetContent](#bottomSheetContent)   | Content               | Configure content                                                               |
+| double                                      | Padding               | Padding                                                                         |
+| Colors                                      | BackgroundColor       | Background color                                                                |
+| bool                                        | IgnoreSafeArea        | Ignore safe area(currently only implemented in iOS)                             |
+| float                                       | CornerRadius          | Top left and top right corner radius                                            |
+| Color                                       | WindowBackgroundColor | Window background color. If BottomSheet is non-modal no window color is applied |
 
 ### BottomSheetState
 | Name   | Description        |
@@ -142,6 +143,25 @@ return builder.Build();
 `Closed`
 `Opening`
 `Opened`
+
+# Platform specifics
+
+## MacCatalyst
+Apple decided that sheets are always [modal](https://developer.apple.com/design/human-interface-guidelines/sheets#macOS).
+## Android
+
+#### Themes
+By default a theme based on `ThemeOverlay.MaterialComponents.BottomSheetDialog` is used to theme `BottomSheets`.
+To enable EdgeToEdge by default the derived theme sets the `navigationBarColor` to transparent.
+You can create you own themes and apply them to different `BottomSheets`
+
+To set a custom theme call the platform specific extension method before the sheet is opened.
+`MyBottomSheet.On<Android>().SetTheme(Resource.Style.My_Awesome_BottomSheetDialog);`
+Theme changes are not possible if the sheet is open and will be applied after it's closed and opened again.
+
+#### Edge to edge
+EdgeToEdge support is built-in and enabled by default. If you create your own theme make sure to derive from `ThemeOverlay.MaterialComponents.BottomSheetDialog` and that `navigationBarColor` is translucent. 
+Otherwise EdgeToEdge is disabled for that sheet.
 
 # XAML usage
 

@@ -2,9 +2,7 @@
 using Android.Content;
 using Android.Widget;
 using Google.Android.Material.BottomSheet;
-using AColor = Android.Graphics.Color;
 using AColorDrawable = Android.Graphics.Drawables.ColorDrawable;
-using AColorStateList = Android.Content.Res.ColorStateList;
 using AGravityFlags = Android.Views.GravityFlags;
 using AView = Android.Views.View;
 using AViewGroup = Android.Views.ViewGroup;
@@ -13,6 +11,7 @@ using AWindowManagerFlags = Android.Views.WindowManagerFlags;
 
 namespace Plugin.Maui.BottomSheet.Platform.Android;
 
+using _Microsoft.Android.Resource.Designer;
 using AndroidX.CoordinatorLayout.Widget;
 using Google.Android.Material.Shape;
 using Microsoft.Maui.Platform;
@@ -63,6 +62,7 @@ internal sealed class BottomSheet : IDisposable
     private View? _virtualBottomSheetContent;
     private AView? _platformBottomSheetContent;
 
+    private Color? _windowBackgroundColor;
     private Color? _backgroundColor;
     private Thickness _padding;
     private float _cornerRadius;
@@ -84,7 +84,6 @@ internal sealed class BottomSheet : IDisposable
         }
 
         _backgroundColorDrawable = new AColorDrawable();
-        _backgroundColorDrawable.SetTintList(AColorStateList.ValueOf(AColor.Transparent));
 
         _bottomSheetCallback = new BottomSheetCallback();
         _bottomSheetCallback.StateChanged += BottomSheetCallbackOnStateChanged;
@@ -179,6 +178,8 @@ internal sealed class BottomSheet : IDisposable
     public void Open(IBottomSheet bottomSheet)
     {
         _bottomSheetDialog = new BottomSheetDialog(_context, bottomSheet.GetTheme());
+        _bottomSheetDialog.Window?.ClearFlags(AWindowManagerFlags.DimBehind);
+        _bottomSheetDialog.Window?.SetBackgroundDrawable(_backgroundColorDrawable);
         _bottomSheetDialog.ShowEvent += BottomSheetShowed;
         _bottomSheetDialog.DismissEvent += BottomSheetClosed;
 
@@ -272,14 +273,16 @@ internal sealed class BottomSheet : IDisposable
             if (_isModal == false)
             {
                 _bottomSheetDialog.SetCanceledOnTouchOutside(false);
-                _bottomSheetDialog.Window?.ClearFlags(AWindowManagerFlags.DimBehind);
                 touchOutside.SetOnTouchListener(_touchOutsideListener);
+
+                _backgroundColorDrawable.Color = Colors.Transparent.ToPlatform();
             }
             else
             {
                 _bottomSheetDialog.SetCanceledOnTouchOutside(true);
-                _bottomSheetDialog.Window?.AddFlags(AWindowManagerFlags.DimBehind);
                 touchOutside.SetOnTouchListener(null);
+
+                SetWindowBackgroundColor(_windowBackgroundColor);
             }
         }
     }
@@ -376,11 +379,14 @@ internal sealed class BottomSheet : IDisposable
     /// Set window background color.
     /// </summary>
     /// <param name="color">Color.</param>
-    public void SetWindowBackgroundColor(Color color)
+    public void SetWindowBackgroundColor(Color? color)
     {
-        if (_isModal)
+        _windowBackgroundColor = color;
+
+        if (_isModal
+            && _windowBackgroundColor is not null)
         {
-            _backgroundColorDrawable.Color = color.ToPlatform();
+            _backgroundColorDrawable.Color = _windowBackgroundColor.ToPlatform();
         }
     }
 
@@ -584,11 +590,6 @@ internal sealed class BottomSheet : IDisposable
         if (parent.LayoutParameters is not null)
         {
             parent.LayoutParameters.Height = AViewGroup.LayoutParams.MatchParent;
-        }
-
-        if (_sheetContainer.Parent.Parent is CoordinatorLayout coordinatorLayout)
-        {
-            coordinatorLayout.Background = _backgroundColorDrawable;
         }
     }
 

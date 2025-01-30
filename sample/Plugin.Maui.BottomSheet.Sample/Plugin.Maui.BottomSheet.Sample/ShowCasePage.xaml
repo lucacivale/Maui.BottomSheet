@@ -119,7 +119,7 @@
                                             Text="Is modal?"
                                             VerticalOptions="Center" />
                                         <Switch
-                                            Grid.Row="4"
+                                            Grid.Row="4" HorizontalOptions="End"
                                             Grid.Column="1"
                                             IsToggled="{Binding IsModal}"
                                             VerticalOptions="Center" />
