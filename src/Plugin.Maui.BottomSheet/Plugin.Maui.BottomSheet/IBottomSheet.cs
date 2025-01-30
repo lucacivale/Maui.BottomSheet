@@ -61,6 +61,11 @@ public interface IBottomSheet : IView, IPadding, ISafeAreaView
     bool IsOpen { get; set; }
 
     /// <summary>
+    /// Gets or sets a value indicating whether the <see cref="IBottomSheet"/>. is modal.
+    /// </summary>
+    bool IsModal { get; set; }
+
+    /// <summary>
     /// Gets or sets a value indicating whether showing the <see cref="IBottomSheet"/>. can be dragged.
     /// </summary>
     /// <remarks>Useful to draw inside the <see cref="IBottomSheet"/>.</remarks>

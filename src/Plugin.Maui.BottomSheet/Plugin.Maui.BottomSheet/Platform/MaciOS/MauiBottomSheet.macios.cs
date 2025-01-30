@@ -175,6 +175,14 @@ internal sealed class MauiBottomSheet : UIView
     }
 
     /// <summary>
+    /// Set modal.
+    /// </summary>
+    public void SetIsModal()
+    {
+        _bottomSheet.SetIsModal(_virtualView?.IsModal == true);
+    }
+
+    /// <summary>
     /// Set padding.
     /// </summary>
     public void SetPadding()

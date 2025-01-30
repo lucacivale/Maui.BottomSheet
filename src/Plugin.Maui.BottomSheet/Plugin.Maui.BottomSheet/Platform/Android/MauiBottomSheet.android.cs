@@ -129,9 +129,12 @@ internal sealed class MauiBottomSheet : AndroidView
         }
         else
         {
-            _virtualView?.OnClosingBottomSheet();
-            _bottomSheet.Close();
-            _virtualView?.OnClosedBottomSheet();
+            if (_bottomSheet.IsShowing)
+            {
+                _virtualView?.OnClosingBottomSheet();
+                _bottomSheet.Close();
+                _virtualView?.OnClosedBottomSheet();
+            }
         }
     }
 
@@ -202,6 +205,14 @@ internal sealed class MauiBottomSheet : AndroidView
                 _bottomSheet.HideContent();
             }
         }
+    }
+
+    /// <summary>
+    /// Set modal.
+    /// </summary>
+    public void SetIsModal()
+    {
+        _bottomSheet.SetIsModal(_virtualView?.IsModal ?? true);
     }
 
     /// <summary>

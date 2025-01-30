@@ -4,8 +4,18 @@ using System.ComponentModel;
 using System.Windows.Input;
 
 /// <inheritdoc cref="IBottomSheet" />
-public class BottomSheet : View, IBottomSheet
+public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet>
 {
+    /// <summary>
+    /// Bindable property.
+    /// </summary>
+    public static readonly BindableProperty IsModalProperty =
+        BindableProperty.Create(
+            nameof(IsModal),
+            typeof(bool),
+            typeof(BottomSheet),
+            defaultValue: true);
+
     /// <summary>
     /// Bindable property.
     /// </summary>
@@ -251,6 +261,15 @@ public class BottomSheet : View, IBottomSheet
             typeof(BottomSheet));
 
     private readonly WeakEventManager _eventManager = new();
+    private readonly Lazy<PlatformConfigurationRegistry<BottomSheet>> _platformConfigurationRegistry;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BottomSheet"/> class.
+    /// </summary>
+    public BottomSheet()
+    {
+        _platformConfigurationRegistry = new Lazy<PlatformConfigurationRegistry<BottomSheet>>(() => new PlatformConfigurationRegistry<BottomSheet>(this));
+    }
 
     /// <inheritdoc/>
     public event EventHandler Closing
@@ -296,6 +315,9 @@ public class BottomSheet : View, IBottomSheet
 
     /// <inheritdoc/>
     public bool IsOpen { get => (bool)GetValue(IsOpenProperty); set => SetValue(IsOpenProperty, value); }
+
+    /// <inheritdoc/>
+    public bool IsModal { get => (bool)GetValue(IsModalProperty); set => SetValue(IsModalProperty, value); }
 
     /// <inheritdoc/>
     public bool IsDraggable { get => (bool)GetValue(IsDraggableProperty); set => SetValue(IsDraggableProperty, value); }
@@ -351,6 +373,12 @@ public class BottomSheet : View, IBottomSheet
     {
         get => (ICollection<BottomSheetState>)GetValue(StatesProperty);
         set => SetValue(StatesProperty, value);
+    }
+
+    public IPlatformElementConfiguration<T, BottomSheet> On<T>()
+        where T : IConfigPlatform
+    {
+        return _platformConfigurationRegistry.Value.On<T>();
     }
 
 #pragma warning disable CA1033

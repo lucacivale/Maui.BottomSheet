@@ -22,6 +22,15 @@ internal sealed class BottomSheetCallback : BottomSheetBehavior.BottomSheetCallb
         remove => _eventManager.RemoveEventHandler(value);
     }
 
+    /// <summary>
+    /// BottomSheet state changed.
+    /// </summary>
+    public event EventHandler Closed
+    {
+        add => _eventManager.AddEventHandler(value);
+        remove => _eventManager.RemoveEventHandler(value);
+    }
+
     /// <inheritdoc />
     public override void OnSlide(AView bottomSheet, float newState)
     {
@@ -38,6 +47,10 @@ internal sealed class BottomSheetCallback : BottomSheetBehavior.BottomSheetCallb
                 p0,
                 new BottomSheetStateChangedEventArgs(p1.ToBottomSheetState()),
                 nameof(StateChanged));
+        }
+        else if (p1 is BottomSheetBehavior.StateHidden)
+        {
+            _eventManager.HandleEvent(p0, EventArgs.Empty, nameof(Closed));
         }
     }
 }

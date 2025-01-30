@@ -25,6 +25,7 @@ internal sealed partial class BottomSheetHandler
         [nameof(IBottomSheet.IgnoreSafeArea)] = MapIgnoreSafeArea,
         [nameof(IBottomSheet.CornerRadius)] = MapCornerRadius,
         [nameof(IBottomSheet.WindowBackgroundColor)] = MapWindowBackgroundColor,
+        [nameof(IBottomSheet.IsModal)] = MapIsModal,
     };
 
     /// <summary>

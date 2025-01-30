@@ -105,4 +105,9 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
     {
         handler.PlatformView.SetWindowBackgroundColor();
     }
+
+    private static void MapIsModal(BottomSheetHandler handler, IBottomSheet bottomSheet)
+    {
+        handler.PlatformView.SetIsModal();
+    }
 }

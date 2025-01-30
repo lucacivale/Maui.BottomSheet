@@ -31,10 +31,13 @@ public sealed partial class ShowCaseViewModel : ObservableObject
     private float _cornerRadius = 20;
 
     [ObservableProperty]
-    private Color _windowBackgroundColor = Colors.Transparent;
+    private Color _windowBackgroundColor = Color.FromArgb("#80000000");
 
     [ObservableProperty]
     private bool _showCloseButton;
+
+    [ObservableProperty]
+    private bool _isModal;
 
     [ObservableProperty]
     private CloseButtonPosition _closeButtonPosition = CloseButtonPosition.TopRight;
@@ -100,6 +103,9 @@ public sealed partial class ShowCaseViewModel : ObservableObject
     private bool _isOpen;
     
     [ObservableProperty]
+    private bool _isNonModalOpen;
+    
+    [ObservableProperty]
     private bool _hasHandle = true;
     
     [ObservableProperty]
@@ -115,6 +121,12 @@ public sealed partial class ShowCaseViewModel : ObservableObject
     private void OpenShowcase()
     {
         IsOpen = true;
+    }
+
+    [RelayCommand]
+    private void OpenNonModalShowcase()
+    {
+        IsNonModalOpen = true;
     }
     
     [RelayCommand]

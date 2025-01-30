@@ -77,6 +77,7 @@ internal sealed class BottomSheet : IDisposable
         SetContent(bottomSheet.Content);
         SetCornerRadius(bottomSheet.CornerRadius);
         SetBackgroundColor(bottomSheet.BackgroundColor);
+        SetIsModal(bottomSheet.IsModal);
 
         if (bottomSheet.ShowHeader)
         {
@@ -152,6 +153,15 @@ internal sealed class BottomSheet : IDisposable
     public void SetIsCancelable(bool isCancelable)
     {
         _bottomSheetUIViewController.ModalInPresentation = !isCancelable;
+    }
+
+    /// <summary>
+    /// Set modal.
+    /// </summary>
+    /// <param name="isModal">Is modal.</param>
+    public void SetIsModal(bool isModal)
+    {
+        _bottomSheetUIViewController.IsModal = isModal;
     }
 
     /// <summary>
