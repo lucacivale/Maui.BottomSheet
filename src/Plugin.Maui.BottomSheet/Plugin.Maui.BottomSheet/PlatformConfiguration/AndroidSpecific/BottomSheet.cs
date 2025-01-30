@@ -12,7 +12,7 @@ public static class BottomSheet
             defaultValueCreator: (_) =>
             {
                 #if ANDROID
-                return _Microsoft.Android.Resource.Designer.Resource.Style.ThemeOverlay_MaterialComponents_BottomSheetDialog;
+                return _Microsoft.Android.Resource.Designer.Resource.Style.Plugin_Maui_BottomSheet_BottomSheetDialog;
                 #else
                 return 0;
                 #endif

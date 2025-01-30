@@ -4,15 +4,16 @@ using Android.Widget;
 using Google.Android.Material.BottomSheet;
 using AColor = Android.Graphics.Color;
 using AColorDrawable = Android.Graphics.Drawables.ColorDrawable;
+using AColorStateList = Android.Content.Res.ColorStateList;
 using AGravityFlags = Android.Views.GravityFlags;
 using AView = Android.Views.View;
 using AViewGroup = Android.Views.ViewGroup;
+using AWindowManagerFlags = Android.Views.WindowManagerFlags;
 #pragma warning disable SA1200
 
 namespace Plugin.Maui.BottomSheet.Platform.Android;
 
 using AndroidX.CoordinatorLayout.Widget;
-using AndroidX.Core.View;
 using Google.Android.Material.Shape;
 using Microsoft.Maui.Platform;
 #pragma warning disable SA1135
@@ -38,15 +39,13 @@ internal sealed class BottomSheet : IDisposable
     private readonly GridLayout _sheetContainer;
     private readonly BottomSheetHandle _bottomSheetHandle;
     private readonly BottomSheetCallback _bottomSheetCallback;
+    private readonly BottomSheetDialogTouchOutsideListener? _touchOutsideListener;
     private readonly BottomSheetLayoutChangeListener _bottomSheetContentChangeListener;
     private readonly int _handleMargin;
     private readonly int _headerMargin;
     private readonly AColorDrawable _backgroundColorDrawable;
-    private readonly bool _windowAppearanceLightStatusBars;
-    private readonly bool _windowAppearanceLightNavigationBars;
 
     private BottomSheetDialog? _bottomSheetDialog;
-    private CoordinatorLayout? _bottomSheetLayout;
     private BottomSheetBehavior? _bottomSheetBehavior;
 
     private BottomSheetHeader? _bottomSheetHeader;
@@ -79,19 +78,16 @@ internal sealed class BottomSheet : IDisposable
         _context = context;
         _mauiContext = mauiContext;
 
-        if (_context is AndroidX.AppCompat.App.AppCompatActivity activity
-            && activity.Window is not null)
+        if (_context is AndroidX.AppCompat.App.AppCompatActivity activity)
         {
-            var controller = WindowCompat.GetInsetsController(activity.Window, activity.Window.DecorView);
-            _windowAppearanceLightStatusBars = controller.AppearanceLightStatusBars;
-            _windowAppearanceLightNavigationBars = controller.AppearanceLightNavigationBars;
+            _touchOutsideListener = new BottomSheetDialogTouchOutsideListener(activity);
         }
 
         _backgroundColorDrawable = new AColorDrawable();
+        _backgroundColorDrawable.SetTintList(AColorStateList.ValueOf(AColor.Transparent));
 
         _bottomSheetCallback = new BottomSheetCallback();
         _bottomSheetCallback.StateChanged += BottomSheetCallbackOnStateChanged;
-        _bottomSheetCallback.Closed += BottomSheetClosed;
 
         _bottomSheetHandle = new BottomSheetHandle(context);
 
@@ -153,7 +149,7 @@ internal sealed class BottomSheet : IDisposable
     /// </summary>
     public bool IsShowing
     {
-        get => _sheetContainer.IsAttachedToWindow;
+        get => _bottomSheetDialog?.IsShowing == true;
     }
 
     /// <summary>
@@ -182,8 +178,10 @@ internal sealed class BottomSheet : IDisposable
     /// <param name="bottomSheet">Virtual view.</param>
     public void Open(IBottomSheet bottomSheet)
     {
-        _isModal = bottomSheet.IsModal;
         _bottomSheetDialog = new BottomSheetDialog(_context, bottomSheet.GetTheme());
+        _bottomSheetDialog.ShowEvent += BottomSheetShowed;
+        _bottomSheetDialog.DismissEvent += BottomSheetClosed;
+
         _bottomSheetBehavior = _bottomSheetDialog.Behavior;
 
         if (bottomSheet.HasHandle)
@@ -204,43 +202,16 @@ internal sealed class BottomSheet : IDisposable
         _bottomSheetBehavior.HalfExpandedRatio = 0.5f;
         _bottomSheetBehavior.AddBottomSheetCallback(_bottomSheetCallback);
 
+        _bottomSheetDialog.SetContentView(_sheetContainer);
+
+        SetIsModal(bottomSheet.IsModal);
         SetState(bottomSheet.CurrentState);
         SetIsCancelable(bottomSheet.IsCancelable);
         SetIsDraggable(bottomSheet.IsDraggable);
         SetCornerRadius(bottomSheet.CornerRadius);
         SetWindowBackgroundColor(bottomSheet.WindowBackgroundColor);
 
-        _sheetContainer.ViewAttachedToWindow += SheetContainerOnViewAttachedToWindow;
-        _bottomSheetDialog.SetContentView(_sheetContainer);
-
-        if (_sheetContainer.Parent?.Parent is CoordinatorLayout layout)
-        {
-            _bottomSheetLayout = layout;
-        }
-
-        if (_isModal == false
-            && _context is AndroidX.AppCompat.App.AppCompatActivity activity
-            && activity.Window?.DecorView is AViewGroup viewGroup
-            && _bottomSheetLayout is not null)
-        {
-            WindowCompat.SetDecorFitsSystemWindows(activity.Window, !_bottomSheetDialog.EdgeToEdgeEnabled);
-            WindowCompat.GetInsetsController(activity.Window, activity.Window.DecorView).AppearanceLightStatusBars = true;
-
-            _bottomSheetLayout.RemoveFromParent();
-            viewGroup.AddView(_bottomSheetLayout);
-        }
-        else
-        {
-            if (_bottomSheetDialog.EdgeToEdgeEnabled
-                && _bottomSheetDialog.Window is not null
-                && AColor.GetAlphaComponent(_bottomSheetDialog.Window.NavigationBarColor) == 255)
-            {
-                _bottomSheetDialog.Window?.SetNavigationBarColor(AColor.Transparent);
-            }
-
-            _bottomSheetDialog.DismissEvent += BottomSheetClosed;
-            _bottomSheetDialog.Show();
-        }
+        _bottomSheetDialog.Show();
     }
 
     /// <summary>
@@ -248,16 +219,6 @@ internal sealed class BottomSheet : IDisposable
     /// </summary>
     public void Close()
     {
-        if (_context is AndroidX.AppCompat.App.AppCompatActivity activity
-            && activity.Window is not null)
-        {
-            var controller = WindowCompat.GetInsetsController(activity.Window, activity.Window.DecorView);
-
-            controller.AppearanceLightStatusBars = _windowAppearanceLightStatusBars;
-            controller.AppearanceLightNavigationBars = _windowAppearanceLightNavigationBars;
-        }
-
-        _sheetContainer.ViewAttachedToWindow -= SheetContainerOnViewAttachedToWindow;
         _bottomSheetHandle.Handle.RemoveOnLayoutChangeListener(_bottomSheetContentChangeListener);
 
         if (_bottomSheetHeader is not null)
@@ -272,15 +233,11 @@ internal sealed class BottomSheet : IDisposable
 
         if (_bottomSheetDialog is not null)
         {
+            _bottomSheetDialog.ShowEvent -= BottomSheetShowed;
             _bottomSheetDialog.DismissEvent -= BottomSheetClosed;
         }
 
-        _bottomSheetLayout?.RemoveFromParent();
-        _bottomSheetLayout?.Dispose();
         _sheetContainer.RemoveFromParent();
-
-        _bottomSheetDialog?.Dismiss();
-        _bottomSheetDialog?.Dispose();
 
         HideHandle();
         HideHeader();
@@ -288,6 +245,43 @@ internal sealed class BottomSheet : IDisposable
         HideContent();
 
         _eventManager.HandleEvent(this, EventArgs.Empty, nameof(Closed));
+
+        _bottomSheetBehavior?.Dispose();
+        _bottomSheetBehavior = null;
+        _bottomSheetDialog?.Dismiss();
+        _bottomSheetDialog = null;
+    }
+
+    /// <summary>
+    /// Set is modal.
+    /// </summary>
+    /// <param name="isModal">Is modal.</param>
+    public void SetIsModal(bool isModal)
+    {
+        _isModal = isModal;
+
+        if (_bottomSheetDialog is null)
+        {
+            return;
+        }
+
+        if (_touchOutsideListener is not null
+            && _sheetContainer.Parent?.Parent is CoordinatorLayout bottomSheetLayout
+            && bottomSheetLayout.FindViewById(Resource.Id.touch_outside) is AView touchOutside)
+        {
+            if (_isModal == false)
+            {
+                _bottomSheetDialog.SetCanceledOnTouchOutside(false);
+                _bottomSheetDialog.Window?.ClearFlags(AWindowManagerFlags.DimBehind);
+                touchOutside.SetOnTouchListener(_touchOutsideListener);
+            }
+            else
+            {
+                _bottomSheetDialog.SetCanceledOnTouchOutside(true);
+                _bottomSheetDialog.Window?.AddFlags(AWindowManagerFlags.DimBehind);
+                touchOutside.SetOnTouchListener(null);
+            }
+        }
     }
 
     /// <summary>
@@ -384,7 +378,10 @@ internal sealed class BottomSheet : IDisposable
     /// <param name="color">Color.</param>
     public void SetWindowBackgroundColor(Color color)
     {
-        _backgroundColorDrawable.Color = color.ToPlatform();
+        if (_isModal)
+        {
+            _backgroundColorDrawable.Color = color.ToPlatform();
+        }
     }
 
     /// <summary>
@@ -589,10 +586,9 @@ internal sealed class BottomSheet : IDisposable
             parent.LayoutParameters.Height = AViewGroup.LayoutParams.MatchParent;
         }
 
-        if (_bottomSheetLayout is not null
-            && _isModal)
+        if (_sheetContainer.Parent.Parent is CoordinatorLayout coordinatorLayout)
         {
-            _bottomSheetLayout.Background = _backgroundColorDrawable;
+            coordinatorLayout.Background = _backgroundColorDrawable;
         }
     }
 
@@ -648,15 +644,15 @@ internal sealed class BottomSheet : IDisposable
             nameof(StateChanged));
     }
 
-    private void BottomSheetClosed(object? sender, EventArgs e)
-    {
-        Close();
-    }
-
-    private void SheetContainerOnViewAttachedToWindow(object? sender, AView.ViewAttachedToWindowEventArgs e)
+    private void BottomSheetShowed(object? sender, EventArgs e)
     {
         ApplyCornerRadius();
         PrepareBottomSheetContainer();
+    }
+
+    private void BottomSheetClosed(object? sender, EventArgs e)
+    {
+        Close();
     }
 
     private void Dispose(bool disposing)
@@ -685,15 +681,22 @@ internal sealed class BottomSheet : IDisposable
 
         _sheetContainer.Dispose();
 
+        _touchOutsideListener?.Dispose();
         _bottomSheetContentChangeListener.Dispose();
 
         _backgroundColorDrawable.Dispose();
 
         _bottomSheetCallback.StateChanged -= BottomSheetCallbackOnStateChanged;
-        _bottomSheetCallback.Closed -= BottomSheetClosed;
         _bottomSheetCallback.Dispose();
 
         _bottomSheetBehavior?.Dispose();
+
+        if (_bottomSheetDialog is not null)
+        {
+            _bottomSheetDialog.ShowEvent -= BottomSheetShowed;
+            _bottomSheetDialog.DismissEvent -= BottomSheetClosed;
+        }
+
         _bottomSheetDialog?.Dispose();
     }
 }

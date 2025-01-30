@@ -37,6 +37,9 @@ public sealed partial class ShowCaseViewModel : ObservableObject
     private bool _showCloseButton;
 
     [ObservableProperty]
+    private bool _isModal;
+
+    [ObservableProperty]
     private CloseButtonPosition _closeButtonPosition = CloseButtonPosition.TopRight;
 
     [RelayCommand]

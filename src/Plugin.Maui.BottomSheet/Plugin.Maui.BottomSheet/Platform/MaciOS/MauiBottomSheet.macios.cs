@@ -175,6 +175,14 @@ internal sealed class MauiBottomSheet : UIView
     }
 
     /// <summary>
+    /// Set modal.
+    /// </summary>
+    public void SetIsModal()
+    {
+
+    }
+
+    /// <summary>
     /// Set padding.
     /// </summary>
     public void SetPadding()

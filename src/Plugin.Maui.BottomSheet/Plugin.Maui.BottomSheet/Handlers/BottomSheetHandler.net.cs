@@ -87,4 +87,9 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, obj
     {
         throw new NotImplementedException();
     }
+
+    private static void MapIsModal(BottomSheetHandler handler, IBottomSheet bottomSheet)
+    {
+        throw new NotImplementedException();
+    }
 }

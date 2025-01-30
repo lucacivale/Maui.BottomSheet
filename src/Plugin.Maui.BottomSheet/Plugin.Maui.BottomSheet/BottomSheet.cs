@@ -3,13 +3,19 @@ namespace Plugin.Maui.BottomSheet;
 using System.ComponentModel;
 using System.Windows.Input;
 
-#if ANDROID
-using Microsoft.Maui.Controls.PlatformConfiguration;
-#endif
-
 /// <inheritdoc cref="IBottomSheet" />
 public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet>
 {
+    /// <summary>
+    /// Bindable property.
+    /// </summary>
+    public static readonly BindableProperty IsModalProperty =
+        BindableProperty.Create(
+            nameof(IsModal),
+            typeof(bool),
+            typeof(BottomSheet),
+            defaultValue: true);
+
     /// <summary>
     /// Bindable property.
     /// </summary>
@@ -311,7 +317,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     public bool IsOpen { get => (bool)GetValue(IsOpenProperty); set => SetValue(IsOpenProperty, value); }
 
     /// <inheritdoc/>
-    public bool IsModal { get; set; } = true;
+    public bool IsModal { get => (bool)GetValue(IsModalProperty); set => SetValue(IsModalProperty, value); }
 
     /// <inheritdoc/>
     public bool IsDraggable { get => (bool)GetValue(IsDraggableProperty); set => SetValue(IsDraggableProperty, value); }

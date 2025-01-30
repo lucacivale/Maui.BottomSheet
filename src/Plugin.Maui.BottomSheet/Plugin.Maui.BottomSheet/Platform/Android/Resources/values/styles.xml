@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<style name="Plugin.Maui.BottomSheet.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
+		<item name="android:navigationBarColor">@android:color/transparent</item>
+	</style>
+</resources>

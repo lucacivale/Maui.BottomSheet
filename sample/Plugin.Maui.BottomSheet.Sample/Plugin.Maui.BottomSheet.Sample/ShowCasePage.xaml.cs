@@ -1,7 +1,9 @@
-namespace Plugin.Maui.BottomSheet.Sample;
+#if ANDROID
+using AAndroid = Microsoft.Maui.Controls.PlatformConfiguration.Android;
+using Plugin.Maui.BottomSheet.PlatformConfiguration.AndroidSpecific;
+#endif
 
-using Microsoft.Maui.Controls.PlatformConfiguration;
-using PlatformConfiguration.AndroidSpecific;
+namespace Plugin.Maui.BottomSheet.Sample;
 
 public partial class ShowCasePage : ContentPage
 {
@@ -10,9 +12,10 @@ public partial class ShowCasePage : ContentPage
         InitializeComponent();
         
         BindingContext = viewModel;
-        
-        #if ANDROID
-        NonModalBottomSheet.On<Android>().SetTheme(_Microsoft.Android.Resource.Designer.Resource.Style.ThemeOverlay_App_BottomSheetDialog);
-        #endif
+
+
+#if ANDROID
+        NonModalBottomSheetNonEdgeToEdge.On<AAndroid>().SetTheme(Resource.Style.ThemeOverlay_MaterialComponents_BottomSheetDialog);
+#endif
     }
 }

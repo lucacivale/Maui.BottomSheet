@@ -41,12 +41,13 @@
                 HorizontalOptions="Center"
                 Text="Open some bottom sheet" />
             <bottomsheet:BottomSheet
-                Padding="20"
                 x:Name="ModalBottomSheet"
+                Padding="20"
                 CornerRadius="{Binding CornerRadius}"
                 HasHandle="{Binding HasHandle}"
                 IsCancelable="{Binding IsCancelable}"
                 IsDraggable="{Binding IsDraggable}"
+                IsModal="{Binding IsModal, Mode=TwoWay}"
                 IsOpen="{Binding IsOpen}"
                 ShowHeader="{Binding ShowHeader}"
                 States="Peek,Medium,Large"
@@ -113,11 +114,15 @@
                                             Minimum="0"
                                             VerticalOptions="Center"
                                             Value="{Binding CornerRadius}" />
-                                        <Button
+                                        <Label
                                             Grid.Row="4"
-                                            Grid.ColumnSpan="2"
-                                            Command="{Binding ChangeWindowBackgroundColorCommand}"
-                                            Text="Change window background color" />
+                                            Text="Is modal?"
+                                            VerticalOptions="Center" />
+                                        <Switch
+                                            Grid.Row="4"
+                                            Grid.Column="1"
+                                            IsToggled="{Binding IsModal}"
+                                            VerticalOptions="Center" />
                                     </Grid>
                                 </ContentView>
                             </DataTemplate>
@@ -130,7 +135,7 @@
                             <DataTemplate x:DataType="local:ShowCaseViewModel">
                                 <Grid
                                     ColumnDefinitions="*, 50"
-                                    RowDefinitions="40,40,40,40,40,40"
+                                    RowDefinitions="40,40,40,40,40,40,40"
                                     RowSpacing="10">
                                     <Label Text="Has handle?" />
                                     <Label Grid.Row="1" Text="Is cancelable?" />
@@ -165,6 +170,11 @@
                                             Command="{Binding TopRightCloseButtonCommand}"
                                             Text="Top right close button" />
                                     </Grid>
+                                    <Button
+                                        Grid.Row="6"
+                                        Grid.ColumnSpan="2"
+                                        Command="{Binding ChangeWindowBackgroundColorCommand}"
+                                        Text="Change window background color" />
                                 </Grid>
                             </DataTemplate>
                         </bottomsheet:BottomSheetContent.ContentTemplate>
@@ -172,17 +182,17 @@
                 </bottomsheet:BottomSheet.Content>
             </bottomsheet:BottomSheet>
             <bottomsheet:BottomSheet
-                x:Name="NonModalBottomSheet"
+                x:Name="NonModalBottomSheetNonEdgeToEdge"
                 Padding="20"
                 CornerRadius="{Binding CornerRadius}"
                 HasHandle="{Binding HasHandle}"
                 IsCancelable="{Binding IsCancelable}"
                 IsDraggable="{Binding IsDraggable}"
+                IsModal="False"
                 IsOpen="{Binding IsNonModalOpen}"
                 ShowHeader="{Binding ShowHeader}"
                 States="Peek,Medium,Large"
-                WindowBackgroundColor="{Binding WindowBackgroundColor, Mode=TwoWay}"
-                IsModal="False">
+                WindowBackgroundColor="{Binding WindowBackgroundColor, Mode=TwoWay}">
                 <bottomsheet:BottomSheet.Header>
                     <bottomsheet:BottomSheetHeader
                         CloseButtonPosition="{Binding CloseButtonPosition}"
