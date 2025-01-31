@@ -37,8 +37,8 @@ jobs:
     - name: Archive NuGet
       uses: actions/upload-artifact@v4
       with:
-        name: code-coverage-report
-        path: src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet\bin\${{ env.Configuration }}\Plugin.Maui.BottomSheet.${{ env.Version }}
+        name: Plugin.Maui.BottomSheet.${{ env.Version }}.nupkg
+        path: src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet\bin\${{ env.Configuration }}\Plugin.Maui.BottomSheet.${{ env.Version }}.nupkg
 
   Build-Plugin_Maui_BottomSheet_Sample:
 
