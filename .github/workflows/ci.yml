@@ -31,7 +31,7 @@ jobs:
       run: dotnet workload restore ${{ env.PluginSolutionPath }}
 
     - name: Build Plugin.Maui.BottomSheet
-      run: dotnet build s${{ env.PluginSolutionPath }} -c ${{ env.Configuration }}
+      run: dotnet build ${{ env.PluginSolutionPath }} -c ${{ env.Configuration }}
 
   Build-Plugin_Maui_BottomSheet_Sample:
 
@@ -49,5 +49,5 @@ jobs:
       run: dotnet workload restore ${{ env.PluginSampleSolutionPath }}
 
     - name: Build Plugin.Maui.BottomSheet.Sample
-      run: dotnet build s${{ env.PluginSampleSolutionPath }} -c ${{ env.Configuration }}
+      run: dotnet build ${{ env.PluginSampleSolutionPath }} -c ${{ env.Configuration }}
 
