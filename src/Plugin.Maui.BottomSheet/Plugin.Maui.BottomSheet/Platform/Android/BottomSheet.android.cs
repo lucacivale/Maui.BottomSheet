@@ -7,6 +7,7 @@ using AGravityFlags = Android.Views.GravityFlags;
 using AView = Android.Views.View;
 using AViewGroup = Android.Views.ViewGroup;
 using AWindowManagerFlags = Android.Views.WindowManagerFlags;
+using AColorStateList = Android.Content.Res.ColorStateList;
 #pragma warning disable SA1200
 
 namespace Plugin.Maui.BottomSheet.Platform.Android;
@@ -160,7 +161,7 @@ internal sealed class BottomSheet : IDisposable
         set
         {
             _backgroundColor = value;
-            _sheetContainer.SetBackgroundColor(value.ToPlatform());
+            ApplyBackgroundColor();
         }
     }
 
@@ -211,6 +212,8 @@ internal sealed class BottomSheet : IDisposable
         SetIsDraggable(bottomSheet.IsDraggable);
         SetCornerRadius(bottomSheet.CornerRadius);
         SetWindowBackgroundColor(bottomSheet.WindowBackgroundColor);
+        SetMaxHeight(bottomSheet.GetMaxHeight());
+        SetMaxWidth(bottomSheet.GetMaxWidth());
 
         _bottomSheetDialog.Show();
     }
@@ -294,6 +297,36 @@ internal sealed class BottomSheet : IDisposable
     public void SetIsCancelable(bool isCancelable)
     {
         _bottomSheetDialog?.SetCancelable(isCancelable);
+    }
+
+    /// <summary>
+    /// Set max height.
+    /// </summary>
+    /// <param name="height">Heigt value in dp.</param>
+    public void SetMaxHeight(int height)
+    {
+        if (_bottomSheetBehavior is null
+            || height == int.MinValue)
+        {
+            return;
+        }
+
+        _bottomSheetBehavior.MaxHeight = Convert.ToInt32(_context.ToPixels(height));
+    }
+
+    /// <summary>
+    /// Set max width.
+    /// </summary>
+    /// <param name="width">Widht value in dp.</param>
+    public void SetMaxWidth(int width)
+    {
+        if (_bottomSheetBehavior is null
+            || width == int.MinValue)
+        {
+            return;
+        }
+
+        _bottomSheetBehavior.MaxWidth = Convert.ToInt32(_context.ToPixels(width));
     }
 
     /// <summary>
@@ -580,16 +613,11 @@ internal sealed class BottomSheet : IDisposable
             0);
     }
 
-    private void PrepareBottomSheetContainer()
+    private void ApplyBackgroundColor()
     {
-        if (_sheetContainer.Parent is not AView parent)
+        if (_sheetContainer.Parent is AView bottomSheetFrame)
         {
-            return;
-        }
-
-        if (parent.LayoutParameters is not null)
-        {
-            parent.LayoutParameters.Height = AViewGroup.LayoutParams.MatchParent;
+            bottomSheetFrame.BackgroundTintList = AColorStateList.ValueOf(BackgroundColor.ToPlatform());
         }
     }
 
@@ -647,8 +675,18 @@ internal sealed class BottomSheet : IDisposable
 
     private void BottomSheetShowed(object? sender, EventArgs e)
     {
+        if (_sheetContainer.Parent is not AView parent)
+        {
+            return;
+        }
+
+        if (parent.LayoutParameters is not null)
+        {
+            parent.LayoutParameters.Height = AViewGroup.LayoutParams.MatchParent;
+        }
+
         ApplyCornerRadius();
-        PrepareBottomSheetContainer();
+        ApplyBackgroundColor();
     }
 
     private void BottomSheetClosed(object? sender, EventArgs e)

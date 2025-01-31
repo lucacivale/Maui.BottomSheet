@@ -4,6 +4,7 @@
     x:Class="Plugin.Maui.BottomSheet.Sample.ShowCasePage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:androidBottomsheet="http://pluginmauibottomsheet.com/platformconfiguration/android"
     xmlns:bottomsheet="http://pluginmauibottomsheet.com"
     xmlns:local="clr-namespace:Plugin.Maui.BottomSheet.Sample"
     Title="Showcase"
@@ -43,6 +44,7 @@
             <bottomsheet:BottomSheet
                 x:Name="ModalBottomSheet"
                 Padding="20"
+                androidBottomsheet:BottomSheet.MaxWidth="300"
                 CornerRadius="{Binding CornerRadius}"
                 HasHandle="{Binding HasHandle}"
                 IsCancelable="{Binding IsCancelable}"
@@ -119,8 +121,9 @@
                                             Text="Is modal?"
                                             VerticalOptions="Center" />
                                         <Switch
-                                            Grid.Row="4" HorizontalOptions="End"
+                                            Grid.Row="4"
                                             Grid.Column="1"
+                                            HorizontalOptions="End"
                                             IsToggled="{Binding IsModal}"
                                             VerticalOptions="Center" />
                                     </Grid>

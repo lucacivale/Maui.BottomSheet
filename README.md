@@ -147,21 +147,37 @@ return builder.Build();
 # Platform specifics
 
 ## MacCatalyst
-Apple decided that sheets are always [modal](https://developer.apple.com/design/human-interface-guidelines/sheets#macOS).
+By design sheets are always [modal](https://developer.apple.com/design/human-interface-guidelines/sheets#macOS).
+
 ## Android
 
 #### Themes
-By default a theme based on `ThemeOverlay.MaterialComponents.BottomSheetDialog` is used to theme `BottomSheets`.
+`BottomSheets` are themed by default based on `ThemeOverlay.MaterialComponents.BottomSheetDialog`.
 To enable EdgeToEdge by default the derived theme sets the `navigationBarColor` to transparent.
-You can create you own themes and apply them to different `BottomSheets`
+You can create you own themes and apply them to different `BottomSheets`.
 
 To set a custom theme call the platform specific extension method before the sheet is opened.
-`MyBottomSheet.On<Android>().SetTheme(Resource.Style.My_Awesome_BottomSheetDialog);`
-Theme changes are not possible if the sheet is open and will be applied after it's closed and opened again.
+```
+MyBottomSheet.On<Android>().SetTheme(Resource.Style.My_Awesome_BottomSheetDialog)
+```
 
 #### Edge to edge
-EdgeToEdge support is built-in and enabled by default. If you create your own theme make sure to derive from `ThemeOverlay.MaterialComponents.BottomSheetDialog` and that `navigationBarColor` is translucent. 
-Otherwise EdgeToEdge is disabled for that sheet.
+EdgeToEdge support is built-in and enabled by default. 
+If you create your own theme make sure to derive from `ThemeOverlay.MaterialComponents.BottomSheetDialog` and that `navigationBarColor` is translucent. 
+Otherwise EdgeToEdge is disabled for that sheet. To disable EdgeToEdge you can also set `<item name="enableEdgeToEdge">false</item>` in your theme.
+
+### MyHeight and MaxWidth
+To override the MaxWidth or MaxHeight call the platform specific extension method before the sheet is opened.
+
+```
+MyBottomSheet.On<Android>().SetMaxWidth(MaxValue);
+MyBottomSheet.On<Android>().SetMaxWidth(MaxValue);
+
+or
+
+xmlns:androidBottomsheet="http://pluginmauibottomsheet.com/platformconfiguration/android"
+androidBottomsheet:BottomSheet.MaxWidth="300"
+```
 
 # XAML usage
 
@@ -169,7 +185,9 @@ In order to make use of sheet within XAML you can use this namespace:
 xmlns:bottomsheet="http://pluginmauibottomsheet.com"
 
 `BottomSheet` is a `View` and can be added in any layout or control which accepts `View`.
-To open/close a BottomSheet simply set `IsOpen` property to true/false. You can have <strong>multiple</strong> BottomSheets on one page.
+
+To open/close a `BottomSheet` simply set `IsOpen` property to true/false.
+
 ```
     <bottomsheet:BottomSheet
         Padding="20"
@@ -245,22 +263,50 @@ public MainViewModel(IBottomSheetNavigationService bottomSheetNavigationService)
 }
 ```
 
-You have to register your View as BottomSheet to enable navigation.
-If the `BindingContext` of `View` is assigned during initialization it will be assigned to the `BottomSheet`. [Reference](https://learn.microsoft.com/en-us/dotnet/architecture/maui/dependency-injection)
+Register named `BottomSheets` for navigation
 
-`builder.Services.AddBottomSheet<ShowCasePage>("Showcase");`
+```
+builder.Services.AddBottomSheet<ShowCasePage>("Showcase");
+```
 
-This will add a named "Showcase" `BottomSheet` to the container
-To open it simply call `_bottomSheetNavigationService.NavigateTo("Showcase");`
+Navigate to the registered `BottomSheet`
 
-You can map your `BottomSheet` to a `ViewModel` to simplify navigation.
-`builder.Services.AddBottomSheet<SomeBottomSheet, SomeViewModel>("SomeBottomSheet");`
-This adds a named `BottomSheet` _SomeBottomSheet_ which will be wired to `SomeViewModel` during navigation.
-To navigate to _SomeBottomSheet_ just execute `_bottomSheetNavigationService.NavigateTo("SomeBottomSheet");`
-The `BindingContext` of `SomeBottomSheet` will be `SomeViewModel`.
+```
+_bottomSheetNavigationService.NavigateTo("Showcase");
+```
 
-You can also add a default `BottomSheet` navigation configuration
-`.UseBottomSheet(config => config.CopyPagePropertiesToBottomSheet = true);` will copy all applicable properties from registered `Pages` to the `BottomSheet`
+Close a top most `BottomSheet`
+```
+_bottomSheetNavigationService.GoBack();
+```
+
+Close all open `BottomSheets`(Last In - First Out)
+```
+_bottomSheetNavigationService.ClearBottomSheetStack();
+```
+
+By default `ShowCasePage.BindingContext` will be assigned to `BottomSheet.BindingContext` as in [Shell navigation](https://learn.microsoft.com/dotnet/architecture/maui/dependency-injection).
+
+Wire your `BottomSheet` to a `ViewModel` to simplify navigation.
+
+```
+builder.Services.AddBottomSheet<SomeBottomSheet, SomeViewModel>("SomeBottomSheet");
+```
+
+To manually set the `ViewModel` it has to be available in the container
+```
+builder.Services.AddTransient<SomeViewModel>();
+
+_bottomSheetNavigationService.NavigateTo<SomeViewModel>("Showcase");
+```
+
+If `CopyPagePropertiesToBottomSheet` is enabled all applicable properties will be copied from the source page to the `BottomSheet` during navigation.
+
+```
+.UseBottomSheet(config => config.CopyPagePropertiesToBottomSheet = true);
+```
+
+Add a default `BottomSheet` navigation configuration
 
 ```
 builder.Services.AddBottomSheet<ShowCasePage>("Showcase",
@@ -283,22 +329,13 @@ _bottomSheetNavigationService.NavigateTo("Showcase", configure: (sheet) =>
 });
 ```
 
-You can pass parameters on each navigation(this follows principle of shell navigation)
-Pass an instance of `BottomSheetNavigationParameters` to navigation and if target `ViewModel` implements `IQueryAttributable` parameters will be applied.
+You can pass parameters on each navigation as you are used to it from [Shell navigation](https://learn.microsoft.com/dotnet/maui/fundamentals/shell/navigation?view=net-maui-9.0#process-navigation-data-using-a-single-method).
+
 ```
 _bottomSheetNavigationService.NavigateTo("Showcase", new BottomSheetNavigationParameters()
 {
     ["SomeKey"] = "SomeValue",
 });
 ```
-
-To manually set the `ViewModel` it has to be available in the container
-```
-builder.Services.AddTransient<SomeViewModel>();
-
-_bottomSheetNavigationService.NavigateTo<SomeViewModel>("Showcase");
-```
-
-To close a `BottomSheet` simply call `GoBack` or `ClearBottomSheetStack`(if you have multiple sheets open and want to close all of them)
 
 
