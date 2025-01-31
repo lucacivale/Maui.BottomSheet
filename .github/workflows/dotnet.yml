@@ -1,0 +1,59 @@
+name: Build for NuGet Release
+
+on:
+  push:
+    branches: [ "main" ]
+    paths-ignore:
+      - "**.md"
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  DOTNET_VERSION: '9.0.x'
+  PluginSolutionPath: 'src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet.sln'
+  PluginSampleSolutionPath: 'sample\Plugin.Maui.BottomSheet.Sample\Plugin.Maui.BottomSheet.Sample.sln'
+  Configuration: 'Release'
+  Version: '9.0.7-pre'
+
+jobs:
+  Build-Plugin_Maui_BottomSheet:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: Install .NET MAUI Workload
+      run: dotnet workload restore ${{ env.PluginSolutionPath }}
+
+    - name: Build Plugin.Maui.BottomSheet
+      run: dotnet build ${{ env.PluginSolutionPath }} -c ${{ env.Configuration }} -p:Version=${{ env.Version }}
+
+    - name: Archive NuGet
+      uses: actions/upload-artifact@v4
+      with:
+        name: code-coverage-report
+        path: src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet\bin\${{ env.Configuration }}\Plugin.Maui.BottomSheet.${{ env.Version }}
+
+  Build-Plugin_Maui_BottomSheet_Sample:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: Install .NET MAUI Workload
+      run: dotnet workload restore ${{ env.PluginSampleSolutionPath }}
+
+    - name: Build Plugin.Maui.BottomSheet.Sample
+      run: dotnet build ${{ env.PluginSampleSolutionPath }} -c ${{ env.Configuration }}
