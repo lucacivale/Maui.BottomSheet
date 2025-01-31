@@ -20,7 +20,6 @@
         <RunAnalyzers>true</RunAnalyzers>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">23.0</SupportedOSPlatformVersion>
-        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <Title>.NET MAUI BottomSheet</Title>
         <Description>
             Open native BottomSheets with .NET MAUI
@@ -30,7 +29,6 @@
             * Configurable header
             * MVVM support
         </Description>
-        <Version>9.0.6-pre</Version>
         <Owners>Luca Civale </Owners>
         <Authors>Luca Civale</Authors>
         <Company>Luca Civale</Company>
@@ -45,7 +43,11 @@
         <PackageIcon>Icon.jpg</PackageIcon>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageId>Plugin.Maui.BottomSheet</PackageId>
-	    <IsAotCompatible>true</IsAotCompatible>
+	<IsAotCompatible>true</IsAotCompatible>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)'=='Release'">
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     </PropertyGroup>
 
     <ItemGroup>
