@@ -166,11 +166,11 @@ EdgeToEdge support is built-in and enabled by default.
 If you create your own theme make sure to derive from `ThemeOverlay.MaterialComponents.BottomSheetDialog` and that `navigationBarColor` is translucent. 
 Otherwise EdgeToEdge is disabled for that sheet. To disable EdgeToEdge you can also set `<item name="enableEdgeToEdge">false</item>` in your theme.
 
-### MyHeight and MaxWidth
-To override the MaxWidth or MaxHeight call the platform specific extension method before the sheet is opened.
+### MaxHeight and MaxWidth
+To override the MaxHeight or MaxWidth call the platform specific extension method before the sheet is opened.
 
 ```
-MyBottomSheet.On<Android>().SetMaxWidth(MaxValue);
+MyBottomSheet.On<Android>().SetMaxHeight(MaxValue);
 MyBottomSheet.On<Android>().SetMaxWidth(MaxValue);
 
 or
