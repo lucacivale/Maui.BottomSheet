@@ -5,7 +5,6 @@ on: workflow_dispatch
 env:
   DOTNET_VERSION: '9.0.x'
   PluginSolutionPath: 'src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet.sln'
-  PluginSampleSolutionPath: 'sample\Plugin.Maui.BottomSheet.Sample\Plugin.Maui.BottomSheet.Sample.sln'
   Configuration: 'Release'
   Version: '9.0.0'
 
