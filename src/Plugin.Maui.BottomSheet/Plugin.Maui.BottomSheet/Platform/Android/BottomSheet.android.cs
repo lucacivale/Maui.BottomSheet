@@ -3,11 +3,11 @@ using Android.Content;
 using Android.Widget;
 using Google.Android.Material.BottomSheet;
 using AColorDrawable = Android.Graphics.Drawables.ColorDrawable;
+using AColorStateList = Android.Content.Res.ColorStateList;
 using AGravityFlags = Android.Views.GravityFlags;
 using AView = Android.Views.View;
 using AViewGroup = Android.Views.ViewGroup;
 using AWindowManagerFlags = Android.Views.WindowManagerFlags;
-using AColorStateList = Android.Content.Res.ColorStateList;
 #pragma warning disable SA1200
 
 namespace Plugin.Maui.BottomSheet.Platform.Android;
@@ -214,6 +214,7 @@ internal sealed class BottomSheet : IDisposable
         SetWindowBackgroundColor(bottomSheet.WindowBackgroundColor);
         SetMaxHeight(bottomSheet.GetMaxHeight());
         SetMaxWidth(bottomSheet.GetMaxWidth());
+        SetMargin(bottomSheet.GetMargin());
 
         _bottomSheetDialog.Show();
     }
@@ -317,7 +318,7 @@ internal sealed class BottomSheet : IDisposable
     /// <summary>
     /// Set max width.
     /// </summary>
-    /// <param name="width">Widht value in dp.</param>
+    /// <param name="width">Width value in dp.</param>
     public void SetMaxWidth(int width)
     {
         if (_bottomSheetBehavior is null
@@ -327,6 +328,27 @@ internal sealed class BottomSheet : IDisposable
         }
 
         _bottomSheetBehavior.MaxWidth = Convert.ToInt32(_context.ToPixels(width));
+    }
+
+    /// <summary>
+    /// Set margin.
+    /// </summary>
+    /// <param name="margin">Margin value in dp.</param>
+    public void SetMargin(Thickness margin)
+    {
+        if (_sheetContainer.Parent is not AView bottomSheetFrame
+            || bottomSheetFrame.LayoutParameters is not AViewGroup.MarginLayoutParams marginLayoutParams)
+        {
+            return;
+        }
+
+        var pixelMargin = _context.ToPixels(margin);
+
+        marginLayoutParams.SetMargins(
+            Convert.ToInt32(pixelMargin.Left),
+            0,
+            Convert.ToInt32(pixelMargin.Right),
+            0);
     }
 
     /// <summary>

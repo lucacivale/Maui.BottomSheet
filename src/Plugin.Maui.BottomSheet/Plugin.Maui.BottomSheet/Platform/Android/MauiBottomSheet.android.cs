@@ -62,24 +62,6 @@ internal sealed class MauiBottomSheet : AndroidView
     }
 
     /// <summary>
-    /// Set max height.
-    /// </summary>
-    /// <param name="height">Heigt value in dp.</param>
-    public void SetMaxHeight(int height)
-    {
-        _bottomSheet.SetMaxHeight(height);
-    }
-
-    /// <summary>
-    /// Set max width.
-    /// </summary>
-    /// <param name="width">Widht value in dp.</param>
-    public void SetMaxWidth(int width)
-    {
-        _bottomSheet.SetMaxWidth(width);
-    }
-
-    /// <summary>
     /// Set whether show handle.
     /// </summary>
     public void SetHasHandle()

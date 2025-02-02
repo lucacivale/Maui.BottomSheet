@@ -179,6 +179,20 @@ xmlns:androidBottomsheet="http://pluginmauibottomsheet.com/platformconfiguration
 androidBottomsheet:BottomSheet.MaxWidth="300"
 ```
 
+### Margin
+
+Set the [`BottomSheet` margin](https://learn.microsoft.com/en-us/dotnet/maui/user-interface/align-position?view=net-maui-9.0#position-controls).
+The margin will only be applied on the left on right.
+
+```
+MyBottomSheet.On<Android>().SetMargin(new Thickness(10, 0, 10, 0));
+
+or
+
+xmlns:androidBottomsheet="http://pluginmauibottomsheet.com/platformconfiguration/android"
+androidBottomsheet:BottomSheet.Margin="10,0,10,0"
+```
+
 # XAML usage
 
 In order to make use of sheet within XAML you can use this namespace:

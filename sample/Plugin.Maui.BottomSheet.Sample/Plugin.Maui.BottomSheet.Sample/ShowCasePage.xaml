@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8" ?>
-
 <ContentPage
     x:Class="Plugin.Maui.BottomSheet.Sample.ShowCasePage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -44,7 +43,6 @@
             <bottomsheet:BottomSheet
                 x:Name="ModalBottomSheet"
                 Padding="20"
-                androidBottomsheet:BottomSheet.MaxWidth="300"
                 CornerRadius="{Binding CornerRadius}"
                 HasHandle="{Binding HasHandle}"
                 IsCancelable="{Binding IsCancelable}"
@@ -53,6 +51,7 @@
                 IsOpen="{Binding IsOpen}"
                 ShowHeader="{Binding ShowHeader}"
                 States="Peek,Medium,Large"
+                androidBottomsheet:BottomSheet.MaxWidth="300"
                 WindowBackgroundColor="{Binding WindowBackgroundColor, Mode=TwoWay}">
                 <bottomsheet:BottomSheet.Header>
                     <bottomsheet:BottomSheetHeader
@@ -195,6 +194,7 @@
                 IsOpen="{Binding IsNonModalOpen}"
                 ShowHeader="{Binding ShowHeader}"
                 States="Peek,Medium,Large"
+                androidBottomsheet:BottomSheet.Margin="20,0,20,0"
                 WindowBackgroundColor="{Binding WindowBackgroundColor, Mode=TwoWay}">
                 <bottomsheet:BottomSheet.Header>
                     <bottomsheet:BottomSheetHeader
