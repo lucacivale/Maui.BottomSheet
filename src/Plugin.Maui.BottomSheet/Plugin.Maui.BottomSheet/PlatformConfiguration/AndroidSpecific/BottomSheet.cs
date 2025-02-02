@@ -1,7 +1,3 @@
-#if ANDROID
-using ABottomSheet = Plugin.Maui.BottomSheet.Platform.Android.MauiBottomSheet;
-#endif
-
 namespace Plugin.Maui.BottomSheet.PlatformConfiguration.AndroidSpecific;
 
 using Microsoft.Maui.Controls.PlatformConfiguration;
@@ -47,6 +43,16 @@ public static class BottomSheet
             typeof(int),
             typeof(BottomSheet),
             defaultValue: int.MinValue);
+
+    /// <summary>
+    /// Bindable property.
+    /// </summary>
+    public static readonly BindableProperty MarginProperty =
+        BindableProperty.Create(
+            "Margin",
+            typeof(Thickness),
+            typeof(BottomSheet),
+            defaultValue: Thickness.Zero);
 
     /// <summary>
     /// Get theme resource id.
@@ -115,19 +121,19 @@ public static class BottomSheet
     /// </summary>
     /// <param name="element"><see cref="Maui.BottomSheet"/> instance.</param>
     /// <returns>Max width.</returns>
-    public static int GetMaxWidth(this IBottomSheet element)
-    {
-        if (element is not BindableObject bindable)
-        {
-            throw new ArgumentException("Element must be a BindableObject");
-        }
-
-        return GetMaxWidth(bindable);
-    }
-
     public static int GetMaxWidth(BindableObject element)
     {
         return (int)element.GetValue(MaxWidthProperty);
+    }
+
+    /// <summary>
+    /// Get <see cref="Maui.BottomSheet"/> max height.
+    /// </summary>
+    /// <param name="element"><see cref="Maui.BottomSheet"/> instance.</param>
+    /// <returns>Max height.</returns>
+    public static int GetMaxHeight(BindableObject element)
+    {
+        return (int)element.GetValue(MaxHeightProperty);
     }
 
     /// <summary>
@@ -141,26 +147,6 @@ public static class BottomSheet
     }
 
     /// <summary>
-    /// Get <see cref="Maui.BottomSheet"/> max height.
-    /// </summary>
-    /// <param name="element"><see cref="Maui.BottomSheet"/> instance.</param>
-    /// <returns>Max height.</returns>
-    public static int GetMaxHeight(this IBottomSheet element)
-    {
-        if (element is not BindableObject bindable)
-        {
-            throw new ArgumentException("Element must be a BindableObject");
-        }
-
-        return GetMaxHeight(bindable);
-    }
-
-    public static int GetMaxHeight(BindableObject element)
-    {
-        return (int)element.GetValue(MaxHeightProperty);
-    }
-
-    /// <summary>
     /// Set <see cref="Maui.BottomSheet"/> max width.
     /// </summary>
     /// <param name="config">Android configuration for <see cref="Maui.BottomSheet"/> instance.</param>.
@@ -168,36 +154,18 @@ public static class BottomSheet
     /// <returns><see cref="IPlatformElementConfiguration{TPlatform, TElement}"/>.</returns>
     public static IPlatformElementConfiguration<Android, Maui.BottomSheet.BottomSheet> SetMaxWidth(this IPlatformElementConfiguration<Android, Maui.BottomSheet.BottomSheet> config, int value)
     {
-        SetMaxWidth(config.Element as BindableObject, value);
+        SetMaxWidth(config.Element, value);
         return config;
     }
 
     /// <summary>
-    /// Set <see cref="Maui.BottomSheet"/> max width.
+    /// Set max width.
     /// </summary>
     /// <param name="element"><see cref="Maui.BottomSheet"/> instance.</param>
     /// <param name="value">Max width.</param>
-    public static void SetMaxWidth(this IBottomSheet element, int value)
-    {
-        if (element is not BindableObject bindable)
-        {
-            throw new ArgumentException("Element must be a BindableObject");
-        }
-
-        SetMaxWidth(bindable, value);
-    }
-
     public static void SetMaxWidth(BindableObject element, int value)
     {
         element.SetValue(MaxWidthProperty, value);
-
-#if ANDROID
-        if (element is Maui.BottomSheet.BottomSheet bottomSheet
-            && bottomSheet.Handler?.PlatformView is ABottomSheet mauiBottomSheet)
-        {
-            mauiBottomSheet.SetMaxWidth(value);
-        }
-#endif
     }
 
     /// <summary>
@@ -208,36 +176,103 @@ public static class BottomSheet
     /// <returns><see cref="IPlatformElementConfiguration{TPlatform, TElement}"/>.</returns>
     public static IPlatformElementConfiguration<Android, Maui.BottomSheet.BottomSheet> SetMaxHeight(this IPlatformElementConfiguration<Android, Maui.BottomSheet.BottomSheet> config, int value)
     {
-        SetMaxHeight(config.Element as BindableObject, value);
+        SetMaxHeight(config.Element, value);
         return config;
     }
 
     /// <summary>
-    /// Set <see cref="Maui.BottomSheet"/> max height.
+    /// Set max height.
     /// </summary>
     /// <param name="element"><see cref="Maui.BottomSheet"/> instance.</param>
     /// <param name="value">Max height.</param>
-    public static void SetMaxHeight(this IBottomSheet element, int value)
+    public static void SetMaxHeight(BindableObject element, int value)
+    {
+        element.SetValue(MaxHeightProperty, value);
+    }
+
+    /// <summary>
+    /// Get margin.
+    /// </summary>
+    /// <param name="config">Android configuration for <see cref="Maui.BottomSheet"/> instance.</param>.
+    /// <returns><see cref="IPlatformElementConfiguration{TPlatform, TElement}"/>.</returns>
+    public static Thickness GetMargin(this IPlatformElementConfiguration<Android, Maui.BottomSheet.BottomSheet> config)
+    {
+        return GetMargin(config.Element as BindableObject);
+    }
+
+    /// <summary>
+    /// Get margin.
+    /// </summary>
+    /// <param name="element"><see cref="Maui.BottomSheet"/> instance.</param>
+    /// <returns>Margin of <see cref="Maui.BottomSheet"/>.</returns>
+    public static Thickness GetMargin(BindableObject element)
+    {
+        return (Thickness)element.GetValue(MarginProperty);
+    }
+
+    /// <summary>
+    /// Set margin.
+    /// </summary>
+    /// <param name="config">Android configuration for <see cref="Maui.BottomSheet"/> instance.</param>.
+    /// <param name="value"><see cref="Maui.BottomSheet"/> margin.</param>
+    public static void SetMargin(this IPlatformElementConfiguration<Android, Maui.BottomSheet.BottomSheet> config, Thickness value)
+    {
+        SetMargin(config.Element, value);
+    }
+
+    /// <summary>
+    /// Set margin.
+    /// </summary>
+    /// <param name="element"><see cref="Maui.BottomSheet"/> instance.</param>
+    /// <param name="value"><see cref="Maui.BottomSheet"/> margin.</param>
+    public static void SetMargin(BindableObject element, Thickness value)
+    {
+        element.SetValue(MarginProperty, value);
+    }
+
+    /// <summary>
+    /// Get <see cref="Maui.BottomSheet"/> max width.
+    /// </summary>
+    /// <param name="element"><see cref="Maui.BottomSheet"/> instance.</param>
+    /// <returns>Max width.</returns>
+    internal static int GetMaxWidth(this IBottomSheet element)
     {
         if (element is not BindableObject bindable)
         {
             throw new ArgumentException("Element must be a BindableObject");
         }
 
-        SetMaxHeight(bindable, value);
+        return GetMaxWidth(bindable);
     }
 
-    public static void SetMaxHeight(BindableObject element, int value)
+    /// <summary>
+    /// Get <see cref="Maui.BottomSheet"/> max height.
+    /// </summary>
+    /// <param name="element"><see cref="Maui.BottomSheet"/> instance.</param>
+    /// <returns>Max height.</returns>
+    internal static int GetMaxHeight(this IBottomSheet element)
     {
-        element.SetValue(MaxHeightProperty, value);
-
-#if ANDROID
-        if (element is Maui.BottomSheet.BottomSheet bottomSheet
-            && bottomSheet.Handler?.PlatformView is ABottomSheet mauiBottomSheet)
+        if (element is not BindableObject bindable)
         {
-            mauiBottomSheet.SetMaxHeight(value);
+            throw new ArgumentException("Element must be a BindableObject");
         }
-#endif
+
+        return GetMaxHeight(bindable);
+    }
+
+    /// <summary>
+    /// Get margin.
+    /// </summary>
+    /// <param name="element"><see cref="Maui.BottomSheet"/> instance.</param>
+    /// <returns>Margin of <see cref="Maui.BottomSheet"/>.</returns>
+    internal static Thickness GetMargin(this IBottomSheet element)
+    {
+        if (element is not BindableObject bindable)
+        {
+            throw new ArgumentException("Element must be a BindableObject");
+        }
+
+        return GetMargin(bindable);
     }
 
     private static void SetTheme(BindableObject element, int value)
