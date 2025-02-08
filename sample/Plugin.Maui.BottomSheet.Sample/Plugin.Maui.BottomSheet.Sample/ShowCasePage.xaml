@@ -45,13 +45,13 @@
                 Padding="20"
                 CornerRadius="{Binding CornerRadius}"
                 HasHandle="{Binding HasHandle}"
+                IgnoreSafeArea="True"
                 IsCancelable="{Binding IsCancelable}"
                 IsDraggable="{Binding IsDraggable}"
                 IsModal="{Binding IsModal, Mode=TwoWay}"
                 IsOpen="{Binding IsOpen}"
                 ShowHeader="{Binding ShowHeader}"
                 States="Peek,Medium,Large"
-                androidBottomsheet:BottomSheet.MaxWidth="300"
                 WindowBackgroundColor="{Binding WindowBackgroundColor, Mode=TwoWay}">
                 <bottomsheet:BottomSheet.Header>
                     <bottomsheet:BottomSheetHeader
@@ -67,117 +67,114 @@
                         </bottomsheet:BottomSheetHeader.TopRightButton>
                     </bottomsheet:BottomSheetHeader>
                 </bottomsheet:BottomSheet.Header>
-                <bottomsheet:BottomSheet.Peek>
-                    <bottomsheet:BottomSheetPeek>
-                        <bottomsheet:BottomSheetPeek.PeekViewDataTemplate>
-                            <DataTemplate x:DataType="local:ShowCaseViewModel">
-                                <ContentView>
-                                    <Grid
-                                        Margin="0,10,0,10"
-                                        ColumnDefinitions="*,*"
-                                        ColumnSpacing="10"
-                                        RowDefinitions="40,40,40,40,40"
-                                        RowSpacing="10">
-                                        <Label
-                                            Grid.Row="0"
-                                            Text="Title"
-                                            VerticalTextAlignment="Center" />
-                                        <Entry
-                                            Grid.Row="0"
-                                            Grid.Column="1"
-                                            Text="{Binding Title}" />
-                                        <Button
-                                            Grid.Row="1"
-                                            Command="{Binding HeaderButtonAppearanceModeNoneCommand}"
-                                            Text="None" />
-                                        <Button
-                                            Grid.Row="1"
-                                            Grid.Column="1"
-                                            Command="{Binding HeaderButtonAppearanceModeLeftCommand}"
-                                            Text="Left" />
-                                        <Button
-                                            Grid.Row="2"
-                                            Command="{Binding HeaderButtonAppearanceModeRightCommand}"
-                                            Text="Right" />
-                                        <Button
-                                            Grid.Row="2"
-                                            Grid.Column="1"
-                                            Command="{Binding HeaderButtonAppearanceModeLeftAndRightCommand}"
-                                            Text="LeftAndRight" />
-                                        <Label
-                                            Grid.Row="3"
-                                            Text="Corner radius"
-                                            VerticalOptions="Center" />
-                                        <Slider
-                                            Grid.Row="3"
-                                            Grid.Column="1"
-                                            Maximum="50"
-                                            Minimum="0"
-                                            VerticalOptions="Center"
-                                            Value="{Binding CornerRadius}" />
-                                        <Label
-                                            Grid.Row="4"
-                                            Text="Is modal?"
-                                            VerticalOptions="Center" />
-                                        <Switch
-                                            Grid.Row="4"
-                                            Grid.Column="1"
-                                            HorizontalOptions="End"
-                                            IsToggled="{Binding IsModal}"
-                                            VerticalOptions="Center" />
-                                    </Grid>
-                                </ContentView>
-                            </DataTemplate>
-                        </bottomsheet:BottomSheetPeek.PeekViewDataTemplate>
-                    </bottomsheet:BottomSheetPeek>
-                </bottomsheet:BottomSheet.Peek>
                 <bottomsheet:BottomSheet.Content>
                     <bottomsheet:BottomSheetContent>
                         <bottomsheet:BottomSheetContent.ContentTemplate>
                             <DataTemplate x:DataType="local:ShowCaseViewModel">
-                                <Grid
-                                    ColumnDefinitions="*, 50"
-                                    RowDefinitions="40,40,40,40,40,40,40"
-                                    RowSpacing="10">
-                                    <Label Text="Has handle?" />
-                                    <Label Grid.Row="1" Text="Is cancelable?" />
-                                    <Label Grid.Row="2" Text="Show header?" />
-                                    <Label Grid.Row="3" Text="Is draggable?" />
-                                    <Label Grid.Row="4" Text="Show close button?" />
-                                    <Switch Grid.Column="1" IsToggled="{Binding HasHandle}" />
-                                    <Switch
-                                        Grid.Row="1"
-                                        Grid.Column="1"
-                                        IsToggled="{Binding IsCancelable}" />
-                                    <Switch
-                                        Grid.Row="2"
-                                        Grid.Column="1"
-                                        IsToggled="{Binding ShowHeader}" />
-                                    <Switch
-                                        Grid.Row="3"
-                                        Grid.Column="1"
-                                        IsToggled="{Binding IsDraggable}" />
-                                    <Switch
-                                        Grid.Row="4"
-                                        Grid.Column="1"
-                                        IsToggled="{Binding ShowCloseButton}" />
+                                <VerticalStackLayout>
+                                    <ContentView>
+                                        <ContentView.Behaviors>
+                                            <bottomsheet:BottomSheetPeekBehavior />
+                                        </ContentView.Behaviors>
+                                        <Grid
+                                            Margin="0,10,0,10"
+                                            ColumnDefinitions="*,*"
+                                            ColumnSpacing="10"
+                                            RowDefinitions="40,40,40,40,40"
+                                            RowSpacing="10">
+                                            <Label
+                                                Grid.Row="0"
+                                                Text="Title"
+                                                VerticalTextAlignment="Center" />
+                                            <Entry
+                                                Grid.Row="0"
+                                                Grid.Column="1"
+                                                Text="{Binding Title}" />
+                                            <Button
+                                                Grid.Row="1"
+                                                Command="{Binding HeaderButtonAppearanceModeNoneCommand}"
+                                                Text="None" />
+                                            <Button
+                                                Grid.Row="1"
+                                                Grid.Column="1"
+                                                Command="{Binding HeaderButtonAppearanceModeLeftCommand}"
+                                                Text="Left" />
+                                            <Button
+                                                Grid.Row="2"
+                                                Command="{Binding HeaderButtonAppearanceModeRightCommand}"
+                                                Text="Right" />
+                                            <Button
+                                                Grid.Row="2"
+                                                Grid.Column="1"
+                                                Command="{Binding HeaderButtonAppearanceModeLeftAndRightCommand}"
+                                                Text="LeftAndRight" />
+                                            <Label
+                                                Grid.Row="3"
+                                                Text="Corner radius"
+                                                VerticalOptions="Center" />
+                                            <Slider
+                                                Grid.Row="3"
+                                                Grid.Column="1"
+                                                Maximum="50"
+                                                Minimum="0"
+                                                VerticalOptions="Center"
+                                                Value="{Binding CornerRadius}" />
+                                            <Label
+                                                Grid.Row="4"
+                                                Text="Is modal?"
+                                                VerticalOptions="Center" />
+                                            <Switch
+                                                Grid.Row="4"
+                                                Grid.Column="1"
+                                                HorizontalOptions="End"
+                                                IsToggled="{Binding IsModal}"
+                                                VerticalOptions="Center" />
+                                        </Grid>
+                                    </ContentView>
                                     <Grid
-                                        Grid.Row="5"
-                                        Grid.ColumnSpan="2"
-                                        ColumnDefinitions="*,*"
-                                        ColumnSpacing="10">
-                                        <Button Command="{Binding TopLeftCloseButtonCommand}" Text="Top left close button" />
-                                        <Button
+                                        ColumnDefinitions="*, 50"
+                                        RowDefinitions="40,40,40,40,40,40,40"
+                                        RowSpacing="10">
+                                        <Label Text="Has handle?" />
+                                        <Label Grid.Row="1" Text="Is cancelable?" />
+                                        <Label Grid.Row="2" Text="Show header?" />
+                                        <Label Grid.Row="3" Text="Is draggable?" />
+                                        <Label Grid.Row="4" Text="Show close button?" />
+                                        <Switch Grid.Column="1" IsToggled="{Binding HasHandle}" />
+                                        <Switch
+                                            Grid.Row="1"
                                             Grid.Column="1"
-                                            Command="{Binding TopRightCloseButtonCommand}"
-                                            Text="Top right close button" />
+                                            IsToggled="{Binding IsCancelable}" />
+                                        <Switch
+                                            Grid.Row="2"
+                                            Grid.Column="1"
+                                            IsToggled="{Binding ShowHeader}" />
+                                        <Switch
+                                            Grid.Row="3"
+                                            Grid.Column="1"
+                                            IsToggled="{Binding IsDraggable}" />
+                                        <Switch
+                                            Grid.Row="4"
+                                            Grid.Column="1"
+                                            IsToggled="{Binding ShowCloseButton}" />
+                                        <Grid
+                                            Grid.Row="5"
+                                            Grid.ColumnSpan="2"
+                                            ColumnDefinitions="*,*"
+                                            ColumnSpacing="10">
+                                            <Button Command="{Binding TopLeftCloseButtonCommand}" Text="Top left close button" />
+                                            <Button
+                                                Grid.Column="1"
+                                                Command="{Binding TopRightCloseButtonCommand}"
+                                                Text="Top right close button" />
+                                        </Grid>
+                                        <Button
+                                            Grid.Row="6"
+                                            Grid.ColumnSpan="2"
+                                            Command="{Binding ChangeWindowBackgroundColorCommand}"
+                                            Text="Change window background color" />
                                     </Grid>
-                                    <Button
-                                        Grid.Row="6"
-                                        Grid.ColumnSpan="2"
-                                        Command="{Binding ChangeWindowBackgroundColorCommand}"
-                                        Text="Change window background color" />
-                                </Grid>
+                                </VerticalStackLayout>
                             </DataTemplate>
                         </bottomsheet:BottomSheetContent.ContentTemplate>
                     </bottomsheet:BottomSheetContent>
@@ -186,6 +183,7 @@
             <bottomsheet:BottomSheet
                 x:Name="NonModalBottomSheetNonEdgeToEdge"
                 Padding="20"
+                androidBottomsheet:BottomSheet.Margin="20,0,20,0"
                 CornerRadius="{Binding CornerRadius}"
                 HasHandle="{Binding HasHandle}"
                 IsCancelable="{Binding IsCancelable}"
@@ -194,7 +192,6 @@
                 IsOpen="{Binding IsNonModalOpen}"
                 ShowHeader="{Binding ShowHeader}"
                 States="Peek,Medium,Large"
-                androidBottomsheet:BottomSheet.Margin="20,0,20,0"
                 WindowBackgroundColor="{Binding WindowBackgroundColor, Mode=TwoWay}">
                 <bottomsheet:BottomSheet.Header>
                     <bottomsheet:BottomSheetHeader
@@ -210,107 +207,104 @@
                         </bottomsheet:BottomSheetHeader.TopRightButton>
                     </bottomsheet:BottomSheetHeader>
                 </bottomsheet:BottomSheet.Header>
-                <bottomsheet:BottomSheet.Peek>
-                    <bottomsheet:BottomSheetPeek>
-                        <bottomsheet:BottomSheetPeek.PeekViewDataTemplate>
-                            <DataTemplate x:DataType="local:ShowCaseViewModel">
-                                <ContentView>
-                                    <Grid
-                                        Margin="0,10,0,10"
-                                        ColumnDefinitions="*,*"
-                                        ColumnSpacing="10"
-                                        RowDefinitions="40,40,40,40,40"
-                                        RowSpacing="10">
-                                        <Label
-                                            Grid.Row="0"
-                                            Text="Title"
-                                            VerticalTextAlignment="Center" />
-                                        <Entry
-                                            Grid.Row="0"
-                                            Grid.Column="1"
-                                            Text="{Binding Title}" />
-                                        <Button
-                                            Grid.Row="1"
-                                            Command="{Binding HeaderButtonAppearanceModeNoneCommand}"
-                                            Text="None" />
-                                        <Button
-                                            Grid.Row="1"
-                                            Grid.Column="1"
-                                            Command="{Binding HeaderButtonAppearanceModeLeftCommand}"
-                                            Text="Left" />
-                                        <Button
-                                            Grid.Row="2"
-                                            Command="{Binding HeaderButtonAppearanceModeRightCommand}"
-                                            Text="Right" />
-                                        <Button
-                                            Grid.Row="2"
-                                            Grid.Column="1"
-                                            Command="{Binding HeaderButtonAppearanceModeLeftAndRightCommand}"
-                                            Text="LeftAndRight" />
-                                        <Label
-                                            Grid.Row="3"
-                                            Text="Corner radius"
-                                            VerticalOptions="Center" />
-                                        <Slider
-                                            Grid.Row="3"
-                                            Grid.Column="1"
-                                            Maximum="50"
-                                            Minimum="0"
-                                            VerticalOptions="Center"
-                                            Value="{Binding CornerRadius}" />
-                                        <Button
-                                            Grid.Row="4"
-                                            Grid.ColumnSpan="2"
-                                            Command="{Binding ChangeWindowBackgroundColorCommand}"
-                                            Text="Change window background color" />
-                                    </Grid>
-                                </ContentView>
-                            </DataTemplate>
-                        </bottomsheet:BottomSheetPeek.PeekViewDataTemplate>
-                    </bottomsheet:BottomSheetPeek>
-                </bottomsheet:BottomSheet.Peek>
                 <bottomsheet:BottomSheet.Content>
                     <bottomsheet:BottomSheetContent>
                         <bottomsheet:BottomSheetContent.ContentTemplate>
                             <DataTemplate x:DataType="local:ShowCaseViewModel">
-                                <Grid
-                                    ColumnDefinitions="*, 50"
-                                    RowDefinitions="40,40,40,40,40,40"
-                                    RowSpacing="10">
-                                    <Label Text="Has handle?" />
-                                    <Label Grid.Row="1" Text="Is cancelable?" />
-                                    <Label Grid.Row="2" Text="Show header?" />
-                                    <Label Grid.Row="3" Text="Is draggable?" />
-                                    <Label Grid.Row="4" Text="Show close button?" />
-                                    <Switch Grid.Column="1" IsToggled="{Binding HasHandle}" />
-                                    <Switch
-                                        Grid.Row="1"
-                                        Grid.Column="1"
-                                        IsToggled="{Binding IsCancelable}" />
-                                    <Switch
-                                        Grid.Row="2"
-                                        Grid.Column="1"
-                                        IsToggled="{Binding ShowHeader}" />
-                                    <Switch
-                                        Grid.Row="3"
-                                        Grid.Column="1"
-                                        IsToggled="{Binding IsDraggable}" />
-                                    <Switch
-                                        Grid.Row="4"
-                                        Grid.Column="1"
-                                        IsToggled="{Binding ShowCloseButton}" />
+                                <VerticalStackLayout>
+                                    <ContentView>
+                                        <ContentView.Behaviors>
+                                            <bottomsheet:BottomSheetPeekBehavior />
+                                        </ContentView.Behaviors>
+                                        <Grid
+                                            Margin="0,10,0,10"
+                                            ColumnDefinitions="*,*"
+                                            ColumnSpacing="10"
+                                            RowDefinitions="40,40,40,40,40"
+                                            RowSpacing="10">
+                                            <Label
+                                                Grid.Row="0"
+                                                Text="Title"
+                                                VerticalTextAlignment="Center" />
+                                            <Entry
+                                                Grid.Row="0"
+                                                Grid.Column="1"
+                                                Text="{Binding Title}" />
+                                            <Button
+                                                Grid.Row="1"
+                                                Command="{Binding HeaderButtonAppearanceModeNoneCommand}"
+                                                Text="None" />
+                                            <Button
+                                                Grid.Row="1"
+                                                Grid.Column="1"
+                                                Command="{Binding HeaderButtonAppearanceModeLeftCommand}"
+                                                Text="Left" />
+                                            <Button
+                                                Grid.Row="2"
+                                                Command="{Binding HeaderButtonAppearanceModeRightCommand}"
+                                                Text="Right" />
+                                            <Button
+                                                Grid.Row="2"
+                                                Grid.Column="1"
+                                                Command="{Binding HeaderButtonAppearanceModeLeftAndRightCommand}"
+                                                Text="LeftAndRight" />
+                                            <Label
+                                                Grid.Row="3"
+                                                Text="Corner radius"
+                                                VerticalOptions="Center" />
+                                            <Slider
+                                                Grid.Row="3"
+                                                Grid.Column="1"
+                                                Maximum="50"
+                                                Minimum="0"
+                                                VerticalOptions="Center"
+                                                Value="{Binding CornerRadius}" />
+                                            <Button
+                                                Grid.Row="4"
+                                                Grid.ColumnSpan="2"
+                                                Command="{Binding ChangeWindowBackgroundColorCommand}"
+                                                Text="Change window background color" />
+                                        </Grid>
+                                    </ContentView>
                                     <Grid
-                                        Grid.Row="5"
-                                        Grid.ColumnSpan="2"
-                                        ColumnDefinitions="*,*"
-                                        ColumnSpacing="10">
-                                        <Button Command="{Binding TopLeftCloseButtonCommand}" Text="Top left close button" />
-                                        <Button
+                                        ColumnDefinitions="*, 50"
+                                        RowDefinitions="40,40,40,40,40,40"
+                                        RowSpacing="10">
+                                        <Label Text="Has handle?" />
+                                        <Label Grid.Row="1" Text="Is cancelable?" />
+                                        <Label Grid.Row="2" Text="Show header?" />
+                                        <Label Grid.Row="3" Text="Is draggable?" />
+                                        <Label Grid.Row="4" Text="Show close button?" />
+                                        <Switch Grid.Column="1" IsToggled="{Binding HasHandle}" />
+                                        <Switch
+                                            Grid.Row="1"
                                             Grid.Column="1"
-                                            Command="{Binding TopRightCloseButtonCommand}"
-                                            Text="Top right close button" />
+                                            IsToggled="{Binding IsCancelable}" />
+                                        <Switch
+                                            Grid.Row="2"
+                                            Grid.Column="1"
+                                            IsToggled="{Binding ShowHeader}" />
+                                        <Switch
+                                            Grid.Row="3"
+                                            Grid.Column="1"
+                                            IsToggled="{Binding IsDraggable}" />
+                                        <Switch
+                                            Grid.Row="4"
+                                            Grid.Column="1"
+                                            IsToggled="{Binding ShowCloseButton}" />
+                                        <Grid
+                                            Grid.Row="5"
+                                            Grid.ColumnSpan="2"
+                                            ColumnDefinitions="*,*"
+                                            ColumnSpacing="10">
+                                            <Button Command="{Binding TopLeftCloseButtonCommand}" Text="Top left close button" />
+                                            <Button
+                                                Grid.Column="1"
+                                                Command="{Binding TopRightCloseButtonCommand}"
+                                                Text="Top right close button" />
+                                        </Grid>
                                     </Grid>
-                                </Grid>
+                                </VerticalStackLayout>
                             </DataTemplate>
                         </bottomsheet:BottomSheetContent.ContentTemplate>
                     </bottomsheet:BottomSheetContent>

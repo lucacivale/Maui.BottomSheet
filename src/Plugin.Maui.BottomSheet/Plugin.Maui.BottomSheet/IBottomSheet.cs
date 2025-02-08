@@ -102,9 +102,9 @@ public interface IBottomSheet : IView, IPadding, ISafeAreaView
     Color WindowBackgroundColor { get; set; }
 
     /// <summary>
-    /// Gets or sets the <see cref="BottomSheetPeek"/>.
+    /// Gets or sets the PeekHeight.
     /// </summary>
-    BottomSheetPeek? Peek { get; set; }
+    double PeekHeight { get; set; }
 
     /// <summary>
     /// Gets or sets the executed command when the <see cref="IBottomSheet"/> is closing.

@@ -5,6 +5,8 @@ using AndroidView = Android.Views.View;
 
 namespace Plugin.Maui.BottomSheet.Platform.Android;
 
+using Microsoft.Maui.Platform;
+
 /// <inheritdoc />
 internal sealed class MauiBottomSheet : AndroidView
 {
@@ -162,25 +164,14 @@ internal sealed class MauiBottomSheet : AndroidView
     /// <summary>
     /// Set peek.
     /// </summary>
-    public void SetPeek()
+    public void SetPeekHeight()
     {
-        if (_virtualView?.Peek is not null)
+        if (_virtualView is null)
         {
-            _bottomSheet.SetPeek(_virtualView.Peek);
+            return;
         }
 
-        if (_virtualView?.IsOpen == true
-            && _bottomSheet.IsShowing)
-        {
-            if (_virtualView.Peek is not null)
-            {
-                _bottomSheet.AddPeek();
-            }
-            else
-            {
-                _bottomSheet.HidePeek();
-            }
-        }
+        _bottomSheet.SetPeekHeight(Context.ToPixels(_virtualView.PeekHeight));
     }
 
     /// <summary>

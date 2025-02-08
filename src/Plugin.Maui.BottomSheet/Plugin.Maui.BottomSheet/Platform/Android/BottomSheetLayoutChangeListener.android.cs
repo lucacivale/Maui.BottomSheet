@@ -5,7 +5,7 @@ using AView = Android.Views.View;
 namespace Plugin.Maui.BottomSheet.Platform.Android;
 
 /// <summary>
-/// <see cref="IBottomSheet.Peek"/> layout change callback.
+/// Layout change callback.
 /// </summary>
 internal sealed class BottomSheetLayoutChangeListener : Java.Lang.Object, AView.IOnLayoutChangeListener
 {

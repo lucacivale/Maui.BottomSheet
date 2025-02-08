@@ -53,7 +53,7 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, obj
         throw new NotImplementedException();
     }
 
-    private static void MapPeek(BottomSheetHandler handler, IBottomSheet bottomSheet)
+    private static void MapPeekHeight(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
         throw new NotImplementedException();
     }

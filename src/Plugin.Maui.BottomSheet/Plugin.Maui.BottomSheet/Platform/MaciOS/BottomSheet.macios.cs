@@ -11,7 +11,6 @@ internal sealed class BottomSheet : IDisposable
     private readonly WeakEventManager _eventManager = new();
 
     private BottomSheetContent? _bottomSheetContent;
-    private BottomSheetPeek? _bottomSheetPeek;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheet"/> class.
@@ -73,7 +72,7 @@ internal sealed class BottomSheet : IDisposable
         SetHasHandle(bottomSheet.HasHandle);
         SetIgnoreSafeArea(bottomSheet.IgnoreSafeArea);
         SetHeader(bottomSheet.Header);
-        SetPeek(bottomSheet.Peek);
+        SetPeekHeight(bottomSheet.PeekHeight);
         SetContent(bottomSheet.Content);
         SetCornerRadius(bottomSheet.CornerRadius);
         SetBackgroundColor(bottomSheet.BackgroundColor);
@@ -84,12 +83,11 @@ internal sealed class BottomSheet : IDisposable
             ShowHeader();
         }
 
-        _bottomSheetUIViewController.AddPeek(_bottomSheetPeek);
         _bottomSheetUIViewController.AddContent(_bottomSheetContent);
 
         _bottomSheetUIViewController.AttachPresentationDelegate();
 
-        await _bottomSheetUIViewController.OpenAsync().ConfigureAwait(true);
+        await _bottomSheetUIViewController.OpenAsync(bottomSheet).ConfigureAwait(true);
 
         SetIsDraggable(bottomSheet.IsDraggable);
     }
@@ -129,12 +127,12 @@ internal sealed class BottomSheet : IDisposable
     }
 
     /// <summary>
-    /// Set the <see cref="Plugin.Maui.BottomSheet.BottomSheetPeek"/>.
+    /// Set peek height.
     /// </summary>
-    /// <param name="peek">Peek.</param>
-    public void SetPeek(BottomSheetPeek? peek)
+    /// <param name="peekHeight">Peek height.</param>
+    public void SetPeekHeight(double peekHeight)
     {
-        _bottomSheetPeek = peek;
+        _bottomSheetUIViewController.SetPeekHeight(peekHeight);
     }
 
     /// <summary>
