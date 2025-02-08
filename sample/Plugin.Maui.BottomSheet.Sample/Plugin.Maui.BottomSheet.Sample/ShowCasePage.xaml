@@ -43,6 +43,7 @@
             <bottomsheet:BottomSheet
                 x:Name="ModalBottomSheet"
                 Padding="20"
+                androidBottomsheet:BottomSheet.HalfExpandedRatio="0.8"
                 CornerRadius="{Binding CornerRadius}"
                 HasHandle="{Binding HasHandle}"
                 IgnoreSafeArea="True"

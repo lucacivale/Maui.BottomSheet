@@ -175,7 +175,7 @@ androidBottomsheet:BottomSheet.MaxWidth="300"
 
 ### Margin
 
-Set the [`BottomSheet` margin](https://learn.microsoft.com/en-us/dotnet/maui/user-interface/align-position?view=net-maui-9.0#position-controls).
+Set the [BottomSheet margin](https://learn.microsoft.com/en-us/dotnet/maui/user-interface/align-position?view=net-maui-9.0#position-controls).
 The margin will only be applied on the left on right.
 
 ```
@@ -185,6 +185,16 @@ or
 
 xmlns:androidBottomsheet="http://pluginmauibottomsheet.com/platformconfiguration/android"
 androidBottomsheet:BottomSheet.Margin="10,0,10,0"
+```
+
+### [HalfExpandedRatio](https://developer.android.com/reference/com/google/android/material/bottomsheet/BottomSheetBehavior#setHalfExpandedRatio(float))
+```
+MyBottomSheet.On<Android>().SetHalfExpanedRatio = 0.8f;
+
+or
+
+xmlns:androidBottomsheet="http://pluginmauibottomsheet.com/platformconfiguration/android"
+androidBottomsheet:BottomSheet.HalfExpandedRatio="0.8"
 ```
 
 # XAML usage

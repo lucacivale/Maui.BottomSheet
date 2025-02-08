@@ -16,6 +16,7 @@ public partial class ShowCasePage : ContentPage
 
 #if ANDROID
         NonModalBottomSheetNonEdgeToEdge.On<AAndroid>().SetTheme(Resource.Style.ThemeOverlay_MaterialComponents_BottomSheetDialog);
+        NonModalBottomSheetNonEdgeToEdge.On<AAndroid>().SetHalfExpandedRatio(0.2f);
 #endif
     }
 }

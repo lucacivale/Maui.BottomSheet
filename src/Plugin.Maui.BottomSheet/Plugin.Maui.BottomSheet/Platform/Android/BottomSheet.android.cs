@@ -197,7 +197,7 @@ internal sealed class BottomSheet : IDisposable
 
         _bottomSheetBehavior.GestureInsetBottomIgnored = true;
         _bottomSheetBehavior.FitToContents = false;
-        _bottomSheetBehavior.HalfExpandedRatio = 0.5f;
+        _bottomSheetBehavior.HalfExpandedRatio = bottomSheet.GetHalfExpandedRatio();
         _bottomSheetBehavior.AddBottomSheetCallback(_bottomSheetCallback);
 
         _bottomSheetDialog.SetContentView(_sheetContainer);

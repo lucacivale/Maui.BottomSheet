@@ -47,12 +47,64 @@ public static class BottomSheet
     /// <summary>
     /// Bindable property.
     /// </summary>
+    public static readonly BindableProperty HalfExpandedRatioProperty =
+        BindableProperty.Create(
+            "HalfExpandedRatio",
+            typeof(float),
+            typeof(BottomSheet),
+            defaultValue: 0.5f);
+
+    /// <summary>
+    /// Bindable property.
+    /// </summary>
     public static readonly BindableProperty MarginProperty =
         BindableProperty.Create(
             "Margin",
             typeof(Thickness),
             typeof(BottomSheet),
             defaultValue: Thickness.Zero);
+
+    /// <summary>
+    /// Set half expanded ratio.
+    /// </summary>
+    /// <param name="config">Android configuration for <see cref="Maui.BottomSheet"/> instance.</param>.
+    /// <param name="value">Half expanded ratio.</param>
+    /// <returns><see cref="IPlatformElementConfiguration{TPlatform, TElement}"/>.</returns>
+    public static IPlatformElementConfiguration<Android, Maui.BottomSheet.BottomSheet> SetHalfExpandedRatio(this IPlatformElementConfiguration<Android, Maui.BottomSheet.BottomSheet> config, float value)
+    {
+        SetHalfExpandedRatio(config.Element as BindableObject, value);
+        return config;
+    }
+
+    /// <summary>
+    /// Set half expanded ratio.
+    /// </summary>
+    /// <param name="element"><see cref="Maui.BottomSheet"/> instance.</param>
+    /// <param name="value">Ratio.</param>
+    public static void SetHalfExpandedRatio(BindableObject element, float value)
+    {
+        element.SetValue(HalfExpandedRatioProperty, value);
+    }
+
+    /// <summary>
+    /// Get half expanded ratio.
+    /// </summary>
+    /// <param name="config">Android configuration for <see cref="Maui.BottomSheet"/> instance.</param>
+    /// <returns>Half expanded ratio.</returns>
+    public static float GetHalfExpandedRatio(this IPlatformElementConfiguration<Android, Maui.BottomSheet.BottomSheet> config)
+    {
+        return GetHalfExpandedRatio(config.Element as BindableObject);
+    }
+
+    /// <summary>
+    /// Get half expanded ratio.
+    /// </summary>
+    /// <param name="element"><see cref="Maui.BottomSheet"/> instance.</param>
+    /// <returns>Ratio.</returns>
+    public static float GetHalfExpandedRatio(BindableObject element)
+    {
+        return (float)element.GetValue(HalfExpandedRatioProperty);
+    }
 
     /// <summary>
     /// Get theme resource id.
@@ -228,6 +280,36 @@ public static class BottomSheet
     public static void SetMargin(BindableObject element, Thickness value)
     {
         element.SetValue(MarginProperty, value);
+    }
+
+    /// <summary>
+    /// Get half expanded ratio.
+    /// </summary>
+    /// <param name="element"><see cref="Maui.BottomSheet"/> instance.</param>
+    /// <returns>Half expanded ratio.</returns>
+    internal static float GetHalfExpandedRatio(this IBottomSheet element)
+    {
+        if (element is not BindableObject bindable)
+        {
+            throw new ArgumentException("Element must be a BindableObject");
+        }
+
+        return GetHalfExpandedRatio(bindable);
+    }
+
+    /// <summary>
+    /// Set half expanded ratio.
+    /// </summary>
+    /// <param name="element"><see cref="Maui.BottomSheet"/> instance.</param>
+    /// <param name="value">Half expanded ratio.</param>
+    internal static void SetHalfExpandedRatio(this IBottomSheet element, float value)
+    {
+        if (element is not BindableObject bindable)
+        {
+            throw new ArgumentException("Element must be a BindableObject");
+        }
+
+        SetHalfExpandedRatio(bindable, value);
     }
 
     /// <summary>
