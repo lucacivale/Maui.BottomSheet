@@ -30,8 +30,7 @@ internal sealed class BottomSheet : IDisposable
 {
     private const int HandleRow = 0;
     private const int HeaderRow = 1;
-    private const int PeekRow = 2;
-    private const int ContentRow = 3;
+    private const int ContentRow = 2;
 
     private readonly WeakEventManager _eventManager = new();
     private readonly IMauiContext _mauiContext;
@@ -49,7 +48,6 @@ internal sealed class BottomSheet : IDisposable
     private BottomSheetBehavior? _bottomSheetBehavior;
 
     private BottomSheetHeader? _bottomSheetHeader;
-    private BottomSheetPeek? _bottomSheetPeek;
     private BottomSheetContent? _bottomSheetContent;
 
     private GridLayout.LayoutParams? _handleLayoutParams;
@@ -57,8 +55,7 @@ internal sealed class BottomSheet : IDisposable
     private GridLayout.LayoutParams? _peekLayoutParams;
     private GridLayout.LayoutParams? _contentLayoutParams;
 
-    private View? _virtualBottomSheetPeek;
-    private AView? _platformBottomSheetPeek;
+    private double _peekHeight;
 
     private View? _virtualBottomSheetContent;
     private AView? _platformBottomSheetContent;
@@ -196,7 +193,6 @@ internal sealed class BottomSheet : IDisposable
             AddHeader();
         }
 
-        AddPeek();
         AddContent();
 
         _bottomSheetBehavior.GestureInsetBottomIgnored = true;
@@ -212,6 +208,7 @@ internal sealed class BottomSheet : IDisposable
         SetIsDraggable(bottomSheet.IsDraggable);
         SetCornerRadius(bottomSheet.CornerRadius);
         SetWindowBackgroundColor(bottomSheet.WindowBackgroundColor);
+        SetPeekHeight(_context.ToPixels(bottomSheet.PeekHeight));
         SetMaxHeight(bottomSheet.GetMaxHeight());
         SetMaxWidth(bottomSheet.GetMaxWidth());
         SetMargin(bottomSheet.GetMargin());
@@ -232,8 +229,6 @@ internal sealed class BottomSheet : IDisposable
             _bottomSheetHeader.CloseButtonClicked -= BottomSheetClosed;
         }
 
-        _platformBottomSheetPeek?.RemoveOnLayoutChangeListener(_bottomSheetContentChangeListener);
-
         _bottomSheetBehavior?.RemoveBottomSheetCallback(_bottomSheetCallback);
 
         if (_bottomSheetDialog is not null)
@@ -246,7 +241,6 @@ internal sealed class BottomSheet : IDisposable
 
         HideHandle();
         HideHeader();
-        HidePeek();
         HideContent();
 
         _eventManager.HandleEvent(this, EventArgs.Empty, nameof(Closed));
@@ -392,25 +386,6 @@ internal sealed class BottomSheet : IDisposable
     }
 
     /// <summary>
-    /// Set the <see cref="Plugin.Maui.BottomSheet.BottomSheetPeek"/>.
-    /// </summary>
-    /// <param name="peek">Peek.</param>
-    public void SetPeek(BottomSheetPeek peek)
-    {
-        if (_bottomSheetPeek is not null)
-        {
-            _bottomSheetPeek.PropertyChanged -= BottomSheetPeekOnPropertyChanged;
-        }
-
-        _bottomSheetPeek = peek;
-
-        if (_bottomSheetPeek is not null)
-        {
-            _bottomSheetPeek.PropertyChanged += BottomSheetPeekOnPropertyChanged;
-        }
-    }
-
-    /// <summary>
     /// Set the <see cref="Plugin.Maui.BottomSheet.BottomSheetContent"/>.
     /// </summary>
     /// <param name="content">Content.</param>
@@ -442,6 +417,37 @@ internal sealed class BottomSheet : IDisposable
             && _windowBackgroundColor is not null)
         {
             _backgroundColorDrawable.Color = _windowBackgroundColor.ToPlatform();
+        }
+    }
+
+    /// <summary>
+    /// Set peek height.
+    /// </summary>
+    /// <param name="peekHeight">Peek height in pixels.</param>
+    public void SetPeekHeight(double peekHeight)
+    {
+        if (_bottomSheetBehavior is null)
+        {
+            return;
+        }
+
+        _peekHeight = peekHeight;
+
+        if (_peekHeight <= 0.00)
+        {
+            _bottomSheetBehavior.PeekHeight = 0;
+            _bottomSheetBehavior.SkipCollapsed = true;
+        }
+        else
+        {
+            var height = _bottomSheetHandle.Handle.Height
+                + (_bottomSheetHeader?.HeaderView.Height ?? 0)
+                + _handleMargin
+                + _headerMargin
+                + _peekHeight;
+
+            _bottomSheetBehavior.PeekHeight = Convert.ToInt32(height);
+            _bottomSheetBehavior.SkipCollapsed = false;
         }
     }
 
@@ -485,43 +491,6 @@ internal sealed class BottomSheet : IDisposable
     }
 
     /// <summary>
-    /// Adds the peek view.
-    /// </summary>
-    public void AddPeek()
-    {
-        if (_bottomSheetPeek is null)
-        {
-            return;
-        }
-
-        _virtualBottomSheetPeek = _bottomSheetPeek.PeekViewDataTemplate?.CreateContent() as View;
-
-        if (_virtualBottomSheetPeek is null)
-        {
-            return;
-        }
-
-        _virtualBottomSheetPeek.BindingContext = _bottomSheetPeek.BindingContext;
-        _virtualBottomSheetPeek.Parent = _bottomSheetPeek.Parent;
-
-        _platformBottomSheetPeek = _virtualBottomSheetPeek.ToPlatform(_mauiContext);
-
-        _peekLayoutParams = new GridLayout.LayoutParams()
-        {
-            RowSpec = GridLayout.InvokeSpec(PeekRow),
-        };
-        _peekLayoutParams.SetGravity(AGravityFlags.Fill);
-
-        _platformBottomSheetPeek.AddOnLayoutChangeListener(_bottomSheetContentChangeListener);
-        _sheetContainer.AddView(_platformBottomSheetPeek, _peekLayoutParams);
-
-        if (_bottomSheetBehavior is not null)
-        {
-            _bottomSheetBehavior.SkipCollapsed = false;
-        }
-    }
-
-    /// <summary>
     /// Adds the content view.
     /// </summary>
     public void AddContent()
@@ -560,6 +529,7 @@ internal sealed class BottomSheet : IDisposable
         _bottomSheetHandle.Handle.RemoveOnLayoutChangeListener(_bottomSheetContentChangeListener);
         _bottomSheetHandle.Remove();
         _handleLayoutParams?.Dispose();
+        SetPeekHeight(_peekHeight);
     }
 
     /// <summary>
@@ -575,32 +545,7 @@ internal sealed class BottomSheet : IDisposable
 
         _bottomSheetHeader?.Remove();
         _headerLayoutParams?.Dispose();
-    }
-
-    /// <summary>
-    /// Hide the peek.
-    /// </summary>
-    public void HidePeek()
-    {
-        if (_bottomSheetPeek is not null)
-        {
-            _bottomSheetPeek.PropertyChanged -= BottomSheetPeekOnPropertyChanged;
-        }
-
-        _platformBottomSheetPeek?.RemoveOnLayoutChangeListener(_bottomSheetContentChangeListener);
-
-        if (_bottomSheetBehavior is not null)
-        {
-            _bottomSheetBehavior.SkipCollapsed = true;
-        }
-
-        _platformBottomSheetPeek?.RemoveFromParent();
-        _peekLayoutParams?.Dispose();
-#if NET9_0_OR_GREATER
-        _virtualBottomSheetPeek?.DisconnectHandlers();
-#else
-        _virtualBottomSheetPeek?.Handler?.DisconnectHandler();
-#endif
+        SetPeekHeight(_peekHeight);
     }
 
     /// <summary>
@@ -646,45 +591,7 @@ internal sealed class BottomSheet : IDisposable
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1422:Validate platform compatibility", Justification = "Validated.")]
     private void BottomSheetContentChanged(object? sender, EventArgs e)
     {
-        if (_bottomSheetBehavior is null)
-        {
-            return;
-        }
-
-        var height = _bottomSheetHandle.Handle.Height
-            + (_bottomSheetHeader?.HeaderView.Height ?? 0)
-            + _handleMargin
-            + _headerMargin
-            + PeekHeight();
-
-        _bottomSheetBehavior.PeekHeight = height;
-    }
-
-    private int PeekHeight()
-    {
-        if (_bottomSheetPeek is not null
-            && !double.IsNaN(_bottomSheetPeek.PeekHeight))
-        {
-            return Convert.ToInt32(_bottomSheetPeek.PeekHeight);
-        }
-        else
-        {
-            return _platformBottomSheetPeek?.Height ?? 0;
-        }
-    }
-
-    private void BottomSheetPeekOnPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-    {
-        if (_bottomSheetPeek is null)
-        {
-            return;
-        }
-
-        if (e.PropertyName == nameof(BottomSheetPeek.PeekHeight)
-            && _bottomSheetBehavior is not null)
-        {
-            _bottomSheetBehavior.PeekHeight = PeekHeight();
-        }
+        SetPeekHeight(_peekHeight);
     }
 
     private void BottomSheetCallbackOnStateChanged(object? sender, BottomSheetStateChangedEventArgs e)
@@ -735,8 +642,6 @@ internal sealed class BottomSheet : IDisposable
         _bottomSheetHandle.Dispose();
         _bottomSheetHeader?.Dispose();
         _bottomSheetHeader = null;
-        _platformBottomSheetPeek?.Dispose();
-        _platformBottomSheetPeek = null;
         _platformBottomSheetContent?.Dispose();
         _platformBottomSheetContent = null;
 

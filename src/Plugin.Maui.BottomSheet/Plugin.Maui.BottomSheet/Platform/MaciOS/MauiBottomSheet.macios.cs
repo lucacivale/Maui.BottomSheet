@@ -149,16 +149,16 @@ internal sealed class MauiBottomSheet : UIView
     }
 
     /// <summary>
-    /// Set peek.
+    /// Set peek height.
     /// </summary>
-    public void SetPeek()
+    public void SetPeekHeight()
     {
-        if (_virtualView?.Peek is null)
+        if (_virtualView is null)
         {
             return;
         }
 
-        _bottomSheet.SetPeek(_virtualView.Peek);
+        _bottomSheet.SetPeekHeight(_virtualView.PeekHeight);
     }
 
     /// <summary>

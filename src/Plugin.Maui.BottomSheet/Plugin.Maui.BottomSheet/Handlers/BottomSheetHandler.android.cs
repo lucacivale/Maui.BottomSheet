@@ -74,9 +74,9 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Mau
         handler.PlatformView.SetCurrentState();
     }
 
-    private static void MapPeek(BottomSheetHandler handler, IBottomSheet bottomSheet)
+    private static void MapPeekHeight(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
-        handler.PlatformView.SetPeek();
+        handler.PlatformView.SetPeekHeight();
     }
 
     private static void MapContent(BottomSheetHandler handler, IBottomSheet bottomSheet)

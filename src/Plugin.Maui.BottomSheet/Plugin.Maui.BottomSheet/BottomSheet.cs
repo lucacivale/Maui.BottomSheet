@@ -151,12 +151,12 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     /// <summary>
     /// Bindable property.
     /// </summary>
-    public static readonly BindableProperty PeekProperty =
+    public static readonly BindableProperty PeekHeightProperty =
         BindableProperty.Create(
-            nameof(Peek),
-            typeof(BottomSheetPeek),
+            nameof(PeekHeight),
+            typeof(double),
             typeof(BottomSheet),
-            propertyChanged: OnPeekChanged);
+            defaultValue: 0.00);
 
     /// <summary>
     /// Bindable property.
@@ -183,7 +183,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     /// </summary>
     public static readonly BindableProperty PaddingProperty =
         BindableProperty.Create(
-            nameof(Peek),
+            nameof(Padding),
             typeof(Thickness),
             typeof(BottomSheet),
             defaultValue: new Thickness(5));
@@ -329,7 +329,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     public Color WindowBackgroundColor { get => (Color)GetValue(WindowBackgroundColorProperty); set => SetValue(WindowBackgroundColorProperty, value); }
 
     /// <inheritdoc/>
-    public BottomSheetPeek? Peek { get => (BottomSheetPeek?)GetValue(PeekProperty); set => SetValue(PeekProperty, value); }
+    public double PeekHeight { get => (double)GetValue(PeekHeightProperty); set => SetValue(PeekHeightProperty, value); }
 
     /// <inheritdoc/>
     public BottomSheetHeader? Header { get => (BottomSheetHeader?)GetValue(HeaderProperty); set => SetValue(HeaderProperty, value); }
@@ -375,6 +375,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         set => SetValue(StatesProperty, value);
     }
 
+    /// <inheritdoc/>
     public IPlatformElementConfiguration<T, BottomSheet> On<T>()
         where T : IConfigPlatform
     {
@@ -412,27 +413,6 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
 #pragma warning restore CA1033
 
     /// <inheritdoc/>
-    protected override void OnParentChanged()
-    {
-        base.OnParentChanged();
-
-        if (Header is not null)
-        {
-            Header.Parent = Parent;
-        }
-
-        if (Peek is not null)
-        {
-            Peek.Parent = Parent;
-        }
-
-        if (Content is not null)
-        {
-            Content.Parent = Parent;
-        }
-    }
-
-    /// <inheritdoc/>
     protected override void OnBindingContextChanged()
     {
         base.OnBindingContextChanged();
@@ -440,11 +420,6 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         if (Header is not null)
         {
             Header.BindingContext = BindingContext;
-        }
-
-        if (Peek is not null)
-        {
-            Peek.BindingContext = BindingContext;
         }
 
         if (Content is not null)
@@ -466,9 +441,6 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
 
     private static void OnHeaderChanged(BindableObject bindable, object oldvalue, object newvalue)
         => ((BottomSheet)bindable).OnHeaderChanged((BottomSheetHeader)newvalue);
-
-    private static void OnPeekChanged(BindableObject bindable, object oldvalue, object newvalue)
-        => ((BottomSheet)bindable).OnPeekChanged((BottomSheetPeek)newvalue);
 
     private static void OnContentChanged(BindableObject bindable, object oldvalue, object newvalue)
         => ((BottomSheet)bindable).OnContentChanged((BottomSheetContent)newvalue);
@@ -492,16 +464,6 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     }
 
     private void OnHeaderChanged(BottomSheetHeader newValue)
-    {
-        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-        if (newValue is not null)
-        {
-            newValue.Parent = this;
-            newValue.BindingContext = BindingContext;
-        }
-    }
-
-    private void OnPeekChanged(BottomSheetPeek newValue)
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (newValue is not null)

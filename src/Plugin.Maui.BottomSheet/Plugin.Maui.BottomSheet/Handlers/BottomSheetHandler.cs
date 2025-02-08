@@ -18,7 +18,7 @@ internal sealed partial class BottomSheetHandler
         [nameof(IBottomSheet.Header)] = MapHeader,
         [nameof(IBottomSheet.States)] = MapStates,
         [nameof(IBottomSheet.CurrentState)] = MapCurrentState,
-        [nameof(IBottomSheet.Peek)] = MapPeek,
+        [nameof(IBottomSheet.PeekHeight)] = MapPeekHeight,
         [nameof(IBottomSheet.Content)] = MapContent,
         [nameof(IBottomSheet.Padding)] = MapPadding,
         [nameof(IBottomSheet.BackgroundColor)] = MapBackgroundColor,

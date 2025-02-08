@@ -1,7 +1,7 @@
 # Plugin.Maui.BottomSheet
 <strong>Show native BottomSheets with .NET MAUI!</strong>
 * Built-in NavigationService
-* Open any ContenPage or View as BottomSheet
+* Open any ContentPage or View as BottomSheet
 * Create BottomSheets in any layout
 * Configurable header
 * MVVM support
@@ -61,24 +61,24 @@ return builder.Build();
 
 # API
 
-| Type                                        | Name                  | Description                                                                     |
-|---------------------------------------------|-----------------------|---------------------------------------------------------------------------------|
-| bool                                        | IsModal               | Is interaction with content under BottomSheet enabled                           |
-| bool                                        | IsCancelable          | Can be closed by user either through gestures or clicking in background         |
-| bool                                        | HasHandle             | Show handle                                                                     |
-| bool                                        | ShowHeader            | Show header                                                                     |
-| bool                                        | IsOpen                | Open or close                                                                   |
-| bool                                        | IsDraggable           | Can be dragged(Useful if drawing gestures are made inside bottom sheet)         |
-| List<[BottomSheetState](#bottomSheetState)> | States                | Allowed states. CurrentState must be a value of this collection.                |
-| [BottomSheetState](#bottomSheetState)       | CurrentState          | Current state                                                                   |
-| [BottomSheetHeader](#bottomSheetHeader)     | Header                | Configure header                                                                |
-| [BottomSheetPeek](#bottomSheetPeek)         | Peek                  | Configure peek(requieres at least iOS 16 -- all other platforms are supported)  |
-| [BottomSheetContent](#bottomSheetContent)   | Content               | Configure content                                                               |
-| double                                      | Padding               | Padding                                                                         |
-| Colors                                      | BackgroundColor       | Background color                                                                |
-| bool                                        | IgnoreSafeArea        | Ignore safe area(currently only implemented in iOS)                             |
-| float                                       | CornerRadius          | Top left and top right corner radius                                            |
-| Color                                       | WindowBackgroundColor | Window background color. If BottomSheet is non-modal no window color is applied |
+| Type                                        | Name                  | Description                                                                                                                                     |
+|---------------------------------------------|-----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
+| bool                                        | IsModal               | Is interaction with content under BottomSheet enabled                                                                                           |
+| bool                                        | IsCancelable          | Can be closed by user either through gestures or clicking in background                                                                         |
+| bool                                        | HasHandle             | Show handle                                                                                                                                     |
+| bool                                        | ShowHeader            | Show header                                                                                                                                     |
+| bool                                        | IsOpen                | Open or close                                                                                                                                   |
+| bool                                        | IsDraggable           | Can be dragged(Useful if drawing gestures are made inside bottom sheet)                                                                         |
+| List<[BottomSheetState](#bottomSheetState)> | States                | Allowed states. CurrentState must be a value of this collection.                                                                                |
+| [BottomSheetState](#bottomSheetState)       | CurrentState          | Current state                                                                                                                                   |
+| [BottomSheetHeader](#bottomSheetHeader)     | Header                | Configure header                                                                                                                                |
+| double                                      | PeekHeight            | Set peek height(requires at least iOS 16 -- all other platforms are supported). The header height will be added to the `PeekHeight` internally. |
+| [BottomSheetContent](#bottomSheetContent)   | Content               | Configure content                                                                                                                               |
+| double                                      | Padding               | Padding                                                                                                                                         |
+| Colors                                      | BackgroundColor       | Background color                                                                                                                                |
+| bool                                        | IgnoreSafeArea        | Ignore safe area(currently only implemented in iOS)                                                                                             |
+| float                                       | CornerRadius          | Top left and top right corner radius                                                                                                            |
+| Color                                       | WindowBackgroundColor | Window background color. If BottomSheet is non-modal no window color is applied                                                                 |
 
 ### BottomSheetState
 | Name   | Description        |
@@ -111,12 +111,6 @@ return builder.Build();
 |-------|--------------------------|
 | Left  | Show button on the left  |
 | Right | Show button on the right |
-
-### BottomSheetPeek
-| Type         | Name                 | Description                                                              |
-|--------------|----------------------|--------------------------------------------------------------------------|
-| double       | PeekHeight           | Fixed peek detent height                                                 |
-| DataTemplate | PeekViewDataTemplate | Peek view. Height will be calculated automatically if PeekHeight is NaN. |
 
 ### BottomSheetContent
 | Type         | Name            | Description   |
@@ -164,7 +158,7 @@ MyBottomSheet.On<Android>().SetTheme(Resource.Style.My_Awesome_BottomSheetDialog
 #### Edge to edge
 EdgeToEdge support is built-in and enabled by default. 
 If you create your own theme make sure to derive from `ThemeOverlay.MaterialComponents.BottomSheetDialog` and that `navigationBarColor` is translucent. 
-Otherwise EdgeToEdge is disabled for that sheet. To disable EdgeToEdge you can also set `<item name="enableEdgeToEdge">false</item>` in your theme.
+Otherwise, EdgeToEdge is disabled for that sheet. To disable EdgeToEdge you can also set `<item name="enableEdgeToEdge">false</item>` in your theme.
 
 ### MaxHeight and MaxWidth
 To override the MaxHeight or MaxWidth call the platform specific extension method before the sheet is opened.
@@ -203,66 +197,170 @@ xmlns:bottomsheet="http://pluginmauibottomsheet.com"
 To open/close a `BottomSheet` simply set `IsOpen` property to true/false.
 
 ```
-    <bottomsheet:BottomSheet
-        Padding="20"
-        IsOpen="{Binding IsOpen}"
-        States="Peek,Medium,Large"
-        HasHandle="{Binding HasHandle}"
-        IsCancelable="{Binding IsCancelable}"
-        ShowHeader="{Binding ShowHeader}"
-        IsDraggable="{Binding IsDraggable}">
-        <bottomsheet:BottomSheet.Header>
-            <bottomsheet:BottomSheetHeader 
-                TitleText="{Binding Title}"
-                HeaderAppearance="{Binding HeaderButtonAppearanceMode}">
-                <bottomsheet:BottomSheetHeader.TopLeftButton>
-                    <Button Text="Top left"  Command="{Binding TopLefButtonCommand}"></Button>
-                </bottomsheet:BottomSheetHeader.TopLeftButton>
-                <bottomsheet:BottomSheetHeader.TopRightButton>
-                    <Button Text="Top right" Command="{Binding TopRightButtonCommand}"></Button>
-                </bottomsheet:BottomSheetHeader.TopRightButton>
-            </bottomsheet:BottomSheetHeader>
-        </bottomsheet:BottomSheet.Header>
-        <bottomsheet:BottomSheet.Peek>
-            <bottomsheet:BottomSheetPeek>
-                <bottomsheet:BottomSheetPeek.PeekViewDataTemplate>
-                    <DataTemplate x:DataType="local:ShowCaseViewModel">
-                        <Grid Margin="0,10,0,10"
-                            ColumnSpacing="10"
-                            RowSpacing="10" 
-                            RowDefinitions="40,40,40" 
-                            ColumnDefinitions="*,*">
-                            <Label VerticalTextAlignment="Center" Grid.Row="0" Text="Title"/>
-                            <Entry Grid.Row="0" Grid.Column="1" Text="{Binding Title}"/>
-                            <Button Grid.Row="1" Text="None" Command="{Binding HeaderButtonAppearanceModeNoneCommand}"></Button>
-                            <Button Grid.Row="1" Grid.Column="1" Text="Left" Command="{Binding HeaderButtonAppearanceModeLeftCommand}"></Button>
-                            <Button Grid.Row="2" Text="Right" Command="{Binding HeaderButtonAppearanceModeRightCommand}"></Button>
-                            <Button Grid.Row="2" Grid.Column="1" Text="LeftAndRight" Command="{Binding HeaderButtonAppearanceModeLeftAndRightCommand}"></Button>
+<bottomsheet:BottomSheet
+    x:Name="ModalBottomSheet"
+    Padding="20"
+    CornerRadius="{Binding CornerRadius}"
+    HasHandle="{Binding HasHandle}"
+    IgnoreSafeArea="True"
+    IsCancelable="{Binding IsCancelable}"
+    IsDraggable="{Binding IsDraggable}"
+    IsModal="{Binding IsModal, Mode=TwoWay}"
+    IsOpen="{Binding IsOpen}"
+    ShowHeader="{Binding ShowHeader}"
+    States="Peek,Medium,Large"
+    WindowBackgroundColor="{Binding WindowBackgroundColor, Mode=TwoWay}">
+    <bottomsheet:BottomSheet.Header>
+        <bottomsheet:BottomSheetHeader
+            CloseButtonPosition="{Binding CloseButtonPosition}"
+            HeaderAppearance="{Binding HeaderButtonAppearanceMode}"
+            ShowCloseButton="{Binding ShowCloseButton}"
+            TitleText="{Binding Title}">
+            <bottomsheet:BottomSheetHeader.TopLeftButton>
+                <Button Command="{Binding TopLefButtonCommand}" Text="Top left" />
+            </bottomsheet:BottomSheetHeader.TopLeftButton>
+            <bottomsheet:BottomSheetHeader.TopRightButton>
+                <Button Command="{Binding TopRightButtonCommand}" Text="Top right" />
+            </bottomsheet:BottomSheetHeader.TopRightButton>
+        </bottomsheet:BottomSheetHeader>
+    </bottomsheet:BottomSheet.Header>
+    <bottomsheet:BottomSheet.Content>
+        <bottomsheet:BottomSheetContent>
+            <bottomsheet:BottomSheetContent.ContentTemplate>
+                <DataTemplate x:DataType="local:ShowCaseViewModel">
+                    <VerticalStackLayout>
+                        <ContentView>
+                            <ContentView.Behaviors>
+                                <bottomsheet:BottomSheetPeekBehavior />
+                            </ContentView.Behaviors>
+                            <Grid
+                                Margin="0,10,0,10"
+                                ColumnDefinitions="*,*"
+                                ColumnSpacing="10"
+                                RowDefinitions="40,40,40,40,40"
+                                RowSpacing="10">
+                                <Label
+                                    Grid.Row="0"
+                                    Text="Title"
+                                    VerticalTextAlignment="Center" />
+                                <Entry
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Text="{Binding Title}" />
+                                <Button
+                                    Grid.Row="1"
+                                    Command="{Binding HeaderButtonAppearanceModeNoneCommand}"
+                                    Text="None" />
+                                <Button
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Command="{Binding HeaderButtonAppearanceModeLeftCommand}"
+                                    Text="Left" />
+                                <Button
+                                    Grid.Row="2"
+                                    Command="{Binding HeaderButtonAppearanceModeRightCommand}"
+                                    Text="Right" />
+                                <Button
+                                    Grid.Row="2"
+                                    Grid.Column="1"
+                                    Command="{Binding HeaderButtonAppearanceModeLeftAndRightCommand}"
+                                    Text="LeftAndRight" />
+                                <Label
+                                    Grid.Row="3"
+                                    Text="Corner radius"
+                                    VerticalOptions="Center" />
+                                <Slider
+                                    Grid.Row="3"
+                                    Grid.Column="1"
+                                    Maximum="50"
+                                    Minimum="0"
+                                    VerticalOptions="Center"
+                                    Value="{Binding CornerRadius}" />
+                                <Label
+                                    Grid.Row="4"
+                                    Text="Is modal?"
+                                    VerticalOptions="Center" />
+                                <Switch
+                                    Grid.Row="4"
+                                    Grid.Column="1"
+                                    HorizontalOptions="End"
+                                    IsToggled="{Binding IsModal}"
+                                    VerticalOptions="Center" />
+                            </Grid>
+                        </ContentView>
+                        <Grid
+                            ColumnDefinitions="*, 50"
+                            RowDefinitions="40,40,40,40,40,40,40"
+                            RowSpacing="10">
+                            <Label Text="Has handle?" />
+                            <Label Grid.Row="1" Text="Is cancelable?" />
+                            <Label Grid.Row="2" Text="Show header?" />
+                            <Label Grid.Row="3" Text="Is draggable?" />
+                            <Label Grid.Row="4" Text="Show close button?" />
+                            <Switch Grid.Column="1" IsToggled="{Binding HasHandle}" />
+                            <Switch
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                IsToggled="{Binding IsCancelable}" />
+                            <Switch
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                IsToggled="{Binding ShowHeader}" />
+                            <Switch
+                                Grid.Row="3"
+                                Grid.Column="1"
+                                IsToggled="{Binding IsDraggable}" />
+                            <Switch
+                                Grid.Row="4"
+                                Grid.Column="1"
+                                IsToggled="{Binding ShowCloseButton}" />
+                            <Grid
+                                Grid.Row="5"
+                                Grid.ColumnSpan="2"
+                                ColumnDefinitions="*,*"
+                                ColumnSpacing="10">
+                                <Button Command="{Binding TopLeftCloseButtonCommand}" Text="Top left close button" />
+                                <Button
+                                    Grid.Column="1"
+                                    Command="{Binding TopRightCloseButtonCommand}"
+                                    Text="Top right close button" />
+                            </Grid>
+                            <Button
+                                Grid.Row="6"
+                                Grid.ColumnSpan="2"
+                                Command="{Binding ChangeWindowBackgroundColorCommand}"
+                                Text="Change window background color" />
                         </Grid>
-                    </DataTemplate>
-                </bottomsheet:BottomSheetPeek.PeekViewDataTemplate>
-            </bottomsheet:BottomSheetPeek>
-        </bottomsheet:BottomSheet.Peek>
-        <bottomsheet:BottomSheet.Content>
-            <bottomsheet:BottomSheetContent>
-                <bottomsheet:BottomSheetContent.ContentTemplate>
-                    <DataTemplate x:DataType="local:ShowCaseViewModel">
-                        <Grid RowDefinitions="40,40,40,40" RowSpacing="10" ColumnDefinitions="*, 50">
-                            <Label Text="Has handle?"></Label>
-                            <Label Grid.Row="1" Text="Is cancelable?"></Label>
-                            <Label Grid.Row="2" Text="Show header?"></Label>
-                            <Label Grid.Row="3" Text="Is draggable?"></Label>
-                            <Switch Grid.Column="1" IsToggled="{Binding HasHandle}"></Switch>
-                            <Switch Grid.Row="1" Grid.Column="1" IsToggled="{Binding IsCancelable}"></Switch>
-                            <Switch Grid.Row="2" Grid.Column="1" IsToggled="{Binding ShowHeader}"></Switch>
-                            <Switch Grid.Row="3" Grid.Column="1" IsToggled="{Binding IsDraggable}"></Switch>
-                        </Grid>
-                    </DataTemplate>
-                </bottomsheet:BottomSheetContent.ContentTemplate>
-            </bottomsheet:BottomSheetContent>
-        </bottomsheet:BottomSheet.Content>
-    </bottomsheet:BottomSheet>
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </bottomsheet:BottomSheetContent.ContentTemplate>
+        </bottomsheet:BottomSheetContent>
+    </bottomsheet:BottomSheet.Content>
+</bottomsheet:BottomSheet>
 ```
+To set the PeekHeight based on a view inside the `BottomSheetContent` attach the `BottomSheetPeekBehavior` to the view.
+```
+<bottomsheet:BottomSheet.Content>
+    <bottomsheet:BottomSheetContent>
+        <bottomsheet:BottomSheetContent.ContentTemplate>
+            <DataTemplate x:DataType="local:ShowCaseViewModel">
+                <VerticalStackLayout>
+                    <ContentView>
+                        <ContentView.Behaviors>
+                            <bottomsheet:BottomSheetPeekBehavior />
+                        </ContentView.Behaviors>
+                        <Label Text="Peek content"/>
+                    </ContentView>
+                    <Grid
+                        <Label Text="Main content"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </DataTemplate>
+        </bottomsheet:BottomSheetContent.ContentTemplate>
+    </bottomsheet:BottomSheetContent>
+</bottomsheet:BottomSheet.Content>
+```
+The peek height will be equal to the `ContentView` height.
 
 # Navigation
 
