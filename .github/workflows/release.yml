@@ -6,7 +6,7 @@ env:
   DOTNET_VERSION: '9.0.x'
   PluginSolutionPath: 'src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet.sln'
   Configuration: 'Release'
-  Version: '9.0.0'
+  Version: '9.1.0'
 
 jobs:
   Build-Plugin_Maui_BottomSheet:
