@@ -146,6 +146,9 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether sheet is modal.
+    /// </summary>
     public bool IsModal
     {
         get => SheetPresentationController?.LargestUndimmedDetentIdentifier == UISheetPresentationControllerDetentIdentifier.Unknown;
@@ -477,8 +480,8 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         _peekDetentHeight = peekHeight;
 
         if ((OperatingSystem.IsMacCatalyst()
-                || (OperatingSystem.IsIOS()
-                    && OperatingSystem.IsIOSVersionAtLeast(16)))
+            || (OperatingSystem.IsIOS()
+                && OperatingSystem.IsIOSVersionAtLeast(16)))
 #pragma warning disable CA1416
 #pragma warning disable S6605
             && SheetPresentationController?.Detents.Any(x => x.Identifier == PeekDetentId) == true)
