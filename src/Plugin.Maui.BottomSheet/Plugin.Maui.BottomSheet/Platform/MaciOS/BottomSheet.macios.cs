@@ -310,7 +310,7 @@ internal sealed class BottomSheet : IDisposable
 
     private void Dispose(bool disposing)
     {
-        if (disposing)
+        if (!disposing)
         {
             return;
         }

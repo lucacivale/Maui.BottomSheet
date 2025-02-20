@@ -31,7 +31,7 @@ internal sealed class BottomSheetHeader : IDisposable
     /// </summary>
     ~BottomSheetHeader()
     {
-        Dispose(false);
+        Dispose();
     }
 
     /// <summary>
@@ -113,7 +113,6 @@ internal sealed class BottomSheetHeader : IDisposable
     /// <inheritdoc/>
     public void Dispose()
     {
-        Dispose(true);
         GC.SuppressFinalize(this);
     }
 
@@ -278,16 +277,6 @@ internal sealed class BottomSheetHeader : IDisposable
             this,
             EventArgs.Empty,
             nameof(SizeChanged));
-    }
-
-    private void Dispose(bool isDisposing)
-    {
-        if (isDisposing)
-        {
-            return;
-        }
-
-        Hide();
     }
 
     private void BottomSheetHeaderOnPropertyChanged(object? sender, PropertyChangedEventArgs e)

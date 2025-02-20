@@ -411,32 +411,33 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     /// <inheritdoc/>
     protected override void Dispose(bool disposing)
     {
-        if (disposing)
+        if (!disposing)
         {
-#if NET9_0_OR_GREATER
-            _virtualBottomSheet.DisconnectHandlers();
-            _virtualBottomSheetContent?.DisconnectHandlers();
-#else
-            _virtualBottomSheet.Handler?.DisconnectHandler();
-            _virtualBottomSheetContent?.Handler?.DisconnectHandler();
-#endif
-            _virtualBottomSheet.BottomSheet = null;
-
-            HideHeader();
-
-            _backgroundView.Dispose();
-
-            _bottomSheetControllerDelegate.Dismissed -= RaiseDismissed;
-            _bottomSheetControllerDelegate.StateChanged -= BottomSheetControllerDelegateOnStateChanged;
-            _bottomSheetControllerDelegate.Dispose();
-            _bottomSheetUIViewController.Dispose();
-
-            _peekDetent?.Dispose();
-            _mediumDetent?.Dispose();
-            _largeDetent?.Dispose();
-
-            _bottomSheetHeader?.Dispose();
+            return;
         }
+#if NET9_0_OR_GREATER
+        _virtualBottomSheet.DisconnectHandlers();
+        _virtualBottomSheetContent?.DisconnectHandlers();
+#else
+        _virtualBottomSheet.Handler?.DisconnectHandler();
+        _virtualBottomSheetContent?.Handler?.DisconnectHandler();
+#endif
+        _virtualBottomSheet.BottomSheet = null;
+
+        HideHeader();
+
+        _backgroundView.Dispose();
+
+        _bottomSheetControllerDelegate.Dismissed -= RaiseDismissed;
+        _bottomSheetControllerDelegate.StateChanged -= BottomSheetControllerDelegateOnStateChanged;
+        _bottomSheetControllerDelegate.Dispose();
+        _bottomSheetUIViewController.Dispose();
+
+        _peekDetent?.Dispose();
+        _mediumDetent?.Dispose();
+        _largeDetent?.Dispose();
+
+        _bottomSheetHeader?.Dispose();
 
         base.Dispose(disposing);
     }
