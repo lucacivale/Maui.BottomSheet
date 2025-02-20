@@ -12,20 +12,28 @@ internal static class IBottomSheetExtensions
     /// </summary>
     /// <param name="bottomSheet"><see cref="IBottomSheet"/>.</param>
     /// <returns><see cref="ContentPage"/> parent.</returns>
-    internal static ContentPage? GetPageParent(this IBottomSheet bottomSheet)
+    internal static Page? GetPageParent(this IBottomSheet bottomSheet)
     {
-        ContentPage? page = null;
+        Page? page = null;
 
         var parent = bottomSheet.Parent;
-        while (parent is not null)
-        {
-            if (parent is ContentPage contentPage)
-            {
-                page = contentPage;
-                break;
-            }
 
-            parent = parent.Parent;
+        if (parent is Shell shell)
+        {
+            page = shell.CurrentPage;
+        }
+        else
+        {
+            while (parent is not null)
+            {
+                if (parent is ContentPage contentPage)
+                {
+                    page = contentPage;
+                    break;
+                }
+
+                parent = parent.Parent;
+            }
         }
 
         return page;
