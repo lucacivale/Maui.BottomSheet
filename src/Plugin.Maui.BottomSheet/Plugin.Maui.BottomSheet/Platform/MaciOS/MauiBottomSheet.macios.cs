@@ -83,6 +83,12 @@ internal sealed class MauiBottomSheet : UIView
     /// </summary>
     public void SetShowHeader()
     {
+        if (_virtualView?.IsOpen == false
+            || _bottomSheet.IsBeingPresented == false)
+        {
+            return;
+        }
+
         if (_virtualView?.ShowHeader == true)
         {
             _bottomSheet.ShowHeader();
