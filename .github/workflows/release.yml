@@ -3,7 +3,7 @@ name: Build for NuGet Release
 on: workflow_dispatch
   
 env:
-  DOTNET_VERSION: '9.0.x'
+  DOTNET_VERSION: '9.0.102'
   PluginSolutionPath: 'src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet.sln'
   Configuration: 'Release'
   Version: '9.1.0'
