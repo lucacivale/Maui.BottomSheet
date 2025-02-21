@@ -429,6 +429,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
 
         HideHeader();
 
+        _backgroundView.RemoveFromSuperview();
         _backgroundView.Dispose();
 
         _bottomSheetControllerDelegate.Dismissed -= RaiseDismissed;
