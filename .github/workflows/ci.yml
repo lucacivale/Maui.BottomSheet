@@ -11,7 +11,6 @@ on:
 env:
   DOTNET_VERSION: '9.0.102'
   PluginSolutionPath: 'src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet.sln'
-  PluginSampleSolutionPath: 'sample\Plugin.Maui.BottomSheet.Sample\Plugin.Maui.BottomSheet.Sample.sln'
   Configuration: 'Release'
 
 jobs:
@@ -32,22 +31,4 @@ jobs:
 
     - name: Build Plugin.Maui.BottomSheet
       run: dotnet build ${{ env.PluginSolutionPath }} -c ${{ env.Configuration }}
-
-  Build-Plugin_Maui_BottomSheet_Sample:
-
-    runs-on: windows-latest
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
-    
-    - name: Install .NET MAUI Workload
-      run: dotnet workload restore ${{ env.PluginSampleSolutionPath }}
-
-    - name: Build Plugin.Maui.BottomSheet.Sample
-      run: dotnet build ${{ env.PluginSampleSolutionPath }} -c ${{ env.Configuration }}
 
