@@ -6,7 +6,6 @@ env:
   DOTNET_VERSION: '9.0.102'
   PluginSolutionPath: 'src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet.sln'
   Configuration: 'Release'
-  Version: '9.1.2'
 
 jobs:
   Build-Plugin_Maui_BottomSheet:
@@ -16,6 +15,13 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Get next version
+      uses: reecetech/version-increment@2024.10.1
+      id: version
+      with:
+        scheme: semver
+        increment: patch
+          
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -25,10 +31,10 @@ jobs:
       run: dotnet workload restore ${{ env.PluginSolutionPath }}
 
     - name: Build Plugin.Maui.BottomSheet
-      run: dotnet build ${{ env.PluginSolutionPath }} -c ${{ env.Configuration }} -p:Version=${{ env.Version }}
+      run: dotnet build ${{ env.PluginSolutionPath }} -c ${{ env.Configuration }} -p:Version=${{ steps.version.outputs.version }}
 
     - name: Archive NuGet
       uses: actions/upload-artifact@v4
       with:
-        name: Plugin.Maui.BottomSheet.${{ env.Version }}.nupkg
-        path: src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet\bin\${{ env.Configuration }}\Plugin.Maui.BottomSheet.${{ env.Version }}.nupkg
+        name: Plugin.Maui.BottomSheet.${{ steps.version.outputs.version }}.nupkg
+        path: src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet\bin\${{ env.Configuration }}\Plugin.Maui.BottomSheet.${{ steps.version.outputs.version }}.nupkg
