@@ -35,6 +35,8 @@ internal sealed class BottomSheetUIViewController : UINavigationController
 
     private BottomSheetHeader? _bottomSheetHeader;
 
+    private bool _isModal;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheetUIViewController"/> class.
     /// </summary>
@@ -151,12 +153,15 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     /// </summary>
     public bool IsModal
     {
-        get => SheetPresentationController?.LargestUndimmedDetentIdentifier == UISheetPresentationControllerDetentIdentifier.Unknown;
+        get => _isModal;
         set
         {
+            _isModal = value;
+
             if (SheetPresentationController is not null)
             {
-                SheetPresentationController.LargestUndimmedDetentIdentifier = value ? UISheetPresentationControllerDetentIdentifier.Unknown : UISheetPresentationControllerDetentIdentifier.Large;
+                // Actually bug in UIKit. Custom detent can't be undimmed. Submit a bug?.
+                SheetPresentationController.LargestUndimmedDetentIdentifier = _isModal ? UISheetPresentationControllerDetentIdentifier.Unknown : Detents.LargestDetentIdentifier();
             }
 
             PrepareBottomSheetWindowBackground();
