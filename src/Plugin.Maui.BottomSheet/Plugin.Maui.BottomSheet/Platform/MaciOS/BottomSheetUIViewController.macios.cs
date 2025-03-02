@@ -293,14 +293,29 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     /// Adds the header view.
     /// </summary>
     /// <param name="header">Header.</param>
-    public void AddHeader(Plugin.Maui.BottomSheet.BottomSheetHeader? header)
+    /// <param name="style">Style.</param>
+    public void AddHeader(Plugin.Maui.BottomSheet.BottomSheetHeader? header, BottomSheetHeaderStyle style)
     {
         if (header is null)
         {
             return;
         }
 
-        _bottomSheetHeader = new BottomSheetHeader(header);
+        _bottomSheetHeader = new BottomSheetHeader(header, style);
+    }
+
+    /// <summary>
+    /// Set header style.
+    /// </summary>
+    /// <param name="style">Style.</param>
+    public void SetHeaderStyle(BottomSheetHeaderStyle style)
+    {
+        if (_bottomSheetHeader is null)
+        {
+            return;
+        }
+
+        _bottomSheetHeader.SetStyle(style);
     }
 
     /// <summary>

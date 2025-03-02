@@ -107,6 +107,11 @@ public interface IBottomSheet : IView, IPadding, ISafeAreaView
     double PeekHeight { get; set; }
 
     /// <summary>
+    /// Gets or sets style for built-in components.
+    /// </summary>
+    public BottomSheetStyle BottomSheetStyle { get; set; }
+
+    /// <summary>
     /// Gets or sets the executed command when the <see cref="IBottomSheet"/> is closing.
     /// </summary>
     ICommand? ClosingCommand { get; set; }

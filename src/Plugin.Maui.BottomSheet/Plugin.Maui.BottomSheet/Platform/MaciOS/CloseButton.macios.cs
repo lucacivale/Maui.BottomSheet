@@ -4,13 +4,18 @@ namespace Plugin.Maui.BottomSheet.Platform.MaciOS;
 public sealed class CloseButton : Button, ICrossPlatformLayout
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="CloseButton"/> class.
+    /// Bindable property.
     /// </summary>
-    public CloseButton()
-    {
-        HeightRequest = 40;
-        WidthRequest = 40;
-    }
+    public static readonly BindableProperty TintProperty =
+        BindableProperty.Create(
+            nameof(TintColor),
+            typeof(Color),
+            typeof(CloseButton));
+
+    /// <summary>
+    /// Gets or sets tint color.
+    /// </summary>
+    public Color TintColor { get => (Color)GetValue(TintProperty); set => SetValue(TintProperty, value); }
 
     /// <inheritdoc/>
     Size ICrossPlatformLayout.CrossPlatformMeasure(double widthConstraint, double heightConstraint)

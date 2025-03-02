@@ -32,10 +32,15 @@ internal sealed class BottomSheetHeader : IDisposable
     private readonly Plugin.Maui.BottomSheet.BottomSheetHeader _bottomSheetHeader;
     private readonly BottomSheetHeaderLayoutChangeListener _headerLayoutChangeListener;
 
+    private BottomSheetHeaderStyle _headerStyle;
+
     private RelativeLayout? _headerLayout;
     private AView? _topLeftView;
     private AView? _topRightView;
+
     private AView? _titleView;
+    private View? _virtualTitleView;
+
     private AView? _headerView;
 
     private View? _virtualHeaderView;
@@ -48,10 +53,12 @@ internal sealed class BottomSheetHeader : IDisposable
     /// <param name="context"><see cref="Context"/>.</param>
     /// <param name="mauiContext"><see cref="IMauiContext"/>.</param>
     /// <param name="bottomSheetHeader"><see cref="Maui.BottomSheet.BottomSheetHeader"/>.</param>
+    /// <param name="headerStyle">Style.</param>
     public BottomSheetHeader(
         Context context,
         IMauiContext mauiContext,
-        Plugin.Maui.BottomSheet.BottomSheetHeader bottomSheetHeader)
+        Plugin.Maui.BottomSheet.BottomSheetHeader bottomSheetHeader,
+        BottomSheetHeaderStyle headerStyle)
     {
         _headerLayoutChangeListener = new BottomSheetHeaderLayoutChangeListener(this);
 
@@ -59,6 +66,7 @@ internal sealed class BottomSheetHeader : IDisposable
         _mauiContext = mauiContext;
 
         _bottomSheetHeader = bottomSheetHeader;
+        _headerStyle = headerStyle;
     }
 
     /// <summary>
@@ -105,6 +113,22 @@ internal sealed class BottomSheetHeader : IDisposable
     }
 
     /// <summary>
+    /// Set style.
+    /// </summary>
+    /// <param name="style">Style.</param>
+    public void SetStyle(BottomSheetHeaderStyle style)
+    {
+        _headerStyle.PropertyChanged -= HeaderStyleOnPropertyChanged;
+        _headerStyle = style;
+        _headerStyle.PropertyChanged += HeaderStyleOnPropertyChanged;
+
+        if (_virtualTitleView is not null)
+        {
+            _virtualTitleView.BindingContext = style;
+        }
+    }
+
+    /// <summary>
     /// Raise <see cref="LayoutChanged"/>.
     /// </summary>
     public void RaiseLayoutChangedEvent()
@@ -147,7 +171,7 @@ internal sealed class BottomSheetHeader : IDisposable
 
         if (string.IsNullOrWhiteSpace(_titleText))
         {
-            RemoveView(ref _titleView, null);
+            RemoveView(ref _titleView, _virtualHeaderView);
             return;
         }
 
@@ -184,7 +208,7 @@ internal sealed class BottomSheetHeader : IDisposable
 
         RemoveView(ref _topLeftView, _bottomSheetHeader.TopLeftButton);
         RemoveView(ref _topRightView, _bottomSheetHeader.TopRightButton);
-        RemoveView(ref _titleView, null);
+        RemoveView(ref _titleView, _virtualTitleView);
 
         RaiseLayoutChangedEvent();
     }
@@ -286,12 +310,27 @@ internal sealed class BottomSheetHeader : IDisposable
     {
         Label title = new()
         {
-            FontAttributes = FontAttributes.Bold,
-            FontSize = 20,
             Text = titleText ?? string.Empty,
+            BindingContext = _headerStyle,
         };
 
-        var view = title.ToPlatform(_mauiContext);
+#if NET9_0_OR_GREATER
+        title.SetBinding(Label.TextColorProperty, static (BottomSheetHeaderStyle style) => style.TitleTextColor);
+        title.SetBinding(Label.FontAttributesProperty, static (BottomSheetHeaderStyle style) => style.TitleTextFontAttributes);
+        title.SetBinding(Label.FontFamilyProperty, static (BottomSheetHeaderStyle style) => style.TitleTextFontFamily);
+        title.SetBinding(Label.FontSizeProperty, static (BottomSheetHeaderStyle style) => style.TitleTextFontSize);
+        title.SetBinding(Label.FontAutoScalingEnabledProperty, static (BottomSheetHeaderStyle style) => style.TitleTextFontAutoScalingEnabled);
+#else
+        title.SetBinding(Label.TextColorProperty, nameof(BottomSheetHeaderStyle.TitleTextColor));
+        title.SetBinding(Label.FontAttributesProperty, nameof(BottomSheetHeaderStyle.TitleTextFontAttributes));
+        title.SetBinding(Label.FontFamilyProperty, nameof(BottomSheetHeaderStyle.TitleTextFontFamily));
+        title.SetBinding(Label.FontSizeProperty, nameof(BottomSheetHeaderStyle.TitleTextFontSize));
+        title.SetBinding(Label.FontAutoScalingEnabledProperty, nameof(BottomSheetHeaderStyle.TitleTextFontAutoScalingEnabled));
+#endif
+
+        _virtualTitleView = title;
+
+        var view = _virtualTitleView.ToPlatform(_mauiContext);
         view.Id = AView.GenerateViewId();
 
         if (view is TextView textView)
@@ -316,7 +355,7 @@ internal sealed class BottomSheetHeader : IDisposable
     private void ConfigureHeader()
     {
         RemoveView(ref _topLeftView, _bottomSheetHeader.TopLeftButton);
-        RemoveView(ref _titleView, null);
+        RemoveView(ref _titleView, _virtualTitleView);
         RemoveView(ref _topRightView, _bottomSheetHeader.TopRightButton);
 
         if (_bottomSheetHeader.HasTopLeftButton())
@@ -366,13 +405,13 @@ internal sealed class BottomSheetHeader : IDisposable
         closeButton.SetIconResource(Resource.Drawable.mtrl_ic_cancel);
         closeButton.IconGravity = MaterialButton.IconGravityTextStart;
         closeButton.IconPadding = 0;
-        closeButton.IconSize = Convert.ToInt32(_context.ToPixels(30));
-        closeButton.IconTint = AColorStateList.ValueOf(AColor.Gray);
+        closeButton.IconSize = Convert.ToInt32(_context.ToPixels((_headerStyle.CloseButtonHeightRequest + _headerStyle.CloseButtonWidthRequest) / 2));
+        closeButton.IconTint = AColorStateList.ValueOf(_headerStyle.CloseButtonTintColor.ToPlatform());
         closeButton.BackgroundTintList = AColorStateList.ValueOf(AColor.Transparent);
         closeButton.Click += RaiseCloseButtonClicked;
 
-        var pixelPadding = Convert.ToInt32(_context.ToPixels(5));
-        closeButton.SetPadding(pixelPadding, pixelPadding, pixelPadding, pixelPadding);
+        closeButton.SetHeight(Convert.ToInt32(_context.ToPixels(_headerStyle.CloseButtonHeightRequest)));
+        closeButton.SetWidth(Convert.ToInt32(_context.ToPixels(_headerStyle.CloseButtonWidthRequest)));
 
         return closeButton;
     }
@@ -421,6 +460,37 @@ internal sealed class BottomSheetHeader : IDisposable
                 }
 
                 break;
+        }
+    }
+
+    private void HeaderStyleOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        BottomSheetHeaderStyle style = (BottomSheetHeaderStyle)sender!;
+
+        if (_bottomSheetHeader.ShowCloseButton
+            && (_bottomSheetHeader.HeaderAppearance == BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton
+                || _bottomSheetHeader.HeaderAppearance == BottomSheetHeaderButtonAppearanceMode.LeftButton
+                || _bottomSheetHeader.HeaderAppearance == BottomSheetHeaderButtonAppearanceMode.RightButton)
+            && (e.PropertyName == nameof(BottomSheetHeaderStyle.CloseButtonHeightRequest)
+                || e.PropertyName == nameof(BottomSheetHeaderStyle.CloseButtonWidthRequestProperty)
+                || e.PropertyName == nameof(BottomSheetHeaderStyle.CloseButtonTintColor)))
+        {
+            MaterialButton button;
+
+            if (_bottomSheetHeader.CloseButtonPosition == CloseButtonPosition.TopLeft)
+            {
+                button = (MaterialButton)_topLeftView!;
+            }
+            else
+            {
+                button = (MaterialButton)_topRightView!;
+            }
+
+            button.SetHeight(Convert.ToInt32(_context.ToPixels(_headerStyle.CloseButtonHeightRequest)));
+            button.SetWidth(Convert.ToInt32(_context.ToPixels(_headerStyle.CloseButtonWidthRequest)));
+            button.IconSize = Convert.ToInt32(_context.ToPixels((_headerStyle.CloseButtonHeightRequest + _headerStyle.CloseButtonWidthRequest) / 2));
+
+            button.IconTint = AColorStateList.ValueOf(style.CloseButtonTintColor.ToPlatform());
         }
     }
 

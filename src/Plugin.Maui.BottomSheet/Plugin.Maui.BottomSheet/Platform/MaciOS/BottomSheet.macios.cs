@@ -71,7 +71,7 @@ internal sealed class BottomSheet : IDisposable
         SetBackgroundColor(bottomSheet.BackgroundColor);
         SetHasHandle(bottomSheet.HasHandle);
         SetIgnoreSafeArea(bottomSheet.IgnoreSafeArea);
-        SetHeader(bottomSheet.Header);
+        SetHeader(bottomSheet.Header, bottomSheet.BottomSheetStyle.HeaderStyle);
         SetPeekHeight(bottomSheet.PeekHeight);
         SetContent(bottomSheet.Content);
         SetCornerRadius(bottomSheet.CornerRadius);
@@ -121,9 +121,19 @@ internal sealed class BottomSheet : IDisposable
     /// Set the <see cref="Plugin.Maui.BottomSheet.BottomSheetHeader"/>.
     /// </summary>
     /// <param name="header">Header.</param>
-    public void SetHeader(Plugin.Maui.BottomSheet.BottomSheetHeader? header)
+    /// <param name="style">Style.</param>
+    public void SetHeader(Plugin.Maui.BottomSheet.BottomSheetHeader? header, BottomSheetHeaderStyle style)
     {
-        _bottomSheetUIViewController.AddHeader(header);
+        _bottomSheetUIViewController.AddHeader(header, style);
+    }
+
+    /// <summary>
+    /// Set header style.
+    /// </summary>
+    /// <param name="style">Style.</param>
+    public void SetHeaderStyle(BottomSheetHeaderStyle style)
+    {
+        _bottomSheetUIViewController.SetHeaderStyle(style);
     }
 
     /// <summary>

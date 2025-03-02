@@ -260,6 +260,16 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             typeof(object),
             typeof(BottomSheet));
 
+    /// <summary>
+    /// Bindable property.
+    /// </summary>
+    public static readonly BindableProperty BottomSheetStyleProperty =
+        BindableProperty.Create(
+            nameof(BottomSheetStyle),
+            typeof(BottomSheetStyle),
+            typeof(BottomSheet),
+            defaultValue: new BottomSheetStyle());
+
     private readonly WeakEventManager _eventManager = new();
     private readonly Lazy<PlatformConfigurationRegistry<BottomSheet>> _platformConfigurationRegistry;
 
@@ -366,6 +376,9 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
 
     /// <inheritdoc/>
     public Thickness Padding { get => (Thickness)GetValue(PaddingProperty); set => SetValue(PaddingProperty, value); }
+
+    /// <inheritdoc/>
+    public BottomSheetStyle BottomSheetStyle { get => (BottomSheetStyle)GetValue(BottomSheetStyleProperty); set => SetValue(BottomSheetStyleProperty, value); }
 
     /// <inheritdoc/>
     [TypeConverter(typeof(StringToBottomSheetStateTypeConverter))]

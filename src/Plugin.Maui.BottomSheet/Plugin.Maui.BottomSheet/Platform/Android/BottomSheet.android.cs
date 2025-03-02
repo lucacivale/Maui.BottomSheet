@@ -183,6 +183,8 @@ internal sealed class BottomSheet : IDisposable
 
         _bottomSheetBehavior = _bottomSheetDialog.Behavior;
 
+        SetHeader(bottomSheet.Header, bottomSheet.BottomSheetStyle.HeaderStyle);
+
         if (bottomSheet.HasHandle)
         {
             AddHandle();
@@ -377,12 +379,28 @@ internal sealed class BottomSheet : IDisposable
     /// Set the <see cref="Plugin.Maui.BottomSheet.BottomSheetHeader"/>.
     /// </summary>
     /// <param name="header">Header.</param>
-    public void SetHeader(Plugin.Maui.BottomSheet.BottomSheetHeader header)
+    /// <param name="style">Style.</param>
+    public void SetHeader(Plugin.Maui.BottomSheet.BottomSheetHeader? header, BottomSheetHeaderStyle style)
     {
+        if (header is null)
+        {
+            return;
+        }
+
         _bottomSheetHeader = new BottomSheetHeader(
             _context,
             _mauiContext,
-            header);
+            header,
+            style);
+    }
+
+    /// <summary>
+    /// Set header style.
+    /// </summary>
+    /// <param name="style">Style.</param>
+    public void SetHeaderStyle(BottomSheetHeaderStyle style)
+    {
+        _bottomSheetHeader?.SetStyle(style);
     }
 
     /// <summary>
