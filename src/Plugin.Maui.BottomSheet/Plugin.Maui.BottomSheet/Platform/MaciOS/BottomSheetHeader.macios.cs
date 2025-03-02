@@ -10,6 +10,8 @@ internal sealed class BottomSheetHeader : IDisposable
     private readonly WeakEventManager _eventManager = new();
     private readonly Plugin.Maui.BottomSheet.BottomSheetHeader _bottomSheetHeader;
 
+    private BottomSheetHeaderStyle _style;
+
     private View? _virtualHeaderView;
 
     private View? _virtualTopLeftButton;
@@ -21,9 +23,11 @@ internal sealed class BottomSheetHeader : IDisposable
     /// Initializes a new instance of the <see cref="BottomSheetHeader"/> class.
     /// </summary>
     /// <param name="bottomSheetHeader">Header.</param>
-    public BottomSheetHeader(Plugin.Maui.BottomSheet.BottomSheetHeader bottomSheetHeader)
+    /// <param name="style">Style.</param>
+    public BottomSheetHeader(Plugin.Maui.BottomSheet.BottomSheetHeader bottomSheetHeader, BottomSheetHeaderStyle style)
     {
         _bottomSheetHeader = bottomSheetHeader;
+        _style = style;
     }
 
     /// <summary>
@@ -58,6 +62,29 @@ internal sealed class BottomSheetHeader : IDisposable
     public View View
     {
         get => _virtualHeaderView ??= CreateVirtualHeaderView();
+    }
+
+    /// <summary>
+    /// Set style.
+    /// </summary>
+    /// <param name="style">Style.</param>
+    public void SetStyle(BottomSheetHeaderStyle style)
+    {
+        _style = style;
+
+        if (_virtualTitleView is not null)
+        {
+            _virtualTitleView.BindingContext = style;
+        }
+
+        if (_virtualTopLeftButton is CloseButton)
+        {
+            _virtualTopLeftButton.BindingContext = style;
+        }
+        else if (_virtualTopRightButton is CloseButton)
+        {
+            _virtualTopRightButton.BindingContext = style;
+        }
     }
 
     /// <summary>
@@ -173,7 +200,18 @@ internal sealed class BottomSheetHeader : IDisposable
         var button = new CloseButton()
         {
             HorizontalOptions = layoutOptions,
+            BindingContext = _style,
         };
+
+#if NET9_0_OR_GREATER
+        button.SetBinding(VisualElement.HeightRequestProperty, static (BottomSheetHeaderStyle style) => style.CloseButtonHeightRequest);
+        button.SetBinding(VisualElement.WidthRequestProperty, static (BottomSheetHeaderStyle style) => style.CloseButtonWidthRequest);
+        button.SetBinding(CloseButton.TintProperty, static (BottomSheetHeaderStyle style) => style.CloseButtonTintColor);
+#else
+        button.SetBinding(VisualElement.HeightRequestProperty, nameof(BottomSheetHeaderStyle.CloseButtonHeightRequest));
+        button.SetBinding(VisualElement.WidthRequestProperty, nameof(BottomSheetHeaderStyle.CloseButtonWidthRequest));
+        button.SetBinding(CloseButton.TintProperty, nameof(BottomSheetHeaderStyle.CloseButtonTintColor));
+#endif
 
         button.Clicked += OnClosedButtonClicked;
 
@@ -262,13 +300,30 @@ internal sealed class BottomSheetHeader : IDisposable
 
     private Label CreateTitleView()
     {
-        return new Label()
+        var title = new Label()
         {
             VerticalTextAlignment = TextAlignment.Center,
             HorizontalOptions = LayoutOptions.Fill,
             HorizontalTextAlignment = TextAlignment.Center,
             Text = _bottomSheetHeader.TitleText ?? string.Empty,
+            BindingContext = _style,
         };
+
+#if NET9_0_OR_GREATER
+        title.SetBinding(Label.TextColorProperty, static (BottomSheetHeaderStyle style) => style.TitleTextColor);
+        title.SetBinding(Label.FontAttributesProperty, static (BottomSheetHeaderStyle style) => style.TitleTextFontAttributes);
+        title.SetBinding(Label.FontFamilyProperty, static (BottomSheetHeaderStyle style) => style.TitleTextFontFamily);
+        title.SetBinding(Label.FontSizeProperty, static (BottomSheetHeaderStyle style) => style.TitleTextFontSize);
+        title.SetBinding(Label.FontAutoScalingEnabledProperty, static (BottomSheetHeaderStyle style) => style.TitleTextFontAutoScalingEnabled);
+#else
+        title.SetBinding(Label.TextColorProperty, nameof(BottomSheetHeaderStyle.TitleTextColor));
+        title.SetBinding(Label.FontAttributesProperty, nameof(BottomSheetHeaderStyle.TitleTextFontAttributes));
+        title.SetBinding(Label.FontFamilyProperty, nameof(BottomSheetHeaderStyle.TitleTextFontFamily));
+        title.SetBinding(Label.FontSizeProperty, nameof(BottomSheetHeaderStyle.TitleTextFontSize));
+        title.SetBinding(Label.FontAutoScalingEnabledProperty, nameof(BottomSheetHeaderStyle.TitleTextFontAutoScalingEnabled));
+#endif
+
+        return title;
     }
 
     private void VirtualHeaderViewOnSizeChanged(object? sender, EventArgs e)

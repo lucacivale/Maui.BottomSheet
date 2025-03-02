@@ -110,4 +110,9 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
     {
         handler.PlatformView.SetIsModal();
     }
+
+    private static void MapBottomSheetStyle(BottomSheetHandler handler, IBottomSheet bottomSheet)
+    {
+        handler.PlatformView.SetBottomSheetStyle();
+    }
 }

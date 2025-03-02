@@ -89,12 +89,12 @@ internal sealed class MauiBottomSheet : AndroidView
     /// </summary>
     public void SetHeader()
     {
-        if (_virtualView?.Header is not null)
+        if (_virtualView?.Header is null)
         {
-            _bottomSheet.SetHeader(_virtualView.Header);
+            return;
         }
 
-        SetShowHeader();
+        _bottomSheet.SetHeader(_virtualView.Header, _virtualView.BottomSheetStyle.HeaderStyle);
     }
 
     /// <summary>
@@ -243,6 +243,17 @@ internal sealed class MauiBottomSheet : AndroidView
     public void SetWindowBackgroundColor()
     {
         _bottomSheet.SetWindowBackgroundColor(_virtualView?.WindowBackgroundColor ?? Colors.Transparent);
+    }
+
+    /// <summary>
+    /// Sets bottom sheet style.
+    /// </summary>
+    public void SetBottomSheetStyle()
+    {
+        if (_virtualView?.BottomSheetStyle is not null)
+        {
+            _bottomSheet.SetHeaderStyle(_virtualView.BottomSheetStyle.HeaderStyle);
+        }
     }
 
     /// <inheritdoc/>

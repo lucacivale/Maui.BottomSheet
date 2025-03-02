@@ -92,4 +92,9 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, obj
     {
         throw new NotImplementedException();
     }
+
+    private static void MapBottomSheetStyle(BottomSheetHandler handler, IBottomSheet bottomSheet)
+    {
+        throw new NotImplementedException();
+    }
 }

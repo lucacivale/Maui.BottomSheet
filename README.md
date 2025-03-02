@@ -78,6 +78,7 @@ return builder.Build();
 | Colors                                      | BackgroundColor       | Background color                                                                                                                                |
 | bool                                        | IgnoreSafeArea        | Ignore safe area(currently only implemented in iOS)                                                                                             |
 | float                                       | CornerRadius          | Top left and top right corner radius                                                                                                            |
+| [BottomSheetStyle](#bottomSheetStyle)       | BottomSheetStyle      | Style built in components                                                                                                                       |
 | Color                                       | WindowBackgroundColor | Window background color. If BottomSheet is non-modal no window color is applied                                                                 |
 
 ### BottomSheetState
@@ -113,9 +114,26 @@ return builder.Build();
 | Right | Show button on the right |
 
 ### BottomSheetContent
-| Type         | Name            | Description   |
-|--------------|-----------------|---------------|
-| DataTemplate | ContentTemplate | Content view. |
+| Type         | Name            | Description  |
+|--------------|-----------------|--------------|
+| DataTemplate | ContentTemplate | Content view |
+
+### BottomSheetStyle
+| Type                                              | Name        | Description |
+|---------------------------------------------------|-------------|-------------|
+| [BottomSheetHeaderStyle](#bottomSheetHeaderStyle) | HeaderStyle | Style class |
+
+### BottomSheetHeaderStyle
+| Type           | Name                            | Description                          |
+|----------------|---------------------------------|--------------------------------------|
+| Color          | TitleTextColor                  | Title text color                     |
+| double         | TitleTextFontSize               | Title text font size                 |
+| FontAttributes | TitleTextFontAttributes         | Title text font attributes           |
+| string         | TitleTextFontFamily             | Title text font family               |
+| bool           | TitleTextFontAutoScalingEnabled | Title text font auto scaling enabled |
+| double         | CloseButtonHeightRequest        | Close button height request          |
+| double         | CloseButtonWidthRequest         | Close button width request           |
+| Color          | CloseButtonTintColor            | Close button tint color              |
 
 ## Interaction
 
@@ -143,7 +161,7 @@ return builder.Build();
 ## MacCatalyst
 By design sheets are always [modal](https://developer.apple.com/design/human-interface-guidelines/sheets#macOS).
 
-## Android
+## [Android](https://developer.android.com/reference/com/google/android/material/bottomsheet/BottomSheetDialog#BottomSheetDialog(android.content.Context))
 
 #### Themes
 `BottomSheets` are themed by default based on `ThemeOverlay.MaterialComponents.BottomSheetDialog`.
@@ -160,7 +178,7 @@ EdgeToEdge support is built-in and enabled by default.
 If you create your own theme make sure to derive from `ThemeOverlay.MaterialComponents.BottomSheetDialog` and that `navigationBarColor` is translucent. 
 Otherwise, EdgeToEdge is disabled for that sheet. To disable EdgeToEdge you can also set `<item name="enableEdgeToEdge">false</item>` in your theme.
 
-### MaxHeight and MaxWidth
+### [MaxHeight](https://developer.android.com/reference/com/google/android/material/bottomsheet/BottomSheetBehavior#setMaxHeight(int)) and [MaxWidth](https://developer.android.com/reference/com/google/android/material/bottomsheet/BottomSheetBehavior#setMaxWidth(int))
 To override the MaxHeight or MaxWidth call the platform specific extension method before the sheet is opened.
 
 ```
@@ -173,9 +191,9 @@ xmlns:androidBottomsheet="http://pluginmauibottomsheet.com/platformconfiguration
 androidBottomsheet:BottomSheet.MaxWidth="300"
 ```
 
-### Margin
+### [Margin](https://learn.microsoft.com/en-us/dotnet/maui/user-interface/align-position?view=net-maui-9.0#position-controls)
 
-Set the [BottomSheet margin](https://learn.microsoft.com/en-us/dotnet/maui/user-interface/align-position?view=net-maui-9.0#position-controls).
+Set the BottomSheet margin.
 The margin will only be applied on the left on right.
 
 ```
@@ -195,6 +213,44 @@ or
 
 xmlns:androidBottomsheet="http://pluginmauibottomsheet.com/platformconfiguration/android"
 androidBottomsheet:BottomSheet.HalfExpandedRatio="0.8"
+```
+# Style
+
+With `BottomSheet.BottomSheetStyle` built in components as e.g. `BottomSheetHeader.Title` or the Close button can be styled.
+You can either style each BottomSheet individually or use [styles](https://learn.microsoft.com/dotnet/maui/user-interface/styles/xaml?view=net-maui-9.0).
+
+```
+<bottomsheet:BottomSheet>
+    <bottomsheet:BottomSheet.BottomSheetStyle>
+        <bottomsheet:BottomSheetStyle>
+            <bottomsheet:BottomSheetStyle.HeaderStyle>
+                <bottomsheet:BottomSheetHeaderStyle TitleTextColor="Aqua" CloseButtonTintColor="Aqua"/>
+            </bottomsheet:BottomSheetStyle.HeaderStyle>
+        </bottomsheet:BottomSheetStyle>
+    </bottomsheet:BottomSheet.BottomSheetStyle>
+</bottomsheet:BottomSheet>
+```
+
+```
+<Style TargetType="bottomsheet:BottomSheet">
+    <Setter Property="BottomSheetStyle">
+        <Setter.Value>
+            <bottomsheet:BottomSheetStyle>
+                <bottomsheet:BottomSheetStyle.HeaderStyle>
+                    <bottomsheet:BottomSheetHeaderStyle
+                        CloseButtonHeightRequest="40"
+                        CloseButtonTintColor="LightBlue"
+                        CloseButtonWidthRequest="40"
+                        TitleTextColor="Blue"
+                        TitleTextFontAttributes="Bold"
+                        TitleTextFontAutoScalingEnabled="True"
+                        TitleTextFontFamily="OpenSansRegular"
+                        TitleTextFontSize="20" />
+                </bottomsheet:BottomSheetStyle.HeaderStyle>
+            </bottomsheet:BottomSheetStyle>
+        </Setter.Value>
+    </Setter>
+</Style>
 ```
 
 # XAML usage
@@ -243,103 +299,10 @@ To open/close a `BottomSheet` simply set `IsOpen` property to true/false.
                             <ContentView.Behaviors>
                                 <bottomsheet:BottomSheetPeekBehavior />
                             </ContentView.Behaviors>
-                            <Grid
-                                Margin="0,10,0,10"
-                                ColumnDefinitions="*,*"
-                                ColumnSpacing="10"
-                                RowDefinitions="40,40,40,40,40"
-                                RowSpacing="10">
-                                <Label
-                                    Grid.Row="0"
-                                    Text="Title"
-                                    VerticalTextAlignment="Center" />
-                                <Entry
-                                    Grid.Row="0"
-                                    Grid.Column="1"
-                                    Text="{Binding Title}" />
-                                <Button
-                                    Grid.Row="1"
-                                    Command="{Binding HeaderButtonAppearanceModeNoneCommand}"
-                                    Text="None" />
-                                <Button
-                                    Grid.Row="1"
-                                    Grid.Column="1"
-                                    Command="{Binding HeaderButtonAppearanceModeLeftCommand}"
-                                    Text="Left" />
-                                <Button
-                                    Grid.Row="2"
-                                    Command="{Binding HeaderButtonAppearanceModeRightCommand}"
-                                    Text="Right" />
-                                <Button
-                                    Grid.Row="2"
-                                    Grid.Column="1"
-                                    Command="{Binding HeaderButtonAppearanceModeLeftAndRightCommand}"
-                                    Text="LeftAndRight" />
-                                <Label
-                                    Grid.Row="3"
-                                    Text="Corner radius"
-                                    VerticalOptions="Center" />
-                                <Slider
-                                    Grid.Row="3"
-                                    Grid.Column="1"
-                                    Maximum="50"
-                                    Minimum="0"
-                                    VerticalOptions="Center"
-                                    Value="{Binding CornerRadius}" />
-                                <Label
-                                    Grid.Row="4"
-                                    Text="Is modal?"
-                                    VerticalOptions="Center" />
-                                <Switch
-                                    Grid.Row="4"
-                                    Grid.Column="1"
-                                    HorizontalOptions="End"
-                                    IsToggled="{Binding IsModal}"
-                                    VerticalOptions="Center" />
-                            </Grid>
+                            <Label Text="PeekHeight reference view " />
                         </ContentView>
-                        <Grid
-                            ColumnDefinitions="*, 50"
-                            RowDefinitions="40,40,40,40,40,40,40"
-                            RowSpacing="10">
-                            <Label Text="Has handle?" />
-                            <Label Grid.Row="1" Text="Is cancelable?" />
-                            <Label Grid.Row="2" Text="Show header?" />
-                            <Label Grid.Row="3" Text="Is draggable?" />
-                            <Label Grid.Row="4" Text="Show close button?" />
-                            <Switch Grid.Column="1" IsToggled="{Binding HasHandle}" />
-                            <Switch
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                IsToggled="{Binding IsCancelable}" />
-                            <Switch
-                                Grid.Row="2"
-                                Grid.Column="1"
-                                IsToggled="{Binding ShowHeader}" />
-                            <Switch
-                                Grid.Row="3"
-                                Grid.Column="1"
-                                IsToggled="{Binding IsDraggable}" />
-                            <Switch
-                                Grid.Row="4"
-                                Grid.Column="1"
-                                IsToggled="{Binding ShowCloseButton}" />
-                            <Grid
-                                Grid.Row="5"
-                                Grid.ColumnSpan="2"
-                                ColumnDefinitions="*,*"
-                                ColumnSpacing="10">
-                                <Button Command="{Binding TopLeftCloseButtonCommand}" Text="Top left close button" />
-                                <Button
-                                    Grid.Column="1"
-                                    Command="{Binding TopRightCloseButtonCommand}"
-                                    Text="Top right close button" />
-                            </Grid>
-                            <Button
-                                Grid.Row="6"
-                                Grid.ColumnSpan="2"
-                                Command="{Binding ChangeWindowBackgroundColorCommand}"
-                                Text="Change window background color" />
+                        <Grid>
+                            <Label Text="Some other view" />
                         </Grid>
                     </VerticalStackLayout>
                 </DataTemplate>

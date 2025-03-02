@@ -75,7 +75,7 @@ internal sealed class MauiBottomSheet : UIView
             return;
         }
 
-        _bottomSheet.SetHeader(_virtualView.Header);
+        _bottomSheet.SetHeader(_virtualView.Header, _virtualView.BottomSheetStyle.HeaderStyle);
     }
 
     /// <summary>
@@ -236,6 +236,17 @@ internal sealed class MauiBottomSheet : UIView
     public void SetWindowBackgroundColor()
     {
         _bottomSheet.SetWindowBackgroundColor(_virtualView?.WindowBackgroundColor ?? Colors.Transparent);
+    }
+
+    /// <summary>
+    /// Sets bottom sheet style.
+    /// </summary>
+    public void SetBottomSheetStyle()
+    {
+        if (_virtualView?.BottomSheetStyle is not null)
+        {
+            _bottomSheet.SetHeaderStyle(_virtualView.BottomSheetStyle.HeaderStyle);
+        }
     }
 
     /// <inheritdoc/>
