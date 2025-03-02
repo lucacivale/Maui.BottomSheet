@@ -191,7 +191,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     /// </summary>
     /// <param name="bottomSheet"><see cref="IBottomSheet"/> to open.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    public async Task OpenAsync(IBottomSheet bottomSheet)
+    public async Task<bool> OpenAsync(IBottomSheet bottomSheet)
     {
         _virtualBottomSheet.Parent = bottomSheet.GetPageParent();
         _virtualBottomSheet.BottomSheet = bottomSheet;
@@ -205,6 +205,8 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         {
             await parent.PresentViewControllerAsync(this, true).ConfigureAwait(true);
         }
+
+        return WindowStateManager.Default.GetCurrentUIViewController() is BottomSheetUIViewController;
     }
 
     /// <summary>
