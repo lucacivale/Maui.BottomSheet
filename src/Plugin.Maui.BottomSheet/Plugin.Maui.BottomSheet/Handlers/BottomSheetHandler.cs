@@ -34,15 +34,16 @@ internal sealed partial class BottomSheetHandler
     /// </summary>
     /// <param name="mapper"><see cref="IPropertyMapper{TVirtualView,TViewHandler}"/>.</param>
     /// <param name="commandMapper"><see cref="CommandMapper"/>.</param>
-    // ReSharper disable once UnusedParameter.Local
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "S1118:Utility classes should not have public constructors", Justification = "Must be public.")]
     public BottomSheetHandler(IPropertyMapper? mapper, CommandMapper? commandMapper)
-        : base(mapper ?? BottomSheetMapper)
+        : base(mapper ?? BottomSheetMapper, commandMapper)
     {
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheetHandler"/> class.
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "S1118:Utility classes should not have public constructors", Justification = "Must be public.")]
     public BottomSheetHandler()
         : base(BottomSheetMapper)
     {
@@ -52,9 +53,22 @@ internal sealed partial class BottomSheetHandler
     /// Initializes a new instance of the <see cref="BottomSheetHandler"/> class.
     /// </summary>
     /// <param name="context"><see cref="IMauiContext"/>.</param>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "S1118:Utility classes should not have public constructors", Justification = "Must be public.")]
     public BottomSheetHandler(IMauiContext context)
         : base(BottomSheetMapper)
     {
         SetMauiContext(context);
+    }
+
+    /// <summary>
+    /// Gets a value indicating whether handler connecting.
+    /// </summary>
+    public bool IsConnecting { get; private set; }
+
+    public override void SetVirtualView(IView view)
+    {
+        IsConnecting = true;
+        base.SetVirtualView(view);
+        IsConnecting = false;
     }
 }

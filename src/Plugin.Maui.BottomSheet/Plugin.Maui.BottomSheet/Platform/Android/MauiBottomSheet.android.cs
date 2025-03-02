@@ -28,6 +28,14 @@ internal sealed class MauiBottomSheet : AndroidView
     }
 
     /// <summary>
+    /// Gets a value indicating whether the bottom sheet is open.
+    /// </summary>
+    public bool IsOpen
+    {
+        get => _bottomSheet.IsShowing;
+    }
+
+    /// <summary>
     /// Set allowed bottom sheet states.
     /// </summary>
     public static void SetStates()
@@ -68,12 +76,6 @@ internal sealed class MauiBottomSheet : AndroidView
     /// </summary>
     public void SetHasHandle()
     {
-        if (_virtualView?.IsOpen == false
-            || !_bottomSheet.IsShowing)
-        {
-            return;
-        }
-
         if (_virtualView?.HasHandle == false)
         {
             _bottomSheet.HideHandle();
@@ -102,12 +104,6 @@ internal sealed class MauiBottomSheet : AndroidView
     /// </summary>
     public void SetShowHeader()
     {
-        if (_virtualView?.IsOpen == false
-            || !_bottomSheet.IsShowing)
-        {
-            return;
-        }
-
         if (_virtualView?.ShowHeader == false)
         {
             _bottomSheet.HideHeader();
@@ -180,23 +176,12 @@ internal sealed class MauiBottomSheet : AndroidView
     /// </summary>
     public void SetContent()
     {
-        if (_virtualView?.Content is not null)
+        if (_virtualView?.Content is null)
         {
-            _bottomSheet.SetContent(_virtualView.Content);
+            return;
         }
 
-        if (_virtualView?.IsOpen == true
-            && _bottomSheet.IsShowing)
-        {
-            if (_virtualView.Content is not null)
-            {
-                _bottomSheet.AddContent();
-            }
-            else
-            {
-                _bottomSheet.HideContent();
-            }
-        }
+        _bottomSheet.SetContent(_virtualView.Content);
     }
 
     /// <summary>

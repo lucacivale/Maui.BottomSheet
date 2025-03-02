@@ -52,10 +52,7 @@ internal sealed class BottomSheet : IDisposable
     /// <summary>
     /// Gets a value indicating whether the sheet is being presented.
     /// </summary>
-    public bool IsBeingPresented
-    {
-        get => _bottomSheetUIViewController.IsBeingPresented;
-    }
+    public bool IsOpen { get; private set; }
 
     /// <summary>
     /// Open the bottom sheet.
@@ -64,30 +61,35 @@ internal sealed class BottomSheet : IDisposable
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public async Task OpenAsync(IBottomSheet bottomSheet)
     {
-        SetPadding(bottomSheet.Padding);
-        SetIsCancelable(bottomSheet.IsCancelable);
-        SetState(bottomSheet.CurrentState);
-        SetStates(bottomSheet.States);
-        SetBackgroundColor(bottomSheet.BackgroundColor);
-        SetHasHandle(bottomSheet.HasHandle);
-        SetIgnoreSafeArea(bottomSheet.IgnoreSafeArea);
-        SetHeader(bottomSheet.Header, bottomSheet.BottomSheetStyle.HeaderStyle);
-        SetPeekHeight(bottomSheet.PeekHeight);
+        if (bottomSheet.Header is not null)
+        {
+            SetHeader(bottomSheet.Header, bottomSheet.BottomSheetStyle.HeaderStyle);
+        }
+
         SetContent(bottomSheet.Content);
-        SetCornerRadius(bottomSheet.CornerRadius);
-        SetBackgroundColor(bottomSheet.BackgroundColor);
-        SetIsModal(bottomSheet.IsModal);
 
         if (bottomSheet.ShowHeader)
         {
             ShowHeader();
         }
 
-        _bottomSheetUIViewController.AddContent(_bottomSheetContent);
+        SetPadding(bottomSheet.Padding);
+        SetIsCancelable(bottomSheet.IsCancelable);
+        SetState(bottomSheet.CurrentState);
+        SetStates(bottomSheet.States);
+        SetHasHandle(bottomSheet.HasHandle);
+        SetIgnoreSafeArea(bottomSheet.IgnoreSafeArea);
+        SetCornerRadius(bottomSheet.CornerRadius);
+        SetBackgroundColor(bottomSheet.BackgroundColor);
+        SetIsModal(bottomSheet.IsModal);
+        SetWindowBackgroundColor(bottomSheet.WindowBackgroundColor);
+        SetHeaderStyle(bottomSheet.BottomSheetStyle.HeaderStyle);
+        SetPeekHeight(bottomSheet.PeekHeight);
 
+        _bottomSheetUIViewController.AddContent(_bottomSheetContent);
         _bottomSheetUIViewController.AttachPresentationDelegate();
 
-        await _bottomSheetUIViewController.OpenAsync(bottomSheet).ConfigureAwait(true);
+        IsOpen = await _bottomSheetUIViewController.OpenAsync(bottomSheet).ConfigureAwait(true);
 
         SetIsDraggable(bottomSheet.IsDraggable);
     }
@@ -115,6 +117,8 @@ internal sealed class BottomSheet : IDisposable
     public async Task CloseAsync()
     {
         await _bottomSheetUIViewController.CloseAsync().ConfigureAwait(true);
+
+        IsOpen = false;
     }
 
     /// <summary>
@@ -122,7 +126,7 @@ internal sealed class BottomSheet : IDisposable
     /// </summary>
     /// <param name="header">Header.</param>
     /// <param name="style">Style.</param>
-    public void SetHeader(Plugin.Maui.BottomSheet.BottomSheetHeader? header, BottomSheetHeaderStyle style)
+    public void SetHeader(Plugin.Maui.BottomSheet.BottomSheetHeader header, BottomSheetHeaderStyle style)
     {
         _bottomSheetUIViewController.AddHeader(header, style);
     }

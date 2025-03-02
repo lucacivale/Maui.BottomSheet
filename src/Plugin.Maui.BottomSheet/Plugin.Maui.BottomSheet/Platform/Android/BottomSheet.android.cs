@@ -183,7 +183,11 @@ internal sealed class BottomSheet : IDisposable
 
         _bottomSheetBehavior = _bottomSheetDialog.Behavior;
 
+        Padding = bottomSheet.Padding;
+        BackgroundColor = bottomSheet.BackgroundColor;
+
         SetHeader(bottomSheet.Header, bottomSheet.BottomSheetStyle.HeaderStyle);
+        SetContent(bottomSheet.Content);
 
         if (bottomSheet.HasHandle)
         {
@@ -204,6 +208,7 @@ internal sealed class BottomSheet : IDisposable
 
         _bottomSheetDialog.SetContentView(_sheetContainer);
 
+        SetHeaderStyle(bottomSheet.BottomSheetStyle.HeaderStyle);
         SetIsModal(bottomSheet.IsModal);
         SetState(bottomSheet.CurrentState);
         SetIsCancelable(bottomSheet.IsCancelable);
@@ -387,11 +392,21 @@ internal sealed class BottomSheet : IDisposable
             return;
         }
 
+        if (IsShowing)
+        {
+            HideHeader();
+        }
+
         _bottomSheetHeader = new BottomSheetHeader(
             _context,
             _mauiContext,
             header,
             style);
+
+        if (IsShowing)
+        {
+            AddHeader();
+        }
     }
 
     /// <summary>
@@ -407,9 +422,24 @@ internal sealed class BottomSheet : IDisposable
     /// Set the <see cref="Plugin.Maui.BottomSheet.BottomSheetContent"/>.
     /// </summary>
     /// <param name="content">Content.</param>
-    public void SetContent(BottomSheetContent content)
+    public void SetContent(BottomSheetContent? content)
     {
+        if (content is null)
+        {
+            return;
+        }
+
+        if (IsShowing)
+        {
+            HideContent();
+        }
+
         _bottomSheetContent = content;
+
+        if (IsShowing)
+        {
+            AddContent();
+        }
     }
 
     /// <summary>

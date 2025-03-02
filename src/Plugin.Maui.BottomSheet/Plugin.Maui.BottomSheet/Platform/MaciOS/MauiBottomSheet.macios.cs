@@ -7,6 +7,7 @@ using UIKit;
 internal sealed class MauiBottomSheet : UIView
 {
     private readonly BottomSheet _bottomSheet;
+    private readonly SemaphoreSlim _semaphore = new(1, 1);
 
     private IBottomSheet? _virtualView;
 
@@ -21,12 +22,21 @@ internal sealed class MauiBottomSheet : UIView
         _bottomSheet.StateChanged += BottomSheetOnStateChanged;
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the bottom sheet is open.
+    /// </summary>
+    public bool IsOpen
+    {
+        get => _bottomSheet.IsOpen;
+    }
+
     /// <inheritdoc/>
     public override void MovedToWindow()
     {
         base.MovedToWindow();
 
-        if (!_bottomSheet.IsBeingPresented)
+        if (_virtualView?.IsOpen == true
+            && _bottomSheet.IsOpen == false)
         {
             SetIsOpenAsync().SafeFireAndForget(continueOnCapturedContext: false);
         }
@@ -83,12 +93,6 @@ internal sealed class MauiBottomSheet : UIView
     /// </summary>
     public void SetShowHeader()
     {
-        if (_virtualView?.IsOpen == false
-            || _bottomSheet.IsBeingPresented == false)
-        {
-            return;
-        }
-
         if (_virtualView?.ShowHeader == true)
         {
             _bottomSheet.ShowHeader();
@@ -107,9 +111,18 @@ internal sealed class MauiBottomSheet : UIView
     {
         if (_virtualView?.IsOpen == true)
         {
+            await _semaphore.WaitAsync().ConfigureAwait(true);
+
+            if (IsOpen)
+            {
+                return;
+            }
+
             _virtualView.OnOpeningBottomSheet();
             await _bottomSheet.OpenAsync(_virtualView).ConfigureAwait(true);
             _virtualView.OnOpenedBottomSheet();
+
+            _semaphore.Release();
         }
         else
         {
@@ -255,6 +268,7 @@ internal sealed class MauiBottomSheet : UIView
         if (disposing)
         {
             _bottomSheet.Dispose();
+            _semaphore.Dispose();
         }
 
         base.Dispose(disposing);
