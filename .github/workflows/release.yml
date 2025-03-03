@@ -28,7 +28,7 @@ jobs:
         dotnet-version: ${{ env.DOTNET_VERSION }}
     
     - name: Install .NET MAUI Workload
-      run: dotnet workload restore ${{ env.PluginSolutionPath }}
+      run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
 
     - name: Build Plugin.Maui.BottomSheet
       run: dotnet build ${{ env.PluginSolutionPath }} -c ${{ env.Configuration }} -p:Version=${{ steps.version.outputs.version }}
