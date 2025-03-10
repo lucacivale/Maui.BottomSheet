@@ -7,6 +7,16 @@ using Microsoft.Maui.Handlers;
 /// </summary>
 internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, object>
 {
+    internal partial Task OpenAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    internal partial Task CloseAsync()
+    {
+        throw new NotImplementedException();
+    }
+
     /// <inheritdoc/>
     protected override object CreatePlatformView()
     {

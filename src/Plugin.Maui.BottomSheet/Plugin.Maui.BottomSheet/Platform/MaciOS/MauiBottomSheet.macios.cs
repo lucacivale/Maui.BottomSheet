@@ -107,6 +107,33 @@ internal sealed class MauiBottomSheet : UIView
     /// Open bottom sheet.
     /// </summary>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    public async Task OpenAsync()
+    {
+        if (_virtualView is null)
+        {
+            return;
+        }
+
+        _virtualView.OnOpeningBottomSheet();
+        await _bottomSheet.OpenAsync(_virtualView).ConfigureAwait(true);
+        _virtualView.OnOpenedBottomSheet();
+    }
+
+    /// <summary>
+    /// Close bottom sheet.
+    /// </summary>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    public async Task CloseAsync()
+    {
+        _virtualView?.OnClosingBottomSheet();
+        await _bottomSheet.CloseAsync().ConfigureAwait(true);
+        _virtualView?.OnClosedBottomSheet();
+    }
+
+    /// <summary>
+    /// Open bottom sheet.
+    /// </summary>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public async Task SetIsOpenAsync()
     {
         if (_virtualView?.IsOpen == true)
