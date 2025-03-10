@@ -71,4 +71,16 @@ internal sealed partial class BottomSheetHandler
         base.SetVirtualView(view);
         IsConnecting = false;
     }
+
+    /// <summary>
+    /// Open bottom sheet.
+    /// </summary>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    internal partial Task OpenAsync();
+
+    /// <summary>
+    /// Close bottom sheet.
+    /// </summary>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    internal partial Task CloseAsync();
 }

@@ -117,6 +117,37 @@ internal sealed class MauiBottomSheet : AndroidView
     /// <summary>
     /// Open bottom sheet.
     /// </summary>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    public Task OpenAsync()
+    {
+        if (_virtualView is null)
+        {
+            return Task.CompletedTask;
+        }
+
+        _virtualView.OnOpeningBottomSheet();
+        _bottomSheet.Open(_virtualView);
+        _virtualView.OnOpenedBottomSheet();
+
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Close bottom sheet.
+    /// </summary>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    public Task CloseAsync()
+    {
+        _virtualView?.OnClosingBottomSheet();
+        _bottomSheet.Close();
+        _virtualView?.OnClosedBottomSheet();
+
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Open bottom sheet.
+    /// </summary>
     public void SetIsOpen()
     {
         if (_virtualView?.IsOpen == true)

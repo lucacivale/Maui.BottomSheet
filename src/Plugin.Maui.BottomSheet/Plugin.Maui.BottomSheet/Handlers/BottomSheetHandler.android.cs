@@ -10,6 +10,16 @@ using Plugin.Maui.BottomSheet.Platform.Android;
 /// </summary>
 internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, MauiBottomSheet>
 {
+    internal partial Task OpenAsync()
+    {
+        return PlatformView.OpenAsync();
+    }
+
+    internal partial Task CloseAsync()
+    {
+        return PlatformView.CloseAsync();
+    }
+
     /// <inheritdoc/>
     protected override void ConnectHandler(MauiBottomSheet platformView)
     {

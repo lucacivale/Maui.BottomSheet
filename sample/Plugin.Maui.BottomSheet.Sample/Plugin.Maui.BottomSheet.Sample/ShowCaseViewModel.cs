@@ -132,30 +132,30 @@ public sealed partial class ShowCaseViewModel : ObservableObject
     [RelayCommand]
     private void OpenShowcasePageAsBottomSheet()
     {
-        _bottomSheetNavigationService.NavigateTo("Showcase");
+        _bottomSheetNavigationService.NavigateToAsync("Showcase").SafeFireAndForget();
     }
     
     [RelayCommand]
     private void OpenCustomHeaderShowcaseViewAsBottomSheet()
     {
-        _bottomSheetNavigationService.NavigateTo<CustomHeaderShowcaseViewModel>("CustomHeaderShowcase");
+        _bottomSheetNavigationService.NavigateToAsync<CustomHeaderShowcaseViewModel>("CustomHeaderShowcase").SafeFireAndForget();
     }
 
     [RelayCommand]
     private void OpenSomeBottomSheet()
     {
-        _bottomSheetNavigationService.NavigateTo("SomeBottomSheet");
+        _bottomSheetNavigationService.NavigateToAsync("SomeBottomSheet").SafeFireAndForget();
     }
 
     [RelayCommand]
     private void CloseAllOpenSheets()
     {
-        _bottomSheetNavigationService.ClearBottomSheetStack();
+        _bottomSheetNavigationService.ClearBottomSheetStackAsync().SafeFireAndForget();
     }
 
     [RelayCommand]
     private void CloseCurrentSheet()
     {
-        _bottomSheetNavigationService.GoBack();
+        _bottomSheetNavigationService.GoBackAsync().SafeFireAndForget();
     }
 }

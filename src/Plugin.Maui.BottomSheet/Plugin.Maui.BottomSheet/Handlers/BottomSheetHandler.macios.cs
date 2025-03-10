@@ -8,6 +8,16 @@ using Microsoft.Maui.Handlers;
 /// </summary>
 internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Platform.MaciOS.MauiBottomSheet>
 {
+    internal partial Task OpenAsync()
+    {
+        return PlatformView.OpenAsync();
+    }
+
+    internal partial Task CloseAsync()
+    {
+        return PlatformView.CloseAsync();
+    }
+
     /// <inheritdoc/>
     protected override void ConnectHandler(Platform.MaciOS.MauiBottomSheet platformView)
     {
