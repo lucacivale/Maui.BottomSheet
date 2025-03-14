@@ -11,11 +11,6 @@ public interface IBottomSheetNavigationService
     internal IServiceProvider ServiceProvider { get; }
 
     /// <summary>
-    /// Gets BottomSheet ViewModel mapping.
-    /// </summary>
-    internal static Dictionary<string, Type> BottomSheetToViewModelMapping { get; } = [];
-
-    /// <summary>
     /// Open a <see cref="BottomSheet"/>.
     /// If <paramref name="viewModel"/> isn't null it'll be assigned to BindingContext.
     /// If <paramref name="viewModel"/> implements <see cref="IQueryAttributable"/> <paramref name="parameters"/> will be applied on navigation.
@@ -36,6 +31,7 @@ public interface IBottomSheetNavigationService
     /// <param name="viewModel">BindingContext of <see cref="BottomSheet"/>.</param>
     /// <param name="parameters">Navigation parameters.</param>
     /// <param name="configure">Action to modify the <see cref="BottomSheet"/>.</param>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "S1133:Do not forget to remove this deprecated code someday.", Justification = "Will be removed with v10.")]
     [Obsolete("Use NavigateToAsync instead.")]
     void NavigateTo(IBottomSheet bottomSheet, object? viewModel = null, IBottomSheetNavigationParameters? parameters = null, Action<IBottomSheet>? configure = null);
 
@@ -44,6 +40,7 @@ public interface IBottomSheetNavigationService
     /// If BindingContext implements <see cref="IQueryAttributable"/> <paramref name="parameters"/> will be applied on navigation.
     /// </summary>
     /// <param name="parameters">Navigation parameters.</param>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "S1133:Do not forget to remove this deprecated code someday.", Justification = "Will be removed with v10.")]
     [Obsolete("Use GoBackAsync instead.")]
     void GoBack(IBottomSheetNavigationParameters? parameters = null);
 
@@ -58,6 +55,7 @@ public interface IBottomSheetNavigationService
     /// <summary>
     /// Close all BottomSheets.
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "S1133:Do not forget to remove this deprecated code someday.", Justification = "Will be removed with v10.")]
     [Obsolete("Use ClearBottomSheetAsync instead.")]
     void ClearBottomSheetStack();
 

@@ -1,7 +1,7 @@
 namespace Plugin.Maui.BottomSheet.Navigation;
 
 /// <inheritdoc />
-internal sealed class BottomSheetNavigationService : IBottomSheetNavigationService
+public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
 {
     private readonly BottomSheetStack _bottomSheetStack = [];
 
@@ -16,6 +16,11 @@ internal sealed class BottomSheetNavigationService : IBottomSheetNavigationServi
 
     /// <inheritdoc/>
     public IServiceProvider ServiceProvider { get; }
+
+    /// <summary>
+    /// Gets BottomSheet ViewModel mapping.
+    /// </summary>
+    internal static Dictionary<string, Type> BottomSheetToViewModelMapping { get; } = [];
 
     /// <inheritdoc/>
     public void NavigateTo(IBottomSheet bottomSheet, object? viewModel = null, IBottomSheetNavigationParameters? parameters = null, Action<IBottomSheet>? configure = null)
@@ -62,6 +67,7 @@ internal sealed class BottomSheetNavigationService : IBottomSheetNavigationServi
         Dispatch(() => DoGoBack(parameters));
     }
 
+    /// <inheritdoc/>
     public Task GoBackAsync(IBottomSheetNavigationParameters? parameters = null)
     {
         return DispatchAsync(() => DoGoBackAsync(parameters));
@@ -79,6 +85,7 @@ internal sealed class BottomSheetNavigationService : IBottomSheetNavigationServi
         });
     }
 
+    /// <inheritdoc/>
     public Task ClearBottomSheetStackAsync()
     {
         return DispatchAsync(async () =>
