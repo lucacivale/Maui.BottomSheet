@@ -13,6 +13,7 @@ public static class IBottomSheetNavigationServiceExtensions
     /// <param name="name">Name of the <see cref="BottomSheet"/> to be opened.</param>
     /// <param name="parameters">Navigation parameters.</param>
     /// <param name="configure">Action to modify the <see cref="BottomSheet"/>.</param>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "S1133:Do not forget to remove this deprecated code someday.", Justification = "Will be removed with v10.")]
     [Obsolete("Use NavigateToAsync instead.")]
     public static void NavigateTo(this IBottomSheetNavigationService navigationService, string name, IBottomSheetNavigationParameters? parameters = null, Action<IBottomSheet>? configure = null)
     {
@@ -40,6 +41,7 @@ public static class IBottomSheetNavigationServiceExtensions
     /// <param name="parameters">Navigation parameters.</param>
     /// <param name="configure">Action to modify the <see cref="BottomSheet"/>.</param>
     /// <typeparam name="TViewModel">View model type.</typeparam>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "S1133:Do not forget to remove this deprecated code someday.", Justification = "Will be removed with v10.")]
     [Obsolete("Use NavigateToAsync instead.")]
     public static void NavigateTo<TViewModel>(this IBottomSheetNavigationService navigationService, string name, IBottomSheetNavigationParameters? parameters = null, Action<IBottomSheet>? configure = null)
         where TViewModel : class
