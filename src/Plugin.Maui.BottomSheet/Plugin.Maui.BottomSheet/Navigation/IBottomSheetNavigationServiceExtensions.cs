@@ -22,7 +22,7 @@ public static class IBottomSheetNavigationServiceExtensions
 
         object? viewModel = null;
 
-        if (IBottomSheetNavigationService.BottomSheetToViewModelMapping.TryGetValue(name, out var viewModelType))
+        if (BottomSheetNavigationService.BottomSheetToViewModelMapping.TryGetValue(name, out var viewModelType))
         {
             viewModel = navigationService.ServiceProvider.GetService(viewModelType);
         }
@@ -68,7 +68,7 @@ public static class IBottomSheetNavigationServiceExtensions
 
         object? viewModel = null;
 
-        if (IBottomSheetNavigationService.BottomSheetToViewModelMapping.TryGetValue(name, out var viewModelType))
+        if (BottomSheetNavigationService.BottomSheetToViewModelMapping.TryGetValue(name, out var viewModelType))
         {
             viewModel = navigationService.ServiceProvider.GetService(viewModelType);
         }

@@ -45,7 +45,7 @@ public static class IServiceCollectionExtensions
         services.TryAddTransient<T>();
         services.TryAddTransient<TViewModel>();
 
-        Navigation.IBottomSheetNavigationService.BottomSheetToViewModelMapping.Add(name, typeof(TViewModel));
+        Navigation.BottomSheetNavigationService.BottomSheetToViewModelMapping.Add(name, typeof(TViewModel));
 
         services.AddKeyedTransient<IBottomSheet>(
             name,
@@ -99,7 +99,7 @@ public static class IServiceCollectionExtensions
         services.TryAddTransient<T>();
         services.TryAddTransient<TViewModel>();
 
-        Navigation.IBottomSheetNavigationService.BottomSheetToViewModelMapping.Add(name, typeof(TViewModel));
+        Navigation.BottomSheetNavigationService.BottomSheetToViewModelMapping.Add(name, typeof(TViewModel));
 
         services.AddKeyedTransient<IBottomSheet>(
             name,
