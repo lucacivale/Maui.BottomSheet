@@ -138,9 +138,12 @@ internal sealed class MauiBottomSheet : AndroidView
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public Task CloseAsync()
     {
-        _virtualView?.OnClosingBottomSheet();
-        _bottomSheet.Close();
-        _virtualView?.OnClosedBottomSheet();
+        if (_virtualView?.IsOpen == true)
+        {
+            _virtualView.OnClosingBottomSheet();
+            _bottomSheet.Close(false);
+            _virtualView.OnClosedBottomSheet();
+        }
 
         return Task.CompletedTask;
     }
@@ -152,13 +155,17 @@ internal sealed class MauiBottomSheet : AndroidView
     {
         if (_virtualView?.IsOpen == true)
         {
-            _virtualView.OnOpeningBottomSheet();
-            _bottomSheet.Open(_virtualView);
-            _virtualView.OnOpenedBottomSheet();
+            if (_bottomSheet.IsShowing == false)
+            {
+                _virtualView.OnOpeningBottomSheet();
+                _bottomSheet.Open(_virtualView);
+                _virtualView.OnOpenedBottomSheet();
+            }
         }
         else
         {
             _virtualView?.OnClosingBottomSheet();
+
             if (_bottomSheet.IsShowing)
             {
                 _bottomSheet.Close();

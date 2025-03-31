@@ -226,7 +226,8 @@ internal sealed class BottomSheet : IDisposable
     /// <summary>
     /// Close the bottom sheet.
     /// </summary>
-    public void Close()
+    /// <param name="handleClose">Should close event be fired. Edge case see issue #80.</param>
+    public void Close(bool handleClose = true)
     {
         _bottomSheetHandle.Handle.RemoveOnLayoutChangeListener(_bottomSheetContentChangeListener);
 
@@ -250,12 +251,15 @@ internal sealed class BottomSheet : IDisposable
         HideHeader();
         HideContent();
 
-        _eventManager.HandleEvent(this, EventArgs.Empty, nameof(Closed));
-
         _bottomSheetBehavior?.Dispose();
         _bottomSheetBehavior = null;
         _bottomSheetDialog?.Dismiss();
         _bottomSheetDialog = null;
+
+        if (handleClose)
+        {
+            _eventManager.HandleEvent(this, EventArgs.Empty, nameof(Closed));
+        }
     }
 
     /// <summary>
