@@ -125,9 +125,12 @@ internal sealed class MauiBottomSheet : UIView
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public async Task CloseAsync()
     {
-        _virtualView?.OnClosingBottomSheet();
-        await _bottomSheet.CloseAsync().ConfigureAwait(true);
-        _virtualView?.OnClosedBottomSheet();
+        if (_virtualView?.IsOpen == true)
+        {
+            _virtualView.OnClosingBottomSheet();
+            await _bottomSheet.CloseAsync().ConfigureAwait(true);
+            _virtualView.OnClosedBottomSheet();
+        }
     }
 
     /// <summary>

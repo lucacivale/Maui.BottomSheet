@@ -52,6 +52,7 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
             {
                 await bottomSheetHandler.OpenAsync().ConfigureAwait(true);
                 _bottomSheetStack.Add(bottomSheet);
+                _bottomSheetStack.Current.IsOpen = true;
             }
 
             if (bottomSheet.BindingContext is IQueryAttributable queryAttributable)
@@ -177,9 +178,10 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
         ApplyGoBackParameters(bottomSheet, parameters);
     }
 
-    private void OnClose(object? sender, EventArgs e)
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "VSTHRD100: Avoid async void methods, because any exceptions not handled by the method will crash the process", Justification = "Event.")]
+    private async void OnClose(object? sender, EventArgs e)
     {
-        GoBack();
+        await GoBackAsync().ConfigureAwait(true);
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA1826:Use property instead of Linq Enumerable method", Justification = "Validated.")]
