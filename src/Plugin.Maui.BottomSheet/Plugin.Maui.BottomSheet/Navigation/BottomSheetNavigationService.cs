@@ -109,11 +109,10 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
 
     private void ApplyGoBackParameters(IBottomSheet bottomSheet, IBottomSheetNavigationParameters? parameters)
     {
-        var parent = bottomSheet.Parent;
         IQueryAttributable? queryAttributable = null;
 
         if (_bottomSheetStack.IsEmpty
-            && parent.BindingContext is IQueryAttributable parentBindingContext)
+            && bottomSheet.GetPageParent()?.BindingContext is IQueryAttributable parentBindingContext)
         {
             queryAttributable = parentBindingContext;
         }
