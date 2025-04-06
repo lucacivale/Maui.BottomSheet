@@ -19,7 +19,6 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     private readonly BottomSheetControllerDelegate _bottomSheetControllerDelegate = new();
 
     private readonly UIViewController _bottomSheetUIViewController;
-    private readonly UIView _backgroundView;
 
     private readonly BottomSheetPage _virtualBottomSheet;
     private readonly Grid _virtualBottomSheetLayout;
@@ -36,6 +35,8 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     private BottomSheetHeader? _bottomSheetHeader;
 
     private bool _isModal;
+
+    private Color _windowBackgroundColor = Colors.Transparent;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheetUIViewController"/> class.
@@ -60,8 +61,6 @@ internal sealed class BottomSheetUIViewController : UINavigationController
 
         _bottomSheetControllerDelegate.Dismissed += RaiseDismissed;
         _bottomSheetControllerDelegate.StateChanged += BottomSheetControllerDelegateOnStateChanged;
-
-        _backgroundView = new UIView();
     }
 
     /// <summary>
@@ -117,10 +116,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     /// <summary>
     /// Gets medium detent.
     /// </summary>
-    public UISheetPresentationControllerDetent MediumDetent
-    {
-        get => _mediumDetent ??= UISheetPresentationControllerDetent.CreateMediumDetent();
-    }
+    public UISheetPresentationControllerDetent MediumDetent => _mediumDetent ??= UISheetPresentationControllerDetent.CreateMediumDetent();
 
     /// <summary>
     /// Gets large detent.
@@ -164,7 +160,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
                 SheetPresentationController.LargestUndimmedDetentIdentifier = _isModal ? UISheetPresentationControllerDetentIdentifier.Unknown : Detents.LargestDetentIdentifier();
             }
 
-            PrepareBottomSheetWindowBackground();
+            ApplyWindowBackgroundColor();
         }
     }
 
@@ -230,20 +226,18 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     /// <inheritdoc/>
     public override void ViewIsAppearing(bool animated)
     {
-        if (PresentingViewController?.View is null)
-        {
-            return;
-        }
-
-        PrepareBottomSheetWindowBackground();
-
         base.ViewIsAppearing(animated);
+
+        ApplyWindowBackgroundColor();
     }
 
-    /// <inheritdoc/>
     public override void ViewWillDisappear(bool animated)
     {
-        _backgroundView.RemoveFromSuperview();
+        if (IsModal
+            && PresentationController?.ContainerView?.Subviews.Length > 0)
+        {
+            UIView.Animate(0.5, () => PresentationController.ContainerView.Subviews[0].BackgroundColor = UIColor.Clear);
+        }
 
         base.ViewWillDisappear(animated);
     }
@@ -392,7 +386,8 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     /// <param name="color">Color.</param>
     public void SetWindowBackgroundColor(Color color)
     {
-        _backgroundView.BackgroundColor = color.ToPlatform();
+        _windowBackgroundColor = color;
+        ApplyWindowBackgroundColor();
     }
 
     /// <summary>
@@ -450,9 +445,6 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         _virtualBottomSheet.BottomSheet = null;
 
         HideHeader();
-
-        _backgroundView.RemoveFromSuperview();
-        _backgroundView.Dispose();
 
         _bottomSheetControllerDelegate.Dismissed -= RaiseDismissed;
         _bottomSheetControllerDelegate.StateChanged -= BottomSheetControllerDelegateOnStateChanged;
@@ -515,21 +507,12 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         }
     }
 
-    private void PrepareBottomSheetWindowBackground()
+    private void ApplyWindowBackgroundColor()
     {
-        if (PresentingViewController?.View is null)
+        // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
+        if (PresentationController?.ContainerView?.Subviews.Length > 0)
         {
-            return;
-        }
-
-        if (IsModal)
-        {
-            _backgroundView.Frame = PresentingViewController.View.Frame;
-            PresentingViewController.Add(_backgroundView);
-        }
-        else
-        {
-            _backgroundView.RemoveFromSuperview();
+            UIView.Animate(0.5, () => PresentationController.ContainerView.Subviews[0].BackgroundColor = IsModal ? _windowBackgroundColor.ToPlatform() : UIColor.Clear);
         }
     }
 
