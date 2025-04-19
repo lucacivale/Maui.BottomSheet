@@ -48,16 +48,16 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
         {
             PrepareBottomSheetForNavigation(bottomSheet, viewModel, configure);
 
+            if (bottomSheet.BindingContext is IQueryAttributable queryAttributable)
+            {
+                ApplyAttributes(queryAttributable, parameters);
+            }
+
             if (bottomSheet.Handler is Handlers.BottomSheetHandler bottomSheetHandler)
             {
                 await bottomSheetHandler.OpenAsync().ConfigureAwait(true);
                 _bottomSheetStack.Add(bottomSheet);
                 _bottomSheetStack.Current.IsOpen = true;
-            }
-
-            if (bottomSheet.BindingContext is IQueryAttributable queryAttributable)
-            {
-                ApplyAttributes(queryAttributable, parameters);
             }
         });
     }
