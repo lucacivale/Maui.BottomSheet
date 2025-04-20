@@ -1,13 +1,13 @@
-namespace Plugin.Maui.BottomSheet.Sample;
-
 using AsyncAwaitBestPractices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Navigation;
+using Plugin.Maui.BottomSheet.Navigation;
+
+namespace Plugin.Maui.BottomSheet.Sample.ViewModels;
 
 public sealed partial class ShowCaseViewModel : ObservableObject
 {
-    private readonly List<string> _colors = 
+    private readonly List<string> _colors =
     [
         "#ffaf83aa",
         "#803983aa",
@@ -23,10 +23,10 @@ public sealed partial class ShowCaseViewModel : ObservableObject
 
     [ObservableProperty]
     private BottomSheetHeaderButtonAppearanceMode _headerButtonAppearanceMode = BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton;
-    
+
     [ObservableProperty]
     private string _title = "My Title";
-    
+
     [ObservableProperty]
     private float _cornerRadius = 20;
 
@@ -57,8 +57,8 @@ public sealed partial class ShowCaseViewModel : ObservableObject
     [RelayCommand]
     private void ChangeWindowBackgroundColor()
     {
-        var colorIndex = _colors.IndexOf(WindowBackgroundColor.ToArgbHex(true).ToLower());
-        var elementAt = colorIndex == _colors.Count - 1 ? 0 : colorIndex + 1;
+        int colorIndex = _colors.IndexOf(WindowBackgroundColor.ToArgbHex(true).ToLower());
+        int elementAt = colorIndex == _colors.Count - 1 ? 0 : colorIndex + 1;
 
         WindowBackgroundColor = Color.FromArgb(_colors.ElementAt(elementAt));
     }
@@ -68,31 +68,31 @@ public sealed partial class ShowCaseViewModel : ObservableObject
     {
         Shell.Current.DisplayAlert("Notification", "Top left clicked", "Cancel").SafeFireAndForget(continueOnCapturedContext: false);
     }
-    
+
     [RelayCommand]
     private static void TopRightButton()
     {
         Shell.Current.DisplayAlert("Notification", "Top right clicked", "Cancel").SafeFireAndForget(continueOnCapturedContext: false);
     }
-    
+
     [RelayCommand]
     private void HeaderButtonAppearanceModeNone()
     {
         HeaderButtonAppearanceMode = BottomSheetHeaderButtonAppearanceMode.None;
     }
-    
+
     [RelayCommand]
     private void HeaderButtonAppearanceModeLeft()
     {
         HeaderButtonAppearanceMode = BottomSheetHeaderButtonAppearanceMode.LeftButton;
     }
-    
+
     [RelayCommand]
     private void HeaderButtonAppearanceModeRight()
     {
         HeaderButtonAppearanceMode = BottomSheetHeaderButtonAppearanceMode.RightButton;
     }
-    
+
     [RelayCommand]
     private void HeaderButtonAppearanceModeLeftAndRight()
     {
@@ -101,16 +101,16 @@ public sealed partial class ShowCaseViewModel : ObservableObject
 
     [ObservableProperty]
     private bool _isOpen;
-    
+
     [ObservableProperty]
     private bool _isNonModalOpen;
-    
+
     [ObservableProperty]
     private bool _hasHandle = true;
-    
+
     [ObservableProperty]
     private bool _isCancelable = true;
-    
+
     [ObservableProperty]
     private bool _showHeader = true;
 
@@ -124,17 +124,23 @@ public sealed partial class ShowCaseViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private void OpenShellPageCommand()
+    {
+        IsOpen = true;
+    }
+
+    [RelayCommand]
     private void OpenNonModalShowcase()
     {
         IsNonModalOpen = true;
     }
-    
+
     [RelayCommand]
     private void OpenShowcasePageAsBottomSheet()
     {
         _bottomSheetNavigationService.NavigateToAsync("Showcase").SafeFireAndForget();
     }
-    
+
     [RelayCommand]
     private void OpenCustomHeaderShowcaseViewAsBottomSheet()
     {

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <bottomsheet:BottomSheet xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:bottomsheet="http://pluginmauibottomsheet.com"
-             Padding="20"
-             xmlns:local="clr-namespace:Plugin.Maui.BottomSheet.Sample"
-             x:Class="Plugin.Maui.BottomSheet.Sample.SomeBottomSheet">
+             xmlns:vm="clr-namespace:Plugin.Maui.BottomSheet.Sample.ViewModels"
+             x:Class="Plugin.Maui.BottomSheet.Sample.Views.SomeBottomSheet"
+             x:DataType="vm:SomeViewModel"
+             Padding="20">
     <bottomsheet:BottomSheet.Content>
         <bottomsheet:BottomSheetContent>
             <bottomsheet:BottomSheetContent.ContentTemplate>
-                <DataTemplate x:DataType="local:SomeViewModel">
+                <DataTemplate x:DataType="vm:SomeViewModel">
                     <Label Text="{Binding Title}" HorizontalOptions="Center"/>
                 </DataTemplate>
             </bottomsheet:BottomSheetContent.ContentTemplate>

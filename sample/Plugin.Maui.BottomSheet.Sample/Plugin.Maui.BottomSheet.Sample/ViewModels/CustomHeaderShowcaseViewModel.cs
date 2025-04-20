@@ -1,7 +1,6 @@
-namespace Plugin.Maui.BottomSheet.Sample;
-
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+namespace Plugin.Maui.BottomSheet.Sample.ViewModels;
 
 public partial class CustomHeaderShowcaseViewModel : ObservableObject
 {
@@ -13,7 +12,7 @@ public partial class CustomHeaderShowcaseViewModel : ObservableObject
     {
         BottomSheetState = BottomSheetState.Medium;
     }
-    
+
     [RelayCommand]
     private void Large()
     {

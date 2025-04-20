@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage 
+    x:Class="Plugin.Maui.BottomSheet.Sample.MainPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:Plugin.Maui.BottomSheet.Sample"
+    x:DataType="local:MainPage">
+    
+    <ScrollView Padding="16,24,16,0">
+        <VerticalStackLayout Spacing="16" VerticalOptions="Center">
+            <Label Text="Welcome! This project was created to showcase real use cases of the Maui.BottomSheet Nugget package." FontSize="22" FontAttributes="Bold" LineBreakMode="WordWrap" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" />
+            <Button Text="Open the examples of the BottonSheet" Clicked="OpenShowCasePage" />
+            <Button Text="Open an example Shell Page with a BottomSheet" Clicked="OpenShellPage" BackgroundColor="{StaticResource Magenta}" />
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

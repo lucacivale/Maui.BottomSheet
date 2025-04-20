@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<bottomsheet:BottomSheet  xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Plugin.Maui.BottomSheet.Sample.ViewModels"
+             xmlns:bottomsheet="http://pluginmauibottomsheet.com"
+             x:Class="Plugin.Maui.BottomSheet.Sample.Views.CustomBottomSheet"
+             x:DataType="vm:CustomBottomSheetViewModel"
+             States="Peek">
+    <bottomsheet:BottomSheet.Content>
+        <bottomsheet:BottomSheetContent>
+            <bottomsheet:BottomSheetContent.ContentTemplate>
+                <DataTemplate x:DataType="vm:CustomBottomSheetViewModel">
+                    <ScrollView Padding="16,24,16,0">
+                        <ScrollView.Behaviors>
+                            <bottomsheet:BottomSheetPeekBehavior />
+                        </ScrollView.Behaviors>
+                        <VerticalStackLayout Spacing="16">
+                            <Label Text="Name Change" FontAttributes="Bold" />
+                            <Entry Text="{Binding Newusername, Mode=TwoWay}" ReturnType="Done" ReturnCommand="{Binding SaveCommand}" />
+                            <Button Text="Save" Command="{Binding SaveCommand}" />
+                            <Button Text="Cancel" Command="{Binding GoBackCommand}" TextColor="Black" BackgroundColor="Transparent" BorderColor="{StaticResource Magenta}" BorderWidth="1" />
+                        </VerticalStackLayout>
+                    </ScrollView>
+                </DataTemplate>
+            </bottomsheet:BottomSheetContent.ContentTemplate>
+        </bottomsheet:BottomSheetContent>
+    </bottomsheet:BottomSheet.Content>
+</bottomsheet:BottomSheet>
