@@ -552,16 +552,7 @@ internal sealed class BottomSheet : IDisposable
             return;
         }
 
-        _virtualBottomSheetContent = _bottomSheetContent.ContentTemplate?.CreateContent() as View;
-
-        if (_virtualBottomSheetContent is null)
-        {
-            return;
-        }
-
-        _virtualBottomSheetContent.BindingContext = _bottomSheetContent.BindingContext;
-        _virtualBottomSheetContent.Parent = _bottomSheetContent.Parent;
-
+        _virtualBottomSheetContent = _bottomSheetContent.CreateContent();
         _platformBottomSheetContent = _virtualBottomSheetContent.ToPlatform(_mauiContext);
 
         _contentLayoutParams = new GridLayout.LayoutParams()
