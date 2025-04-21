@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Plugin.Maui.BottomSheet.Sample.Views.ShellPage"
+             xmlns:vm="clr-namespace:Plugin.Maui.BottomSheet.Sample.ViewModels"
+             x:DataType="vm:ShellPageViewModel"
+             Title="Examples of a BottomSheet with Shell navigation">
+    <Grid>
+        <VerticalStackLayout BackgroundColor="White" Spacing="12" Padding="16" VerticalOptions="Center">
+            <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                <Label Text="Username:" FontAttributes="Bold" FontSize="16" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" />
+                <Label Text="{Binding Username}" FontSize="16" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" />
+            </HorizontalStackLayout>
+
+            <Button Text="Edit username" Command="{Binding OpenCustomBottomSheetCommand}" BackgroundColor="{StaticResource Magenta}" />
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

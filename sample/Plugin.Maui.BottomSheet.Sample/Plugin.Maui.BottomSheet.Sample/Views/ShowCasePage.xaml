@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-    x:Class="Plugin.Maui.BottomSheet.Sample.ShowCasePage"
+    x:Class="Plugin.Maui.BottomSheet.Sample.Views.ShowCasePage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:androidBottomsheet="http://pluginmauibottomsheet.com/platformconfiguration/android"
     xmlns:bottomsheet="http://pluginmauibottomsheet.com"
-    xmlns:local="clr-namespace:Plugin.Maui.BottomSheet.Sample"
-    Title="Showcase"
-    Padding="20"
-    x:DataType="local:ShowCaseViewModel">
+    xmlns:vm="clr-namespace:Plugin.Maui.BottomSheet.Sample.ViewModels"
+    x:DataType="vm:ShowCaseViewModel"
+    Title="Examples of the BottomSheet"
+    Padding="20">
     <ContentPage.Content>
         <VerticalStackLayout Spacing="20">
             <Button
@@ -71,7 +71,7 @@
                 <bottomsheet:BottomSheet.Content>
                     <bottomsheet:BottomSheetContent>
                         <bottomsheet:BottomSheetContent.ContentTemplate>
-                            <DataTemplate x:DataType="local:ShowCaseViewModel">
+                            <DataTemplate x:DataType="vm:ShowCaseViewModel">
                                 <VerticalStackLayout>
                                     <ContentView>
                                         <ContentView.Behaviors>
@@ -211,7 +211,7 @@
                 <bottomsheet:BottomSheet.Content>
                     <bottomsheet:BottomSheetContent>
                         <bottomsheet:BottomSheetContent.ContentTemplate>
-                            <DataTemplate x:DataType="local:ShowCaseViewModel">
+                            <DataTemplate x:DataType="vm:ShowCaseViewModel">
                                 <VerticalStackLayout>
                                     <ContentView>
                                         <ContentView.Behaviors>

@@ -1,4 +1,4 @@
-namespace Plugin.Maui.BottomSheet.Sample;
+namespace Plugin.Maui.BottomSheet.Sample.Views;
 
 public partial class CustomHeaderShowcase : BottomSheet
 {

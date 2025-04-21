@@ -3,16 +3,16 @@ using AAndroid = Microsoft.Maui.Controls.PlatformConfiguration.Android;
 using Plugin.Maui.BottomSheet.PlatformConfiguration.AndroidSpecific;
 #endif
 
-namespace Plugin.Maui.BottomSheet.Sample;
+using Plugin.Maui.BottomSheet.Sample.ViewModels;
+
+namespace Plugin.Maui.BottomSheet.Sample.Views;
 
 public partial class ShowCasePage : ContentPage
 {
-    public ShowCasePage(ShowCaseViewModel viewModel)
+    public ShowCasePage(ShowCaseViewModel showCaseViewModel)
     {
         InitializeComponent();
-        
-        BindingContext = viewModel;
-
+        BindingContext = showCaseViewModel;
 
 #if ANDROID
         NonModalBottomSheetNonEdgeToEdge.On<AAndroid>().SetTheme(Resource.Style.ThemeOverlay_MaterialComponents_BottomSheetDialog);

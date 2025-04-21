@@ -1,4 +1,4 @@
-namespace Plugin.Maui.BottomSheet.Sample;
+namespace Plugin.Maui.BottomSheet.Sample.ViewModels;
 
 public class SomeViewModel
 {
