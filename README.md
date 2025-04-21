@@ -72,7 +72,7 @@ return builder.Build();
 | List<[BottomSheetState](#bottomSheetState)> | States                | Allowed states. CurrentState must be a value of this collection.                                                                                |
 | [BottomSheetState](#bottomSheetState)       | CurrentState          | Current state                                                                                                                                   |
 | [BottomSheetHeader](#bottomSheetHeader)     | Header                | Configure header                                                                                                                                |
-| double                                      | PeekHeight            | Set peek height(requires at least iOS 16 -- all other platforms are supported). The header height will be added to the `PeekHeight` internally. |
+| double                                      | PeekHeight            | Set peek height(requires at least iOS 16 -- all other platforms are supported). The header height will be added to the `PeekHeight` internally. Use `BottomSheetPeekBehavior` to calculate the height based on a `View`. |
 | [BottomSheetContent](#bottomSheetContent)   | Content               | Configure content                                                                                                                               |
 | double                                      | Padding               | Padding                                                                                                                                         |
 | Colors                                      | BackgroundColor       | Background color                                                                                                                                |
@@ -341,6 +341,10 @@ To set the PeekHeight based on a view inside the `BottomSheetContent` attach the
 The peek height will be equal to the `ContentView` height.
 
 # Navigation
+
+> [!CAUTION]
+> Never mix navigation with `BottomSheet.IsOpen`. This will lead to unexpected behavior and is not supported.
+> Either open and close `BottomSheet` using `IsOpen` or use navigation.
 
 `IBottomSheetNavigationService` is be registered automatically and can be resolved. 
 
