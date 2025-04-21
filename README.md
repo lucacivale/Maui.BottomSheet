@@ -114,9 +114,14 @@ return builder.Build();
 | Right | Show button on the right |
 
 ### BottomSheetContent
-| Type         | Name            | Description  |
-|--------------|-----------------|--------------|
-| DataTemplate | ContentTemplate | Content view |
+| Type         | Name            | Description                                                                       |
+|--------------|-----------------|-----------------------------------------------------------------------------------|
+| View         | Content         | View content. Xaml usage can be simplified as ContentProperty attribute is added. |
+| DataTemplate | ContentTemplate | View template will be inflated when the BottomSheet is opened.                    |
+
+> [!CAUTION]
+> Be careful when using `Content` because the Content will be created even if the BottomSheet isn't open and this may have a negative performance impact.
+> `Content` should only be used with navigation and not in `BottomSheets` added directly to a `Layout`.
 
 ### BottomSheetStyle
 | Type                                              | Name        | Description |

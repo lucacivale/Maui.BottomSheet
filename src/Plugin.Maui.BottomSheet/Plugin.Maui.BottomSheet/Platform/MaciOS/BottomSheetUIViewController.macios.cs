@@ -326,14 +326,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
             return;
         }
 
-        _virtualBottomSheetContent = content.ContentTemplate?.CreateContent() as View;
-
-        if (_virtualBottomSheetContent is null)
-        {
-            return;
-        }
-
-        _virtualBottomSheetContent.BindingContext = content.BindingContext;
+        _virtualBottomSheetContent = content.CreateContent();
 
         _virtualBottomSheetLayout.Add(
             _virtualBottomSheetContent,

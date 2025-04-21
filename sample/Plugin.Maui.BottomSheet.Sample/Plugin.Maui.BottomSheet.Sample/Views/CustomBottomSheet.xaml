@@ -8,21 +8,17 @@
              States="Peek">
     <bottomsheet:BottomSheet.Content>
         <bottomsheet:BottomSheetContent>
-            <bottomsheet:BottomSheetContent.ContentTemplate>
-                <DataTemplate x:DataType="vm:CustomBottomSheetViewModel">
-                    <ScrollView Padding="16,24,16,0">
-                        <ScrollView.Behaviors>
-                            <bottomsheet:BottomSheetPeekBehavior />
-                        </ScrollView.Behaviors>
-                        <VerticalStackLayout Spacing="16">
-                            <Label Text="Name Change" FontAttributes="Bold" />
-                            <Entry Text="{Binding Newusername, Mode=TwoWay}" ReturnType="Done" ReturnCommand="{Binding SaveCommand}" />
-                            <Button Text="Save" Command="{Binding SaveCommand}" />
-                            <Button Text="Cancel" Command="{Binding GoBackCommand}" TextColor="Black" BackgroundColor="Transparent" BorderColor="{StaticResource Magenta}" BorderWidth="1" />
-                        </VerticalStackLayout>
-                    </ScrollView>
-                </DataTemplate>
-            </bottomsheet:BottomSheetContent.ContentTemplate>
+            <ScrollView Padding="16,24,16,0">
+                <ScrollView.Behaviors>
+                    <bottomsheet:BottomSheetPeekBehavior />
+                </ScrollView.Behaviors>
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="Name Change" FontAttributes="Bold" />
+                    <Entry Text="{Binding Newusername, Mode=TwoWay}" ReturnType="Done" ReturnCommand="{Binding SaveCommand}" />
+                    <Button Text="Save" Command="{Binding SaveCommand}" />
+                    <Button Text="Cancel" Command="{Binding GoBackCommand}" TextColor="Black" BackgroundColor="Transparent" BorderColor="{StaticResource Magenta}" BorderWidth="1" />
+                </VerticalStackLayout>
+            </ScrollView>
         </bottomsheet:BottomSheetContent>
     </bottomsheet:BottomSheet.Content>
 </bottomsheet:BottomSheet>
