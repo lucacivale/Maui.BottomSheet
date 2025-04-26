@@ -25,6 +25,28 @@ internal sealed class BottomSheetControllerDelegate : UISheetPresentationControl
         remove => _eventManager.RemoveEventHandler(value);
     }
 
+    /// <summary>
+    /// Confirm dismiss.
+    /// </summary>
+    public event EventHandler ConfirmDismiss
+    {
+        add => _eventManager.AddEventHandler(value);
+        remove => _eventManager.RemoveEventHandler(value);
+    }
+
+    /// <inheritdoc/>
+    // DidAttemptToDismiss is only called if UISheetPresentationController is closed via swipe. Tapping on backrgound only calls ShouldDismiss.
+    // Maybe will be fixed or works as designed. File bug report.
+    public override bool ShouldDismiss(UIPresentationController presentationController)
+    {
+        _eventManager.HandleEvent(
+            presentationController,
+            EventArgs.Empty,
+            nameof(ConfirmDismiss));
+
+        return false;
+    }
+
     /// <inheritdoc/>
     public override void DidDismiss(UIPresentationController presentationController)
     {

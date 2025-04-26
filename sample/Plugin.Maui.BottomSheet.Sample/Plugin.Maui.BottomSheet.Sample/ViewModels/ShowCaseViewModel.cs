@@ -5,7 +5,7 @@ using Plugin.Maui.BottomSheet.Navigation;
 
 namespace Plugin.Maui.BottomSheet.Sample.ViewModels;
 
-public sealed partial class ShowCaseViewModel : ObservableObject
+public sealed partial class ShowCaseViewModel : ObservableObject, IConfirmNavigationAsync
 {
     private readonly List<string> _colors =
     [
@@ -163,5 +163,14 @@ public sealed partial class ShowCaseViewModel : ObservableObject
     private void CloseCurrentSheet()
     {
         _bottomSheetNavigationService.GoBackAsync().SafeFireAndForget();
+    }
+
+    public Task<bool> CanNavigateAsync(IBottomSheetNavigationParameters? parameters)
+    {
+        return Shell.Current.CurrentPage.DisplayAlert(
+            "Warning",
+            "You are about to navigate away",
+            "OK",
+            "Cancel");
     }
 }

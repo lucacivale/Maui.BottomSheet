@@ -61,6 +61,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
 
         _bottomSheetControllerDelegate.Dismissed += RaiseDismissed;
         _bottomSheetControllerDelegate.StateChanged += BottomSheetControllerDelegateOnStateChanged;
+        _bottomSheetControllerDelegate.ConfirmDismiss += BottomSheetControllerDelegateOnConfirmDismiss;
     }
 
     /// <summary>
@@ -75,6 +76,15 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     /// BottomSheet state changed.
     /// </summary>
     public event EventHandler<BottomSheetStateChangedEventArgs> StateChanged
+    {
+        add => _eventManager.AddEventHandler(value);
+        remove => _eventManager.RemoveEventHandler(value);
+    }
+
+    /// <summary>
+    /// Confirm dismiss.
+    /// </summary>
+    public event EventHandler ConfirmDismiss
     {
         add => _eventManager.AddEventHandler(value);
         remove => _eventManager.RemoveEventHandler(value);
@@ -121,10 +131,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     /// <summary>
     /// Gets large detent.
     /// </summary>
-    public UISheetPresentationControllerDetent LargeDetent
-    {
-        get => _largeDetent ??= UISheetPresentationControllerDetent.CreateLargeDetent();
-    }
+    public UISheetPresentationControllerDetent LargeDetent => _largeDetent ??= UISheetPresentationControllerDetent.CreateLargeDetent();
 
     /// <summary>
     /// Gets or sets a value indicating whether sheet is draggable.
@@ -231,6 +238,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         ApplyWindowBackgroundColor();
     }
 
+    [SuppressMessage("Usage", "ConditionalAccessQualifierIsNonNullableAccordingToAPIContract: ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract", Justification = "Can actually be null.")]
     public override void ViewWillDisappear(bool animated)
     {
         if (IsModal
@@ -441,6 +449,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
 
         _bottomSheetControllerDelegate.Dismissed -= RaiseDismissed;
         _bottomSheetControllerDelegate.StateChanged -= BottomSheetControllerDelegateOnStateChanged;
+        _bottomSheetControllerDelegate.ConfirmDismiss -= BottomSheetControllerDelegateOnConfirmDismiss;
         _bottomSheetControllerDelegate.Dispose();
         _bottomSheetUIViewController.Dispose();
 
@@ -515,6 +524,14 @@ internal sealed class BottomSheetUIViewController : UINavigationController
             this,
             e,
             nameof(StateChanged));
+    }
+
+    private void BottomSheetControllerDelegateOnConfirmDismiss(object? sender, EventArgs e)
+    {
+        _eventManager.HandleEvent(
+            this,
+            e,
+            nameof(ConfirmDismiss));
     }
 
     private void RaiseDismissed(object? sender, EventArgs e)

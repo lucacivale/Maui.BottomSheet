@@ -4,12 +4,33 @@ using Plugin.Maui.BottomSheet.Navigation;
 
 namespace Plugin.Maui.BottomSheet.Sample.ViewModels;
 
-public partial class CustomBottomSheetViewModel (IBottomSheetNavigationService bottomSheetNavigationService) : ObservableObject, IQueryAttributable
+public partial class CustomBottomSheetViewModel : ObservableObject, IQueryAttributable, IConfirmNavigationAsync, IConfirmNavigation
 {
+    private readonly IBottomSheetNavigationService _bottomSheetNavigationService;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(SaveCommand))]
+    private string? _oldusername;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(SaveCommand))]
+    private string? _newusername;
+
+    [ObservableProperty]
+    private bool _navigationAllowed;
+
+    public CustomBottomSheetViewModel(IBottomSheetNavigationService bottomSheetNavigationService)
+    {
+        _bottomSheetNavigationService = bottomSheetNavigationService;
+    }
+
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
-        if (query is null || query.Count == 0)
+        if (query is null
+            || query.Count == 0)
+        {
             return;
+        }
 
         if (query.TryGetValue("username", out object? username))
         {
@@ -20,16 +41,7 @@ public partial class CustomBottomSheetViewModel (IBottomSheetNavigationService b
         query.Clear();
     }
 
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(SaveCommand))]
-    string? _oldusername;
-
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(SaveCommand))]
-    string? _newusername;
-
-
-    bool SaveCanExecute()
+    public bool SaveCanExecute()
     {
         if (!string.IsNullOrEmpty(Newusername) && Newusername != Oldusername)
         {
@@ -43,17 +55,31 @@ public partial class CustomBottomSheetViewModel (IBottomSheetNavigationService b
     }
 
     [RelayCommand(CanExecute = nameof(SaveCanExecute))]
-    async Task Save()
+    public async Task Save()
     {
-        await bottomSheetNavigationService.GoBackAsync(new BottomSheetNavigationParameters()
+        await _bottomSheetNavigationService.GoBackAsync(new BottomSheetNavigationParameters()
         {
             ["newusername"] = Newusername!,
         });
     }
 
     [RelayCommand]
-    async Task GoBack()
+    public async Task GoBack()
     {
-        await bottomSheetNavigationService.GoBackAsync();
+        await _bottomSheetNavigationService.GoBackAsync();
+    }
+
+    public Task<bool> CanNavigateAsync(IBottomSheetNavigationParameters? parameters)
+    {
+        return Shell.Current.CurrentPage.DisplayAlert(
+            "Warning",
+            "You are about to navigate away",
+            "OK",
+            "Cancel");
+    }
+
+    public bool CanNavigate(IBottomSheetNavigationParameters? parameters)
+    {
+        return NavigationAllowed;
     }
 }

@@ -1,3 +1,6 @@
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+
 namespace Plugin.Maui.BottomSheet.Navigation;
 
 /// <inheritdoc />
@@ -46,6 +49,12 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
     {
         return DispatchAsync(async () =>
         {
+            if (_bottomSheetStack.IsEmpty == false
+                && await MvvmHelpers.ConfirmNavigationAsync(_bottomSheetStack.Current, parameters ?? BottomSheetNavigationParameters.Empty()).ConfigureAwait(true) == false)
+            {
+                return;
+            }
+
             PrepareBottomSheetForNavigation(bottomSheet, viewModel, configure);
 
             if (bottomSheet.BindingContext is IQueryAttributable queryAttributable)
@@ -124,7 +133,7 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
         ApplyAttributes(queryAttributable, parameters);
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA1826:Use property instead of Linq Enumerable method", Justification = "Improved readability.")]
+    [SuppressMessage("Usage", "CA1826:Use property instead of Linq Enumerable method", Justification = "Improved readability.")]
     private void PrepareBottomSheetForNavigation(IBottomSheet bottomSheet, object? viewModel = null, Action<IBottomSheet>? configure = null)
     {
         var page = Application.Current?.Windows.LastOrDefault()?.Page ?? throw new InvalidOperationException("Application.Current?.Windows.LastOrDefault()?.Page cannot be null.");
@@ -157,9 +166,15 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
         ApplyGoBackParameters(bottomSheet, parameters);
     }
 
-    private async Task DoGoBackAsync(IBottomSheetNavigationParameters? parameters = null)
+    private async Task DoGoBackAsync(IBottomSheetNavigationParameters? parameters = null, bool withConfirmation = true)
     {
         if (_bottomSheetStack.IsEmpty)
+        {
+            return;
+        }
+
+        if (withConfirmation
+            && await MvvmHelpers.ConfirmNavigationAsync(_bottomSheetStack.Current, parameters ?? BottomSheetNavigationParameters.Empty()).ConfigureAwait(true) == false)
         {
             return;
         }
@@ -177,29 +192,35 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
         ApplyGoBackParameters(bottomSheet, parameters);
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "VSTHRD100: Avoid async void methods, because any exceptions not handled by the method will crash the process", Justification = "Event.")]
+    [SuppressMessage("Design", "CA1031: Do not catch general exception types", Justification = "Catch all exceptions to prevent crash.")]
+    [SuppressMessage("Usage", "VSTHRD100: Avoid async void methods, because any exceptions not handled by the method will crash the process", Justification = "Event.")]
     private async void OnClose(object? sender, EventArgs e)
     {
-        await GoBackAsync().ConfigureAwait(true);
+        try
+        {
+            await DispatchAsync(() => DoGoBackAsync(null, false)).ConfigureAwait(false);
+        }
+        catch
+        {
+            Trace.TraceError("Invoking GoBackAsync failed.");
+        }
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA1826:Use property instead of Linq Enumerable method", Justification = "Validated.")]
+    [SuppressMessage("Usage", "CA1826:Use property instead of Linq Enumerable method", Justification = "Validated.")]
     private IDispatcher GetDispatcher()
     {
-        var dispatcher = _bottomSheetStack is { IsEmpty: false, Current: BindableObject bindable } ? bindable.Dispatcher : Application.Current?.Windows.LastOrDefault()?.Page?.Dispatcher;
+        IDispatcher? dispatcher = _bottomSheetStack is { IsEmpty: false, Current: BindableObject bindable } ? bindable.Dispatcher : Application.Current?.Windows.LastOrDefault()?.Page?.Dispatcher;
 
         ArgumentNullException.ThrowIfNull(dispatcher);
 
         return dispatcher;
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA1826:Use property instead of Linq Enumerable method", Justification = "Validated.")]
     private void Dispatch(Action action)
     {
         GetDispatcher().Dispatch(action);
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA1826:Use property instead of Linq Enumerable method", Justification = "Validated.")]
     private Task DispatchAsync(Func<Task> action)
     {
         return GetDispatcher().DispatchAsync(action);
