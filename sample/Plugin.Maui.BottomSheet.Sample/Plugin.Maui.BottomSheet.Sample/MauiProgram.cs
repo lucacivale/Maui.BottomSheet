@@ -32,7 +32,7 @@ namespace Plugin.Maui.BottomSheet.Sample
                 {
                     sheet.States = [BottomSheetState.Medium, BottomSheetState.Large];
                 });
-            builder.Services.AddBottomSheet<ShowCasePage>("Showcase",
+            builder.Services.AddBottomSheet<ShowCasePage, ShowCaseViewModel>("Showcase",
                 (sheet, page) =>
                 {
                     sheet.States = [BottomSheetState.Medium, BottomSheetState.Large];

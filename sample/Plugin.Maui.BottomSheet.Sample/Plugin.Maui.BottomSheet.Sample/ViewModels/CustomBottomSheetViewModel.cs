@@ -4,7 +4,7 @@ using Plugin.Maui.BottomSheet.Navigation;
 
 namespace Plugin.Maui.BottomSheet.Sample.ViewModels;
 
-public partial class CustomBottomSheetViewModel : ObservableObject, IQueryAttributable, IConfirmNavigationAsync, IConfirmNavigation
+public partial class CustomBottomSheetViewModel : ObservableObject, IQueryAttributable, IConfirmNavigationAsync
 {
     private readonly IBottomSheetNavigationService _bottomSheetNavigationService;
 
@@ -15,9 +15,6 @@ public partial class CustomBottomSheetViewModel : ObservableObject, IQueryAttrib
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(SaveCommand))]
     private string? _newusername;
-
-    [ObservableProperty]
-    private bool _navigationAllowed;
 
     public CustomBottomSheetViewModel(IBottomSheetNavigationService bottomSheetNavigationService)
     {
@@ -76,10 +73,5 @@ public partial class CustomBottomSheetViewModel : ObservableObject, IQueryAttrib
             "You are about to navigate away",
             "OK",
             "Cancel");
-    }
-
-    public bool CanNavigate(IBottomSheetNavigationParameters? parameters)
-    {
-        return NavigationAllowed;
     }
 }

@@ -13,7 +13,6 @@
                     <bottomsheet:BottomSheetPeekBehavior />
                 </ScrollView.Behaviors>
                 <VerticalStackLayout Spacing="16">
-                    <Switch IsToggled="{Binding NavigationAllowed}" HorizontalOptions="Center"/>
                     <Label Text="Name Change" FontAttributes="Bold" />
                     <Entry Text="{Binding Newusername, Mode=TwoWay}" ReturnType="Done" ReturnCommand="{Binding SaveCommand}" />
                     <Button Text="Save" Command="{Binding SaveCommand}" />

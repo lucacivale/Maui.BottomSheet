@@ -274,7 +274,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
 
         _virtualBottomSheetLayout.Add(_bottomSheetHeader.View);
         _bottomSheetHeader.SizeChanged += BottomSheetHeaderOnSizeChanged;
-        _bottomSheetHeader.CloseButtonClicked += RaiseDismissed;
+        _bottomSheetHeader.CloseButtonClicked += BottomSheetControllerDelegateOnConfirmDismiss;
     }
 
     /// <summary>
@@ -289,7 +289,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
 
         _bottomSheetHeader.Hide();
         _bottomSheetHeader.SizeChanged -= BottomSheetHeaderOnSizeChanged;
-        _bottomSheetHeader.CloseButtonClicked -= RaiseDismissed;
+        _bottomSheetHeader.CloseButtonClicked -= BottomSheetControllerDelegateOnConfirmDismiss;
         ApplyPeekHeight();
     }
 
