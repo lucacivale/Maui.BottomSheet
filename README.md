@@ -61,25 +61,25 @@ return builder.Build();
 
 # API
 
-| Type                                        | Name                  | Description                                                                                                                                     |
-|---------------------------------------------|-----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
-| bool                                        | IsModal               | Is interaction with content under BottomSheet enabled                                                                                           |
-| bool                                        | IsCancelable          | Can be closed by user either through gestures or clicking in background                                                                         |
-| bool                                        | HasHandle             | Show handle                                                                                                                                     |
-| bool                                        | ShowHeader            | Show header                                                                                                                                     |
-| bool                                        | IsOpen                | Open or close                                                                                                                                   |
-| bool                                        | IsDraggable           | Can be dragged(Useful if drawing gestures are made inside bottom sheet)                                                                         |
-| List<[BottomSheetState](#bottomSheetState)> | States                | Allowed states. CurrentState must be a value of this collection.                                                                                |
-| [BottomSheetState](#bottomSheetState)       | CurrentState          | Current state                                                                                                                                   |
-| [BottomSheetHeader](#bottomSheetHeader)     | Header                | Configure header                                                                                                                                |
+| Type                                        | Name                  | Description                                                                                                                                                                                                              |
+|---------------------------------------------|-----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| bool                                        | IsModal               | Is interaction with content under BottomSheet enabled                                                                                                                                                                    |
+| bool                                        | IsCancelable          | Can be closed by user either through gestures or clicking in background                                                                                                                                                  |
+| bool                                        | HasHandle             | Show handle                                                                                                                                                                                                              |
+| bool                                        | ShowHeader            | Show header                                                                                                                                                                                                              |
+| bool                                        | IsOpen                | Open or close                                                                                                                                                                                                            |
+| bool                                        | IsDraggable           | Can be dragged(Useful if drawing gestures are made inside bottom sheet)                                                                                                                                                  |
+| List<[BottomSheetState](#bottomSheetState)> | States                | Allowed states. CurrentState must be a value of this collection.                                                                                                                                                         |
+| [BottomSheetState](#bottomSheetState)       | CurrentState          | Current state                                                                                                                                                                                                            |
+| [BottomSheetHeader](#bottomSheetHeader)     | Header                | Configure header                                                                                                                                                                                                         |
 | double                                      | PeekHeight            | Set peek height(requires at least iOS 16 -- all other platforms are supported). The header height will be added to the `PeekHeight` internally. Use `BottomSheetPeekBehavior` to calculate the height based on a `View`. |
-| [BottomSheetContent](#bottomSheetContent)   | Content               | Configure content                                                                                                                               |
-| double                                      | Padding               | Padding                                                                                                                                         |
-| Colors                                      | BackgroundColor       | Background color                                                                                                                                |
-| bool                                        | IgnoreSafeArea        | Ignore safe area(currently only implemented in iOS)                                                                                             |
-| float                                       | CornerRadius          | Top left and top right corner radius                                                                                                            |
-| [BottomSheetStyle](#bottomSheetStyle)       | BottomSheetStyle      | Style built in components                                                                                                                       |
-| Color                                       | WindowBackgroundColor | Window background color. If BottomSheet is non-modal no window color is applied                                                                 |
+| [BottomSheetContent](#bottomSheetContent)   | Content               | Configure content                                                                                                                                                                                                        |
+| double                                      | Padding               | Padding                                                                                                                                                                                                                  |
+| Colors                                      | BackgroundColor       | Background color                                                                                                                                                                                                         |
+| bool                                        | IgnoreSafeArea        | Ignore safe area(currently only implemented in iOS)                                                                                                                                                                      |
+| float                                       | CornerRadius          | Top left and top right corner radius                                                                                                                                                                                     |
+| [BottomSheetStyle](#bottomSheetStyle)       | BottomSheetStyle      | Style built in components                                                                                                                                                                                                |
+| Color                                       | WindowBackgroundColor | Window background color. If BottomSheet is non-modal no window color is applied                                                                                                                                          |
 
 ### BottomSheetState
 | Name   | Description        |
@@ -432,4 +432,37 @@ _bottomSheetNavigationService.NavigateTo("Showcase", new BottomSheetNavigationPa
 });
 ```
 
+# Confirming navigation
 
+A `BottomSheet` or its associated `ViewModel` can determine whether a navigation operation is allowed by implementing either the `IConfirmNavigation` or `IConfirmNavigationAsync` interface.
+
+When one of these interfaces is implemented, the navigation system checks the result of the confirmation method:
+
+- If the method returns `true`, the navigation proceeds—this may result in the current `BottomSheet` being closed or another `BottomSheet` being opened above it.
+- If the method returns `false`, the navigation is canceled—the current `BottomSheet` remains open, and no new one is shown.
+
+For `BottomSheets` that are added directly to a layout (not navigated to), the navigation system checks whether `BottomSheet.Parent` or its `ViewModel` implements `IConfirmNavigation` or `IConfirmNavigationAsync`.
+
+> **Note:** `IBottomSheetNavigationParameters` are only passed when a `BottomSheet` is shown or closed via navigation. If a `BottomSheet` is closed with a gesture (such as swipe down).
+
+```
+public class UserViewModel : IConfirmNavigationAsync
+{
+    public Task<bool> CanNavigateAsync(IBottomSheetNavigationParameters? parameters)
+    {
+        return Shell.Current.CurrentPage.DisplayAlert(
+            "Warning",
+            "Would you like to save?",
+            "Yes",
+            "No");
+    }
+}
+
+public class UserViewModel : IConfirmNavigation
+{
+    public Task<bool> CanNavigateAsync(IBottomSheetNavigationParameters? parameters)
+    {
+        return true;
+    }
+}
+```
