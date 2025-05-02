@@ -1,3 +1,7 @@
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using Plugin.Maui.BottomSheet.Navigation;
+
 namespace Plugin.Maui.BottomSheet.Platform.MaciOS;
 
 using AsyncAwaitBestPractices;
@@ -20,15 +24,13 @@ internal sealed class MauiBottomSheet : UIView
         _bottomSheet = new BottomSheet(mauiContext);
         _bottomSheet.Dismissed += BottomSheetOnDismissed;
         _bottomSheet.StateChanged += BottomSheetOnStateChanged;
+        _bottomSheet.ConfirmDismiss += BottomSheetOnConfirmDismiss;
     }
 
     /// <summary>
     /// Gets a value indicating whether the bottom sheet is open.
     /// </summary>
-    public bool IsOpen
-    {
-        get => _bottomSheet.IsOpen;
-    }
+    public bool IsOpen => _bottomSheet.IsOpen;
 
     /// <inheritdoc/>
     public override void MovedToWindow()
@@ -320,6 +322,24 @@ internal sealed class MauiBottomSheet : UIView
 
         _virtualView.CurrentState = state;
         _bottomSheet.SetState(_virtualView.CurrentState);
+    }
+
+    [SuppressMessage("Usage", "VSTHRD100: Avoid async void methods", Justification = "Is okay here.")]
+    [SuppressMessage("Design", "CA1031: Do not catch general exception types", Justification = "Catch all exceptions to prevent crash.")]
+    private async void BottomSheetOnConfirmDismiss(object? sender, EventArgs e)
+    {
+        try
+        {
+            if (_virtualView is not null
+                && await MvvmHelpers.ConfirmNavigationAsync(_virtualView, BottomSheetNavigationParameters.Empty()).ConfigureAwait(true))
+            {
+                _virtualView.IsOpen = false;
+            }
+        }
+        catch
+        {
+            Trace.TraceError("Invoking IConfirmNavigation or IConfirmNavigationAsync failed.");
+        }
     }
 
     private void BottomSheetOnDismissed(object? sender, EventArgs e)

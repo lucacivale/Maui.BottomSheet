@@ -13,11 +13,16 @@ internal sealed class BottomSheetDialogTouchOutsideListener : Java.Lang.Object, 
 {
     private readonly AppCompatActivity _activity;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BottomSheetDialogTouchOutsideListener"/> class.
+    /// </summary>
+    /// <param name="activity"><see cref="AppCompatActivity"/>.</param>
     public BottomSheetDialogTouchOutsideListener(AppCompatActivity activity)
     {
         _activity = activity;
     }
 
+    /// <inheritdoc />
     public bool OnTouch(AView? v, MotionEvent? e)
     {
         _activity.DispatchTouchEvent(e);

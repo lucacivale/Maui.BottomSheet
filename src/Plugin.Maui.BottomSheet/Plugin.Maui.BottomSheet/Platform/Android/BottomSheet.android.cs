@@ -1,4 +1,6 @@
 #pragma warning disable SA1200
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Android.Content;
 using Android.Widget;
 using Google.Android.Material.BottomSheet;
@@ -144,10 +146,7 @@ internal sealed class BottomSheet : IDisposable
     /// <summary>
     /// Gets a value indicating whether BottomSheet is showing.
     /// </summary>
-    public bool IsShowing
-    {
-        get => _bottomSheetDialog?.IsShowing == true;
-    }
+    public bool IsShowing => _bottomSheetDialog?.IsShowing == true;
 
     /// <summary>
     /// Gets or sets the Color which will fill the background of an element.
@@ -175,7 +174,11 @@ internal sealed class BottomSheet : IDisposable
     /// <param name="bottomSheet">Virtual view.</param>
     public void Open(IBottomSheet bottomSheet)
     {
-        _bottomSheetDialog = new BottomSheetDialog(_context, bottomSheet.GetTheme());
+        _bottomSheetDialog = new BottomSheetDialog(
+            _context,
+            bottomSheet.GetTheme(),
+            bottomSheet,
+            _bottomSheetCallback);
         _bottomSheetDialog.Window?.ClearFlags(AWindowManagerFlags.DimBehind);
         _bottomSheetDialog.Window?.SetBackgroundDrawable(_backgroundColorDrawable);
         _bottomSheetDialog.ShowEvent += BottomSheetShowed;
@@ -204,7 +207,6 @@ internal sealed class BottomSheet : IDisposable
         _bottomSheetBehavior.GestureInsetBottomIgnored = true;
         _bottomSheetBehavior.FitToContents = false;
         _bottomSheetBehavior.HalfExpandedRatio = bottomSheet.GetHalfExpandedRatio();
-        _bottomSheetBehavior.AddBottomSheetCallback(_bottomSheetCallback);
 
         _bottomSheetDialog.SetContentView(_sheetContainer);
 
@@ -234,10 +236,8 @@ internal sealed class BottomSheet : IDisposable
         if (_bottomSheetHeader is not null)
         {
             _bottomSheetHeader.LayoutChanged -= BottomSheetContentChanged;
-            _bottomSheetHeader.CloseButtonClicked -= BottomSheetClosed;
+            _bottomSheetHeader.CloseButtonClicked -= BottomSheetHeaderOnCloseButtonClicked;
         }
-
-        _bottomSheetBehavior?.RemoveBottomSheetCallback(_bottomSheetCallback);
 
         if (_bottomSheetDialog is not null)
         {
@@ -308,7 +308,7 @@ internal sealed class BottomSheet : IDisposable
     /// <summary>
     /// Set max height.
     /// </summary>
-    /// <param name="height">Heigt value in dp.</param>
+    /// <param name="height">Height value in dp.</param>
     public void SetMaxHeight(int height)
     {
         if (_bottomSheetBehavior is null
@@ -531,7 +531,7 @@ internal sealed class BottomSheet : IDisposable
         }
 
         _bottomSheetHeader.LayoutChanged += BottomSheetContentChanged;
-        _bottomSheetHeader.CloseButtonClicked += BottomSheetClosed;
+        _bottomSheetHeader.CloseButtonClicked += BottomSheetHeaderOnCloseButtonClicked;
 
         _headerLayoutParams = new GridLayout.LayoutParams()
         {
@@ -583,7 +583,7 @@ internal sealed class BottomSheet : IDisposable
         if (_bottomSheetHeader is not null)
         {
             _bottomSheetHeader.LayoutChanged -= BottomSheetContentChanged;
-            _bottomSheetHeader.CloseButtonClicked -= BottomSheetClosed;
+            _bottomSheetHeader.CloseButtonClicked -= BottomSheetHeaderOnCloseButtonClicked;
         }
 
         _bottomSheetHeader?.Remove();
@@ -631,7 +631,6 @@ internal sealed class BottomSheet : IDisposable
         }
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1422:Validate platform compatibility", Justification = "Validated.")]
     private void BottomSheetContentChanged(object? sender, EventArgs e)
     {
         SetPeekHeight(_peekHeight);
@@ -664,6 +663,24 @@ internal sealed class BottomSheet : IDisposable
     private void BottomSheetClosed(object? sender, EventArgs e)
     {
         Close();
+    }
+
+    [SuppressMessage("Design", "CA1031: Do not catch general exception types", Justification = "Catch all exceptions to prevent crash.")]
+    [SuppressMessage("Design", "VSTHRD100: Avoid async void methods, because any exceptions not handled by the method will crash the process", Justification = "Event.")]
+    private async void BottomSheetHeaderOnCloseButtonClicked(object? sender, EventArgs e)
+    {
+        try
+        {
+            if (_bottomSheetDialog is not null
+                && await _bottomSheetDialog.ConfirmNavigationAsync().ConfigureAwait(true))
+            {
+                Close();
+            }
+        }
+        catch
+        {
+            Trace.TraceError("BottomSheetHeaderOnCloseButtonClicked failed.");
+        }
     }
 
     private void Dispose(bool disposing)
