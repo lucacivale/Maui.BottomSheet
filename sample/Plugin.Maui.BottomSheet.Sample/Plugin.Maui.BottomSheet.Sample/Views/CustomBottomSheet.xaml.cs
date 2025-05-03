@@ -9,4 +9,9 @@ public partial class CustomBottomSheet : BottomSheet
 		InitializeComponent();
         BindingContext = customBottomSheetViewModel;
     }
+
+    private void BottomSheet_Opened(object sender, EventArgs e)
+    {
+        NameNewusername.Focus();
+    }
 }

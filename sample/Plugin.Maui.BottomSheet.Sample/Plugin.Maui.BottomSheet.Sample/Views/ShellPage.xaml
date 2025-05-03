@@ -11,8 +11,7 @@
                 <Label Text="Username:" FontAttributes="Bold" FontSize="16" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" />
                 <Label Text="{Binding Username}" FontSize="16" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" />
             </HorizontalStackLayout>
-
-            <Button Text="Edit username" Command="{Binding OpenCustomBottomSheetCommand}" BackgroundColor="{StaticResource Magenta}" />
+            <Button Text="Edit username" AutomationId="ShellPageEditUsernameButton" Command="{Binding OpenCustomBottomSheetCommand}" BackgroundColor="{StaticResource Magenta}" />
         </VerticalStackLayout>
     </Grid>
 </ContentPage>

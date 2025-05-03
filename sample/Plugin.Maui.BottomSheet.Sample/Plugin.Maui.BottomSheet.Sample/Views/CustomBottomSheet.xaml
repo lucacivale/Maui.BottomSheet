@@ -5,7 +5,8 @@
              xmlns:bottomsheet="http://pluginmauibottomsheet.com"
              x:Class="Plugin.Maui.BottomSheet.Sample.Views.CustomBottomSheet"
              x:DataType="vm:CustomBottomSheetViewModel"
-             States="Peek">
+             States="Peek"
+             Opened="BottomSheet_Opened">
     <bottomsheet:BottomSheet.Content>
         <bottomsheet:BottomSheetContent>
             <ScrollView Padding="16,24,16,0">
@@ -14,9 +15,9 @@
                 </ScrollView.Behaviors>
                 <VerticalStackLayout Spacing="16">
                     <Label Text="Name Change" FontAttributes="Bold" />
-                    <Entry Text="{Binding Newusername, Mode=TwoWay}" ReturnType="Done" ReturnCommand="{Binding SaveCommand}" />
-                    <Button Text="Save" Command="{Binding SaveCommand}" />
-                    <Button Text="Cancel" Command="{Binding GoBackCommand}" TextColor="Black" BackgroundColor="Transparent" BorderColor="{StaticResource Magenta}" BorderWidth="1" />
+                    <Entry x:Name="NameNewusername" AutomationId="CustomBottomSheetNewusernameEntry" Text="{Binding Newusername, Mode=TwoWay}" ReturnType="Done" ReturnCommand="{Binding SaveCommand}" />
+                    <Button Text="Save" AutomationId="CustomBottomSheetSaveButton" Command="{Binding SaveCommand}" />
+                    <Button Text="Cancel" AutomationId="CustomBottomSheetCancelButton" Command="{Binding GoBackCommand}" TextColor="Black" BackgroundColor="Transparent" BorderColor="{StaticResource Magenta}" BorderWidth="1" />
                 </VerticalStackLayout>
             </ScrollView>
         </bottomsheet:BottomSheetContent>

@@ -68,10 +68,17 @@ public partial class CustomBottomSheetViewModel : ObservableObject, IQueryAttrib
 
     public Task<bool> CanNavigateAsync(IBottomSheetNavigationParameters? parameters)
     {
-        return Shell.Current.CurrentPage.DisplayAlert(
-            "Warning",
-            "You are about to navigate away",
-            "OK",
-            "Cancel");
+        if (Newusername != Oldusername)
+        {
+            return Shell.Current.CurrentPage.DisplayAlert(
+                "Discard changes?",
+                "Are you sure you want to discard the changes?",
+                "Yes, discard",
+                "Continue editing");
+        }
+        else
+        {
+            return Task.FromResult(true);
+        }
     }
 }
