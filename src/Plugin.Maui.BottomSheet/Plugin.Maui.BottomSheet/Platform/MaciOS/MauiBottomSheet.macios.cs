@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.Maui.Platform;
 using Plugin.Maui.BottomSheet.Navigation;
 
 namespace Plugin.Maui.BottomSheet.Platform.MaciOS;
@@ -10,6 +11,7 @@ using UIKit;
 /// <inheritdoc />
 internal sealed class MauiBottomSheet : UIView
 {
+    private readonly IMauiContext _mauiContext;
     private readonly BottomSheet _bottomSheet;
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
@@ -21,7 +23,8 @@ internal sealed class MauiBottomSheet : UIView
     /// <param name="mauiContext">Maui context.</param>
     public MauiBottomSheet(IMauiContext mauiContext)
     {
-        _bottomSheet = new BottomSheet(mauiContext);
+        _mauiContext = mauiContext;
+        _bottomSheet = new BottomSheet(_mauiContext);
         _bottomSheet.Dismissed += BottomSheetOnDismissed;
         _bottomSheet.StateChanged += BottomSheetOnStateChanged;
         _bottomSheet.ConfirmDismiss += BottomSheetOnConfirmDismiss;
@@ -330,10 +333,26 @@ internal sealed class MauiBottomSheet : UIView
     {
         try
         {
-            if (_virtualView is not null
-                && await MvvmHelpers.ConfirmNavigationAsync(_virtualView, BottomSheetNavigationParameters.Empty()).ConfigureAwait(true))
+            if (_virtualView is null)
             {
-                _virtualView.IsOpen = false;
+                return;
+            }
+
+            var parameters = BottomSheetNavigationParameters.Empty();
+
+            if (_mauiContext.Services.GetRequiredService<IBottomSheetNavigationService>().NavigationStack().Contains(_virtualView))
+            {
+                await _mauiContext.Services.GetRequiredService<IBottomSheetNavigationService>().GoBackAsync(parameters).ConfigureAwait(true);
+            }
+            else
+            {
+                if (_virtualView.IsOpen
+                    && await MvvmHelpers.ConfirmNavigationAsync(_virtualView, parameters).ConfigureAwait(true))
+                {
+                    MvvmHelpers.OnNavigatedFrom(_virtualView, parameters);
+                    MvvmHelpers.OnNavigatedTo(_virtualView.GetPageParent(), parameters);
+                    _virtualView.IsOpen = false;
+                }
             }
         }
         catch
