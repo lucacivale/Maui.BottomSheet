@@ -4,21 +4,8 @@ using Plugin.Maui.BottomSheet.Navigation;
 
 namespace Plugin.Maui.BottomSheet.Sample.ViewModels;
 
-public partial class ShellPageViewModel (IBottomSheetNavigationService bottomSheetNavigationService) : ObservableObject, IQueryAttributable
+public partial class ShellPageViewModel (IBottomSheetNavigationService bottomSheetNavigationService) : ObservableObject, INavigationAware
 {
-    public void ApplyQueryAttributes(IDictionary<string, object> query)
-    {
-        if (query is null || query.Count == 0)
-            return;
-
-        if (query.TryGetValue("newusername", out object? newusername))
-        {
-            Username = newusername.ToString();
-        }
-
-        query.Clear();
-    }
-
     [ObservableProperty]
     string? _username = "John, Smith";
 
@@ -29,5 +16,19 @@ public partial class ShellPageViewModel (IBottomSheetNavigationService bottomShe
         {
             ["username"] = Username!,
         });
+    }
+
+    public void OnNavigatedFrom(IBottomSheetNavigationParameters parameters)
+    {
+        Console.WriteLine($"OnNavigatedFrom ShellPageViewModel");
+    }
+
+    public void OnNavigatedTo(IBottomSheetNavigationParameters parameters)
+    {
+        if (parameters.TryGetValue("newusername", out object? newusername))
+        {
+            Username = newusername.ToString();
+        }
+        Console.WriteLine($"OnNavigatedTo ShellPageViewModel");
     }
 }

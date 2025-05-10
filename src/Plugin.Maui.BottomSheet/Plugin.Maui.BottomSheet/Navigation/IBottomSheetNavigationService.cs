@@ -64,4 +64,10 @@ public interface IBottomSheetNavigationService
     /// </summary>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     Task ClearBottomSheetStackAsync();
+
+    /// <summary>
+    /// Returns the current navigation stack.
+    /// </summary>
+    /// <returns>The current stack.</returns>
+    IReadOnlyCollection<IBottomSheet> NavigationStack();
 }

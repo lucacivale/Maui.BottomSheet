@@ -1,3 +1,6 @@
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using Plugin.Maui.BottomSheet.Navigation;
 #pragma warning disable SA1200
 using Android.Content;
 using AndroidView = Android.Views.View;
@@ -10,6 +13,7 @@ using Microsoft.Maui.Platform;
 /// <inheritdoc />
 internal sealed class MauiBottomSheet : AndroidView
 {
+    private readonly IMauiContext _mauiContext;
     private readonly BottomSheet _bottomSheet;
 
     private IBottomSheet? _virtualView;
@@ -22,7 +26,8 @@ internal sealed class MauiBottomSheet : AndroidView
     public MauiBottomSheet(IMauiContext mauiContext, Context context)
         : base(context)
     {
-        _bottomSheet = new BottomSheet(context, mauiContext);
+        _mauiContext = mauiContext;
+        _bottomSheet = new BottomSheet(context, _mauiContext);
         _bottomSheet.Closed += BottomSheetOnClosed;
         _bottomSheet.StateChanged += BottomSheetOnStateChanged;
     }
@@ -30,10 +35,7 @@ internal sealed class MauiBottomSheet : AndroidView
     /// <summary>
     /// Gets a value indicating whether the bottom sheet is open.
     /// </summary>
-    public bool IsOpen
-    {
-        get => _bottomSheet.IsShowing;
-    }
+    public bool IsOpen => _bottomSheet.IsShowing;
 
     /// <summary>
     /// Set allowed bottom sheet states.
@@ -292,11 +294,47 @@ internal sealed class MauiBottomSheet : AndroidView
         Cleanup();
     }
 
-    private void BottomSheetOnClosed(object? sender, EventArgs e)
+    [SuppressMessage("Usage", "VSTHRD100: Avoid async void methods", Justification = "Is okay here.")]
+    [SuppressMessage("Design", "CA1031: Do not catch general exception types", Justification = "Catch all exceptions to prevent crash.")]
+    private async void BottomSheetOnClosed(object? sender, EventArgs e)
     {
-        if (_virtualView is not null)
+        try
         {
-            _virtualView.IsOpen = false;
+            if (_virtualView is null)
+            {
+                return;
+            }
+
+            var parameters = BottomSheetNavigationParameters.Empty();
+
+            if (_mauiContext.Services.GetRequiredService<IBottomSheetNavigationService>().NavigationStack().Contains(_virtualView))
+            {
+                await _mauiContext.Services.GetRequiredService<IBottomSheetNavigationService>().GoBackAsync(parameters).ConfigureAwait(true);
+
+                if (_mauiContext.Services.GetRequiredService<IBottomSheetNavigationService>().NavigationStack().Contains(_virtualView))
+                {
+                    _bottomSheet.SetState(_virtualView.CurrentState);
+                }
+            }
+            else
+            {
+                if (_virtualView.IsOpen
+                    && await MvvmHelpers.ConfirmNavigationAsync(_virtualView, parameters).ConfigureAwait(true))
+                {
+                    MvvmHelpers.OnNavigatedFrom(_virtualView, parameters);
+                    MvvmHelpers.OnNavigatedTo(_virtualView.GetPageParent(), parameters);
+                    _virtualView.IsOpen = false;
+                }
+
+                if (_virtualView.IsOpen)
+                {
+                    _bottomSheet.SetState(_virtualView.CurrentState);
+                }
+            }
+        }
+        catch
+        {
+            Trace.TraceError("Invoking IConfirmNavigation or IConfirmNavigationAsync failed.");
         }
     }
 

@@ -25,13 +25,33 @@ internal static class MvvmHelpers
     }
 
     /// <summary>
+    /// Invokes the <see cref="INavigationAware.OnNavigatedFrom"/> method on both the view and its ViewModel, if they implement <see cref="INavigationAware"/>.
+    /// </summary>
+    /// <param name="view"> The view object that is being navigated from. This may be a visual element or a container such as a page or bottom sheet.</param>
+    /// <param name="parameters"> Optional navigation parameters associated with the navigation event. </param>
+    internal static void OnNavigatedFrom(object? view, IBottomSheetNavigationParameters parameters)
+    {
+        InvokeViewAndViewModelAction<INavigationAware>(view, v => v.OnNavigatedFrom(parameters));
+    }
+
+    /// <summary>
+    /// Invokes the <see cref="INavigationAware.OnNavigatedFrom"/> method on both the view and its ViewModel, if they implement <see cref="INavigationAware"/>.
+    /// </summary>
+    /// <param name="view"> The view object that is being navigated to. This may be a visual element or a container such as a page or bottom sheet.</param>
+    /// <param name="parameters"> Optional navigation parameters associated with the navigation event. </param>
+    internal static void OnNavigatedTo(object? view, IBottomSheetNavigationParameters parameters)
+    {
+        InvokeViewAndViewModelAction<INavigationAware>(view, v => v.OnNavigatedTo(parameters));
+    }
+
+    /// <summary>
     /// Determines whether <paramref name="bottomSheet"/> accepts being navigated away from.
     /// </summary>
     /// <param name="bottomSheet">The <see cref="IBottomSheet"/> to navigate from.</param>
     /// <param name="parameters">Navigation parameters.</param>
     /// <returns>Can navigate away from <see cref="IBottomSheet"/>.</returns>
     [SuppressMessage("Usage", "SuspiciousTypeConversion.Global: ReSharper disable once SuspiciousTypeConversion.Global", Justification = "False positive.")]
-    internal static bool CanNavigate(IBottomSheet bottomSheet, IBottomSheetNavigationParameters parameters)
+    private static bool CanNavigate(IBottomSheet bottomSheet, IBottomSheetNavigationParameters parameters)
     {
         bool canNavigate = true;
 
@@ -74,7 +94,7 @@ internal static class MvvmHelpers
     /// <param name="parameters">Navigation parameters.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     [SuppressMessage("Usage", "SuspiciousTypeConversion.Global: ReSharper disable once SuspiciousTypeConversion.Global", Justification = "False positive.")]
-    internal static async Task<bool> CanNavigateAsync(IBottomSheet bottomSheet, IBottomSheetNavigationParameters parameters)
+    private static async Task<bool> CanNavigateAsync(IBottomSheet bottomSheet, IBottomSheetNavigationParameters parameters)
     {
         bool canNavigate = true;
 
@@ -108,5 +128,19 @@ internal static class MvvmHelpers
         }
 
         return canNavigate;
+    }
+
+    private static void InvokeViewAndViewModelAction<T>(object? view, Action<T> action)
+        where T : class
+    {
+        if (view is T viewAsT)
+        {
+            action(viewAsT);
+        }
+
+        if (view is BindableObject { BindingContext: T viewModelAsT })
+        {
+            action(viewModelAsT);
+        }
     }
 }

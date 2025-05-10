@@ -4,7 +4,7 @@ using Plugin.Maui.BottomSheet.Navigation;
 
 namespace Plugin.Maui.BottomSheet.Sample.ViewModels;
 
-public partial class CustomBottomSheetViewModel : ObservableObject, IQueryAttributable, IConfirmNavigationAsync
+public partial class CustomBottomSheetViewModel : ObservableObject, IConfirmNavigationAsync, INavigationAware
 {
     private readonly IBottomSheetNavigationService _bottomSheetNavigationService;
 
@@ -19,23 +19,6 @@ public partial class CustomBottomSheetViewModel : ObservableObject, IQueryAttrib
     public CustomBottomSheetViewModel(IBottomSheetNavigationService bottomSheetNavigationService)
     {
         _bottomSheetNavigationService = bottomSheetNavigationService;
-    }
-
-    public void ApplyQueryAttributes(IDictionary<string, object> query)
-    {
-        if (query is null
-            || query.Count == 0)
-        {
-            return;
-        }
-
-        if (query.TryGetValue("username", out object? username))
-        {
-            Oldusername = username.ToString();
-            Newusername = username.ToString();
-        }
-
-        query.Clear();
     }
 
     public bool SaveCanExecute()
@@ -54,10 +37,7 @@ public partial class CustomBottomSheetViewModel : ObservableObject, IQueryAttrib
     [RelayCommand(CanExecute = nameof(SaveCanExecute))]
     public async Task Save()
     {
-        await _bottomSheetNavigationService.GoBackAsync(new BottomSheetNavigationParameters()
-        {
-            ["newusername"] = Newusername!,
-        });
+        await _bottomSheetNavigationService.GoBackAsync();
     }
 
     [RelayCommand]
@@ -66,19 +46,45 @@ public partial class CustomBottomSheetViewModel : ObservableObject, IQueryAttrib
         await _bottomSheetNavigationService.GoBackAsync();
     }
 
-    public Task<bool> CanNavigateAsync(IBottomSheetNavigationParameters? parameters)
+    public async Task<bool> CanNavigateAsync(IBottomSheetNavigationParameters parameters)
     {
+        bool canNavigate = true;
+        
         if (Newusername != Oldusername)
         {
-            return Shell.Current.CurrentPage.DisplayAlert(
-                "Discard changes?",
-                "Are you sure you want to discard the changes?",
-                "Yes, discard",
-                "Continue editing");
+            string button = await  Shell.Current.CurrentPage.DisplayActionSheet(
+                "Pending changes?",
+                "Cancel",
+                "Discard",
+                "Save");
+            
+            canNavigate = button == "Discard" || button == "Save";
+
+            if (button == "Save")
+            {
+                parameters.Add("Save", true);
+            }
         }
-        else
+
+        return canNavigate;
+    }
+
+    public void OnNavigatedFrom(IBottomSheetNavigationParameters parameters)
+    {
+        if (parameters.ContainsKey("Save"))
         {
-            return Task.FromResult(true);
+            parameters.Add("newusername", Newusername!);
+        }
+
+        Console.WriteLine($"OnNavigatedFrom CustomBottomSheetViewModel");
+    }
+
+    public void OnNavigatedTo(IBottomSheetNavigationParameters parameters)
+    {
+        if (parameters.TryGetValue("username", out object? username))
+        {
+            Oldusername = username.ToString();
+            Newusername = username.ToString();
         }
     }
 }

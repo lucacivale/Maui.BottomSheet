@@ -49,8 +49,10 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
     {
         return DispatchAsync(async () =>
         {
+            parameters ??= BottomSheetNavigationParameters.Empty();
+
             if (_bottomSheetStack.IsEmpty == false
-                && await MvvmHelpers.ConfirmNavigationAsync(_bottomSheetStack.Current, parameters ?? BottomSheetNavigationParameters.Empty()).ConfigureAwait(true) == false)
+                && await MvvmHelpers.ConfirmNavigationAsync(_bottomSheetStack.Current, parameters).ConfigureAwait(true) == false)
             {
                 return;
             }
@@ -61,6 +63,17 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
             {
                 ApplyAttributes(queryAttributable, parameters);
             }
+
+            if (_bottomSheetStack.IsEmpty)
+            {
+                MvvmHelpers.OnNavigatedFrom(bottomSheet.GetPageParent(), parameters);
+            }
+            else
+            {
+                MvvmHelpers.OnNavigatedFrom(_bottomSheetStack.Current, parameters);
+            }
+
+            MvvmHelpers.OnNavigatedTo(bottomSheet, parameters);
 
             if (bottomSheet.Handler is Handlers.BottomSheetHandler bottomSheetHandler)
             {
@@ -106,6 +119,8 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
             }
         });
     }
+
+    public IReadOnlyCollection<IBottomSheet> NavigationStack() => _bottomSheetStack;
 
     private static void ApplyAttributes(IQueryAttributable? attributable, IBottomSheetNavigationParameters? parameters)
     {
@@ -166,15 +181,16 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
         ApplyGoBackParameters(bottomSheet, parameters);
     }
 
-    private async Task DoGoBackAsync(IBottomSheetNavigationParameters? parameters = null, bool withConfirmation = true)
+    private async Task DoGoBackAsync(IBottomSheetNavigationParameters? parameters = null)
     {
         if (_bottomSheetStack.IsEmpty)
         {
             return;
         }
 
-        if (withConfirmation
-            && await MvvmHelpers.ConfirmNavigationAsync(_bottomSheetStack.Current, parameters ?? BottomSheetNavigationParameters.Empty()).ConfigureAwait(true) == false)
+        parameters ??= BottomSheetNavigationParameters.Empty();
+
+        if (await MvvmHelpers.ConfirmNavigationAsync(_bottomSheetStack.Current, parameters).ConfigureAwait(true) == false)
         {
             return;
         }
@@ -189,6 +205,17 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
         _bottomSheetStack.Current.Handler?.DisconnectHandler();
         var bottomSheet = _bottomSheetStack.Remove();
 
+        MvvmHelpers.OnNavigatedFrom(bottomSheet, parameters);
+
+        if (_bottomSheetStack.IsEmpty)
+        {
+            MvvmHelpers.OnNavigatedTo(bottomSheet.GetPageParent(), parameters);
+        }
+        else
+        {
+            MvvmHelpers.OnNavigatedTo(_bottomSheetStack.Current, parameters);
+        }
+
         ApplyGoBackParameters(bottomSheet, parameters);
     }
 
@@ -198,7 +225,7 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
     {
         try
         {
-            await DispatchAsync(() => DoGoBackAsync(null, false)).ConfigureAwait(false);
+            await DispatchAsync(() => DoGoBackAsync()).ConfigureAwait(false);
         }
         catch
         {

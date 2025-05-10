@@ -6,18 +6,12 @@ internal sealed class BottomSheetStack : Stack<IBottomSheet>
     /// <summary>
     /// Gets current <see cref="IBottomSheet"/>.
     /// </summary>
-    public IBottomSheet Current
-    {
-        get => Peek();
-    }
+    public IBottomSheet Current => Peek();
 
     /// <summary>
     /// Gets a value indicating whether the stack is empty.
     /// </summary>
-    public bool IsEmpty
-    {
-        get => Count == 0;
-    }
+    public bool IsEmpty => Count == 0;
 
     /// <summary>
     /// Add a sheet to the stack.

@@ -1,6 +1,4 @@
 #pragma warning disable SA1200
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using Android.Content;
 using Android.Widget;
 using Google.Android.Material.BottomSheet;
@@ -177,12 +175,12 @@ internal sealed class BottomSheet : IDisposable
         _bottomSheetDialog = new BottomSheetDialog(
             _context,
             bottomSheet.GetTheme(),
-            bottomSheet,
             _bottomSheetCallback);
         _bottomSheetDialog.Window?.ClearFlags(AWindowManagerFlags.DimBehind);
         _bottomSheetDialog.Window?.SetBackgroundDrawable(_backgroundColorDrawable);
         _bottomSheetDialog.ShowEvent += BottomSheetShowed;
         _bottomSheetDialog.DismissEvent += BottomSheetClosed;
+        _bottomSheetDialog.Canceled += BottomSheetDialogOnCanceled;
 
         _bottomSheetBehavior = _bottomSheetDialog.Behavior;
 
@@ -243,6 +241,7 @@ internal sealed class BottomSheet : IDisposable
         {
             _bottomSheetDialog.ShowEvent -= BottomSheetShowed;
             _bottomSheetDialog.DismissEvent -= BottomSheetClosed;
+            _bottomSheetDialog.Canceled -= BottomSheetDialogOnCanceled;
         }
 
         _sheetContainer.RemoveFromParent();
@@ -665,22 +664,14 @@ internal sealed class BottomSheet : IDisposable
         Close();
     }
 
-    [SuppressMessage("Design", "CA1031: Do not catch general exception types", Justification = "Catch all exceptions to prevent crash.")]
-    [SuppressMessage("Design", "VSTHRD100: Avoid async void methods, because any exceptions not handled by the method will crash the process", Justification = "Event.")]
-    private async void BottomSheetHeaderOnCloseButtonClicked(object? sender, EventArgs e)
+    private void BottomSheetHeaderOnCloseButtonClicked(object? sender, EventArgs e)
     {
-        try
-        {
-            if (_bottomSheetDialog is not null
-                && await _bottomSheetDialog.ConfirmNavigationAsync().ConfigureAwait(true))
-            {
-                Close();
-            }
-        }
-        catch
-        {
-            Trace.TraceError("BottomSheetHeaderOnCloseButtonClicked failed.");
-        }
+        _eventManager.HandleEvent(this, EventArgs.Empty, nameof(Closed));
+    }
+
+    private void BottomSheetDialogOnCanceled(object? sender, EventArgs e)
+    {
+        _eventManager.HandleEvent(this, EventArgs.Empty, nameof(Closed));
     }
 
     private void Dispose(bool disposing)
@@ -721,6 +712,7 @@ internal sealed class BottomSheet : IDisposable
         {
             _bottomSheetDialog.ShowEvent -= BottomSheetShowed;
             _bottomSheetDialog.DismissEvent -= BottomSheetClosed;
+            _bottomSheetDialog.Canceled -= BottomSheetDialogOnCanceled;
         }
 
         _bottomSheetDialog?.Dispose();
