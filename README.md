@@ -340,6 +340,80 @@ To set the PeekHeight based on a view inside the `BottomSheetContent` attach the
 ```
 The peek height will be equal to the `ContentView` height.
 
+# Navigation Awareness
+
+To enable the `ViewModel` of a `BottomSheet` to participate in the navigation lifecycle, implement the `INavigationAware` interface. This interface defines two lifecycle methods:
+
+- OnNavigatedTo(IBottomSheetNavigationParameters parameters): Called when the BottomSheet is navigated to.
+- OnNavigatedFrom(IBottomSheetNavigationParameters parameters): Called when navigating away from the BottomSheet.
+
+Implementing these methods allows the `ViewModel` to handle initialization, cleanup, or state persistence tasks based on the navigation context.
+Additionally, any `BottomSheetNavigationParameters` passed during navigation will be available through the parameters argument, enabling the `ViewModel` to access incoming or outgoing data as needed.
+
+> [!TIP]
+> Not only can the BottomSheet’s `ViewModel` implement `INavigationAware`, but so can the `ViewModel` of the parent view that launched the `BottomSheet`. This allows the parent to respond when:
+> - The first BottomSheet is opened (OnNavigatedFrom)
+> - The last BottomSheet is closed (OnNavigatedTo)
+>
+> This is especially useful for suspending or restoring state in the parent view while modals are active.
+
+> [!IMPORTANT]  
+> When using the `IsOpen` to manage the visibility of a `BottomSheet`, the parent `ViewModel` can implement `INavigationAware` to respond to the lifecycle of the `BottomSheet`.
+> This allows the parent `ViewModel` to handle actions when:
+
+| Scenario                                       | `INavigationAware` on Parent Triggered? |
+|------------------------------------------------|-----------------------------------------|
+| BottomSheet opened via navigation              | ❌ No                                    |
+| BottomSheet opened without navigation (IsOpen) | ✅ Yes                                   |
+
+```
+public class UserViewModel : IConfirmNavigationAsync
+{
+    public void OnNavigatedFrom(IBottomSheetNavigationParameters parameters)
+    {
+    }
+
+    public void OnNavigatedTo(IBottomSheetNavigationParameters parameters)
+    {
+    }
+}
+```
+
+# Confirming navigation
+
+A `BottomSheet` or its associated `ViewModel` can determine whether a navigation operation is allowed by implementing either the `IConfirmNavigation` or `IConfirmNavigationAsync` interface.
+
+When one of these interfaces is implemented, the navigation system checks the result of the confirmation method:
+
+- If the method returns `true`, the navigation proceeds—this may result in the current `BottomSheet` being closed or another `BottomSheet` being opened above it.
+- If the method returns `false`, the navigation is canceled—the current `BottomSheet` remains open, and no new one is shown.
+
+For `BottomSheets` that are added directly to a layout (not navigated to), the navigation system checks whether `BottomSheet.Parent` or its `ViewModel` implements `IConfirmNavigation` or `IConfirmNavigationAsync`.
+
+> **Note:** `IBottomSheetNavigationParameters` are only passed when a `BottomSheet` is shown or closed via navigation. If a `BottomSheet` is closed with a gesture (such as swipe down).
+
+```
+public class UserViewModel : IConfirmNavigationAsync
+{
+    public Task<bool> CanNavigateAsync(IBottomSheetNavigationParameters? parameters)
+    {
+        return Shell.Current.CurrentPage.DisplayAlert(
+            "Warning",
+            "Would you like to save?",
+            "Yes",
+            "No");
+    }
+}
+
+public class UserViewModel : IConfirmNavigation
+{
+    public Task<bool> CanNavigateAsync(IBottomSheetNavigationParameters? parameters)
+    {
+        return true;
+    }
+}
+```
+
 # Navigation
 
 > [!CAUTION]
@@ -430,39 +504,4 @@ _bottomSheetNavigationService.NavigateTo("Showcase", new BottomSheetNavigationPa
 {
     ["SomeKey"] = "SomeValue",
 });
-```
-
-# Confirming navigation
-
-A `BottomSheet` or its associated `ViewModel` can determine whether a navigation operation is allowed by implementing either the `IConfirmNavigation` or `IConfirmNavigationAsync` interface.
-
-When one of these interfaces is implemented, the navigation system checks the result of the confirmation method:
-
-- If the method returns `true`, the navigation proceeds—this may result in the current `BottomSheet` being closed or another `BottomSheet` being opened above it.
-- If the method returns `false`, the navigation is canceled—the current `BottomSheet` remains open, and no new one is shown.
-
-For `BottomSheets` that are added directly to a layout (not navigated to), the navigation system checks whether `BottomSheet.Parent` or its `ViewModel` implements `IConfirmNavigation` or `IConfirmNavigationAsync`.
-
-> **Note:** `IBottomSheetNavigationParameters` are only passed when a `BottomSheet` is shown or closed via navigation. If a `BottomSheet` is closed with a gesture (such as swipe down).
-
-```
-public class UserViewModel : IConfirmNavigationAsync
-{
-    public Task<bool> CanNavigateAsync(IBottomSheetNavigationParameters? parameters)
-    {
-        return Shell.Current.CurrentPage.DisplayAlert(
-            "Warning",
-            "Would you like to save?",
-            "Yes",
-            "No");
-    }
-}
-
-public class UserViewModel : IConfirmNavigation
-{
-    public Task<bool> CanNavigateAsync(IBottomSheetNavigationParameters? parameters)
-    {
-        return true;
-    }
-}
 ```
