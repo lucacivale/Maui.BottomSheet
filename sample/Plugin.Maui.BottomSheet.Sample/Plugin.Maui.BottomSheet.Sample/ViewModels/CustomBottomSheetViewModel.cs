@@ -52,7 +52,7 @@ public partial class CustomBottomSheetViewModel : ObservableObject, IConfirmNavi
         
         if (Newusername != Oldusername)
         {
-            string button = await  Shell.Current.CurrentPage.DisplayActionSheet(
+            string button = await  Shell.Current.CurrentPage.DisplayActionSheetAsync(
                 "Pending changes?",
                 "Cancel",
                 "Discard",

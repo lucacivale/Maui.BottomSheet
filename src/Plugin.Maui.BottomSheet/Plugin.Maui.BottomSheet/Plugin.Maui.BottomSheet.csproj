@@ -1,14 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
+        <LegacyNETVersion>net9.0</LegacyNETVersion>
+        <NETVersion>net10.0</NETVersion>
         <TargetFrameworks>
-            net8.0;
-            net8.0-ios;
-            net8.0-android;
-            net8.0-maccatalyst;
-            net9.0;
-            net9.0-ios;
-            net9.0-android;
-            net9.0-maccatalyst</TargetFrameworks>
+            $(LegacyNETVersion);
+            $(LegacyNETVersion)-ios;
+            $(LegacyNETVersion)-android;
+            $(LegacyNETVersion)-maccatalyst;
+            $(NETVersion);
+            $(NETVersion)-ios;
+            $(NETVersion)-android;
+            $(NETVersion)-maccatalyst</TargetFrameworks>
         <UseMaui>true</UseMaui>
         <SingleProject>true</SingleProject>
         <Nullable>enable</Nullable>
@@ -68,13 +70,12 @@
         </PackageReference>
     </ItemGroup>
 
-    <ItemGroup Condition="$(TargetFramework.StartsWith('net8.0'))">
-        <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.7" />
-        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.7" />
+    <ItemGroup Condition="$(TargetFramework.StartsWith('$(LegacyNETVersion)'))">
+        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.21" />
     </ItemGroup>
 
-    <ItemGroup Condition="$(TargetFramework.StartsWith('net9.0'))">
-        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.21" />
+    <ItemGroup Condition="$(TargetFramework.StartsWith('$(NETVersion)'))">
+        <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.0-preview.4.25263.4" />
     </ItemGroup>
 
 	<ItemGroup Condition="$(TargetFramework.EndsWith('android'))">

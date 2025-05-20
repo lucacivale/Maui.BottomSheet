@@ -11,23 +11,23 @@ using UIKit;
 public class CloseButtonHandler : ButtonHandler
 {
     // ReSharper disable once ArrangeModifiersOrder
-    private static readonly IPropertyMapper<CloseButton, IButtonHandler> CloseButtonMapper = new PropertyMapper<CloseButton, IButtonHandler>(Mapper)
+    private static readonly IPropertyMapper<CloseButton, IButtonHandler> _closeButtonMapper = new PropertyMapper<CloseButton, IButtonHandler>(Mapper)
     {
         [nameof(CloseButton.TintColor)] = MapTintColor,
     };
 
     public CloseButtonHandler()
-        : base(CloseButtonMapper, CommandMapper)
+        : base(_closeButtonMapper, CommandMapper)
     {
     }
 
     public CloseButtonHandler(IPropertyMapper? mapper)
-        : base(mapper ?? CloseButtonMapper, CommandMapper)
+        : base(mapper ?? _closeButtonMapper, CommandMapper)
     {
     }
 
     public CloseButtonHandler(IPropertyMapper? mapper, CommandMapper? commandMapper)
-        : base(mapper ?? CloseButtonMapper, commandMapper ?? CommandMapper)
+        : base(mapper ?? _closeButtonMapper, commandMapper ?? CommandMapper)
     {
     }
 

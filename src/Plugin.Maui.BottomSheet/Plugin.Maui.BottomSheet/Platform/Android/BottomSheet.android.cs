@@ -597,11 +597,7 @@ internal sealed class BottomSheet : IDisposable
     {
         _platformBottomSheetContent?.RemoveFromParent();
         _contentLayoutParams?.Dispose();
-#if NET9_0_OR_GREATER
         _virtualBottomSheetContent?.DisconnectHandlers();
-#else
-        _virtualBottomSheetContent?.Handler?.DisconnectHandler();
-#endif
     }
 
     private void ApplyCornerRadius()

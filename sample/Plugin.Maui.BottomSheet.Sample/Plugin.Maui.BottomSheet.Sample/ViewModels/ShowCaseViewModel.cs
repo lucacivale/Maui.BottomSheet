@@ -66,13 +66,13 @@ public sealed partial class ShowCaseViewModel : ObservableObject, IConfirmNaviga
     [RelayCommand]
     private static void TopLefButton()
     {
-        Shell.Current.DisplayAlert("Notification", "Top left clicked", "Cancel").SafeFireAndForget(continueOnCapturedContext: false);
+        Shell.Current.DisplayAlertAsync("Notification", "Top left clicked", "Cancel").SafeFireAndForget(continueOnCapturedContext: false);
     }
 
     [RelayCommand]
     private static void TopRightButton()
     {
-        Shell.Current.DisplayAlert("Notification", "Top right clicked", "Cancel").SafeFireAndForget(continueOnCapturedContext: false);
+        Shell.Current.DisplayAlertAsync("Notification", "Top right clicked", "Cancel").SafeFireAndForget(continueOnCapturedContext: false);
     }
 
     [RelayCommand]
@@ -167,7 +167,7 @@ public sealed partial class ShowCaseViewModel : ObservableObject, IConfirmNaviga
 
     public Task<bool> CanNavigateAsync(IBottomSheetNavigationParameters? parameters)
     {
-        return Shell.Current.CurrentPage.DisplayAlert(
+        return Shell.Current.CurrentPage.DisplayAlertAsync(
             "Warning",
             "You are about to navigate away",
             "OK",

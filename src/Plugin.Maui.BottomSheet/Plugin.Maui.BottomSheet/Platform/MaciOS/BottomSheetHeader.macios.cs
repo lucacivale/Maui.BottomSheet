@@ -188,11 +188,7 @@ internal sealed class BottomSheetHeader : IDisposable
             closeButton.Clicked -= OnClosedButtonClicked;
         }
 
-#if NET9_0_OR_GREATER
         view?.DisconnectHandlers();
-#else
-        view?.Handler?.DisconnectHandler();
-#endif
     }
 
     private CloseButton CreateCloseButton(LayoutOptions layoutOptions)
@@ -203,15 +199,9 @@ internal sealed class BottomSheetHeader : IDisposable
             BindingContext = _style,
         };
 
-#if NET9_0_OR_GREATER
         button.SetBinding(VisualElement.HeightRequestProperty, static (BottomSheetHeaderStyle style) => style.CloseButtonHeightRequest);
         button.SetBinding(VisualElement.WidthRequestProperty, static (BottomSheetHeaderStyle style) => style.CloseButtonWidthRequest);
         button.SetBinding(CloseButton.TintProperty, static (BottomSheetHeaderStyle style) => style.CloseButtonTintColor);
-#else
-        button.SetBinding(VisualElement.HeightRequestProperty, nameof(BottomSheetHeaderStyle.CloseButtonHeightRequest));
-        button.SetBinding(VisualElement.WidthRequestProperty, nameof(BottomSheetHeaderStyle.CloseButtonWidthRequest));
-        button.SetBinding(CloseButton.TintProperty, nameof(BottomSheetHeaderStyle.CloseButtonTintColor));
-#endif
 
         button.Clicked += OnClosedButtonClicked;
 
@@ -309,19 +299,11 @@ internal sealed class BottomSheetHeader : IDisposable
             BindingContext = _style,
         };
 
-#if NET9_0_OR_GREATER
         title.SetBinding(Label.TextColorProperty, static (BottomSheetHeaderStyle style) => style.TitleTextColor);
         title.SetBinding(Label.FontAttributesProperty, static (BottomSheetHeaderStyle style) => style.TitleTextFontAttributes);
         title.SetBinding(Label.FontFamilyProperty, static (BottomSheetHeaderStyle style) => style.TitleTextFontFamily);
         title.SetBinding(Label.FontSizeProperty, static (BottomSheetHeaderStyle style) => style.TitleTextFontSize);
         title.SetBinding(Label.FontAutoScalingEnabledProperty, static (BottomSheetHeaderStyle style) => style.TitleTextFontAutoScalingEnabled);
-#else
-        title.SetBinding(Label.TextColorProperty, nameof(BottomSheetHeaderStyle.TitleTextColor));
-        title.SetBinding(Label.FontAttributesProperty, nameof(BottomSheetHeaderStyle.TitleTextFontAttributes));
-        title.SetBinding(Label.FontFamilyProperty, nameof(BottomSheetHeaderStyle.TitleTextFontFamily));
-        title.SetBinding(Label.FontSizeProperty, nameof(BottomSheetHeaderStyle.TitleTextFontSize));
-        title.SetBinding(Label.FontAutoScalingEnabledProperty, nameof(BottomSheetHeaderStyle.TitleTextFontAutoScalingEnabled));
-#endif
 
         return title;
     }

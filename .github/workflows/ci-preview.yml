@@ -1,0 +1,34 @@
+name: Build for CI
+
+on:
+  push:
+    branches: [ "v10" ]
+    paths-ignore:
+      - "**.md"
+  pull_request:
+    branches: [ "v10" ]
+
+env:
+  DOTNET_VERSION: '10.0.100-preview.4.25258.110'
+  PluginSolutionPath: 'src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet.sln'
+  Configuration: 'Release'
+
+jobs:
+  Build-Plugin_Maui_BottomSheet:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: Install .NET MAUI Workload
+      run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
+
+    - name: Build Plugin.Maui.BottomSheet
+      run: dotnet build ${{ env.PluginSolutionPath }} -c ${{ env.Configuration }}
+

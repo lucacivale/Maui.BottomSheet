@@ -271,11 +271,7 @@ internal sealed class BottomSheetHeader : IDisposable
         RemoveFromParent(view);
         view?.LayoutParameters?.Dispose();
 
-#if NET9_0_OR_GREATER
         mauiView?.DisconnectHandlers();
-#else
-        mauiView?.Handler?.DisconnectHandler();
-#endif
         view?.Dispose();
     }
 
@@ -314,19 +310,11 @@ internal sealed class BottomSheetHeader : IDisposable
             BindingContext = _headerStyle,
         };
 
-#if NET9_0_OR_GREATER
         title.SetBinding(Label.TextColorProperty, static (BottomSheetHeaderStyle style) => style.TitleTextColor);
         title.SetBinding(Label.FontAttributesProperty, static (BottomSheetHeaderStyle style) => style.TitleTextFontAttributes);
         title.SetBinding(Label.FontFamilyProperty, static (BottomSheetHeaderStyle style) => style.TitleTextFontFamily);
         title.SetBinding(Label.FontSizeProperty, static (BottomSheetHeaderStyle style) => style.TitleTextFontSize);
         title.SetBinding(Label.FontAutoScalingEnabledProperty, static (BottomSheetHeaderStyle style) => style.TitleTextFontAutoScalingEnabled);
-#else
-        title.SetBinding(Label.TextColorProperty, nameof(BottomSheetHeaderStyle.TitleTextColor));
-        title.SetBinding(Label.FontAttributesProperty, nameof(BottomSheetHeaderStyle.TitleTextFontAttributes));
-        title.SetBinding(Label.FontFamilyProperty, nameof(BottomSheetHeaderStyle.TitleTextFontFamily));
-        title.SetBinding(Label.FontSizeProperty, nameof(BottomSheetHeaderStyle.TitleTextFontSize));
-        title.SetBinding(Label.FontAutoScalingEnabledProperty, nameof(BottomSheetHeaderStyle.TitleTextFontAutoScalingEnabled));
-#endif
 
         _virtualTitleView = title;
 
