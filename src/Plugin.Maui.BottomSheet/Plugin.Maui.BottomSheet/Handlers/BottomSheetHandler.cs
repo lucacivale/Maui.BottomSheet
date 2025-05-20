@@ -8,7 +8,7 @@ using Plugin.Maui.BottomSheet;
 internal sealed partial class BottomSheetHandler
 {
     // ReSharper disable once ArrangeModifiersOrder
-    private static readonly IPropertyMapper<IBottomSheet, BottomSheetHandler> BottomSheetMapper = new PropertyMapper<IBottomSheet, BottomSheetHandler>(ElementMapper)
+    private static readonly IPropertyMapper<IBottomSheet, BottomSheetHandler> _bottomSheetMapper = new PropertyMapper<IBottomSheet, BottomSheetHandler>(ElementMapper)
     {
         [nameof(IBottomSheet.IsCancelable)] = MapIsCancelable,
         [nameof(IBottomSheet.HasHandle)] = MapHasHandle,
@@ -36,7 +36,7 @@ internal sealed partial class BottomSheetHandler
     /// <param name="commandMapper"><see cref="CommandMapper"/>.</param>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "S1118:Utility classes should not have public constructors", Justification = "Must be public.")]
     public BottomSheetHandler(IPropertyMapper? mapper, CommandMapper? commandMapper)
-        : base(mapper ?? BottomSheetMapper, commandMapper)
+        : base(mapper ?? _bottomSheetMapper, commandMapper)
     {
     }
 
@@ -45,7 +45,7 @@ internal sealed partial class BottomSheetHandler
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "S1118:Utility classes should not have public constructors", Justification = "Must be public.")]
     public BottomSheetHandler()
-        : base(BottomSheetMapper)
+        : base(_bottomSheetMapper)
     {
     }
 
@@ -55,7 +55,7 @@ internal sealed partial class BottomSheetHandler
     /// <param name="context"><see cref="IMauiContext"/>.</param>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "S1118:Utility classes should not have public constructors", Justification = "Must be public.")]
     public BottomSheetHandler(IMauiContext context)
-        : base(BottomSheetMapper)
+        : base(_bottomSheetMapper)
     {
         SetMauiContext(context);
     }

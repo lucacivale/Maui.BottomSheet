@@ -221,13 +221,8 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         await DismissViewControllerAsync(true).ConfigureAwait(true);
         _virtualBottomSheetLayout.Clear();
 
-#if NET9_0_OR_GREATER
         _virtualBottomSheetContent?.DisconnectHandlers();
         _virtualBottomSheetContent = null;
-#else
-        _virtualBottomSheetContent?.Handler?.DisconnectHandler();
-        _virtualBottomSheetContent = null;
-#endif
     }
 
     /// <inheritdoc/>
@@ -436,13 +431,9 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         {
             return;
         }
-#if NET9_0_OR_GREATER
+
         _virtualBottomSheet.DisconnectHandlers();
         _virtualBottomSheetContent?.DisconnectHandlers();
-#else
-        _virtualBottomSheet.Handler?.DisconnectHandler();
-        _virtualBottomSheetContent?.Handler?.DisconnectHandler();
-#endif
         _virtualBottomSheet.BottomSheet = null;
 
         HideHeader();
