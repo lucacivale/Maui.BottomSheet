@@ -26,55 +26,30 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
     internal static Dictionary<string, Type> BottomSheetToViewModelMapping { get; } = [];
 
     /// <inheritdoc/>
-    public Task NavigateToAsync(IBottomSheet bottomSheet, object? viewModel = null, IBottomSheetNavigationParameters? parameters = null, Action<IBottomSheet>? configure = null)
+    public Task<INavigationResult> NavigateToAsync(IBottomSheet bottomSheet, object? viewModel = null, IBottomSheetNavigationParameters? parameters = null, Action<IBottomSheet>? configure = null)
     {
-        return DispatchAsync(async () =>
-        {
-            parameters ??= BottomSheetNavigationParameters.Empty();
-
-            if (_bottomSheetStack.IsEmpty == false
-                && await MvvmHelpers.ConfirmNavigationAsync(_bottomSheetStack.Current, parameters).ConfigureAwait(true) == false)
-            {
-                return;
-            }
-
-            PrepareBottomSheetForNavigation(bottomSheet, viewModel, configure);
-
-            if (_bottomSheetStack.IsEmpty)
-            {
-                MvvmHelpers.OnNavigatedFrom(bottomSheet.GetPageParent(), parameters);
-            }
-            else
-            {
-                MvvmHelpers.OnNavigatedFrom(_bottomSheetStack.Current, parameters);
-            }
-
-            MvvmHelpers.OnNavigatedTo(bottomSheet, parameters);
-
-            if (bottomSheet.Handler is Handlers.BottomSheetHandler bottomSheetHandler)
-            {
-                await bottomSheetHandler.OpenAsync().ConfigureAwait(true);
-                _bottomSheetStack.Add(bottomSheet);
-                _bottomSheetStack.Current.IsOpen = true;
-            }
-        });
+        return DispatchAsync(() => DoNavigateAsync(bottomSheet, viewModel, parameters, configure));
     }
 
     /// <inheritdoc/>
-    public Task GoBackAsync(IBottomSheetNavigationParameters? parameters = null)
+    public Task<INavigationResult> GoBackAsync(IBottomSheetNavigationParameters? parameters = null)
     {
         return DispatchAsync(() => DoGoBackAsync(parameters));
     }
 
     /// <inheritdoc/>
-    public Task ClearBottomSheetStackAsync()
+    public Task<IEnumerable<INavigationResult>> ClearBottomSheetStackAsync()
     {
-        return DispatchAsync(async () =>
+        return DispatchAsync<IEnumerable<INavigationResult>>(async () =>
         {
+            List<INavigationResult> results = new();
+
             while (!_bottomSheetStack.IsEmpty)
             {
-                await DoGoBackAsync().ConfigureAwait(true);
+                results.Add(await DoGoBackAsync().ConfigureAwait(true));
             }
+
+            return results;
         });
     }
 
@@ -98,40 +73,102 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
         configure?.Invoke(bottomSheet);
     }
 
-    private async Task DoGoBackAsync(IBottomSheetNavigationParameters? parameters = null)
+    [SuppressMessage("Design", "CA1031: Do not catch general exception types", Justification = "Catch all exceptions.")]
+    private async Task<INavigationResult> DoNavigateAsync(IBottomSheet bottomSheet, object? viewModel = null, IBottomSheetNavigationParameters? parameters = null, Action<IBottomSheet>? configure = null)
     {
+        NavigationResult result = new();
+
+        try
+        {
+            parameters ??= BottomSheetNavigationParameters.Empty();
+
+            if (_bottomSheetStack.IsEmpty == false
+                && await MvvmHelpers.ConfirmNavigationAsync(_bottomSheetStack.Current, parameters).ConfigureAwait(true) == false)
+            {
+                result.Cancelled = true;
+            }
+            else
+            {
+                PrepareBottomSheetForNavigation(bottomSheet, viewModel, configure);
+
+                if (_bottomSheetStack.IsEmpty)
+                {
+                    MvvmHelpers.OnNavigatedFrom(bottomSheet.GetPageParent(), parameters);
+                }
+                else
+                {
+                    MvvmHelpers.OnNavigatedFrom(_bottomSheetStack.Current, parameters);
+                }
+
+                MvvmHelpers.OnNavigatedTo(bottomSheet, parameters);
+
+                if (bottomSheet.Handler is Handlers.BottomSheetHandler bottomSheetHandler)
+                {
+                    await bottomSheetHandler.OpenAsync().ConfigureAwait(true);
+                    _bottomSheetStack.Add(bottomSheet);
+                    _bottomSheetStack.Current.IsOpen = true;
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            result.Exception = e;
+            result.Success = false;
+        }
+
+        return result;
+    }
+
+    [SuppressMessage("Design", "CA1031: Do not catch general exception types", Justification = "Catch all exceptions.")]
+    private async Task<INavigationResult> DoGoBackAsync(IBottomSheetNavigationParameters? parameters = null)
+    {
+        NavigationResult result = new();
+
         if (_bottomSheetStack.IsEmpty)
         {
-            return;
+            result.Success = false;
+            return result;
         }
 
-        parameters ??= BottomSheetNavigationParameters.Empty();
-
-        if (await MvvmHelpers.ConfirmNavigationAsync(_bottomSheetStack.Current, parameters).ConfigureAwait(true) == false)
+        try
         {
-            return;
+            parameters ??= BottomSheetNavigationParameters.Empty();
+
+            if (await MvvmHelpers.ConfirmNavigationAsync(_bottomSheetStack.Current, parameters).ConfigureAwait(true) == false)
+            {
+                result.Cancelled = true;
+            }
+            else
+            {
+                _bottomSheetStack.Current.Closed -= OnClose;
+
+                if (_bottomSheetStack.Current.Handler is Handlers.BottomSheetHandler bottomSheetHandler)
+                {
+                    await bottomSheetHandler.CloseAsync().ConfigureAwait(true);
+                }
+
+                _bottomSheetStack.Current.Handler?.DisconnectHandler();
+                var bottomSheet = _bottomSheetStack.Remove();
+
+                MvvmHelpers.OnNavigatedFrom(bottomSheet, parameters);
+
+                if (_bottomSheetStack.IsEmpty)
+                {
+                    MvvmHelpers.OnNavigatedTo(bottomSheet.GetPageParent(), parameters);
+                }
+                else
+                {
+                    MvvmHelpers.OnNavigatedTo(_bottomSheetStack.Current, parameters);
+                }
+            }
         }
-
-        _bottomSheetStack.Current.Closed -= OnClose;
-
-        if (_bottomSheetStack.Current.Handler is Handlers.BottomSheetHandler bottomSheetHandler)
+        catch (Exception e)
         {
-            await bottomSheetHandler.CloseAsync().ConfigureAwait(true);
+            result.Exception = e;
+            result.Success = false;
         }
 
-        _bottomSheetStack.Current.Handler?.DisconnectHandler();
-        var bottomSheet = _bottomSheetStack.Remove();
-
-        MvvmHelpers.OnNavigatedFrom(bottomSheet, parameters);
-
-        if (_bottomSheetStack.IsEmpty)
-        {
-            MvvmHelpers.OnNavigatedTo(bottomSheet.GetPageParent(), parameters);
-        }
-        else
-        {
-            MvvmHelpers.OnNavigatedTo(_bottomSheetStack.Current, parameters);
-        }
+        return result;
     }
 
     [SuppressMessage("Design", "CA1031: Do not catch general exception types", Justification = "Catch all exceptions to prevent crash.")]
@@ -158,7 +195,7 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
         return dispatcher;
     }
 
-    private Task DispatchAsync(Func<Task> action)
+    private Task<TReturn> DispatchAsync<TReturn>(Func<Task<TReturn>> action)
     {
         return GetDispatcher().DispatchAsync(action);
     }

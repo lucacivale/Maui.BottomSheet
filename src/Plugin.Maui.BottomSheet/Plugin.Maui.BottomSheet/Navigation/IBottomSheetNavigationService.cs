@@ -20,7 +20,7 @@ public interface IBottomSheetNavigationService
     /// <param name="parameters">Navigation parameters.</param>
     /// <param name="configure">Action to modify the <see cref="BottomSheet"/>.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous navigation operation.</returns>
-    Task NavigateToAsync(IBottomSheet bottomSheet, object? viewModel = null, IBottomSheetNavigationParameters? parameters = null, Action<IBottomSheet>? configure = null);
+    Task<INavigationResult> NavigateToAsync(IBottomSheet bottomSheet, object? viewModel = null, IBottomSheetNavigationParameters? parameters = null, Action<IBottomSheet>? configure = null);
 
     /// <summary>
     /// Close current <see cref="BottomSheet"/>.
@@ -28,13 +28,13 @@ public interface IBottomSheetNavigationService
     /// </summary>
     /// <param name="parameters">Navigation parameters.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    Task GoBackAsync(IBottomSheetNavigationParameters? parameters = null);
+    Task<INavigationResult> GoBackAsync(IBottomSheetNavigationParameters? parameters = null);
 
     /// <summary>
     /// Close all BottomSheets.
     /// </summary>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    Task ClearBottomSheetStackAsync();
+    Task<IEnumerable<INavigationResult>> ClearBottomSheetStackAsync();
 
     /// <summary>
     /// Returns the current navigation stack.
