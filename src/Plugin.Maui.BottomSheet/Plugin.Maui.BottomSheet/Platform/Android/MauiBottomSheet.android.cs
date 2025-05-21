@@ -267,7 +267,7 @@ internal sealed class MauiBottomSheet : AndroidView
     /// </summary>
     public void SetWindowBackgroundColor()
     {
-        _bottomSheet.SetWindowBackgroundColor(_virtualView?.WindowBackgroundColor ?? Colors.Transparent);
+        _bottomSheet.SetWindowBackgroundColor(_virtualView?.WindowBackgroundColor ?? Colors.Transparent, true);
     }
 
     /// <summary>

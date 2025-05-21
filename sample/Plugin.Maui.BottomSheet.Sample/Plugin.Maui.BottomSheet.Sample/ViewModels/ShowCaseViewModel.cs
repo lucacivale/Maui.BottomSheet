@@ -167,10 +167,11 @@ public sealed partial class ShowCaseViewModel : ObservableObject, IConfirmNaviga
 
     public Task<bool> CanNavigateAsync(IBottomSheetNavigationParameters? parameters)
     {
-        return Shell.Current.CurrentPage.DisplayAlertAsync(
+        return Task.FromResult(true);
+        /*return Shell.Current.CurrentPage.DisplayAlertAsync(
             "Warning",
             "You are about to navigate away",
             "OK",
-            "Cancel");
+            "Cancel");*/
     }
 }

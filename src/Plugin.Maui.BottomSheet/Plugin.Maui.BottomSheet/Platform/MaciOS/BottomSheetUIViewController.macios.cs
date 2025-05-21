@@ -494,7 +494,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         if (PresentationController?.ContainerView?.Subviews.Length > 0)
         {
-            UIView.Animate(0.5, () => PresentationController.ContainerView.Subviews[0].BackgroundColor = IsModal ? _windowBackgroundColor.ToPlatform() : UIColor.Clear);
+            UIView.Animate(0.25, () => PresentationController.ContainerView.Subviews[0].BackgroundColor = IsModal ? _windowBackgroundColor.ToPlatform() : UIColor.Clear);
         }
     }
 

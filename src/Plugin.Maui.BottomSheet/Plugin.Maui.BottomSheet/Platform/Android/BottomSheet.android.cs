@@ -228,35 +228,42 @@ internal sealed class BottomSheet : IDisposable
     /// <param name="handleClose">Should close event be fired. Edge case see issue #80.</param>
     public void Close(bool handleClose = true)
     {
-        _bottomSheetHandle.Handle.RemoveOnLayoutChangeListener(_bottomSheetContentChangeListener);
+        _backgroundColorDrawable.AnimateChange(_backgroundColorDrawable.Color.ToArgb(), Colors.Transparent.ToPlatform().ToArgb(), 100);
 
-        if (_bottomSheetHeader is not null)
-        {
-            _bottomSheetHeader.LayoutChanged -= BottomSheetContentChanged;
-            _bottomSheetHeader.CloseButtonClicked -= BottomSheetHeaderOnCloseButtonClicked;
-        }
+        _bottomSheetDialog?.Window?.DecorView.PostDelayed(
+            () =>
+            {
+                _bottomSheetHandle.Handle.RemoveOnLayoutChangeListener(_bottomSheetContentChangeListener);
 
-        if (_bottomSheetDialog is not null)
-        {
-            _bottomSheetDialog.ShowEvent -= BottomSheetShowed;
-            _bottomSheetDialog.Canceled -= BottomSheetDialogOnCanceled;
-        }
+                if (_bottomSheetHeader is not null)
+                {
+                    _bottomSheetHeader.LayoutChanged -= BottomSheetContentChanged;
+                    _bottomSheetHeader.CloseButtonClicked -= BottomSheetHeaderOnCloseButtonClicked;
+                }
 
-        _sheetContainer.RemoveFromParent();
+                if (_bottomSheetDialog is not null)
+                {
+                    _bottomSheetDialog.ShowEvent -= BottomSheetShowed;
+                    _bottomSheetDialog.Canceled -= BottomSheetDialogOnCanceled;
+                }
 
-        HideHandle();
-        HideHeader();
-        HideContent();
+                _sheetContainer.RemoveFromParent();
 
-        _bottomSheetBehavior?.Dispose();
-        _bottomSheetBehavior = null;
-        _bottomSheetDialog?.Dismiss();
-        _bottomSheetDialog = null;
+                HideHandle();
+                HideHeader();
+                HideContent();
 
-        if (handleClose)
-        {
-            _eventManager.HandleEvent(this, EventArgs.Empty, nameof(Closed));
-        }
+                _bottomSheetBehavior?.Dispose();
+                _bottomSheetBehavior = null;
+                _bottomSheetDialog?.Dismiss();
+                _bottomSheetDialog = null;
+
+                if (handleClose)
+                {
+                    _eventManager.HandleEvent(this, EventArgs.Empty, nameof(Closed));
+                }
+            },
+            110);
     }
 
     /// <summary>
@@ -281,14 +288,20 @@ internal sealed class BottomSheet : IDisposable
                 _bottomSheetDialog.SetCanceledOnTouchOutside(false);
                 touchOutside.SetOnTouchListener(_touchOutsideListener);
 
-                _backgroundColorDrawable.Color = Colors.Transparent.ToPlatform();
+                if (IsShowing)
+                {
+                    _backgroundColorDrawable.AnimateChange(_backgroundColorDrawable.Color.ToArgb(), Colors.Transparent.ToPlatform().ToArgb());
+                }
             }
             else
             {
                 _bottomSheetDialog.SetCanceledOnTouchOutside(true);
                 touchOutside.SetOnTouchListener(null);
 
-                SetWindowBackgroundColor(_windowBackgroundColor);
+                if (IsShowing)
+                {
+                    ApplyWindowBackgroundColor();
+                }
             }
         }
     }
@@ -458,14 +471,14 @@ internal sealed class BottomSheet : IDisposable
     /// Set window background color.
     /// </summary>
     /// <param name="color">Color.</param>
-    public void SetWindowBackgroundColor(Color? color)
+    /// <param name="apply">Apply color to drawable.</param>
+    public void SetWindowBackgroundColor(Color? color, bool apply = false)
     {
         _windowBackgroundColor = color;
 
-        if (_isModal
-            && _windowBackgroundColor is not null)
+        if (apply)
         {
-            _backgroundColorDrawable.Color = _windowBackgroundColor.ToPlatform();
+            ApplyWindowBackgroundColor();
         }
     }
 
@@ -624,6 +637,15 @@ internal sealed class BottomSheet : IDisposable
         }
     }
 
+    private void ApplyWindowBackgroundColor()
+    {
+        if (_isModal
+            && _windowBackgroundColor is not null)
+        {
+            _backgroundColorDrawable.AnimateChange(_backgroundColorDrawable.Color.ToArgb(), _windowBackgroundColor.ToPlatform());
+        }
+    }
+
     private void BottomSheetContentChanged(object? sender, EventArgs e)
     {
         SetPeekHeight(_peekHeight);
@@ -651,11 +673,8 @@ internal sealed class BottomSheet : IDisposable
 
         ApplyCornerRadius();
         ApplyBackgroundColor();
-    }
 
-    private void BottomSheetClosed(object? sender, EventArgs e)
-    {
-        Close();
+        _bottomSheetDialog?.Window?.DecorView.PostDelayed(ApplyWindowBackgroundColor, 50);
     }
 
     private void BottomSheetHeaderOnCloseButtonClicked(object? sender, EventArgs e)
