@@ -179,7 +179,6 @@ internal sealed class BottomSheet : IDisposable
         _bottomSheetDialog.Window?.ClearFlags(AWindowManagerFlags.DimBehind);
         _bottomSheetDialog.Window?.SetBackgroundDrawable(_backgroundColorDrawable);
         _bottomSheetDialog.ShowEvent += BottomSheetShowed;
-        _bottomSheetDialog.DismissEvent += BottomSheetClosed;
         _bottomSheetDialog.Canceled += BottomSheetDialogOnCanceled;
 
         _bottomSheetBehavior = _bottomSheetDialog.Behavior;
@@ -240,7 +239,6 @@ internal sealed class BottomSheet : IDisposable
         if (_bottomSheetDialog is not null)
         {
             _bottomSheetDialog.ShowEvent -= BottomSheetShowed;
-            _bottomSheetDialog.DismissEvent -= BottomSheetClosed;
             _bottomSheetDialog.Canceled -= BottomSheetDialogOnCanceled;
         }
 
@@ -707,7 +705,6 @@ internal sealed class BottomSheet : IDisposable
         if (_bottomSheetDialog is not null)
         {
             _bottomSheetDialog.ShowEvent -= BottomSheetShowed;
-            _bottomSheetDialog.DismissEvent -= BottomSheetClosed;
             _bottomSheetDialog.Canceled -= BottomSheetDialogOnCanceled;
         }
 
