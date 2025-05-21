@@ -496,12 +496,3 @@ _bottomSheetNavigationService.NavigateTo("Showcase", configure: (sheet) =>
     sheet.Header.TitleText = "My new title";
 });
 ```
-
-You can pass parameters on each navigation as you are used to it from [Shell navigation](https://learn.microsoft.com/dotnet/maui/fundamentals/shell/navigation?view=net-maui-9.0#process-navigation-data-using-a-single-method).
-
-```
-_bottomSheetNavigationService.NavigateTo("Showcase", new BottomSheetNavigationParameters()
-{
-    ["SomeKey"] = "SomeValue",
-});
-```

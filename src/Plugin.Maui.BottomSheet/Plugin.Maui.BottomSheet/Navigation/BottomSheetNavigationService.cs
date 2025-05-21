@@ -26,25 +26,6 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
     internal static Dictionary<string, Type> BottomSheetToViewModelMapping { get; } = [];
 
     /// <inheritdoc/>
-    public void NavigateTo(IBottomSheet bottomSheet, object? viewModel = null, IBottomSheetNavigationParameters? parameters = null, Action<IBottomSheet>? configure = null)
-    {
-        Dispatch(() =>
-        {
-            PrepareBottomSheetForNavigation(bottomSheet, viewModel, configure);
-
-            bottomSheet.IsOpen = true;
-
-            if (bottomSheet.BindingContext is IQueryAttributable queryAttributable
-                && parameters is not null)
-            {
-                queryAttributable.ApplyQueryAttributes(parameters);
-            }
-
-            _bottomSheetStack.Add(bottomSheet);
-        });
-    }
-
-    /// <inheritdoc/>
     public Task NavigateToAsync(IBottomSheet bottomSheet, object? viewModel = null, IBottomSheetNavigationParameters? parameters = null, Action<IBottomSheet>? configure = null)
     {
         return DispatchAsync(async () =>
@@ -58,11 +39,6 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
             }
 
             PrepareBottomSheetForNavigation(bottomSheet, viewModel, configure);
-
-            if (bottomSheet.BindingContext is IQueryAttributable queryAttributable)
-            {
-                ApplyAttributes(queryAttributable, parameters);
-            }
 
             if (_bottomSheetStack.IsEmpty)
             {
@@ -85,27 +61,9 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
     }
 
     /// <inheritdoc/>
-    public void GoBack(IBottomSheetNavigationParameters? parameters = null)
-    {
-        Dispatch(() => DoGoBack(parameters));
-    }
-
-    /// <inheritdoc/>
     public Task GoBackAsync(IBottomSheetNavigationParameters? parameters = null)
     {
         return DispatchAsync(() => DoGoBackAsync(parameters));
-    }
-
-    /// <inheritdoc/>
-    public void ClearBottomSheetStack()
-    {
-        Dispatch(() =>
-        {
-            while (!_bottomSheetStack.IsEmpty)
-            {
-                DoGoBack();
-            }
-        });
     }
 
     /// <inheritdoc/>
@@ -121,32 +79,6 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
     }
 
     public IReadOnlyCollection<IBottomSheet> NavigationStack() => _bottomSheetStack;
-
-    private static void ApplyAttributes(IQueryAttributable? attributable, IBottomSheetNavigationParameters? parameters)
-    {
-        if (parameters is not null
-            && attributable is not null)
-        {
-            attributable.ApplyQueryAttributes(parameters);
-        }
-    }
-
-    private void ApplyGoBackParameters(IBottomSheet bottomSheet, IBottomSheetNavigationParameters? parameters)
-    {
-        IQueryAttributable? queryAttributable = null;
-
-        if (_bottomSheetStack.IsEmpty
-            && bottomSheet.GetPageParent()?.BindingContext is IQueryAttributable parentBindingContext)
-        {
-            queryAttributable = parentBindingContext;
-        }
-        else if (_bottomSheetStack is { IsEmpty: false, Current.BindingContext: IQueryAttributable sheetBindingContext })
-        {
-            queryAttributable = sheetBindingContext;
-        }
-
-        ApplyAttributes(queryAttributable, parameters);
-    }
 
     [SuppressMessage("Usage", "CA1826:Use property instead of Linq Enumerable method", Justification = "Improved readability.")]
     private void PrepareBottomSheetForNavigation(IBottomSheet bottomSheet, object? viewModel = null, Action<IBottomSheet>? configure = null)
@@ -164,21 +96,6 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
         }
 
         configure?.Invoke(bottomSheet);
-    }
-
-    private void DoGoBack(IBottomSheetNavigationParameters? parameters = null)
-    {
-        if (_bottomSheetStack.IsEmpty)
-        {
-            return;
-        }
-
-        _bottomSheetStack.Current.Closed -= OnClose;
-        _bottomSheetStack.Current.IsOpen = false;
-        _bottomSheetStack.Current.Handler?.DisconnectHandler();
-        var bottomSheet = _bottomSheetStack.Remove();
-
-        ApplyGoBackParameters(bottomSheet, parameters);
     }
 
     private async Task DoGoBackAsync(IBottomSheetNavigationParameters? parameters = null)
@@ -215,8 +132,6 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
         {
             MvvmHelpers.OnNavigatedTo(_bottomSheetStack.Current, parameters);
         }
-
-        ApplyGoBackParameters(bottomSheet, parameters);
     }
 
     [SuppressMessage("Design", "CA1031: Do not catch general exception types", Justification = "Catch all exceptions to prevent crash.")]
@@ -241,11 +156,6 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
         ArgumentNullException.ThrowIfNull(dispatcher);
 
         return dispatcher;
-    }
-
-    private void Dispatch(Action action)
-    {
-        GetDispatcher().Dispatch(action);
     }
 
     private Task DispatchAsync(Func<Task> action)

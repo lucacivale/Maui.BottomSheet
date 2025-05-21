@@ -59,7 +59,6 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         SetViewControllers([_bottomSheetUIViewController], true);
         SetNavigationBarHidden(true, true);
 
-        _bottomSheetControllerDelegate.Dismissed += RaiseDismissed;
         _bottomSheetControllerDelegate.StateChanged += BottomSheetControllerDelegateOnStateChanged;
         _bottomSheetControllerDelegate.ConfirmDismiss += BottomSheetControllerDelegateOnConfirmDismiss;
     }
@@ -85,15 +84,6 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     /// Confirm dismiss.
     /// </summary>
     public event EventHandler ConfirmDismiss
-    {
-        add => _eventManager.AddEventHandler(value);
-        remove => _eventManager.RemoveEventHandler(value);
-    }
-
-    /// <summary>
-    /// BottomSheet dismissed.
-    /// </summary>
-    public event EventHandler Dismissed
     {
         add => _eventManager.AddEventHandler(value);
         remove => _eventManager.RemoveEventHandler(value);
@@ -438,7 +428,6 @@ internal sealed class BottomSheetUIViewController : UINavigationController
 
         HideHeader();
 
-        _bottomSheetControllerDelegate.Dismissed -= RaiseDismissed;
         _bottomSheetControllerDelegate.StateChanged -= BottomSheetControllerDelegateOnStateChanged;
         _bottomSheetControllerDelegate.ConfirmDismiss -= BottomSheetControllerDelegateOnConfirmDismiss;
         _bottomSheetControllerDelegate.Dispose();
@@ -523,13 +512,5 @@ internal sealed class BottomSheetUIViewController : UINavigationController
             this,
             e,
             nameof(ConfirmDismiss));
-    }
-
-    private void RaiseDismissed(object? sender, EventArgs e)
-    {
-        _eventManager.HandleEvent(
-            this,
-            e,
-            nameof(Dismissed));
     }
 }

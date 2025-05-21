@@ -17,15 +17,6 @@ internal sealed class BottomSheetControllerDelegate : UISheetPresentationControl
     }
 
     /// <summary>
-    /// BottomSheet dismissed.
-    /// </summary>
-    public event EventHandler Dismissed
-    {
-        add => _eventManager.AddEventHandler(value);
-        remove => _eventManager.RemoveEventHandler(value);
-    }
-
-    /// <summary>
     /// Confirm dismiss.
     /// </summary>
     public event EventHandler ConfirmDismiss
@@ -45,15 +36,6 @@ internal sealed class BottomSheetControllerDelegate : UISheetPresentationControl
             nameof(ConfirmDismiss));
 
         return false;
-    }
-
-    /// <inheritdoc/>
-    public override void DidDismiss(UIPresentationController presentationController)
-    {
-        _eventManager.HandleEvent(
-            presentationController,
-            EventArgs.Empty,
-            nameof(Dismissed));
     }
 
     /// <inheritdoc/>

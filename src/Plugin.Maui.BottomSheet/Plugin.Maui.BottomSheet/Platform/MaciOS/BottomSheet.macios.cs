@@ -19,7 +19,6 @@ internal sealed class BottomSheet : IDisposable
     public BottomSheet(IMauiContext mauiContext)
     {
         _bottomSheetUIViewController = new BottomSheetUIViewController(mauiContext);
-        _bottomSheetUIViewController.Dismissed += BottomSheetUIViewControllerOnDismissed;
         _bottomSheetUIViewController.StateChanged += BottomSheetUIViewControllerOnStateChanged;
         _bottomSheetUIViewController.ConfirmDismiss += BottomSheetUIViewControllerOnConfirmDismiss;
     }
@@ -339,7 +338,6 @@ internal sealed class BottomSheet : IDisposable
             return;
         }
 
-        _bottomSheetUIViewController.Dismissed -= BottomSheetUIViewControllerOnDismissed;
         _bottomSheetUIViewController.StateChanged -= BottomSheetUIViewControllerOnStateChanged;
         _bottomSheetUIViewController.ConfirmDismiss -= BottomSheetUIViewControllerOnConfirmDismiss;
         _bottomSheetUIViewController.Dispose();
@@ -359,13 +357,5 @@ internal sealed class BottomSheet : IDisposable
             this,
             e,
             nameof(ConfirmDismiss));
-    }
-
-    private void BottomSheetUIViewControllerOnDismissed(object? sender, EventArgs e)
-    {
-        _eventManager.HandleEvent(
-            this,
-            e,
-            nameof(Dismissed));
     }
 }
