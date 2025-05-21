@@ -309,9 +309,10 @@ internal sealed class MauiBottomSheet : AndroidView
 
             if (_mauiContext.Services.GetRequiredService<IBottomSheetNavigationService>().NavigationStack().Contains(_virtualView))
             {
-                await _mauiContext.Services.GetRequiredService<IBottomSheetNavigationService>().GoBackAsync(parameters).ConfigureAwait(true);
+                var result = await _mauiContext.Services.GetRequiredService<IBottomSheetNavigationService>().GoBackAsync(parameters).ConfigureAwait(true);
 
-                if (_mauiContext.Services.GetRequiredService<IBottomSheetNavigationService>().NavigationStack().Contains(_virtualView))
+                if (result.Success == false
+                    || result.Cancelled == true)
                 {
                     _bottomSheet.SetState(_virtualView.CurrentState);
                 }
