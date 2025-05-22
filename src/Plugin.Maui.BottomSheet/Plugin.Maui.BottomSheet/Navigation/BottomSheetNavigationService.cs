@@ -34,10 +34,10 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
 
             bottomSheet.IsOpen = true;
 
-            if (bottomSheet.BindingContext is IQueryAttributable queryAttributable
-                && parameters is not null)
+            if (parameters is not null)
             {
-                queryAttributable.ApplyQueryAttributes(parameters);
+                (bottomSheet.BindingContext as IQueryAttributable)?.ApplyQueryAttributes(parameters);
+                (bottomSheet as IQueryAttributable)?.ApplyQueryAttributes(parameters);
             }
 
             _bottomSheetStack.Add(bottomSheet);
