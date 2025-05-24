@@ -129,6 +129,15 @@ internal sealed class BottomSheet : IDisposable
     }
 
     /// <summary>
+    /// Back button pressed.
+    /// </summary>
+    public event EventHandler BackPressed
+    {
+        add => _eventManager.AddEventHandler(value);
+        remove => _eventManager.RemoveEventHandler(value);
+    }
+
+    /// <summary>
     /// Gets or sets the padding for the view.
     /// </summary>
     public Thickness Padding
@@ -180,6 +189,7 @@ internal sealed class BottomSheet : IDisposable
         _bottomSheetDialog.Window?.SetBackgroundDrawable(_backgroundColorDrawable);
         _bottomSheetDialog.ShowEvent += BottomSheetShowed;
         _bottomSheetDialog.Canceled += BottomSheetDialogOnCanceled;
+        _bottomSheetDialog.BackPressed += BottomSheetDialogOnBackPressed;
 
         _bottomSheetBehavior = _bottomSheetDialog.Behavior;
 
@@ -245,6 +255,7 @@ internal sealed class BottomSheet : IDisposable
                 {
                     _bottomSheetDialog.ShowEvent -= BottomSheetShowed;
                     _bottomSheetDialog.Canceled -= BottomSheetDialogOnCanceled;
+                    _bottomSheetDialog.BackPressed -= BottomSheetDialogOnBackPressed;
                 }
 
                 _sheetContainer.RemoveFromParent();
@@ -685,6 +696,11 @@ internal sealed class BottomSheet : IDisposable
     private void BottomSheetDialogOnCanceled(object? sender, EventArgs e)
     {
         _eventManager.HandleEvent(this, EventArgs.Empty, nameof(Closed));
+    }
+
+    private void BottomSheetDialogOnBackPressed(object? sender, EventArgs e)
+    {
+        _eventManager.HandleEvent(this, EventArgs.Empty, nameof(BackPressed));
     }
 
     private void Dispose(bool disposing)
