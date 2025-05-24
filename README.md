@@ -496,3 +496,54 @@ _bottomSheetNavigationService.NavigateTo("Showcase", configure: (sheet) =>
     sheet.Header.TitleText = "My new title";
 });
 ```
+
+# BottomSheet lifecycle
+
+## Platform lifecycle events
+
+.NET MAUI defines delegates that are invoked in response to platform lifecycle events being raised.
+Handlers can be specified for these delegates, using named methods or anonymous functions, which are executed when the delegate is invoked.
+This mechanism enables apps to be notified when common platform lifecycle events are raised.
+
+> [!IMPORTANT]
+> The `ConfigureLifecycleEvents` method is in the `Microsoft.Maui.LifecycleEvents` namespace.
+
+The following table lists the BottomSheet delegates that are invoked in response to Android lifecycle events being raised:
+
+| Delegate                   | Arguments              | Description                                                    | Comments                                                                                         |
+|----------------------------|------------------------|----------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
+| `OnBottomSheetBackPressed` | `Android.App.Activity` | Invoked when the activity has detected a press of the back key | Will only be invoked if BottomSheet is not cancelable(Limitation of Android's BottomSheetDialog) |
+
+```
+using Microsoft.Maui.LifecycleEvents;
+using Plugin.Maui.BottomSheet.LifecycleEvents;
+
+namespace PlatformLifecycleDemo
+{
+    public static class MauiProgram
+    {
+        public static MauiApp CreateMauiApp()
+        {
+            var builder = MauiApp.CreateBuilder();
+            builder
+                .UseMauiApp<App>()
+                .UseBottomSheet();
+            
+            #if ANDROID
+            builder.ConfigureLifecycleEvents(events =>
+            {
+                events.AddAndroid(android =>
+                {
+                    android.OnBottomSheetBackPressed(activity =>
+                    {
+                        Debug.WriteLine("BACK PRESSED");
+                    });
+                });
+            });
+            #endif
+
+            return builder.Build();
+        }
+    }
+}
+```

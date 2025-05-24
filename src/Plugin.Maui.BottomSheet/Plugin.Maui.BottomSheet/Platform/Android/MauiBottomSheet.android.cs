@@ -1,6 +1,9 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.Maui.LifecycleEvents;
 using Plugin.Maui.BottomSheet.Navigation;
+using AActivity = Android.App.Activity;
+using AndroidLifecycle = Plugin.Maui.BottomSheet.LifecycleEvents.AndroidLifecycle;
 #pragma warning disable SA1200
 using Android.Content;
 using AndroidView = Android.Views.View;
@@ -30,6 +33,7 @@ internal sealed class MauiBottomSheet : AndroidView
         _bottomSheet = new BottomSheet(context, _mauiContext);
         _bottomSheet.Closed += BottomSheetOnClosed;
         _bottomSheet.StateChanged += BottomSheetOnStateChanged;
+        _bottomSheet.BackPressed += BottomSheetOnBackPressed;
     }
 
     /// <summary>
@@ -62,6 +66,7 @@ internal sealed class MauiBottomSheet : AndroidView
     {
         _bottomSheet.Closed -= BottomSheetOnClosed;
         _bottomSheet.StateChanged -= BottomSheetOnStateChanged;
+        _bottomSheet.BackPressed -= BottomSheetOnBackPressed;
         _bottomSheet.Dispose();
     }
 
@@ -312,7 +317,7 @@ internal sealed class MauiBottomSheet : AndroidView
                 var result = await _mauiContext.Services.GetRequiredService<IBottomSheetNavigationService>().GoBackAsync(parameters).ConfigureAwait(true);
 
                 if (result.Success == false
-                    || result.Cancelled == true)
+                    || result.Cancelled)
                 {
                     _bottomSheet.SetState(_virtualView.CurrentState);
                 }
@@ -355,5 +360,15 @@ internal sealed class MauiBottomSheet : AndroidView
         }
 
         _virtualView.CurrentState = state;
+    }
+
+    private void BottomSheetOnBackPressed(object? sender, EventArgs e)
+    {
+        var actions = _mauiContext.Services.GetRequiredService<ILifecycleEventService>().GetEventDelegates<Action<AActivity?>>(AndroidLifecycle.BottomSheetBackPressedEventName);
+
+        foreach (Action<AActivity?> action in actions)
+        {
+            action(Microsoft.Maui.ApplicationModel.Platform.CurrentActivity);
+        }
     }
 }
