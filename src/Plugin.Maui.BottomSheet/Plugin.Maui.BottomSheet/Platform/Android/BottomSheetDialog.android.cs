@@ -24,6 +24,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
         : base(context, theme)
     {
         _bottomSheetCallback = bottomSheetCallback;
+        Behavior.AddBottomSheetCallback(_bottomSheetCallback);
     }
 
     /// <summary>

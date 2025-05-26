@@ -40,6 +40,7 @@ internal sealed class BottomSheet : IDisposable
     private readonly BottomSheetCallback _bottomSheetCallback;
     private readonly BottomSheetDialogTouchOutsideListener? _touchOutsideListener;
     private readonly BottomSheetLayoutChangeListener _bottomSheetContentChangeListener;
+    private readonly BottomSheetLayoutChangeListener _bottomSheetContainerLayoutChangeListener;
     private readonly int _handleMargin;
     private readonly int _headerMargin;
     private readonly AColorDrawable _backgroundColorDrawable;
@@ -85,11 +86,15 @@ internal sealed class BottomSheet : IDisposable
 
         _bottomSheetCallback = new BottomSheetCallback();
         _bottomSheetCallback.StateChanged += BottomSheetCallbackOnStateChanged;
+        _bottomSheetCallback.Slide += BottomSheetCallbackOnSlide;
 
         _bottomSheetHandle = new BottomSheetHandle(context);
 
         _bottomSheetContentChangeListener = new BottomSheetLayoutChangeListener();
         _bottomSheetContentChangeListener.LayoutChange += BottomSheetContentChanged;
+
+        _bottomSheetContainerLayoutChangeListener = new BottomSheetLayoutChangeListener();
+        _bottomSheetContainerLayoutChangeListener.LayoutChange += BottomSheetContainerLayoutChangeListenerOnLayoutChange;
 
         _sheetContainer = new GridLayout(_context)
         {
@@ -111,7 +116,16 @@ internal sealed class BottomSheet : IDisposable
     }
 
     /// <summary>
-    /// Header layout changed
+    /// BottomSheet opened.
+    /// </summary>
+    public event EventHandler Opened
+    {
+        add => _eventManager.AddEventHandler(value);
+        remove => _eventManager.RemoveEventHandler(value);
+    }
+
+    /// <summary>
+    /// BottomSheet closed.
     /// </summary>
     public event EventHandler Closed
     {
@@ -129,9 +143,27 @@ internal sealed class BottomSheet : IDisposable
     }
 
     /// <summary>
+    /// BottomSheet slide.
+    /// </summary>
+    public event EventHandler Slide
+    {
+        add => _eventManager.AddEventHandler(value);
+        remove => _eventManager.RemoveEventHandler(value);
+    }
+
+    /// <summary>
     /// Back button pressed.
     /// </summary>
     public event EventHandler BackPressed
+    {
+        add => _eventManager.AddEventHandler(value);
+        remove => _eventManager.RemoveEventHandler(value);
+    }
+
+    /// <summary>
+    /// BottomSheet layout changed.
+    /// </summary>
+    public event EventHandler LayoutChanged
     {
         add => _eventManager.AddEventHandler(value);
         remove => _eventManager.RemoveEventHandler(value);
@@ -165,6 +197,23 @@ internal sealed class BottomSheet : IDisposable
         {
             _backgroundColor = value;
             ApplyBackgroundColor();
+        }
+    }
+
+    /// <summary>
+    /// Gets BottomSheet frame in pixels.
+    /// </summary>
+    public Rect Frame
+    {
+        get
+        {
+            int[] location = new int[2];
+            _sheetContainer.GetLocationInWindow(location);
+
+            int height = _bottomSheetDialog?.Window?.DecorView.Height - location[1] ?? -1;
+            int width = _sheetContainer.Width;
+
+            return new Rect(location[0], location[1], width, height);
         }
     }
 
@@ -215,6 +264,8 @@ internal sealed class BottomSheet : IDisposable
         _bottomSheetBehavior.FitToContents = false;
         _bottomSheetBehavior.HalfExpandedRatio = bottomSheet.GetHalfExpandedRatio();
 
+        _sheetContainer.AddOnLayoutChangeListener(_bottomSheetContainerLayoutChangeListener);
+
         _bottomSheetDialog.SetContentView(_sheetContainer);
 
         SetHeaderStyle(bottomSheet.BottomSheetStyle.HeaderStyle);
@@ -236,13 +287,16 @@ internal sealed class BottomSheet : IDisposable
     /// Close the bottom sheet.
     /// </summary>
     /// <param name="handleClose">Should close event be fired. Edge case see issue #80.</param>
-    public void Close(bool handleClose = true)
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    public async Task CloseAsync(bool handleClose = true)
     {
         _backgroundColorDrawable.AnimateChange(_backgroundColorDrawable.Color.ToArgb(), Colors.Transparent.ToPlatform().ToArgb(), 100);
 
         _bottomSheetDialog?.Window?.DecorView.PostDelayed(
             () =>
             {
+                _sheetContainer.RemoveOnLayoutChangeListener(_bottomSheetContainerLayoutChangeListener);
+
                 _bottomSheetHandle.Handle.RemoveOnLayoutChangeListener(_bottomSheetContentChangeListener);
 
                 if (_bottomSheetHeader is not null)
@@ -275,6 +329,8 @@ internal sealed class BottomSheet : IDisposable
                 }
             },
             110);
+
+        await Task.Delay(120).ConfigureAwait(true);
     }
 
     /// <summary>
@@ -672,6 +728,8 @@ internal sealed class BottomSheet : IDisposable
 
     private void BottomSheetShowed(object? sender, EventArgs e)
     {
+        _eventManager.HandleEvent(this, EventArgs.Empty, nameof(Opened));
+
         if (_sheetContainer.Parent is not AView parent)
         {
             return;
@@ -703,6 +761,16 @@ internal sealed class BottomSheet : IDisposable
         _eventManager.HandleEvent(this, EventArgs.Empty, nameof(BackPressed));
     }
 
+    private void BottomSheetContainerLayoutChangeListenerOnLayoutChange(object? sender, EventArgs e)
+    {
+        _eventManager.HandleEvent(this, EventArgs.Empty, nameof(LayoutChanged));
+    }
+
+    private void BottomSheetCallbackOnSlide(object? sender, EventArgs e)
+    {
+        _eventManager.HandleEvent(this, EventArgs.Empty, nameof(Slide));
+    }
+
     private void Dispose(bool disposing)
     {
         if (!disposing)
@@ -725,6 +793,9 @@ internal sealed class BottomSheet : IDisposable
         _platformBottomSheetContent?.Dispose();
         _platformBottomSheetContent = null;
 
+        _bottomSheetContainerLayoutChangeListener.LayoutChange -= BottomSheetContentChanged;
+        _bottomSheetContainerLayoutChangeListener.Dispose();
+
         _sheetContainer.Dispose();
 
         _touchOutsideListener?.Dispose();
@@ -733,6 +804,7 @@ internal sealed class BottomSheet : IDisposable
         _backgroundColorDrawable.Dispose();
 
         _bottomSheetCallback.StateChanged -= BottomSheetCallbackOnStateChanged;
+        _bottomSheetCallback.Slide -= BottomSheetCallbackOnSlide;
         _bottomSheetCallback.Dispose();
 
         _bottomSheetBehavior?.Dispose();

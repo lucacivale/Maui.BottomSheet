@@ -22,9 +22,19 @@ internal sealed class BottomSheetCallback : BottomSheetBehavior.BottomSheetCallb
         remove => _eventManager.RemoveEventHandler(value);
     }
 
+    /// <summary>
+    /// BottomSheet slide.
+    /// </summary>
+    public event EventHandler Slide
+    {
+        add => _eventManager.AddEventHandler(value);
+        remove => _eventManager.RemoveEventHandler(value);
+    }
+
     /// <inheritdoc />
     public override void OnSlide(AView bottomSheet, float newState)
     {
+        _eventManager.HandleEvent(this, EventArgs.Empty, nameof(Slide));
     }
 
     /// <inheritdoc />
