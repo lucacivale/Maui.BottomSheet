@@ -43,6 +43,10 @@ internal static class IBottomSheetExtensions
         {
             page = shell.CurrentPage;
         }
+        else if (parent is NavigationPage navigationPage)
+        {
+            page = navigationPage.CurrentPage;
+        }
         else
         {
             while (parent is not null)
