@@ -10,4 +10,9 @@ public sealed class Configuration
     /// all applicable properties are copied to <see cref="BottomSheet"/>.
     /// </summary>
     public bool CopyPagePropertiesToBottomSheet { get; set; }
+
+    /// <summary>
+    /// Gets plugin feature flags.
+    /// </summary>
+    public FeatureFlags FeatureFlags { get; } = new();
 }
