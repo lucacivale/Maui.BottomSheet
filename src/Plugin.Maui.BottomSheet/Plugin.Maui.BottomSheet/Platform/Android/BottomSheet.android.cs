@@ -554,10 +554,18 @@ internal sealed class BottomSheet : IDisposable
         _virtualBottomSheetContent = _bottomSheetContent.CreateContent();
         _platformBottomSheetContent = _virtualBottomSheetContent.ToPlatform(_mauiContext);
 
+        var fillAvailableSpace = _mauiContext.Services.GetRequiredService<Configuration>().FeatureFlags.ContentFillsAvailableSpace;
+
         _contentLayoutParams = new GridLayout.LayoutParams()
         {
-            RowSpec = GridLayout.InvokeSpec(ContentRow),
+            RowSpec = fillAvailableSpace ? GridLayout.InvokeSpec(ContentRow, 1f) : GridLayout.InvokeSpec(ContentRow),
         };
+
+        if (fillAvailableSpace)
+        {
+            _contentLayoutParams.Height = 0;
+        }
+
         _contentLayoutParams.SetGravity(AGravityFlags.Fill);
 
         _sheetContainer.AddView(_platformBottomSheetContent, _contentLayoutParams);
