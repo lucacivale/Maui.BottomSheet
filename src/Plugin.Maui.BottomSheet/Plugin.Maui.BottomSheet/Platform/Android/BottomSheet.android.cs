@@ -149,9 +149,9 @@ internal sealed class BottomSheet : IDisposable
     /// <summary>
     /// Gets or sets the Color which will fill the background of an element.
     /// </summary>
-    public Color BackgroundColor
+    public Color? BackgroundColor
     {
-        get => _backgroundColor ?? Colors.White;
+        get => _backgroundColor;
         set
         {
             _backgroundColor = value;
@@ -624,7 +624,8 @@ internal sealed class BottomSheet : IDisposable
 
     private void ApplyBackgroundColor()
     {
-        if (_sheetContainer.Parent is AView bottomSheetFrame)
+        if (_sheetContainer.Parent is AView bottomSheetFrame
+            && BackgroundColor is not null)
         {
             bottomSheetFrame.BackgroundTintList = AColorStateList.ValueOf(BackgroundColor.ToPlatform());
         }
