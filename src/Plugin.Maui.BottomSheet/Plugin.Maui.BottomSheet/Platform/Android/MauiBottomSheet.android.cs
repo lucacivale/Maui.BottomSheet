@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using AsyncAwaitBestPractices;
 using Microsoft.Maui.LifecycleEvents;
 using Plugin.Maui.BottomSheet.Navigation;
 using AActivity = Android.App.Activity;
@@ -18,6 +19,7 @@ internal sealed class MauiBottomSheet : AndroidView
 {
     private readonly IMauiContext _mauiContext;
     private readonly BottomSheet _bottomSheet;
+    private readonly Context _context;
 
     private IBottomSheet? _virtualView;
 
@@ -30,10 +32,13 @@ internal sealed class MauiBottomSheet : AndroidView
         : base(context)
     {
         _mauiContext = mauiContext;
-        _bottomSheet = new BottomSheet(context, _mauiContext);
+        _context = context;
+        _bottomSheet = new BottomSheet(_context, _mauiContext);
+        _bottomSheet.Opened += BottomSheetOnOpened;
         _bottomSheet.Closed += BottomSheetOnClosed;
         _bottomSheet.StateChanged += BottomSheetOnStateChanged;
         _bottomSheet.BackPressed += BottomSheetOnBackPressed;
+        _bottomSheet.LayoutChanged += BottomSheetOnLayoutChanged;
     }
 
     /// <summary>
@@ -64,9 +69,11 @@ internal sealed class MauiBottomSheet : AndroidView
     /// </summary>
     public void Cleanup()
     {
+        _bottomSheet.Opened -= BottomSheetOnOpened;
         _bottomSheet.Closed -= BottomSheetOnClosed;
         _bottomSheet.StateChanged -= BottomSheetOnStateChanged;
         _bottomSheet.BackPressed -= BottomSheetOnBackPressed;
+        _bottomSheet.LayoutChanged -= BottomSheetOnLayoutChanged;
         _bottomSheet.Dispose();
     }
 
@@ -143,16 +150,15 @@ internal sealed class MauiBottomSheet : AndroidView
     /// Close bottom sheet.
     /// </summary>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    public Task CloseAsync()
+    public async Task CloseAsync()
     {
         if (_virtualView?.IsOpen == true)
         {
             _virtualView.OnClosingBottomSheet();
-            _bottomSheet.Close(false);
+            await _bottomSheet.CloseAsync(false).ConfigureAwait(true);
+            SetFrame(true);
             _virtualView.OnClosedBottomSheet();
         }
-
-        return Task.CompletedTask;
     }
 
     /// <summary>
@@ -175,8 +181,10 @@ internal sealed class MauiBottomSheet : AndroidView
 
             if (_bottomSheet.IsShowing)
             {
-                _bottomSheet.Close();
+                _bottomSheet.CloseAsync().SafeFireAndForget();
             }
+
+            SetFrame(true);
 
             _virtualView?.OnClosedBottomSheet();
         }
@@ -299,6 +307,11 @@ internal sealed class MauiBottomSheet : AndroidView
         Cleanup();
     }
 
+    private void BottomSheetOnOpened(object? sender, EventArgs e)
+    {
+        SetFrame();
+    }
+
     [SuppressMessage("Usage", "VSTHRD100: Avoid async void methods", Justification = "Is okay here.")]
     [SuppressMessage("Design", "CA1031: Do not catch general exception types", Justification = "Catch all exceptions to prevent crash.")]
     private async void BottomSheetOnClosed(object? sender, EventArgs e)
@@ -321,6 +334,10 @@ internal sealed class MauiBottomSheet : AndroidView
                 {
                     _bottomSheet.SetState(_virtualView.CurrentState);
                 }
+                else
+                {
+                    SetFrame(true);
+                }
             }
             else
             {
@@ -336,6 +353,10 @@ internal sealed class MauiBottomSheet : AndroidView
                 {
                     _bottomSheet.SetState(_virtualView.CurrentState);
                 }
+                else
+                {
+                    SetFrame(true);
+                }
             }
         }
         catch
@@ -346,12 +367,13 @@ internal sealed class MauiBottomSheet : AndroidView
 
     private void BottomSheetOnStateChanged(object? sender, BottomSheetStateChangedEventArgs e)
     {
-        if (_virtualView is null)
+        var state = e.State;
+
+        if (_virtualView is null
+            || state == _virtualView.CurrentState)
         {
             return;
         }
-
-        var state = e.State;
 
         if (!_virtualView.States.IsStateAllowed(state))
         {
@@ -359,6 +381,7 @@ internal sealed class MauiBottomSheet : AndroidView
             _bottomSheet.SetState(state);
         }
 
+        SetFrame();
         _virtualView.CurrentState = state;
     }
 
@@ -370,5 +393,20 @@ internal sealed class MauiBottomSheet : AndroidView
         {
             action(Microsoft.Maui.ApplicationModel.Platform.CurrentActivity);
         }
+    }
+
+    private void BottomSheetOnLayoutChanged(object? sender, EventArgs e)
+    {
+        SetFrame();
+    }
+
+    private void SetFrame(bool isClosed = false)
+    {
+        if (_virtualView is null)
+        {
+            return;
+        }
+
+        _virtualView.Frame = isClosed ? Rect.Zero : _context.FromPixels(_bottomSheet.Frame);
     }
 }

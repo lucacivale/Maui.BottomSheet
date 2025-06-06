@@ -1,3 +1,7 @@
+using System.ComponentModel;
+using CoreGraphics;
+using Microsoft.Maui.Graphics.Platform;
+
 namespace Plugin.Maui.BottomSheet.Platform.MaciOS;
 
 using System.Diagnostics.CodeAnalysis;
@@ -54,6 +58,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         {
             Content = _virtualBottomSheetLayout,
         };
+
         _bottomSheetUIViewController = _virtualBottomSheet.ToUIViewController(mauiContext);
 
         SetViewControllers([_bottomSheetUIViewController], true);
@@ -84,6 +89,15 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     /// Confirm dismiss.
     /// </summary>
     public event EventHandler ConfirmDismiss
+    {
+        add => _eventManager.AddEventHandler(value);
+        remove => _eventManager.RemoveEventHandler(value);
+    }
+
+    /// <summary>
+    /// Frame changed.
+    /// </summary>
+    public event EventHandler<Rect> FrameChanged
     {
         add => _eventManager.AddEventHandler(value);
         remove => _eventManager.RemoveEventHandler(value);
@@ -412,6 +426,25 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         _peekHeight = peekHeight;
 
         ApplyPeekHeight();
+    }
+
+    /// <inheritdoc />
+    public override void ViewDidLayoutSubviews()
+    {
+        base.ViewDidLayoutSubviews();
+
+        if (PresentationController is null)
+        {
+            return;
+        }
+
+        CGRect frame = PresentationController.FrameOfPresentedViewInContainerView;
+        frame.Y -= new nfloat(Math.Abs(NavigationBar.Frame.Y.Value)) + PresentationController.PresentedView.LayoutMargins.Top;
+
+        _eventManager.HandleEvent(
+            this,
+            frame.AsRectangle(),
+            nameof(FrameChanged));
     }
 
     /// <inheritdoc/>
