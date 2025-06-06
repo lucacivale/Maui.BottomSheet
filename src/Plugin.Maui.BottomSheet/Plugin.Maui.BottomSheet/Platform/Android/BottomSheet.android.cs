@@ -86,7 +86,6 @@ internal sealed class BottomSheet : IDisposable
 
         _bottomSheetCallback = new BottomSheetCallback();
         _bottomSheetCallback.StateChanged += BottomSheetCallbackOnStateChanged;
-        _bottomSheetCallback.Slide += BottomSheetCallbackOnSlide;
 
         _bottomSheetHandle = new BottomSheetHandle(context);
 
@@ -137,15 +136,6 @@ internal sealed class BottomSheet : IDisposable
     /// BottomSheet state changed.
     /// </summary>
     public event EventHandler<BottomSheetStateChangedEventArgs> StateChanged
-    {
-        add => _eventManager.AddEventHandler(value);
-        remove => _eventManager.RemoveEventHandler(value);
-    }
-
-    /// <summary>
-    /// BottomSheet slide.
-    /// </summary>
-    public event EventHandler Slide
     {
         add => _eventManager.AddEventHandler(value);
         remove => _eventManager.RemoveEventHandler(value);
@@ -208,12 +198,12 @@ internal sealed class BottomSheet : IDisposable
         get
         {
             int[] location = new int[2];
-            _sheetContainer.GetLocationInWindow(location);
+            ((AView?)_sheetContainer.Parent)?.GetLocationOnScreen(location);
 
             int height = _bottomSheetDialog?.Window?.DecorView.Height - location[1] ?? -1;
             int width = _sheetContainer.Width;
 
-            return new Rect(location[0], location[1], width, height);
+            return new Rect(location[0], location[1] - 144, width, height);
         }
     }
 
@@ -766,11 +756,6 @@ internal sealed class BottomSheet : IDisposable
         _eventManager.HandleEvent(this, EventArgs.Empty, nameof(LayoutChanged));
     }
 
-    private void BottomSheetCallbackOnSlide(object? sender, EventArgs e)
-    {
-        _eventManager.HandleEvent(this, EventArgs.Empty, nameof(Slide));
-    }
-
     private void Dispose(bool disposing)
     {
         if (!disposing)
@@ -804,7 +789,6 @@ internal sealed class BottomSheet : IDisposable
         _backgroundColorDrawable.Dispose();
 
         _bottomSheetCallback.StateChanged -= BottomSheetCallbackOnStateChanged;
-        _bottomSheetCallback.Slide -= BottomSheetCallbackOnSlide;
         _bottomSheetCallback.Dispose();
 
         _bottomSheetBehavior?.Dispose();

@@ -21,6 +21,7 @@ internal sealed class BottomSheet : IDisposable
         _bottomSheetUIViewController = new BottomSheetUIViewController(mauiContext);
         _bottomSheetUIViewController.StateChanged += BottomSheetUIViewControllerOnStateChanged;
         _bottomSheetUIViewController.ConfirmDismiss += BottomSheetUIViewControllerOnConfirmDismiss;
+        _bottomSheetUIViewController.FrameChanged += BottomSheetUIViewControllerOnFrameChanged;
     }
 
     /// <summary>
@@ -53,6 +54,15 @@ internal sealed class BottomSheet : IDisposable
     /// BottomSheet dismissed.
     /// </summary>
     public event EventHandler Dismissed
+    {
+        add => _eventManager.AddEventHandler(value);
+        remove => _eventManager.RemoveEventHandler(value);
+    }
+
+    /// <summary>
+    /// Frame changed.
+    /// </summary>
+    public event EventHandler<Rect> FrameChanged
     {
         add => _eventManager.AddEventHandler(value);
         remove => _eventManager.RemoveEventHandler(value);
@@ -340,6 +350,7 @@ internal sealed class BottomSheet : IDisposable
 
         _bottomSheetUIViewController.StateChanged -= BottomSheetUIViewControllerOnStateChanged;
         _bottomSheetUIViewController.ConfirmDismiss -= BottomSheetUIViewControllerOnConfirmDismiss;
+        _bottomSheetUIViewController.FrameChanged -= BottomSheetUIViewControllerOnFrameChanged;
         _bottomSheetUIViewController.Dispose();
     }
 
@@ -357,5 +368,13 @@ internal sealed class BottomSheet : IDisposable
             this,
             e,
             nameof(ConfirmDismiss));
+    }
+
+    private void BottomSheetUIViewControllerOnFrameChanged(object? sender, Rect e)
+    {
+        _eventManager.HandleEvent(
+            this,
+            e,
+            nameof(FrameChanged));
     }
 }

@@ -39,7 +39,6 @@ internal sealed class MauiBottomSheet : AndroidView
         _bottomSheet.StateChanged += BottomSheetOnStateChanged;
         _bottomSheet.BackPressed += BottomSheetOnBackPressed;
         _bottomSheet.LayoutChanged += BottomSheetOnLayoutChanged;
-        _bottomSheet.Slide += BottomSheetOnSlide;
     }
 
     /// <summary>
@@ -75,7 +74,6 @@ internal sealed class MauiBottomSheet : AndroidView
         _bottomSheet.StateChanged -= BottomSheetOnStateChanged;
         _bottomSheet.BackPressed -= BottomSheetOnBackPressed;
         _bottomSheet.LayoutChanged -= BottomSheetOnLayoutChanged;
-        _bottomSheet.Slide -= BottomSheetOnSlide;
         _bottomSheet.Dispose();
     }
 
@@ -383,8 +381,8 @@ internal sealed class MauiBottomSheet : AndroidView
             _bottomSheet.SetState(state);
         }
 
-        _virtualView.CurrentState = state;
         SetFrame();
+        _virtualView.CurrentState = state;
     }
 
     private void BottomSheetOnBackPressed(object? sender, EventArgs e)
@@ -398,11 +396,6 @@ internal sealed class MauiBottomSheet : AndroidView
     }
 
     private void BottomSheetOnLayoutChanged(object? sender, EventArgs e)
-    {
-        SetFrame();
-    }
-
-    private void BottomSheetOnSlide(object? sender, EventArgs e)
     {
         SetFrame();
     }

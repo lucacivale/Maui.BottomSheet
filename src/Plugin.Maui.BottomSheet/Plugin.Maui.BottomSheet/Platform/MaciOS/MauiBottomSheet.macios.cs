@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.Maui.Platform;
 using Plugin.Maui.BottomSheet.Navigation;
 
 namespace Plugin.Maui.BottomSheet.Platform.MaciOS;
@@ -28,6 +27,7 @@ internal sealed class MauiBottomSheet : UIView
         _bottomSheet.Dismissed += BottomSheetOnDismissed;
         _bottomSheet.StateChanged += BottomSheetOnStateChanged;
         _bottomSheet.ConfirmDismiss += BottomSheetOnConfirmDismiss;
+        _bottomSheet.FrameChanged += BottomSheetOnFrameChanged;
     }
 
     /// <summary>
@@ -367,5 +367,15 @@ internal sealed class MauiBottomSheet : UIView
         {
             _virtualView.IsOpen = false;
         }
+    }
+
+    private void BottomSheetOnFrameChanged(object? sender, Rect e)
+    {
+        if (_virtualView is null)
+        {
+            return;
+        }
+
+        _virtualView.Frame = e;
     }
 }
