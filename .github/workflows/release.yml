@@ -25,7 +25,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
+        global-json-file: global.json
     
     - name: Install .NET MAUI Workload
       run: dotnet workload install maui --source https://api.nuget.org/v3/index.json

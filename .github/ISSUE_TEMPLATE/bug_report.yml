@@ -1,0 +1,45 @@
+name: Bug
+title: '[BUG] <title>'
+description: File a bug report
+labels: ["bug", "to verify"]
+assignees: []
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Detailed description of the issue that you're seeing. You can add screenshots and videos as well and a **reproduction** project
+      placeholder: What is wrong?
+    validations:
+      required: true
+  - type: textarea
+    id: repro-steps
+    attributes:
+      label: Steps to Reproduce
+      description: Describe all the steps to show the behavior that you have observed.
+      placeholder: |
+        1. Create a File > New App
+        2. Add a `Button` like so: `<Button Text="this is a bug" />`
+        3. Click the added button and bang!
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platforms-affected
+    attributes:
+      label: Affected platforms
+      description: Select all or any platform that you see this issue on.
+      multiple: true
+      options:
+        - iOS
+        - Android
+        - macOS
+        - I was *not* able test on other platforms
+    validations:
+      required: true
+
+  - type: textarea
+    id: workaround
+    attributes:
+      label: Did you find any workaround?
+      description: Did you find any workaround for this issue?

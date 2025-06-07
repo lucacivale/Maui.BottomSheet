@@ -1,0 +1,6 @@
+{
+  "android": "Android",
+  "ios": "iOS",
+  "macOS": "macOS",
+  "macios": ["macos", "ios"]
+}
