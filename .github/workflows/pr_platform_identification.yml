@@ -25,10 +25,12 @@ jobs:
         with:
           script: |
             const fs = require('fs');
+
+            // Load config JSON
             const configPath = '.github/${{ env.ConfigFileName }}';
             const rawConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 
-            // Normalize config keys and ensure values are arrays
+            // Normalize config keys to lowercase and ensure values are arrays
             const config = {};
             for (const key in rawConfig) {
               if (Array.isArray(rawConfig[key])) {
@@ -38,7 +40,33 @@ jobs:
               }
             }
 
-            const pr = context.payload.pull_request;
+            // Function to get PR or commit info depending on event
+            async function getPR() {
+              if (context.payload.pull_request) {
+                return context.payload.pull_request;
+              } else if (context.payload.ref && context.payload.head_commit) {
+                // On push event - try to find PR associated with this commit
+                const prs = await github.rest.pulls.list({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  head: `${context.repo.owner}:${context.payload.ref.replace('refs/heads/', '')}`,
+                  state: 'open'
+                });
+                if (prs.data.length > 0) {
+                  return prs.data[0];
+                }
+                return null;
+              }
+              return null;
+            }
+
+            const pr = await getPR();
+
+            if (!pr) {
+              console.log('No pull request found for this event, skipping platform identification.');
+              return;
+            }
+
             const prTitle = pr.title.trim();
             const prBody = pr.body || '';
 
@@ -83,7 +111,7 @@ jobs:
               }
             }
 
-            // 4. Analyze changed files under Platform/ anywhere in the path
+            // 4. Analyze changed files under "Platform" folder anywhere in the path
             const filesChanged = await github.paginate(
               github.rest.pulls.listFiles,
               {
@@ -111,20 +139,17 @@ jobs:
 
             // 5. Apply labels with removal of old platform labels
 
-            // Get all current labels on the PR
+            // Get current labels on the PR
             const currentLabels = pr.labels.map(label => label.name);
 
-            // Platform labels from config values (flattened)
+            // Flatten all platform labels from config
             const platformLabels = new Set(
               Object.values(config).flat()
             );
 
-            // Labels currently detected by this run
-            const detectedLabels = labelsToAdd;
-
-            // Labels to remove = currently on PR but not detected now, and part of platform labels
+            // Labels to remove: currently on PR but not detected now and are platform labels
             const labelsToRemove = currentLabels.filter(label =>
-              platformLabels.has(label) && !detectedLabels.has(label)
+              platformLabels.has(label) && !labelsToAdd.has(label)
             );
 
             if (labelsToAdd.size > 0) {
@@ -141,12 +166,14 @@ jobs:
 
             if (labelsToRemove.length > 0) {
               console.log(`Removing labels: ${labelsToRemove.join(', ')}`);
-              await github.rest.issues.removeLabels({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: pr.number,
-                names: labelsToRemove
-              });
+              for (const label of labelsToRemove) {
+                await github.rest.issues.removeLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: pr.number,
+                  name: label
+                });
+              }
             } else {
               console.log('No platform labels to remove.');
             }
@@ -161,13 +188,14 @@ jobs:
               .replace(/\s+/g, ' ')
               .trim();
 
-            const newPrefixes = [...matchedPlatforms].filter(
-              p => !existingPrefixesLower.includes(p.toLowerCase())
-            );
-
-            // Remove prefixes that are no longer matched
+            // Remove prefixes no longer matched
             const prefixesToKeep = existingPrefixes.filter(p =>
               matchedPlatforms.has(p) || matchedPlatforms.has(p.toLowerCase())
+            );
+
+            // Add new prefixes not already present
+            const newPrefixes = [...matchedPlatforms].filter(
+              p => !existingPrefixesLower.includes(p.toLowerCase())
             );
 
             const finalPrefixes = [...prefixesToKeep, ...newPrefixes]
@@ -196,12 +224,18 @@ jobs:
             };
 
             const platformList = [...matchedPlatforms];
-            const summaryLines = platformList.map(p => {
-              const emoji = emojiMap[p.toLowerCase()] || '🔧';
-              return `- ${emoji} \`${p}\``;
-            });
+            let summaryBody;
 
-            const summaryBody = `👋 This pull request touches the following platform(s):\n\n${summaryLines.join('\n')}\n\n_Detected via linked issues, PR content, and changed files under \`Platform/\`._`;
+            if (platformList.length === 0) {
+              summaryBody = `👋 This pull request touches no platform.\n\n_Detected via linked issues, PR content, and changed files under \`Platform/\`._`;
+            } else {
+              const summaryLines = platformList.map(p => {
+                const emoji = emojiMap[p.toLowerCase()] || '🔧';
+                return `- ${emoji} \`${p}\``;
+              });
+
+              summaryBody = `👋 This pull request touches the following platform(s):\n\n${summaryLines.join('\n')}\n\n_Detected via linked issues, PR content, and changed files under \`Platform/\`._`;
+            }
 
             const existingComments = await github.rest.issues.listComments({
               owner: context.repo.owner,
@@ -211,7 +245,7 @@ jobs:
 
             const botComment = existingComments.data.find(c =>
               c.user?.type === 'Bot' &&
-              c.body?.includes('pull request touches the following platform')
+              c.body?.includes('pull request touches')
             );
 
             if (botComment) {
