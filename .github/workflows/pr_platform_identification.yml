@@ -1,0 +1,233 @@
+name: PR Platform Identification
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: read
+
+env:
+  ConfigFileName: platform_identification_config.json
+
+jobs:
+  pr_platform_identification:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Analyze PR and apply platform labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const configPath = '.github/${{ env.ConfigFileName }}';
+            const rawConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+
+            // Normalize config keys and ensure values are arrays
+            const config = {};
+            for (const key in rawConfig) {
+              if (Array.isArray(rawConfig[key])) {
+                config[key.toLowerCase()] = rawConfig[key];
+              } else {
+                config[key.toLowerCase()] = [rawConfig[key]];
+              }
+            }
+
+            const pr = context.payload.pull_request;
+            const prTitle = pr.title.trim();
+            const prBody = pr.body || '';
+
+            // 1. Extract linked issues
+            const issueMatches = [...prBody.matchAll(/#(\d+)/g)];
+            const issueNumbers = [...new Set(issueMatches.map(m => parseInt(m[1])))];
+            let contentToAnalyze = '';
+
+            for (const issueNumber of issueNumbers) {
+              try {
+                const { data: issue } = await github.rest.issues.get({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issueNumber
+                });
+                contentToAnalyze += (issue.title || '') + '\n' + (issue.body || '') + '\n';
+              } catch (e) {
+                console.log(`Failed to get issue #${issueNumber}: ${e.message}`);
+              }
+            }
+
+            // 2. Fallback to PR content
+            if (!contentToAnalyze.trim()) {
+              console.log('No linked issue content found. Using PR content.');
+              contentToAnalyze = prTitle + '\n' + prBody;
+            }
+
+            contentToAnalyze = contentToAnalyze.toLowerCase();
+
+            const labelsToAdd = new Set();
+            const matchedPlatforms = new Set();
+
+            // 3. Match content keywords
+            for (const keyword in config) {
+              const labels = config[keyword];
+              const regex = new RegExp(`\\b${keyword}\\b`, 'i');
+              if (regex.test(contentToAnalyze)) {
+                for (const label of labels) {
+                  labelsToAdd.add(label);
+                  matchedPlatforms.add(label);
+                }
+              }
+            }
+
+            // 4. Analyze changed files under Platform/ anywhere in the path
+            const filesChanged = await github.paginate(
+              github.rest.pulls.listFiles,
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr.number
+              }
+            );
+
+            for (const file of filesChanged) {
+              const lowerPathParts = file.filename.toLowerCase().split('/');
+              const platformIndex = lowerPathParts.indexOf('platform');
+
+              if (platformIndex !== -1 && lowerPathParts.length > platformIndex + 1) {
+                const folderName = lowerPathParts[platformIndex + 1];
+                if (config[folderName]) {
+                  const labels = config[folderName];
+                  for (const label of labels) {
+                    labelsToAdd.add(label);
+                    matchedPlatforms.add(label);
+                  }
+                }
+              }
+            }
+
+            // 5. Apply labels with removal of old platform labels
+
+            // Get all current labels on the PR
+            const currentLabels = pr.labels.map(label => label.name);
+
+            // Platform labels from config values (flattened)
+            const platformLabels = new Set(
+              Object.values(config).flat()
+            );
+
+            // Labels currently detected by this run
+            const detectedLabels = labelsToAdd;
+
+            // Labels to remove = currently on PR but not detected now, and part of platform labels
+            const labelsToRemove = currentLabels.filter(label =>
+              platformLabels.has(label) && !detectedLabels.has(label)
+            );
+
+            if (labelsToAdd.size > 0) {
+              console.log(`Adding labels: ${[...labelsToAdd].join(', ')}`);
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                labels: [...labelsToAdd]
+              });
+            } else {
+              console.log('No platform labels detected.');
+            }
+
+            if (labelsToRemove.length > 0) {
+              console.log(`Removing labels: ${labelsToRemove.join(', ')}`);
+              await github.rest.issues.removeLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                names: labelsToRemove
+              });
+            } else {
+              console.log('No platform labels to remove.');
+            }
+
+            // 6. Update PR title with platform prefixes
+            const existingMatches = [...prTitle.matchAll(/\[(.*?)\]/g)];
+            const existingPrefixes = existingMatches.map(m => m[1]);
+            const existingPrefixesLower = existingPrefixes.map(p => p.toLowerCase());
+
+            const titleWithoutPrefixes = prTitle
+              .replace(/^(\[(.*?)\]\s*)+/g, '')
+              .replace(/\s+/g, ' ')
+              .trim();
+
+            const newPrefixes = [...matchedPlatforms].filter(
+              p => !existingPrefixesLower.includes(p.toLowerCase())
+            );
+
+            // Remove prefixes that are no longer matched
+            const prefixesToKeep = existingPrefixes.filter(p =>
+              matchedPlatforms.has(p) || matchedPlatforms.has(p.toLowerCase())
+            );
+
+            const finalPrefixes = [...prefixesToKeep, ...newPrefixes]
+              .map(p => `[${p.trim()}]`)
+              .join(' ') + ' ';
+
+            const newTitle = (finalPrefixes + titleWithoutPrefixes).replace(/\s+/g, ' ').trim();
+
+            if (newTitle !== prTitle) {
+              console.log(`Updating PR title to: ${newTitle}`);
+              await github.rest.pulls.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr.number,
+                title: newTitle
+              });
+            } else {
+              console.log('No title update needed.');
+            }
+
+            // 7. Post/update comment with platform summary
+            const emojiMap = {
+              macos: '🍎',
+              android: '🤖',
+              ios: '📱',
+            };
+
+            const platformList = [...matchedPlatforms];
+            const summaryLines = platformList.map(p => {
+              const emoji = emojiMap[p.toLowerCase()] || '🔧';
+              return `- ${emoji} \`${p}\``;
+            });
+
+            const summaryBody = `👋 This pull request touches the following platform(s):\n\n${summaryLines.join('\n')}\n\n_Detected via linked issues, PR content, and changed files under \`Platform/\`._`;
+
+            const existingComments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number
+            });
+
+            const botComment = existingComments.data.find(c =>
+              c.user?.type === 'Bot' &&
+              c.body?.includes('pull request touches the following platform')
+            );
+
+            if (botComment) {
+              console.log('Updating existing platform summary comment.');
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: summaryBody
+              });
+            } else {
+              console.log('Posting new platform summary comment.');
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                body: summaryBody
+              });
+            }
