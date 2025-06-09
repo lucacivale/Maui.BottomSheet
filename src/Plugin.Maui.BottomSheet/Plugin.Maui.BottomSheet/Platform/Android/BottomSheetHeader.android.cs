@@ -95,22 +95,7 @@ internal sealed class BottomSheetHeader : IDisposable
         remove => _eventManager.RemoveEventHandler(value);
     }
 
-    /// <summary>
-    /// Gets header view.
-    /// </summary>
-    public AView HeaderView
-    {
-        get
-        {
-            if (_headerView is null
-                || _bottomSheetHeader.HasHeaderView())
-            {
-                _headerView = CreateHeader(_bottomSheetHeader);
-            }
-
-            return _headerView;
-        }
-    }
+    public double Height => _headerView?.Height ?? 0;
 
     /// <summary>
     /// Set style.

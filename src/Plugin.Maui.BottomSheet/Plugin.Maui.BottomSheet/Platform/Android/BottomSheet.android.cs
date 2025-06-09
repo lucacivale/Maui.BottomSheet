@@ -492,7 +492,7 @@ internal sealed class BottomSheet : IDisposable
         else
         {
             var height = _bottomSheetHandle.Handle.Height
-                + (_bottomSheetHeader?.HeaderView.Height ?? 0)
+                + (_bottomSheetHeader?.Height ?? 0)
                 + _handleMargin
                 + _headerMargin
                 + _peekHeight;
