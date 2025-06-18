@@ -180,9 +180,9 @@ internal sealed class BottomSheet : IDisposable
     /// <summary>
     /// Gets or sets the Color which will fill the background of an element.
     /// </summary>
-    public Color BackgroundColor
+    public Color? BackgroundColor
     {
-        get => _backgroundColor ?? Colors.White;
+        get => _backgroundColor;
         set
         {
             _backgroundColor = value;
@@ -560,7 +560,7 @@ internal sealed class BottomSheet : IDisposable
         else
         {
             var height = _bottomSheetHandle.Handle.Height
-                + (_bottomSheetHeader?.HeaderView.Height ?? 0)
+                + (_bottomSheetHeader?.Height ?? 0)
                 + _handleMargin
                 + _headerMargin
                 + _peekHeight;
@@ -622,10 +622,18 @@ internal sealed class BottomSheet : IDisposable
         _virtualBottomSheetContent = _bottomSheetContent.CreateContent();
         _platformBottomSheetContent = _virtualBottomSheetContent.ToPlatform(_mauiContext);
 
+        var fillAvailableSpace = _mauiContext.Services.GetRequiredService<Configuration>().FeatureFlags.ContentFillsAvailableSpace;
+
         _contentLayoutParams = new GridLayout.LayoutParams()
         {
-            RowSpec = GridLayout.InvokeSpec(ContentRow),
+            RowSpec = fillAvailableSpace ? GridLayout.InvokeSpec(ContentRow, 1f) : GridLayout.InvokeSpec(ContentRow),
         };
+
+        if (fillAvailableSpace)
+        {
+            _contentLayoutParams.Height = 0;
+        }
+
         _contentLayoutParams.SetGravity(AGravityFlags.Fill);
 
         _sheetContainer.AddView(_platformBottomSheetContent, _contentLayoutParams);
@@ -688,7 +696,8 @@ internal sealed class BottomSheet : IDisposable
 
     private void ApplyBackgroundColor()
     {
-        if (_sheetContainer.Parent is AView bottomSheetFrame)
+        if (_sheetContainer.Parent is AView bottomSheetFrame
+            && BackgroundColor is not null)
         {
             bottomSheetFrame.BackgroundTintList = AColorStateList.ValueOf(BackgroundColor.ToPlatform());
         }

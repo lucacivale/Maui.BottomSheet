@@ -1,0 +1,101 @@
+name: Issues platform identification
+
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  contents: read
+  issues: write
+
+env:
+  ConfigFileName: platform_identification_config.json
+  
+jobs:
+  issue_platform_identification:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Read config and apply labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = '.github/${{ env.ConfigFileName }}';
+            const config = JSON.parse(fs.readFileSync(path, 'utf8'));
+      
+            const rawTitle = context.payload.issue.title || '';
+            const rawBody = context.payload.issue.body || '';
+      
+            const title = rawTitle.toLowerCase().trim();
+            const body = rawBody.toLowerCase().trim();
+      
+             if (!title && !body) {
+              console.log('Issue has no title or body. Skipping label.');
+              return;
+            }
+
+            const content = title + '\n' + body;
+            const labelsToAdd = [];
+            const matchedPlatforms = [];
+
+            for (const keyword in config) {
+              const label = config[keyword];
+              const regex = new RegExp(`\\b${keyword}\\b`, 'i');
+              if (regex.test(content)) {
+                if (!labelsToAdd.includes(label)) labelsToAdd.push(label);
+                if (!matchedPlatforms.includes(label)) matchedPlatforms.push(label);
+              }
+            }
+
+            if (labelsToAdd.length > 0) {
+              console.log(`Adding labels: ${labelsToAdd.join(', ')}`);
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                labels: labelsToAdd
+              });
+            } else {
+              console.log('No matching labels found.');
+            }
+
+            const currentTitle = context.payload.issue.title.trim();
+
+            // Extract and preserve all existing prefixes
+            const existingMatches = [...currentTitle.matchAll(/\[(.*?)\]/g)];
+            const existingPrefixes = existingMatches.map(m => m[1]);
+            const existingPrefixesLower = existingPrefixes.map(p => p.toLowerCase());
+
+            // Clean base title (strip all leading prefix blocks)
+            const titleWithoutPrefixes = currentTitle
+              .replace(/^(\[(.*?)\]\s*)+/g, '')
+              .replace(/\s+/g, ' ')
+              .trim();
+
+            // Add new platform prefixes if missing
+            const newPrefixes = matchedPlatforms.filter(
+              p => !existingPrefixesLower.includes(p.toLowerCase())
+            );
+
+            // Combine all prefixes and clean spacing
+            const finalPrefixes = [...existingPrefixes, ...newPrefixes]
+              .map(p => `[${p.trim()}]`)
+              .join(' ') + ' ';
+
+            const newTitle = (finalPrefixes + titleWithoutPrefixes).replace(/\s+/g, ' ').trim();
+
+            if (newTitle !== currentTitle) {
+              console.log(`Updating title to: ${newTitle}`);
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                title: newTitle
+              });
+            } else {
+              console.log('No title update needed.');
+            }

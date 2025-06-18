@@ -1,6 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-using Plugin.Maui.BottomSheet.Navigation;
-
 namespace Plugin.Maui.BottomSheet;
 
 // ReSharper disable once InconsistentNaming
@@ -10,24 +7,6 @@ namespace Plugin.Maui.BottomSheet;
 /// </summary>
 internal static class IBottomSheetExtensions
 {
-    /// <summary>
-    /// Is navigation confirmation configured for <paramref name="bottomSheet"/>.
-    /// </summary>
-    /// <param name="bottomSheet">BottomSheet.</param>
-    /// <returns>Is navigation confirmation configured.</returns>
-    [SuppressMessage("Usage", "SuspiciousTypeConversion.Global: ReSharper disable once SuspiciousTypeConversion.Global", Justification = "False positive.")]
-    internal static bool ShouldConfirmNavigation(this IBottomSheet bottomSheet)
-    {
-        return bottomSheet.Parent is IConfirmNavigation
-            || bottomSheet.Parent.BindingContext is IConfirmNavigation
-            || bottomSheet.Parent is IConfirmNavigationAsync
-            || bottomSheet.Parent.BindingContext is IConfirmNavigationAsync
-            || bottomSheet is IConfirmNavigation
-            || bottomSheet.BindingContext is IConfirmNavigation
-            || bottomSheet is IConfirmNavigationAsync
-            || bottomSheet.BindingContext is IConfirmNavigationAsync;
-    }
-
     /// <summary>
     /// Get the <see cref="ContentPage"/> parent of <see cref="IBottomSheet"/>.
     /// </summary>
@@ -39,9 +18,18 @@ internal static class IBottomSheetExtensions
 
         var parent = bottomSheet.Parent;
 
-        if (parent is Shell shell)
+        if (parent is IPageContainer<Page> pageContainer)
         {
-            page = shell.CurrentPage;
+            page = pageContainer.CurrentPage;
+        }
+        else if (parent is FlyoutPage flyoutPage)
+        {
+            page = flyoutPage.IsPresented ? flyoutPage.Flyout : flyoutPage.Detail;
+
+            if (page is IPageContainer<Page> container)
+            {
+                page = container.CurrentPage;
+            }
         }
         else
         {

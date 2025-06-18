@@ -39,10 +39,12 @@ Install package [Plugin.Maui.BottomSheet](https://www.nuget.org/packages/Plugin.
 Enable this plugin by calling `UseBottomSheet()` in your `MauiProgram.cs`
 
 ```cs
+using Plugin.Maui.BottomSheet.Hosting;
+
 var builder = MauiApp.CreateBuilder();
 builder
   .UseMauiApp<App>()
-  .UseMauiBottomSheet()
+  .UseBottomSheet()
   .ConfigureFonts(fonts =>
   {
     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
