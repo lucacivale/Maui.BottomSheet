@@ -18,10 +18,8 @@ using Microsoft.Maui.Platform;
 // ReSharper disable RedundantNameQualifier
 using View = Microsoft.Maui.Controls.View;
 
-// ReSharper restore RedundantNameQualifier
-
 /// <summary>
-/// The header shown at the top of <see cref="MauiBottomSheet"/>.
+/// Manages the header section of the bottom sheet including title and navigation buttons.
 /// </summary>
 internal sealed class BottomSheetHeader : IDisposable
 {
@@ -50,10 +48,10 @@ internal sealed class BottomSheetHeader : IDisposable
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheetHeader"/> class.
     /// </summary>
-    /// <param name="context"><see cref="Context"/>.</param>
-    /// <param name="mauiContext"><see cref="IMauiContext"/>.</param>
-    /// <param name="bottomSheetHeader"><see cref="Maui.BottomSheet.BottomSheetHeader"/>.</param>
-    /// <param name="headerStyle">Style.</param>
+    /// <param name="context">The Android context.</param>
+    /// <param name="mauiContext">The MAUI context.</param>
+    /// <param name="bottomSheetHeader">The header configuration.</param>
+    /// <param name="headerStyle">The header style.</param>
     public BottomSheetHeader(
         Context context,
         IMauiContext mauiContext,
@@ -78,7 +76,7 @@ internal sealed class BottomSheetHeader : IDisposable
     }
 
     /// <summary>
-    /// Header layout changed
+    /// Occurs when the header layout changes.
     /// </summary>
     public event EventHandler LayoutChanged
     {
@@ -87,7 +85,7 @@ internal sealed class BottomSheetHeader : IDisposable
     }
 
     /// <summary>
-    /// Close button clicked
+    /// Occurs when the close button is clicked.
     /// </summary>
     public event EventHandler CloseButtonClicked
     {
@@ -95,12 +93,15 @@ internal sealed class BottomSheetHeader : IDisposable
         remove => _eventManager.RemoveEventHandler(value);
     }
 
+    /// <summary>
+    /// Gets the height of the header view.
+    /// </summary>
     public double Height => _headerView?.Height ?? 0;
 
     /// <summary>
-    /// Set style.
+    /// Sets the header style and updates bindings.
     /// </summary>
-    /// <param name="style">Style.</param>
+    /// <param name="style">The new header style.</param>
     public void SetStyle(BottomSheetHeaderStyle style)
     {
         _headerStyle.PropertyChanged -= HeaderStyleOnPropertyChanged;
@@ -114,7 +115,7 @@ internal sealed class BottomSheetHeader : IDisposable
     }
 
     /// <summary>
-    /// Raise <see cref="LayoutChanged"/>.
+    /// Raises the layout changed event and adjusts title view width.
     /// </summary>
     public void RaiseLayoutChangedEvent()
     {
@@ -129,9 +130,9 @@ internal sealed class BottomSheetHeader : IDisposable
     }
 
     /// <summary>
-    /// Create header view.
+    /// Creates and returns the complete header view.
     /// </summary>
-    /// <returns>Created header.</returns>
+    /// <returns>The created header view.</returns>
     public AView CreateHeader()
     {
         _headerView = CreateHeader(_bottomSheetHeader);
@@ -141,9 +142,9 @@ internal sealed class BottomSheetHeader : IDisposable
     }
 
     /// <summary>
-    /// Sets the header title.
+    /// Sets the title text for the header.
     /// </summary>
-    /// <param name="title">Title text.</param>
+    /// <param name="title">The title text to display.</param>
     public void SetTitleText(string title)
     {
         if (_titleText == title
@@ -174,7 +175,7 @@ internal sealed class BottomSheetHeader : IDisposable
     }
 
     /// <summary>
-    /// Removes the header from the BottomSheet.
+    /// Removes the header from the bottom sheet and cleans up resources.
     /// </summary>
     public void Remove()
     {
@@ -198,13 +199,19 @@ internal sealed class BottomSheetHeader : IDisposable
         RaiseLayoutChangedEvent();
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Releases all resources used by the header.
+    /// </summary>
     public void Dispose()
     {
         Dispose(true);
         GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// Removes a view from its parent if it has one.
+    /// </summary>
+    /// <param name="view">The view to remove.</param>
     private static void RemoveFromParent(AView? view)
     {
         if (view?.Parent is not null)
@@ -213,6 +220,11 @@ internal sealed class BottomSheetHeader : IDisposable
         }
     }
 
+    /// <summary>
+    /// Creates layout parameters for header views with specified positioning.
+    /// </summary>
+    /// <param name="layoutRule">The layout rule for positioning.</param>
+    /// <returns>The configured layout parameters.</returns>
     private static RelativeLayout.LayoutParams CreateHeaderViewLayoutParams(LayoutRules layoutRule)
     {
         var layoutParams = new RelativeLayout.LayoutParams(AViewGroup.LayoutParams.WrapContent, AViewGroup.LayoutParams.WrapContent);
@@ -221,6 +233,10 @@ internal sealed class BottomSheetHeader : IDisposable
         return layoutParams;
     }
 
+    /// <summary>
+    /// Creates layout parameters for the title view with center positioning and margins.
+    /// </summary>
+    /// <returns>The configured layout parameters.</returns>
     private static RelativeLayout.LayoutParams CreateTitleViewLayoutParams()
     {
         var layoutParams = new RelativeLayout.LayoutParams(AViewGroup.LayoutParams.WrapContent, AViewGroup.LayoutParams.WrapContent)
@@ -234,18 +250,33 @@ internal sealed class BottomSheetHeader : IDisposable
         return layoutParams;
     }
 
+    /// <summary>
+    /// Removes a view and sets the reference to null.
+    /// </summary>
+    /// <param name="view">The view reference to remove.</param>
+    /// <param name="mauiView">The associated MAUI view.</param>
     private void RemoveView(ref AView? view, View? mauiView)
     {
         RemoveView(view, mauiView);
         view = null;
     }
 
+    /// <summary>
+    /// Removes a relative layout and sets the reference to null.
+    /// </summary>
+    /// <param name="view">The layout reference to remove.</param>
+    /// <param name="mauiView">The associated MAUI view.</param>
     private void RemoveView(ref RelativeLayout? view, View? mauiView)
     {
         RemoveView(view, mauiView);
         view = null;
     }
 
+    /// <summary>
+    /// Removes a view from its parent and disposes resources.
+    /// </summary>
+    /// <param name="view">The view to remove.</param>
+    /// <param name="mauiView">The associated MAUI view to disconnect.</param>
     private void RemoveView(AView? view, View? mauiView)
     {
         if (view is MaterialButton)
@@ -260,6 +291,11 @@ internal sealed class BottomSheetHeader : IDisposable
         view?.Dispose();
     }
 
+    /// <summary>
+    /// Creates the header view based on the configuration, either custom or default layout.
+    /// </summary>
+    /// <param name="bottomSheetHeader">The header configuration.</param>
+    /// <returns>The created header view.</returns>
     private AView CreateHeader(Plugin.Maui.BottomSheet.BottomSheetHeader? bottomSheetHeader)
     {
         ArgumentNullException.ThrowIfNull(bottomSheetHeader);
@@ -287,6 +323,11 @@ internal sealed class BottomSheetHeader : IDisposable
         return _headerLayout;
     }
 
+    /// <summary>
+    /// Creates a title view with proper styling and data binding.
+    /// </summary>
+    /// <param name="titleText">The title text to display.</param>
+    /// <returns>The created title TextView.</returns>
     private TextView CreateTitleView(string? titleText)
     {
         Label title = new()
@@ -314,6 +355,11 @@ internal sealed class BottomSheetHeader : IDisposable
         return (view as TextView)!;
     }
 
+    /// <summary>
+    /// Creates a platform view from a MAUI view with proper binding and parent setup.
+    /// </summary>
+    /// <param name="view">The MAUI view to convert.</param>
+    /// <returns>The created platform view.</returns>
     private AView CreatePlatformView(View view)
     {
         view.BindingContext = _bottomSheetHeader.BindingContext;
@@ -325,6 +371,9 @@ internal sealed class BottomSheetHeader : IDisposable
         return platformView;
     }
 
+    /// <summary>
+    /// Configures the header by adding appropriate buttons and title based on configuration.
+    /// </summary>
     private void ConfigureHeader()
     {
         RemoveView(ref _topLeftView, _bottomSheetHeader.TopLeftButton);
@@ -372,6 +421,10 @@ internal sealed class BottomSheetHeader : IDisposable
         }
     }
 
+    /// <summary>
+    /// Creates a Material Design close button with proper styling and icon.
+    /// </summary>
+    /// <returns>The created close button.</returns>
     private MaterialButton CreateCloseButton()
     {
         var closeButton = new MaterialButton(_context);
@@ -389,6 +442,10 @@ internal sealed class BottomSheetHeader : IDisposable
         return closeButton;
     }
 
+    /// <summary>
+    /// Creates the main header layout container as a RelativeLayout.
+    /// </summary>
+    /// <returns>The created header layout.</returns>
     private RelativeLayout CreateHeaderLayout()
     {
         var linearLayout = new RelativeLayout(_context)
@@ -401,11 +458,21 @@ internal sealed class BottomSheetHeader : IDisposable
         return linearLayout;
     }
 
+    /// <summary>
+    /// Handles close button click events and raises the CloseButtonClicked event.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
     private void RaiseCloseButtonClicked(object? sender, EventArgs e)
     {
         _eventManager.HandleEvent(this, EventArgs.Empty, nameof(CloseButtonClicked));
     }
 
+    /// <summary>
+    /// Handles property changes on the bottom sheet header and updates the UI accordingly.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The property changed event arguments.</param>
     private void BottomSheetHeaderOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         switch (e.PropertyName)
@@ -436,6 +503,11 @@ internal sealed class BottomSheetHeader : IDisposable
         }
     }
 
+    /// <summary>
+    /// Handles property changes on the header style and updates close button appearance.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The property changed event arguments.</param>
     private void HeaderStyleOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         BottomSheetHeaderStyle style = (BottomSheetHeaderStyle)sender!;
@@ -467,6 +539,10 @@ internal sealed class BottomSheetHeader : IDisposable
         }
     }
 
+    /// <summary>
+    /// Releases managed and unmanaged resources.
+    /// </summary>
+    /// <param name="disposing">True if disposing managed resources.</param>
     private void Dispose(bool disposing)
     {
         if (!disposing)

@@ -1,27 +1,27 @@
 namespace Plugin.Maui.BottomSheet;
 
 /// <summary>
-/// Show a button on the left, right, on both sides or no button at all.
+/// Specifies which buttons should be displayed in the bottom sheet header.
 /// </summary>
 public enum BottomSheetHeaderButtonAppearanceMode
 {
     /// <summary>
-    /// Don't show a button.
+    /// No buttons are displayed in the header.
     /// </summary>
     None,
 
     /// <summary>
-    /// Show a button on the left and right.
+    /// Both left and right buttons are displayed in the header.
     /// </summary>
     LeftAndRightButton,
 
     /// <summary>
-    /// Show a button on the left.
+    /// Only the left button is displayed in the header.
     /// </summary>
     LeftButton,
 
     /// <summary>
-    /// Show a button on the right.
+    /// Only the right button is displayed in the header.
     /// </summary>
     RightButton,
 }

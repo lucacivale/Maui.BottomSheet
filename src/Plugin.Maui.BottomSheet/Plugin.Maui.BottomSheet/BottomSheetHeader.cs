@@ -3,12 +3,12 @@ namespace Plugin.Maui.BottomSheet;
 using Microsoft.Maui.Controls;
 
 /// <summary>
-/// The header shown at the top of <see cref="IBottomSheet"/>.
+/// Represents the header section displayed at the top of a bottom sheet.
 /// </summary>
 public sealed class BottomSheetHeader : BindableObject
 {
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the title text.
     /// </summary>
     public static readonly BindableProperty TitleTextProperty =
         BindableProperty.Create(
@@ -17,7 +17,7 @@ public sealed class BottomSheetHeader : BindableObject
             typeof(BottomSheetHeader));
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the top left button.
     /// </summary>
     public static readonly BindableProperty TopLeftButtonProperty =
         BindableProperty.Create(
@@ -26,7 +26,7 @@ public sealed class BottomSheetHeader : BindableObject
             typeof(BottomSheetHeader));
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the top right button.
     /// </summary>
     // ReSharper disable once MemberCanBePrivate.Global
     public static readonly BindableProperty TopRightButtonProperty =
@@ -36,7 +36,7 @@ public sealed class BottomSheetHeader : BindableObject
             typeof(BottomSheetHeader));
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the close button visibility.
     /// </summary>
     public static readonly BindableProperty ShowCloseButtonProperty =
         BindableProperty.Create(
@@ -45,7 +45,7 @@ public sealed class BottomSheetHeader : BindableObject
             typeof(BottomSheetHeader));
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the close button position.
     /// </summary>
     public static readonly BindableProperty CloseButtonPositionProperty =
         BindableProperty.Create(
@@ -55,7 +55,7 @@ public sealed class BottomSheetHeader : BindableObject
             defaultValue: CloseButtonPosition.TopRight);
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the custom header data template.
     /// </summary>
     // ReSharper disable once MemberCanBePrivate.Global
     public static readonly BindableProperty HeaderDataTemplateProperty =
@@ -65,7 +65,7 @@ public sealed class BottomSheetHeader : BindableObject
             typeof(BottomSheetHeader));
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the header button appearance mode.
     /// </summary>
     // ReSharper disable once MemberCanBePrivate.Global
     public static readonly BindableProperty HeaderAppearanceProperty =
@@ -75,43 +75,42 @@ public sealed class BottomSheetHeader : BindableObject
             typeof(BottomSheetHeader));
 
     /// <summary>
-    /// Gets or sets title text.
+    /// Gets or sets the title text displayed in the header.
     /// </summary>
     public string? TitleText { get => (string?)GetValue(TitleTextProperty); set => SetValue(TitleTextProperty, value); }
 
     /// <summary>
-    /// Gets or sets the <see cref="Button"/> at the top left in the <see cref="BottomSheetHeader"/>.
+    /// Gets or sets the button displayed at the top left of the header.
     /// </summary>
     public Button? TopLeftButton { get => (Button?)GetValue(TopLeftButtonProperty); set => SetValue(TopLeftButtonProperty, value); }
 
     /// <summary>
-    /// Gets or sets the <see cref="Button"/> at the top right in the <see cref="BottomSheetHeader"/>.
+    /// Gets or sets the button displayed at the top right of the header.
     /// </summary>
     public Button? TopRightButton { get => (Button?)GetValue(TopRightButtonProperty); set => SetValue(TopRightButtonProperty, value); }
 
     /// <summary>
-    /// Gets or sets the <see cref="CloseButtonPosition"/>. Default is <see cref="CloseButtonPosition.TopRight"/>.
+    /// Gets or sets the position of the close button in the header.
     /// </summary>
     public CloseButtonPosition CloseButtonPosition { get => (CloseButtonPosition)GetValue(CloseButtonPositionProperty); set => SetValue(CloseButtonPositionProperty, value); }
 
     /// <summary>
-    /// Gets or sets a value indicating whether to show the close button.
-    /// The close button will replace either top left or top right button based on <see cref="CloseButtonPosition"/>.
+    /// Gets or sets a value indicating whether the close button should be displayed.
     /// </summary>
     public bool ShowCloseButton { get => (bool)GetValue(ShowCloseButtonProperty); set => SetValue(ShowCloseButtonProperty, value); }
 
     /// <summary>
-    /// Gets or sets a custom header <see cref="View"/>.
+    /// Gets or sets the data template for creating a custom header view.
     /// </summary>
     public DataTemplate? HeaderDataTemplate { get => (DataTemplate?)GetValue(HeaderDataTemplateProperty); set => SetValue(HeaderDataTemplateProperty, value); }
 
     /// <summary>
-    /// Gets or sets the <see cref="BottomSheetHeaderButtonAppearanceMode"/>.
+    /// Gets or sets the appearance mode for header buttons.
     /// </summary>
     public BottomSheetHeaderButtonAppearanceMode HeaderAppearance { get => (BottomSheetHeaderButtonAppearanceMode)GetValue(HeaderAppearanceProperty); set => SetValue(HeaderAppearanceProperty, value); }
 
     /// <summary>
-    /// Gets or sets the parent <see cref="Element"/> of this element.
+    /// Gets or sets the parent element of this header.
     /// </summary>
     public Element? Parent { get; set; }
 }

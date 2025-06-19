@@ -1,15 +1,15 @@
 namespace Plugin.Maui.BottomSheet;
 
 /// <summary>
-/// <see cref="View"/> extension methods.
+/// Extension methods for View objects to provide bottom sheet-related functionality.
 /// </summary>
 internal static class ViewExtensions
 {
     /// <summary>
-    /// Finds <see cref="IBottomSheet"/> parent of view.
+    /// Traverses the visual tree upward to find the first parent that implements IBottomSheet.
     /// </summary>
-    /// <param name="view"><see cref="View"/>.</param>
-    /// <returns>Found <see cref="IBottomSheet"/> instance.</returns>
+    /// <param name="view">The view to start the search from.</param>
+    /// <returns>The first IBottomSheet parent found, or null if none exists.</returns>
     internal static IBottomSheet? FindBottomSheet(this View view)
     {
         IBottomSheet? bottomSheet = null;
@@ -31,10 +31,10 @@ internal static class ViewExtensions
 
     #if MACCATALYST || IOS
     /// <summary>
-    /// Finds BottomSheetPage parent of <see cref="View"/>.
+    /// Traverses the visual tree upward to find the first parent that is a BottomSheetPage (macOS/iOS platforms only).
     /// </summary>
-    /// <param name="view"><see cref="View"/>.</param>
-    /// <returns>BottomSheetPage parent.</returns>
+    /// <param name="view">The view to start the search from.</param>
+    /// <returns>The first BottomSheetPage parent found, or null if none exists.</returns>
     internal static Platform.MaciOS.BottomSheetPage? FindBottomSheetPage(this View view)
     {
         Platform.MaciOS.BottomSheetPage? bottomSheetPage = null;

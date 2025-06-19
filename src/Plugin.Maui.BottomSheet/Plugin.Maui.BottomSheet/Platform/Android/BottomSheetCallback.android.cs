@@ -7,14 +7,14 @@ namespace Plugin.Maui.BottomSheet.Platform.Android;
 using Google.Android.Material.BottomSheet;
 
 /// <summary>
-/// Callback for Bottom sheet state changes.
+/// Handles bottom sheet behavior state change callbacks.
 /// </summary>
 internal sealed class BottomSheetCallback : BottomSheetBehavior.BottomSheetCallback
 {
     private readonly WeakEventManager _eventManager = new();
 
     /// <summary>
-    /// BottomSheet state changed.
+    /// Occurs when the bottom sheet state changes.
     /// </summary>
     public event EventHandler<BottomSheetStateChangedEventArgs> StateChanged
     {
@@ -22,12 +22,20 @@ internal sealed class BottomSheetCallback : BottomSheetBehavior.BottomSheetCallb
         remove => _eventManager.RemoveEventHandler(value);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Called when the bottom sheet slides.
+    /// </summary>
+    /// <param name="bottomSheet">The bottom sheet view.</param>
+    /// <param name="newState">The new slide state.</param>
     public override void OnSlide(AView bottomSheet, float newState)
     {
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Called when the bottom sheet state changes.
+    /// </summary>
+    /// <param name="p0">The bottom sheet view.</param>
+    /// <param name="p1">The new state constant.</param>
     public override void OnStateChanged(AView p0, int p1)
     {
         if (p1 is BottomSheetBehavior.StateCollapsed

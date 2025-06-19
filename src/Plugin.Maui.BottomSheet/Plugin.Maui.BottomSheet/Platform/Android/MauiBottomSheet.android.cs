@@ -14,7 +14,9 @@ namespace Plugin.Maui.BottomSheet.Platform.Android;
 
 using Microsoft.Maui.Platform;
 
-/// <inheritdoc />
+/// <summary>
+/// Android platform implementation of the MAUI bottom sheet view handler.
+/// </summary>
 internal sealed class MauiBottomSheet : AndroidView
 {
     private readonly IMauiContext _mauiContext;
@@ -26,8 +28,8 @@ internal sealed class MauiBottomSheet : AndroidView
     /// <summary>
     /// Initializes a new instance of the <see cref="MauiBottomSheet"/> class.
     /// </summary>
-    /// <param name="mauiContext">Maui context.</param>
-    /// <param name="context">Android context.</param>
+    /// <param name="mauiContext">The MAUI context for platform services.</param>
+    /// <param name="context">The Android context.</param>
     public MauiBottomSheet(IMauiContext mauiContext, Context context)
         : base(context)
     {
@@ -42,12 +44,12 @@ internal sealed class MauiBottomSheet : AndroidView
     }
 
     /// <summary>
-    /// Gets a value indicating whether the bottom sheet is open.
+    /// Gets a value indicating whether the bottom sheet is currently open.
     /// </summary>
     public bool IsOpen => _bottomSheet.IsShowing;
 
     /// <summary>
-    /// Set allowed bottom sheet states.
+    /// Sets the allowed bottom sheet states. This method is intentionally empty on Android.
     /// </summary>
     public static void SetStates()
     {
@@ -56,16 +58,16 @@ internal sealed class MauiBottomSheet : AndroidView
     }
 
     /// <summary>
-    /// Set virtual view.
+    /// Sets the virtual view associated with this bottom sheet.
     /// </summary>
-    /// <param name="virtualView">View.</param>
+    /// <param name="virtualView">The virtual view to associate.</param>
     public void SetView(IBottomSheet virtualView)
     {
         _virtualView = virtualView;
     }
 
     /// <summary>
-    /// Cleanup resources.
+    /// Cleans up resources and event handlers.
     /// </summary>
     public void Cleanup()
     {
@@ -78,7 +80,7 @@ internal sealed class MauiBottomSheet : AndroidView
     }
 
     /// <summary>
-    /// Set whether sheet is cancelable.
+    /// Sets whether the bottom sheet is cancelable.
     /// </summary>
     public void SetIsCancelable()
     {
@@ -86,7 +88,7 @@ internal sealed class MauiBottomSheet : AndroidView
     }
 
     /// <summary>
-    /// Set whether show handle.
+    /// Sets whether the bottom sheet should show a drag handle.
     /// </summary>
     public void SetHasHandle()
     {
@@ -101,7 +103,7 @@ internal sealed class MauiBottomSheet : AndroidView
     }
 
     /// <summary>
-    /// Set bottom sheet header.
+    /// Sets the header for the bottom sheet.
     /// </summary>
     public void SetHeader()
     {
@@ -114,7 +116,7 @@ internal sealed class MauiBottomSheet : AndroidView
     }
 
     /// <summary>
-    /// Show header.
+    /// Sets whether the header should be shown.
     /// </summary>
     public void SetShowHeader()
     {
@@ -129,9 +131,9 @@ internal sealed class MauiBottomSheet : AndroidView
     }
 
     /// <summary>
-    /// Open bottom sheet.
+    /// Opens the bottom sheet asynchronously.
     /// </summary>
-    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public Task OpenAsync()
     {
         if (_virtualView is null)
@@ -147,9 +149,9 @@ internal sealed class MauiBottomSheet : AndroidView
     }
 
     /// <summary>
-    /// Close bottom sheet.
+    /// Closes the bottom sheet asynchronously.
     /// </summary>
-    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public async Task CloseAsync()
     {
         if (_virtualView?.IsOpen == true)
@@ -162,7 +164,7 @@ internal sealed class MauiBottomSheet : AndroidView
     }
 
     /// <summary>
-    /// Open bottom sheet.
+    /// Sets the open state of the bottom sheet.
     /// </summary>
     public void SetIsOpen()
     {
@@ -191,7 +193,7 @@ internal sealed class MauiBottomSheet : AndroidView
     }
 
     /// <summary>
-    /// Set whether bottom sheet is draggable.
+    /// Sets whether the bottom sheet is draggable.
     /// </summary>
     public void SetIsDraggable()
     {
@@ -199,7 +201,7 @@ internal sealed class MauiBottomSheet : AndroidView
     }
 
     /// <summary>
-    /// Set current bottom sheet state.
+    /// Sets the current state of the bottom sheet.
     /// </summary>
     public void SetCurrentState()
     {
@@ -212,7 +214,7 @@ internal sealed class MauiBottomSheet : AndroidView
     }
 
     /// <summary>
-    /// Set peek.
+    /// Sets the peek height of the bottom sheet.
     /// </summary>
     public void SetPeekHeight()
     {
@@ -225,7 +227,7 @@ internal sealed class MauiBottomSheet : AndroidView
     }
 
     /// <summary>
-    /// Set content.
+    /// Sets the content of the bottom sheet.
     /// </summary>
     public void SetContent()
     {
@@ -238,7 +240,7 @@ internal sealed class MauiBottomSheet : AndroidView
     }
 
     /// <summary>
-    /// Set modal.
+    /// Sets whether the bottom sheet is modal.
     /// </summary>
     public void SetIsModal()
     {
@@ -246,7 +248,7 @@ internal sealed class MauiBottomSheet : AndroidView
     }
 
     /// <summary>
-    /// Set padding.
+    /// Sets the padding of the bottom sheet.
     /// </summary>
     public void SetPadding()
     {
@@ -257,7 +259,7 @@ internal sealed class MauiBottomSheet : AndroidView
     }
 
     /// <summary>
-    /// set background color.
+    /// Sets the background color of the bottom sheet.
     /// </summary>
     public void SetBottomSheetBackgroundColor()
     {
@@ -268,7 +270,7 @@ internal sealed class MauiBottomSheet : AndroidView
     }
 
     /// <summary>
-    /// Set corner radius.
+    /// Sets the corner radius of the bottom sheet.
     /// </summary>
     public void SetCornerRadius()
     {
@@ -276,7 +278,7 @@ internal sealed class MauiBottomSheet : AndroidView
     }
 
     /// <summary>
-    /// Set window background color.
+    /// Sets the window background color of the bottom sheet.
     /// </summary>
     public void SetWindowBackgroundColor()
     {
@@ -284,7 +286,7 @@ internal sealed class MauiBottomSheet : AndroidView
     }
 
     /// <summary>
-    /// Sets bottom sheet style.
+    /// Sets the bottom sheet style configuration.
     /// </summary>
     public void SetBottomSheetStyle()
     {
@@ -294,7 +296,10 @@ internal sealed class MauiBottomSheet : AndroidView
         }
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Releases managed and unmanaged resources.
+    /// </summary>
+    /// <param name="disposing">True if disposing managed resources.</param>
     protected override void Dispose(bool disposing)
     {
         base.Dispose(disposing);
@@ -307,11 +312,21 @@ internal sealed class MauiBottomSheet : AndroidView
         Cleanup();
     }
 
+    /// <summary>
+    /// Handles the bottom sheet opened event and updates the frame.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
     private void BottomSheetOnOpened(object? sender, EventArgs e)
     {
         SetFrame();
     }
 
+    /// <summary>
+    /// Handles the bottom sheet closed event with navigation support.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
     [SuppressMessage("Usage", "VSTHRD100: Avoid async void methods", Justification = "Is okay here.")]
     [SuppressMessage("Design", "CA1031: Do not catch general exception types", Justification = "Catch all exceptions to prevent crash.")]
     private async void BottomSheetOnClosed(object? sender, EventArgs e)
@@ -365,6 +380,11 @@ internal sealed class MauiBottomSheet : AndroidView
         }
     }
 
+    /// <summary>
+    /// Handles bottom sheet state changes and validates state transitions.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The state change event arguments.</param>
     private void BottomSheetOnStateChanged(object? sender, BottomSheetStateChangedEventArgs e)
     {
         var state = e.State;
@@ -385,6 +405,11 @@ internal sealed class MauiBottomSheet : AndroidView
         _virtualView.CurrentState = state;
     }
 
+    /// <summary>
+    /// Handles back button press events by invoking lifecycle event delegates.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
     private void BottomSheetOnBackPressed(object? sender, EventArgs e)
     {
         var actions = _mauiContext.Services.GetRequiredService<ILifecycleEventService>().GetEventDelegates<Action<AActivity?>>(AndroidLifecycle.BottomSheetBackPressedEventName);
@@ -395,11 +420,20 @@ internal sealed class MauiBottomSheet : AndroidView
         }
     }
 
+    /// <summary>
+    /// Handles layout change events and updates the frame.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
     private void BottomSheetOnLayoutChanged(object? sender, EventArgs e)
     {
         SetFrame();
     }
 
+    /// <summary>
+    /// Updates the virtual view's frame based on the bottom sheet's current state.
+    /// </summary>
+    /// <param name="isClosed">Whether the bottom sheet is closed.</param>
     private void SetFrame(bool isClosed = false)
     {
         if (_virtualView is null)

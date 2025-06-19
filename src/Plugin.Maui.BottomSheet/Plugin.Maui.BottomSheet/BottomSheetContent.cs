@@ -1,13 +1,13 @@
 namespace Plugin.Maui.BottomSheet;
 
 /// <summary>
-/// <see cref="BottomSheet"/> content.
+/// Represents the content area of a bottom sheet with support for templates and direct content.
 /// </summary>
 [ContentProperty(nameof(Content))]
 public sealed class BottomSheetContent : BindableObject
 {
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the content template.
     /// </summary>
     public static readonly BindableProperty ContentTemplateProperty =
         BindableProperty.Create(
@@ -16,7 +16,7 @@ public sealed class BottomSheetContent : BindableObject
             typeof(BottomSheetContent));
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the direct content.
     /// </summary>
     public static readonly BindableProperty ContentProperty =
         BindableProperty.Create(
@@ -25,25 +25,25 @@ public sealed class BottomSheetContent : BindableObject
             typeof(BottomSheetContent));
 
     /// <summary>
-    /// Gets or sets the content <see cref="DataTemplate"/>.
+    /// Gets or sets the data template used to create the content dynamically.
     /// </summary>
     public DataTemplate? ContentTemplate { get => (DataTemplate?)GetValue(ContentTemplateProperty); set => SetValue(ContentTemplateProperty, value); }
 
     /// <summary>
-    /// Gets or sets the raw content of this view.
+    /// Gets or sets the direct content view for the bottom sheet.
     /// </summary>
     public View? Content { get => (View?)GetValue(ContentProperty); set => SetValue(ContentProperty, value); }
 
     /// <summary>
-    /// Gets or sets the parent <see cref="Element"/> of this element.
+    /// Gets or sets the parent element of this content.
     /// </summary>
     public Element? Parent { get; set; }
 
     /// <summary>
-    /// Creates content.
+    /// Creates and returns the content view, using either the template or direct content.
     /// </summary>
-    /// <returns>If <see cref="ContentTemplate"/> is set the content is created and returned. Otherwise <see cref="Content"/> is returned.</returns>
-    /// <exception cref="BottomSheetContentNotSetException">If <see cref="Content"/> nor <see cref="ContentTemplate"/> is set.</exception>
+    /// <returns>The content view ready for display.</returns>
+    /// <exception cref="BottomSheetContentNotSetException">Thrown when neither Content nor ContentTemplate is set.</exception>
     public View CreateContent()
     {
         if (ContentTemplate?.CreateContent() is View content)

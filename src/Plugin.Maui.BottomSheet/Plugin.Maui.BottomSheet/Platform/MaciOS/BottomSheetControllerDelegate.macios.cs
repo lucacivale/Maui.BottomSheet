@@ -2,13 +2,15 @@ namespace Plugin.Maui.BottomSheet.Platform.MaciOS;
 
 using UIKit;
 
-/// <inheritdoc />
+/// <summary>
+/// Handles presentation controller delegate methods for bottom sheet behavior and state management.
+/// </summary>
 internal sealed class BottomSheetControllerDelegate : UISheetPresentationControllerDelegate
 {
     private readonly WeakEventManager _eventManager = new();
 
     /// <summary>
-    /// BottomSheet state changed.
+    /// Occurs when the bottom sheet state changes.
     /// </summary>
     public event EventHandler<BottomSheetStateChangedEventArgs> StateChanged
     {
@@ -17,7 +19,7 @@ internal sealed class BottomSheetControllerDelegate : UISheetPresentationControl
     }
 
     /// <summary>
-    /// Confirm dismiss.
+    /// Occurs when the bottom sheet dismissal needs confirmation.
     /// </summary>
     public event EventHandler ConfirmDismiss
     {
@@ -25,9 +27,12 @@ internal sealed class BottomSheetControllerDelegate : UISheetPresentationControl
         remove => _eventManager.RemoveEventHandler(value);
     }
 
-    /// <inheritdoc/>
-    // DidAttemptToDismiss is only called if UISheetPresentationController is closed via swipe. Tapping on backrgound only calls ShouldDismiss.
-    // Maybe will be fixed or works as designed. File bug report.
+    /// <summary>
+    /// Determines whether the presentation controller should dismiss when touched outside or swiped.
+    /// Note: DidAttemptToDismiss is only called for swipe dismissal, while ShouldDismiss handles background taps.
+    /// </summary>
+    /// <param name="presentationController">The presentation controller requesting dismissal.</param>
+    /// <returns>Always returns false to prevent automatic dismissal and trigger confirmation.</returns>
     public override bool ShouldDismiss(UIPresentationController presentationController)
     {
         _eventManager.HandleEvent(
@@ -38,7 +43,10 @@ internal sealed class BottomSheetControllerDelegate : UISheetPresentationControl
         return false;
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Called when the selected detent identifier changes, translating it to bottom sheet state.
+    /// </summary>
+    /// <param name="sheetPresentationController">The sheet presentation controller with the changed detent.</param>
     public override void DidChangeSelectedDetentIdentifier(UISheetPresentationController sheetPresentationController)
     {
         var state = sheetPresentationController.SelectedDetentIdentifier switch

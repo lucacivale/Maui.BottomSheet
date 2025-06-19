@@ -3,15 +3,15 @@ namespace Plugin.Maui.BottomSheet;
 // ReSharper disable once InconsistentNaming
 
 /// <summary>
-/// <see cref="IBottomSheet"/> extension methods.
+/// Extension methods for the IBottomSheet interface.
 /// </summary>
 internal static class IBottomSheetExtensions
 {
     /// <summary>
-    /// Get the <see cref="ContentPage"/> parent of <see cref="IBottomSheet"/>.
+    /// Gets the parent page of the bottom sheet by traversing the visual tree.
     /// </summary>
-    /// <param name="bottomSheet"><see cref="IBottomSheet"/>.</param>
-    /// <returns><see cref="ContentPage"/> parent.</returns>
+    /// <param name="bottomSheet">The bottom sheet instance.</param>
+    /// <returns>The parent page if found, otherwise null.</returns>
     internal static Page? GetPageParent(this IBottomSheet bottomSheet)
     {
         Page? page = null;

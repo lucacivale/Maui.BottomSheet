@@ -1,14 +1,22 @@
 namespace Plugin.Maui.BottomSheet.Navigation;
 
-/// <inheritdoc />
+/// <summary>
+/// Implementation of navigation result containing operation status and error information.
+/// </summary>
 internal sealed class NavigationResult : INavigationResult
 {
-    /// <inheritdoc />
+    /// <summary>
+    /// Gets or sets whether the navigation completed successfully.
+    /// </summary>
     public bool Success { get; set; } = true;
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Gets or sets whether the navigation was cancelled.
+    /// </summary>
     public bool Cancelled { get; set; }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Gets or sets any exception that occurred during navigation.
+    /// </summary>
     public Exception? Exception { get; set; }
 }

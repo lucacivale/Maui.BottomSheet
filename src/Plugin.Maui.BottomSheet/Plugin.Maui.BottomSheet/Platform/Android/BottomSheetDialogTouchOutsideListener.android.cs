@@ -7,7 +7,7 @@ using AView = Android.Views.View;
 namespace Plugin.Maui.BottomSheet.Platform.Android;
 
 /// <summary>
-/// Touch outside listener for <see cref="BottomSheet"/>.
+/// Handles touch events outside the bottom sheet for non-modal behavior.
 /// </summary>
 internal sealed class BottomSheetDialogTouchOutsideListener : Java.Lang.Object, AView.IOnTouchListener
 {
@@ -16,13 +16,18 @@ internal sealed class BottomSheetDialogTouchOutsideListener : Java.Lang.Object, 
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheetDialogTouchOutsideListener"/> class.
     /// </summary>
-    /// <param name="activity"><see cref="AppCompatActivity"/>.</param>
+    /// <param name="activity">The host activity.</param>
     public BottomSheetDialogTouchOutsideListener(AppCompatActivity activity)
     {
         _activity = activity;
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Handles touch events and dispatches them to the activity.
+    /// </summary>
+    /// <param name="v">The view that was touched.</param>
+    /// <param name="e">The motion event details.</param>
+    /// <returns>Always returns false to allow further event processing.</returns>
     public bool OnTouch(AView? v, MotionEvent? e)
     {
         _activity.DispatchTouchEvent(e);

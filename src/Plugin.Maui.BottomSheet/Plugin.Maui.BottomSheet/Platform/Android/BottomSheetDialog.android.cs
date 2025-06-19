@@ -2,7 +2,9 @@ using Android.Content;
 
 namespace Plugin.Maui.BottomSheet.Platform.Android;
 
-/// <inheritdoc />
+/// <summary>
+/// Custom bottom sheet dialog with enhanced event handling and back press support.
+/// </summary>
 internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.BottomSheetDialog
 {
     private readonly WeakEventManager _eventManager = new();
@@ -14,9 +16,9 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheetDialog"/> class.
     /// </summary>
-    /// <param name="context"><see cref="Context"/>.</param>
-    /// <param name="theme">Theme Id.</param>
-    /// <param name="bottomSheetCallback"><see cref="BottomSheetCallback"/>.</param>
+    /// <param name="context">The Android context.</param>
+    /// <param name="theme">The theme resource ID.</param>
+    /// <param name="bottomSheetCallback">The bottom sheet callback handler.</param>
     public BottomSheetDialog(
         Context context,
         int theme,
@@ -28,7 +30,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
     }
 
     /// <summary>
-    /// BottomSheet canceled.
+    /// Occurs when the bottom sheet is canceled.
     /// </summary>
     public event EventHandler Canceled
     {
@@ -37,7 +39,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
     }
 
     /// <summary>
-    /// Back button pressed.
+    /// Occurs when the back button is pressed.
     /// </summary>
     public event EventHandler BackPressed
     {
@@ -45,7 +47,9 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
         remove => _eventManager.RemoveEventHandler(value);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Shows the bottom sheet dialog.
+    /// </summary>
     public override void Show()
     {
         _onBackPressedCallback = new BottomSheetDialogOnBackPressedCallback(true);
@@ -55,12 +59,17 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
         base.Show();
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Cancels the bottom sheet dialog.
+    /// </summary>
     public override void Cancel()
     {
         _eventManager.HandleEvent(this, EventArgs.Empty, nameof(Canceled));
     }
 
+    /// <summary>
+    /// Handles the back button press event.
+    /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1422: Validate platform compatibility - obsoleted APIs", Justification = "Needed for backwards compatibility.")]
     public override void OnBackPressed()
     {
@@ -69,7 +78,9 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
         _eventManager.HandleEvent(this, EventArgs.Empty, nameof(BackPressed));
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Dismisses the bottom sheet dialog and cleans up resources.
+    /// </summary>
     public override void Dismiss()
     {
         Behavior.RemoveBottomSheetCallback(_bottomSheetCallback);
@@ -84,6 +95,11 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
         base.Dismiss();
     }
 
+    /// <summary>
+    /// Handles the back pressed callback event.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
     private void OnBackPressedCallbackOnBackPressed(object? sender, EventArgs e)
     {
         _eventManager.HandleEvent(this, EventArgs.Empty, nameof(BackPressed));

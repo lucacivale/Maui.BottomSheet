@@ -6,17 +6,17 @@ using AValueAnimator= Android.Animation.ValueAnimator;
 namespace Plugin.Maui.BottomSheet.Platform.Android;
 
 /// <summary>
-/// Color drawable extension methods.
+/// Extension methods for animating color changes in ColorDrawable objects.
 /// </summary>
 internal static class ColorDrawableExtensions
 {
     /// <summary>
-    /// Animate color change.
+    /// Animates a color change on a ColorDrawable from one ARGB value to another.
     /// </summary>
-    /// <param name="drawable">Drawable to change.</param>
-    /// <param name="from">From color as argb value.</param>
-    /// <param name="to">To color as argb value.</param>
-    /// <param name="duration">Animation duration in ms.</param>
+    /// <param name="drawable">The ColorDrawable to animate.</param>
+    /// <param name="from">The starting ARGB color value.</param>
+    /// <param name="to">The ending ARGB color value.</param>
+    /// <param name="duration">The animation duration in milliseconds. Default is 250 ms.</param>
     public static void AnimateChange(this AColorDrawable drawable, int from, int to, int duration = 250)
     {
         using AArgbEvaluator evaluator = new();

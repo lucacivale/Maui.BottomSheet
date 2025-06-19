@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using CoreGraphics;
 using Microsoft.Maui.Graphics.Platform;
 
@@ -10,12 +9,12 @@ using Microsoft.Maui.Platform;
 using UIKit;
 
 /// <summary>
-/// BottomSheet controller.
+/// UIViewController implementation for managing bottom sheet presentation on macOS and iOS platforms.
 /// </summary>
 internal sealed class BottomSheetUIViewController : UINavigationController
 {
     /// <summary>
-    /// Peek detent Id.
+    /// Identifier for custom peek detent used in iOS 16+ and macOS.
     /// </summary>
     public const string PeekDetentId = "Plugin.Maui.BottomSheet.PeekDetentId";
 
@@ -45,7 +44,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheetUIViewController"/> class.
     /// </summary>
-    /// <param name="mauiContext">Context.</param>
+    /// <param name="mauiContext">The MAUI context for platform services.</param>
     public BottomSheetUIViewController(IMauiContext mauiContext)
     {
         _virtualBottomSheetLayout = new Grid()
@@ -77,7 +76,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     }
 
     /// <summary>
-    /// BottomSheet state changed.
+    /// Occurs when the bottom sheet state changes.
     /// </summary>
     public event EventHandler<BottomSheetStateChangedEventArgs> StateChanged
     {
@@ -86,7 +85,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     }
 
     /// <summary>
-    /// Confirm dismiss.
+    /// Occurs when the bottom sheet dismissal needs confirmation.
     /// </summary>
     public event EventHandler ConfirmDismiss
     {
@@ -95,7 +94,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     }
 
     /// <summary>
-    /// Frame changed.
+    /// Occurs when the bottom sheet frame changes.
     /// </summary>
     public event EventHandler<Rect> FrameChanged
     {
@@ -104,7 +103,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     }
 
     /// <summary>
-    /// Gets peek detent.
+    /// Gets the peek detent for the bottom sheet, creating a custom detent on supported platforms.
     /// </summary>
     public UISheetPresentationControllerDetent PeekDetent
     {
@@ -128,17 +127,17 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     }
 
     /// <summary>
-    /// Gets medium detent.
+    /// Gets the medium detent for the bottom sheet.
     /// </summary>
     public UISheetPresentationControllerDetent MediumDetent => _mediumDetent ??= UISheetPresentationControllerDetent.CreateMediumDetent();
 
     /// <summary>
-    /// Gets large detent.
+    /// Gets the large detent for the bottom sheet.
     /// </summary>
     public UISheetPresentationControllerDetent LargeDetent => _largeDetent ??= UISheetPresentationControllerDetent.CreateLargeDetent();
 
     /// <summary>
-    /// Gets or sets a value indicating whether sheet is draggable.
+    /// Gets or sets a value indicating whether the bottom sheet is draggable.
     /// </summary>
     public bool Draggable
     {
@@ -156,7 +155,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     }
 
     /// <summary>
-    /// Gets or sets a value indicating whether sheet is modal.
+    /// Gets or sets a value indicating whether the bottom sheet is modal.
     /// </summary>
     public bool IsModal
     {
@@ -176,7 +175,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     }
 
     /// <summary>
-    /// Gets or sets available detents.
+    /// Gets or sets the available detents for the bottom sheet.
     /// </summary>
     public UISheetPresentationControllerDetent[] Detents
     {
@@ -194,10 +193,10 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     }
 
     /// <summary>
-    /// Open the bottom sheet.
+    /// Opens the bottom sheet with the specified configuration.
     /// </summary>
-    /// <param name="bottomSheet"><see cref="IBottomSheet"/> to open.</param>
-    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    /// <param name="bottomSheet">The bottom sheet configuration to open.</param>
+    /// <returns>A task that returns true if the bottom sheet opened successfully.</returns>
     public async Task<bool> OpenAsync(IBottomSheet bottomSheet)
     {
         _virtualBottomSheet.Parent = bottomSheet.GetPageParent();
@@ -217,9 +216,9 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     }
 
     /// <summary>
-    /// Close the bottom sheet.
+    /// Closes the bottom sheet and cleans up resources.
     /// </summary>
-    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public async Task CloseAsync()
     {
         await DismissViewControllerAsync(true).ConfigureAwait(true);
@@ -229,7 +228,10 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         _virtualBottomSheetContent = null;
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Called when the view is appearing, applies window background color.
+    /// </summary>
+    /// <param name="animated">Whether the appearance is animated.</param>
     public override void ViewIsAppearing(bool animated)
     {
         base.ViewIsAppearing(animated);
@@ -237,6 +239,10 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         ApplyWindowBackgroundColor();
     }
 
+    /// <summary>
+    /// Called when the view will disappear, handles modal background animation.
+    /// </summary>
+    /// <param name="animated">Whether the disappearance is animated.</param>
     [SuppressMessage("Usage", "ConditionalAccessQualifierIsNonNullableAccordingToAPIContract: ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract", Justification = "Can actually be null.")]
     public override void ViewWillDisappear(bool animated)
     {
@@ -250,7 +256,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     }
 
     /// <summary>
-    /// Attach presentation delegate to notify sheet dismiss and state changes.
+    /// Attaches the presentation delegate to handle sheet dismissal and state changes.
     /// </summary>
     public void AttachPresentationDelegate()
     {
@@ -262,7 +268,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     }
 
     /// <summary>
-    /// Show header.
+    /// Shows the header in the bottom sheet layout.
     /// </summary>
     public void ShowHeader()
     {
@@ -277,7 +283,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     }
 
     /// <summary>
-    /// Hide header.
+    /// Hides the header from the bottom sheet layout.
     /// </summary>
     public void HideHeader()
     {
@@ -293,10 +299,10 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     }
 
     /// <summary>
-    /// Adds the header view.
+    /// Adds a header to the bottom sheet with the specified configuration and style.
     /// </summary>
-    /// <param name="header">Header.</param>
-    /// <param name="style">Style.</param>
+    /// <param name="header">The header configuration.</param>
+    /// <param name="style">The header style settings.</param>
     public void AddHeader(Plugin.Maui.BottomSheet.BottomSheetHeader? header, BottomSheetHeaderStyle style)
     {
         if (header is null)
@@ -308,9 +314,9 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     }
 
     /// <summary>
-    /// Set header style.
+    /// Sets the header style for the existing header.
     /// </summary>
-    /// <param name="style">Style.</param>
+    /// <param name="style">The header style settings to apply.</param>
     public void SetHeaderStyle(BottomSheetHeaderStyle style)
     {
         if (_bottomSheetHeader is null)
@@ -322,9 +328,9 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     }
 
     /// <summary>
-    /// Adds the content view.
+    /// Adds content to the bottom sheet layout.
     /// </summary>
-    /// <param name="content">Content.</param>
+    /// <param name="content">The content to add to the bottom sheet.</param>
     public void AddContent(BottomSheetContent? content)
     {
         if (content is null
@@ -342,9 +348,9 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     }
 
     /// <summary>
-    /// Set current detent identifier.
+    /// Sets the current detent identifier for the sheet presentation.
     /// </summary>
-    /// <param name="identifier">Identifier.</param>
+    /// <param name="identifier">The detent identifier to set.</param>
     public void SetSelectedDetentIdentifier(UISheetPresentationControllerDetentIdentifier identifier)
     {
         if (SheetPresentationController is not null)
@@ -357,9 +363,9 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     }
 
     /// <summary>
-    /// Sets whether grabber is visible.
+    /// Sets whether the grabber (drag handle) should be visible.
     /// </summary>
-    /// <param name="visible">Is visible.</param>
+    /// <param name="visible">True to show the grabber, false to hide it.</param>
     public void SetPrefersGrabberVisible(bool visible)
     {
         if (SheetPresentationController is not null)
@@ -369,9 +375,9 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     }
 
     /// <summary>
-    /// Sets corner radius.
+    /// Sets the corner radius for the bottom sheet.
     /// </summary>
-    /// <param name="cornerRadius">Corner radius.</param>
+    /// <param name="cornerRadius">The corner radius value.</param>
     public void SetCornerRadius(float cornerRadius)
     {
         if (SheetPresentationController is not null)
@@ -381,9 +387,9 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     }
 
     /// <summary>
-    /// Sets window background color.
+    /// Sets the window background color for the bottom sheet.
     /// </summary>
-    /// <param name="color">Color.</param>
+    /// <param name="color">The background color to apply.</param>
     public void SetWindowBackgroundColor(Color color)
     {
         _windowBackgroundColor = color;
@@ -391,36 +397,36 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     }
 
     /// <summary>
-    /// Sets the background color.
+    /// Sets the background color for the bottom sheet.
     /// </summary>
-    /// <param name="color">Color.</param>
+    /// <param name="color">The background color to apply.</param>
     public void SetBackgroundColor(Color color)
     {
         _virtualBottomSheet.BackgroundColor = color;
     }
 
     /// <summary>
-    /// Sets padding.
+    /// Sets the padding for the bottom sheet content.
     /// </summary>
-    /// <param name="padding">Thickness.</param>
+    /// <param name="padding">The padding thickness to apply.</param>
     public void SetPadding(Thickness padding)
     {
         _virtualBottomSheet.Padding = padding;
     }
 
     /// <summary>
-    /// Set ignore safe area.
+    /// Sets whether the bottom sheet should ignore safe area constraints.
     /// </summary>
-    /// <param name="ignoreSafeArea">Ignore safe area.</param>
+    /// <param name="ignoreSafeArea">True to ignore safe area, false to respect it.</param>
     public void SetIgnoreSafeArea(bool ignoreSafeArea)
     {
         _virtualBottomSheetLayout.IgnoreSafeArea = ignoreSafeArea;
     }
 
     /// <summary>
-    /// Set peek detent height.
+    /// Sets the peek height for the bottom sheet.
     /// </summary>
-    /// <param name="peekHeight">Peek height.</param>
+    /// <param name="peekHeight">The peek height value.</param>
     public void SetPeekHeight(double peekHeight)
     {
         _peekHeight = peekHeight;
@@ -428,7 +434,9 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         ApplyPeekHeight();
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Called when the view layout is complete, handles frame change notifications.
+    /// </summary>
     public override void ViewDidLayoutSubviews()
     {
         base.ViewDidLayoutSubviews();
@@ -447,7 +455,10 @@ internal sealed class BottomSheetUIViewController : UINavigationController
             nameof(FrameChanged));
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Releases all resources used by the view controller.
+    /// </summary>
+    /// <param name="disposing">True if disposing managed resources.</param>
     protected override void Dispose(bool disposing)
     {
         if (!disposing)
@@ -475,11 +486,21 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         base.Dispose(disposing);
     }
 
+    /// <summary>
+    /// Handles header size change events and updates peek height.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
     private void BottomSheetHeaderOnSizeChanged(object? sender, EventArgs e)
     {
         ApplyPeekHeight();
     }
 
+    /// <summary>
+    /// Calculates the peek height based on container context and constraints.
+    /// </summary>
+    /// <param name="arg">The detent resolution context.</param>
+    /// <returns>The calculated peek height as a native float.</returns>
     [SuppressMessage("Major Bug", "S1244:Floating point numbers should not be tested for equality", Justification = "False positive")]
     private nfloat PeekHeight(IUISheetPresentationControllerDetentResolutionContext arg)
     {
@@ -497,6 +518,9 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         }
     }
 
+    /// <summary>
+    /// Applies the calculated peek height and updates detents if necessary.
+    /// </summary>
     private void ApplyPeekHeight()
     {
         var peekHeight = (_bottomSheetHeader?.View.Height ?? 0)
@@ -522,6 +546,9 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         }
     }
 
+    /// <summary>
+    /// Applies the window background color based on modal state.
+    /// </summary>
     private void ApplyWindowBackgroundColor()
     {
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
@@ -531,6 +558,11 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         }
     }
 
+    /// <summary>
+    /// Handles state change events from the delegate and forwards them.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The state change event arguments.</param>
     private void BottomSheetControllerDelegateOnStateChanged(object? sender, BottomSheetStateChangedEventArgs e)
     {
         _eventManager.HandleEvent(
@@ -539,6 +571,11 @@ internal sealed class BottomSheetUIViewController : UINavigationController
             nameof(StateChanged));
     }
 
+    /// <summary>
+    /// Handles confirm dismiss events from the delegate and forwards them.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
     private void BottomSheetControllerDelegateOnConfirmDismiss(object? sender, EventArgs e)
     {
         _eventManager.HandleEvent(

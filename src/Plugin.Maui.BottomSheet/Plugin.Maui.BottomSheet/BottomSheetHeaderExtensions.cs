@@ -1,15 +1,15 @@
 namespace Plugin.Maui.BottomSheet;
 
 /// <summary>
-/// Common extensions.
+/// Extension methods for working with bottom sheet headers.
 /// </summary>
 internal static class BottomSheetHeaderExtensions
 {
     /// <summary>
-    /// Is <see cref="BottomSheetHeader"/> top left button configured.
+    /// Determines whether the header has a top left button configured.
     /// </summary>
-    /// <param name="bottomSheetHeader"><see cref="BottomSheetHeader"/>.</param>
-    /// <returns>Is button configured.</returns>
+    /// <param name="bottomSheetHeader">The bottom sheet header to check.</param>
+    /// <returns>True if a top left button is configured, false otherwise.</returns>
     public static bool HasTopLeftButton(this BottomSheetHeader? bottomSheetHeader)
     {
         return bottomSheetHeader is not null
@@ -20,10 +20,10 @@ internal static class BottomSheetHeaderExtensions
     }
 
     /// <summary>
-    /// Is <see cref="BottomSheetHeader"/> top left close button configured.
+    /// Determines whether the header has a top left close button configured.
     /// </summary>
-    /// <param name="bottomSheetHeader"><see cref="BottomSheetHeader"/>.</param>
-    /// <returns>Is button configured.</returns>
+    /// <param name="bottomSheetHeader">The bottom sheet header to check.</param>
+    /// <returns>True if a top left close button is configured, false otherwise.</returns>
     public static bool HasTopLeftCloseButton(this BottomSheetHeader? bottomSheetHeader)
     {
         return bottomSheetHeader is not null
@@ -32,10 +32,10 @@ internal static class BottomSheetHeaderExtensions
     }
 
     /// <summary>
-    /// Is <see cref="BottomSheetHeader"/> top right button configured.
+    /// Determines whether the header has a top right button configured.
     /// </summary>
-    /// <param name="bottomSheetHeader"><see cref="BottomSheetHeader"/>.</param>
-    /// <returns>Is button configured.</returns>
+    /// <param name="bottomSheetHeader">The bottom sheet header to check.</param>
+    /// <returns>True if a top right button is configured, false otherwise.</returns>
     public static bool HasTopRightButton(this BottomSheetHeader? bottomSheetHeader)
     {
         return bottomSheetHeader is not null
@@ -46,10 +46,10 @@ internal static class BottomSheetHeaderExtensions
     }
 
     /// <summary>
-    /// Is <see cref="BottomSheetHeader"/> top right close button configured.
+    /// Determines whether the header has a top right close button configured.
     /// </summary>
-    /// <param name="bottomSheetHeader"><see cref="BottomSheetHeader"/>.</param>
-    /// <returns>Is button configured.</returns>
+    /// <param name="bottomSheetHeader">The bottom sheet header to check.</param>
+    /// <returns>True if a top right close button is configured, false otherwise.</returns>
     public static bool HasTopRightCloseButton(this BottomSheetHeader? bottomSheetHeader)
     {
         return bottomSheetHeader is not null
@@ -58,10 +58,10 @@ internal static class BottomSheetHeaderExtensions
     }
 
     /// <summary>
-    /// Is <see cref="BottomSheetHeader"/> title configured.
+    /// Determines whether the header has a title configured.
     /// </summary>
-    /// <param name="bottomSheetHeader"><see cref="BottomSheetHeader"/>.</param>
-    /// <returns>Is title configured.</returns>
+    /// <param name="bottomSheetHeader">The bottom sheet header to check.</param>
+    /// <returns>True if a title is configured, false otherwise.</returns>
     public static bool HasTitle(this BottomSheetHeader? bottomSheetHeader)
     {
         return bottomSheetHeader is not null
@@ -69,10 +69,10 @@ internal static class BottomSheetHeaderExtensions
     }
 
     /// <summary>
-    /// Is <see cref="BottomSheetHeader"/> header view configured.
+    /// Determines whether the header has a custom header view configured.
     /// </summary>
-    /// <param name="bottomSheetHeader"><see cref="BottomSheetHeader"/>.</param>
-    /// <returns>Is header view configured.</returns>
+    /// <param name="bottomSheetHeader">The bottom sheet header to check.</param>
+    /// <returns>True if a custom header view is configured, false otherwise.</returns>
     public static bool HasHeaderView(this BottomSheetHeader? bottomSheetHeader)
     {
         return bottomSheetHeader is not null

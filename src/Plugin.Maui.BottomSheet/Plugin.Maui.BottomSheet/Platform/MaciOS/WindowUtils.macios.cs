@@ -3,14 +3,14 @@ namespace Plugin.Maui.BottomSheet.Platform.MaciOS;
 using UIKit;
 
 /// <summary>
-/// Window utility methods.
+/// Provides utility methods for working with windows and safe areas on macOS and iOS platforms.
 /// </summary>
 internal static class WindowUtils
 {
     /// <summary>
-    /// Gets safe area insets for current UIViewController.
+    /// Gets the safe area insets for the current UIViewController based on the device idiom.
     /// </summary>
-    /// <returns>Safe area insets.</returns>
+    /// <returns>The safe area insets as UIEdgeInsets.</returns>
     public static UIEdgeInsets CurrentSafeAreaInsets()
     {
         if (DeviceInfo.Idiom == DeviceIdiom.Tablet)

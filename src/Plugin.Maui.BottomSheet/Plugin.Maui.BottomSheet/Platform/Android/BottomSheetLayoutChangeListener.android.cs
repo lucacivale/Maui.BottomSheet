@@ -5,14 +5,14 @@ using AView = Android.Views.View;
 namespace Plugin.Maui.BottomSheet.Platform.Android;
 
 /// <summary>
-/// Layout change callback.
+/// Monitors layout changes for bottom sheet views and content.
 /// </summary>
 internal sealed class BottomSheetLayoutChangeListener : Java.Lang.Object, AView.IOnLayoutChangeListener
 {
     private readonly WeakEventManager _eventManager = new();
 
     /// <summary>
-    /// Peek layout changed
+    /// Occurs when the monitored view's layout changes.
     /// </summary>
     public event EventHandler? LayoutChange
     {
@@ -20,7 +20,18 @@ internal sealed class BottomSheetLayoutChangeListener : Java.Lang.Object, AView.
         remove => _eventManager.RemoveEventHandler(value);
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Called when the layout of the monitored view changes.
+    /// </summary>
+    /// <param name="v">The view whose layout changed.</param>
+    /// <param name="left">The new left position.</param>
+    /// <param name="top">The new top position.</param>
+    /// <param name="right">The new right position.</param>
+    /// <param name="bottom">The new bottom position.</param>
+    /// <param name="oldLeft">The previous left position.</param>
+    /// <param name="oldTop">The previous top position.</param>
+    /// <param name="oldRight">The previous right position.</param>
+    /// <param name="oldBottom">The previous bottom position.</param>
     public void OnLayoutChange(
         AView? v,
         int left,
