@@ -470,6 +470,11 @@ public class EditUserViewModel : IConfirmNavigationAsync
 > [!IMPORTANT]  
 > When using the `IsOpen` to manage the visibility of a `BottomSheet`, the parent `ViewModel` can implement `INavigationAware` to respond to the lifecycle of the `BottomSheet`.
 > This allows the parent `ViewModel` to handle actions when:
+> 
+> | Scenario                                       | `INavigationAware` on Parent Triggered? |
+> |------------------------------------------------|-----------------------------------------|
+> | BottomSheet opened via navigation              | ❌ No                                    |
+> | BottomSheet opened without navigation (IsOpen) | ✅ Yes                                   |
 
 ## 🎯 Event Handling
 
