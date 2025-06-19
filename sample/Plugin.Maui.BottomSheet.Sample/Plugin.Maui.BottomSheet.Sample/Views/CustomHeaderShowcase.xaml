@@ -1,24 +1,30 @@
-<?xml version="1.0" encoding="utf-8"?>
-<bottomsheet:BottomSheet xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-                         xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-                         xmlns:bottomsheet="http://pluginmauibottomsheet.com"
-                         x:Class="Plugin.Maui.BottomSheet.Sample.Views.CustomHeaderShowcase"
-                         xmlns:vm="clr-namespace:Plugin.Maui.BottomSheet.Sample.ViewModels"
-                         x:DataType="vm:CustomHeaderShowcaseViewModel"
-                         ShowHeader="True" CurrentState="{Binding BottomSheetState}"
-                         Margin="20">
+<?xml version="1.0" encoding="utf-8" ?>
+<bottomsheet:BottomSheet
+    x:Class="Plugin.Maui.BottomSheet.Sample.Views.CustomHeaderShowcase"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:bottomsheet="http://pluginmauibottomsheet.com"
+    xmlns:vm="clr-namespace:Plugin.Maui.BottomSheet.Sample.ViewModels"
+    Margin="20"
+    x:DataType="vm:CustomHeaderShowcaseViewModel"
+    CurrentState="{Binding BottomSheetState}"
+    ShowHeader="True">
     <bottomsheet:BottomSheet.Header>
         <bottomsheet:BottomSheetHeader>
-            <bottomsheet:BottomSheetHeader.HeaderDataTemplate>
-                <DataTemplate x:DataType="vm:CustomHeaderShowcaseViewModel">
-                    <ContentView>
-                        <Grid ColumnDefinitions="*,*">
-                            <Button Command="{Binding MediumCommand}" Grid.Column="0" Text="Medium" HorizontalOptions="Start"/>
-                            <Button Command="{Binding LargeCommand}" Grid.Column="1" Text="Large" HorizontalOptions="End"/>
-                        </Grid>
-                    </ContentView>
-                </DataTemplate>
-            </bottomsheet:BottomSheetHeader.HeaderDataTemplate>
+            <ContentView>
+                <Grid ColumnDefinitions="*,*">
+                    <Button
+                        Grid.Column="0"
+                        Command="{Binding MediumCommand}"
+                        HorizontalOptions="Start"
+                        Text="Medium" />
+                    <Button
+                        Grid.Column="1"
+                        Command="{Binding LargeCommand}"
+                        HorizontalOptions="End"
+                        Text="Large" />
+                </Grid>
+            </ContentView>
         </bottomsheet:BottomSheetHeader>
     </bottomsheet:BottomSheet.Header>
 </bottomsheet:BottomSheet>

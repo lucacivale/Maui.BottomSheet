@@ -302,11 +302,9 @@ internal sealed class BottomSheetHeader : IDisposable
 
         _bottomSheetHeader.PropertyChanged += BottomSheetHeaderOnPropertyChanged;
 
-        if (bottomSheetHeader.HasHeaderView()
-            && bottomSheetHeader.HeaderDataTemplate!.CreateContent() is View headerView)
+        if (bottomSheetHeader.HasHeaderView())
         {
-            headerView.BindingContext = bottomSheetHeader.BindingContext;
-            headerView.Parent = _bottomSheetHeader.Parent;
+            var headerView = bottomSheetHeader.CreateContent();
 
             _virtualHeaderView = headerView;
 
