@@ -259,10 +259,9 @@ internal sealed class BottomSheetHeader : IDisposable
             _virtualHeaderView.SizeChanged -= VirtualHeaderViewOnSizeChanged;
         }
 
-        if (_bottomSheetHeader.HasHeaderView()
-            && _bottomSheetHeader.HeaderDataTemplate is not null)
+        if (_bottomSheetHeader.HasHeaderView())
         {
-            _virtualHeaderView = _bottomSheetHeader.HeaderDataTemplate.CreateContent() as View;
+            _virtualHeaderView = _bottomSheetHeader.CreateContent();
         }
         else
         {
@@ -270,12 +269,12 @@ internal sealed class BottomSheetHeader : IDisposable
             ConfigureHeader();
 
             _virtualHeaderView = _virtualHeaderGridView;
+            _virtualHeaderView.BindingContext = _bottomSheetHeader.BindingContext;
+            _virtualHeaderView.Parent = _bottomSheetHeader.Parent;
         }
 
         ArgumentNullException.ThrowIfNull(_virtualHeaderView);
-
-        _virtualHeaderView.BindingContext = _bottomSheetHeader.BindingContext;
-        _virtualHeaderView.Parent = _bottomSheetHeader.Parent;
+        
         _virtualHeaderView.SizeChanged += VirtualHeaderViewOnSizeChanged;
         _bottomSheetHeader.PropertyChanged += BottomSheetHeaderOnPropertyChanged;
 

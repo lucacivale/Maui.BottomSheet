@@ -138,9 +138,14 @@ Create a simple bottom sheet:
 | `TopLeftButton`       | `Button`                                | Custom button for top-left position                      |
 | `TopRightButton`      | `Button`                                | Custom button for top-right position                     |
 | `HeaderDataTemplate`  | `DataTemplate`                          | Custom view template (overrides other header properties) |
+| `Content`             | `View`                                  | Direct view content                                      |                     |                                         |                                                          |
 | `HeaderAppearance`    | `BottomSheetHeaderButtonAppearanceMode` | Controls which buttons are displayed                     |
 | `ShowCloseButton`     | `bool`                                  | Show built-in close button                               |
 | `CloseButtonPosition` | `CloseButtonPosition`                   | Position of close button (Left/Right)                    |
+
+> [!CAUTION]
+> Be careful when using `Content` because the Content will be created even if the BottomSheet isn't open and this may have a negative performance impact.
+> `Content` should only be used with navigation and not in `BottomSheets` added directly to a `Layout`.
 
 ### 📱 Content Configuration
 
