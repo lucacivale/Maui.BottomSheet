@@ -1,0 +1,268 @@
+
+<ContentPage
+    x:Class="TaskManager.Views.MainPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+    xmlns:models="clr-namespace:TaskManager.Models"
+    xmlns:vm="clr-namespace:TaskManager.ViewModels"
+    Title="Task Manager"
+    x:DataType="vm:MainViewModel">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Border
+            Grid.Row="0"
+            Margin="16,16,16,8"
+            Padding="16"
+            BackgroundColor="{AppThemeBinding Light=#E3F2FD,
+                                              Dark=#1E1E1E}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <StackLayout Grid.Column="0" HorizontalOptions="Center">
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="24"
+                        HorizontalOptions="Center"
+                        Text="{Binding TotalTasks}"
+                        TextColor="{AppThemeBinding Light=#1976D2,
+                                                    Dark=#90CAF9}" />
+                    <Label
+                        FontSize="12"
+                        HorizontalOptions="Center"
+                        Text="Total"
+                        TextColor="{AppThemeBinding Light=#666,
+                                                    Dark=#AAA}" />
+                </StackLayout>
+
+                <StackLayout Grid.Column="1" HorizontalOptions="Center">
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="24"
+                        HorizontalOptions="Center"
+                        Text="{Binding CompletedTasks}"
+                        TextColor="#4CAF50" />
+                    <Label
+                        FontSize="12"
+                        HorizontalOptions="Center"
+                        Text="Completed"
+                        TextColor="{AppThemeBinding Light=#666,
+                                                    Dark=#AAA}" />
+                </StackLayout>
+
+                <StackLayout Grid.Column="2" HorizontalOptions="Center">
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="24"
+                        HorizontalOptions="Center"
+                        Text="{Binding PendingTasks}"
+                        TextColor="#FF9800" />
+                    <Label
+                        FontSize="12"
+                        HorizontalOptions="Center"
+                        Text="Pending"
+                        TextColor="{AppThemeBinding Light=#666,
+                                                    Dark=#AAA}" />
+                </StackLayout>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1" Margin="16,0,16,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <SearchBar
+                Grid.Column="0"
+                ios:SearchBar.SearchBarStyle="Minimal"
+                Placeholder="Search tasks..."
+                SearchCommand="{Binding SearchTasksCommand}"
+                Text="{Binding SearchText}" />
+
+            <Button
+                Grid.Column="1"
+                Margin="8,0,0,0"
+                Padding="16,8"
+                BackgroundColor="{AppThemeBinding Light=#1976D2,
+                                                  Dark=#90CAF9}"
+                Command="{Binding ShowFilterOptionsCommand}"
+                CornerRadius="20"
+                Text="Filter"
+                TextColor="White" />
+
+            <Button
+                Grid.Column="2"
+                Margin="8,0,0,0"
+                BackgroundColor="#4CAF50"
+                Command="{Binding NavigateToAddTaskCommand}"
+                CornerRadius="25"
+                FontAttributes="Bold"
+                FontSize="20"
+                HeightRequest="50"
+                Text="+"
+                TextColor="White"
+                WidthRequest="50" />
+        </Grid>
+
+        <RefreshView Grid.Row="2" Command="{Binding LoadTasksCommand}">
+            <CollectionView
+                BackgroundColor="Transparent"
+                ItemsSource="{Binding Tasks, Mode=TwoWay}"
+                SelectionChanged="SelectableItemsView_OnSelectionChanged"
+                SelectionMode="Single">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:TaskItem">
+                        <SwipeView>
+                            <SwipeView.RightItems>
+                                <SwipeItems>
+                                    <SwipeItemView Command="{Binding DeleteTaskCommand, Source={RelativeSource AncestorType={x:Type vm:MainViewModel}}, x:DataType=vm:MainViewModel}" CommandParameter="{Binding .}">
+                                        <Border
+                                            BackgroundColor="#FF5252"
+                                            HeightRequest="100"
+                                            WidthRequest="80">
+                                            <Label
+                                                FontAttributes="Bold"
+                                                HorizontalOptions="Center"
+                                                Text="Delete"
+                                                TextColor="White"
+                                                VerticalOptions="Center" />
+                                        </Border>
+                                    </SwipeItemView>
+                                </SwipeItems>
+                            </SwipeView.RightItems>
+
+                            <Border
+                                Margin="16,8"
+                                Padding="16"
+                                BackgroundColor="{AppThemeBinding Light=White}">
+
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <BoxView
+                                        Grid.Row="0"
+                                        Grid.Column="0"
+                                        Grid.ColumnSpan="2"
+                                        Margin="0,0,0,8"
+                                        BackgroundColor="{Binding PriorityColor}"
+                                        CornerRadius="2"
+                                        HeightRequest="4" />
+
+                                    <Label
+                                        Grid.Row="1"
+                                        Grid.Column="0"
+                                        FontAttributes="Bold"
+                                        FontSize="18"
+                                        Text="{Binding Title}"
+                                        TextColor="{AppThemeBinding Light=#212121,
+                                                                    Dark=#E0E0E0}" />
+
+                                    <!--<CheckBox
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ToggleTaskStatusCommand}"
+                                        CommandParameter="{Binding .}"
+                                        IsChecked="{Binding IsCompleted}"
+                                        Color="#4CAF50" />-->
+
+                                    <CheckBox
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        IsChecked="{Binding IsCompleted}"
+                                        Color="#4CAF50" />
+
+                                    <Label
+                                        Grid.Row="2"
+                                        Grid.Column="0"
+                                        Grid.ColumnSpan="2"
+                                        Margin="0,4,0,8"
+                                        FontSize="14"
+                                        LineBreakMode="TailTruncation"
+                                        MaxLines="2"
+                                        Text="{Binding Description}"
+                                        TextColor="{AppThemeBinding Light=#666,
+                                                                    Dark=#AAA}" />
+
+                                    <Grid
+                                        Grid.Row="3"
+                                        Grid.Column="0"
+                                        Grid.ColumnSpan="2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <Label
+                                            Grid.Column="0"
+                                            Padding="8,4"
+                                            BackgroundColor="{AppThemeBinding Light=#E8F5E8,
+                                                                              Dark=#2E7D32}"
+                                            FontSize="12"
+                                            HorizontalOptions="Start"
+                                            Text="{Binding Category}"
+                                            TextColor="{AppThemeBinding Light=#2E7D32,
+                                                                        Dark=#C8E6C9}" />
+
+                                        <Label
+                                            Grid.Column="1"
+                                            Margin="8,0"
+                                            FontSize="12"
+                                            Text="{Binding StatusText}"
+                                            TextColor="{AppThemeBinding Light=#666,
+                                                                        Dark=#AAA}" />
+
+                                        <Label
+                                            Grid.Column="2"
+                                            FontSize="12"
+                                            Text="{Binding DueDate, StringFormat='{0:MMM dd}'}"
+                                            TextColor="{AppThemeBinding Light=#666,
+                                                                        Dark=#AAA}" />
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                        </SwipeView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+                <CollectionView.EmptyView>
+                    <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
+                        <Label
+                            FontSize="16"
+                            HorizontalOptions="Center"
+                            Text="No tasks found"
+                            TextColor="{AppThemeBinding Light=#666,
+                                                        Dark=#AAA}" />
+                        <Label
+                            Margin="0,8,0,0"
+                            FontSize="14"
+                            HorizontalOptions="Center"
+                            Text="Tap + to add your first task"
+                            TextColor="{AppThemeBinding Light=#999,
+                                                        Dark=#777}" />
+                    </StackLayout>
+                </CollectionView.EmptyView>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</ContentPage>
