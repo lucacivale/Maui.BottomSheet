@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManager", "TaskManager\TaskManager.csproj", "{83F6F9F5-54B9-4360-9EFC-AC64375895C1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.Maui.BottomSheet", "..\..\src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet.csproj", "{5C188D84-A081-479F-9934-F17C86CA905F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{83F6F9F5-54B9-4360-9EFC-AC64375895C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83F6F9F5-54B9-4360-9EFC-AC64375895C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83F6F9F5-54B9-4360-9EFC-AC64375895C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83F6F9F5-54B9-4360-9EFC-AC64375895C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C188D84-A081-479F-9934-F17C86CA905F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C188D84-A081-479F-9934-F17C86CA905F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C188D84-A081-479F-9934-F17C86CA905F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C188D84-A081-479F-9934-F17C86CA905F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
