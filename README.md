@@ -1,58 +1,80 @@
-# Plugin.Maui.BottomSheet
-<strong>Show native BottomSheets with .NET MAUI!</strong>
-* Built-in NavigationService
-* Open any ContentPage or View as BottomSheet
-* Create BottomSheets in any layout
-* Configurable header
-* MVVM support
-<br>
+# 📱 Plugin.Maui.BottomSheet
 
-# Samples
+**🚀 Show native BottomSheets with .NET MAUI!**
 
-<strong>Check out sample project to see the API in action!</strong>.
+[![NuGet](https://img.shields.io/nuget/v/Plugin.Maui.BottomSheet.svg?style=flat-square&label=NuGet)](https://www.nuget.org/packages/Plugin.Maui.BottomSheet)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
+[![Platform Support](https://img.shields.io/badge/platform-iOS%20%7C%20Android%20%7C%20MacCatalyst-lightgrey.svg?style=flat-square)](#platforms)
 
-## Platforms
+## ✨ Features
 
-`iOS` at least iOS 15
-<br>
-<img src="screenshots/iOS/Showcase.gif" />
-<br>
+- 🧭 **Built-in NavigationService** - Seamless navigation between bottom sheets
+- 📄 **Flexible Content** - Open any ContentPage or View as BottomSheet
+- 🎨 **Customizable Layout** - Create BottomSheets in any layout
+- 📋 **Configurable Header** - Full header customization support
+- 🏗️ **MVVM Support** - Complete MVVM pattern integration
+- 🎯 **Native Performance** - Platform-specific implementations for optimal UX
 
-`iPad`
-<br>
-<img src="screenshots/iPad/Showcase.gif" />
-<br>
+## 🎯 Quick Demo
 
-`MacCatalyst` [implementation details](https://developer.apple.com/design/human-interface-guidelines/sheets)
-<br>
-<img src="screenshots/MacCatalyst/Showcase.gif" />
-<br>
+Check out the sample project to see the API in action!
 
-`Android` at least API 23
-<br>
-<img src="screenshots/Android/Showcase.gif" />
-<img src="screenshots/Android/Tablet/Showcase.gif" />
+## 🌍 Platform Support
 
-# Setup
+<table>
+<tr>
+<td>
 
-Install package [Plugin.Maui.BottomSheet](https://www.nuget.org/packages/Plugin.Maui.BottomSheet/9.0.1-pre)
-Enable this plugin by calling `UseBottomSheet()` in your `MauiProgram.cs`
+### 📱 iOS
+**Minimum:** iOS 15+
 
-```cs
+<img src="screenshots/iOS/Showcase.gif" width="200" alt="iOS Demo"/>
+<img src="screenshots/iPad/Showcase.gif" alt="iPad Demo"/>
+<td>
+
+### 💻 MacCatalyst
+
+<img src="screenshots/MacCatalyst/Showcase.gif" width="300" alt="MacCatalyst Demo"/>
+
+</td>
+<td>
+
+### 🤖 Android
+**Minimum:** API 23+
+
+<img src="screenshots/Android/Showcase.gif" width="200" alt="Android Demo"/>
+<img src="screenshots/Android/Tablet/Showcase.gif" width="250" alt="Android Tablet Demo"/>
+
+</td>
+</tr>
+</table>
+
+## 🚀 Quick Start
+
+### 1️⃣ Installation
+
+Install the NuGet package:
+
+```bash
+dotnet add package Plugin.Maui.BottomSheet
+```
+
+### 2️⃣ Setup
+
+Enable the plugin in your `MauiProgram.cs`:
+
+```csharp
 using Plugin.Maui.BottomSheet.Hosting;
 
 var builder = MauiApp.CreateBuilder();
 builder
-  .UseMauiApp<App>()
-  .UseBottomSheet()
-  .ConfigureFonts(fonts =>
-  {
-    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-    fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-  })
-  .RegisterPages()
-  .RegisterViewModels()
-  .PlatformServices();
+    .UseMauiApp<App>()
+    .UseBottomSheet() // 👈 Add this line
+    .ConfigureFonts(fonts =>
+    {
+        fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+        fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+    });
 
 #if DEBUG
 builder.Logging.AddDebug();
@@ -61,184 +83,176 @@ builder.Logging.AddDebug();
 return builder.Build();
 ```
 
-# API
+### 3️⃣ Basic Usage
 
-| Type                                        | Name                  | Description                                                                                                                                                                                                              |
-|---------------------------------------------|-----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| bool                                        | IsModal               | Is interaction with content under BottomSheet enabled                                                                                                                                                                    |
-| bool                                        | IsCancelable          | Can be closed by user either through gestures or clicking in background                                                                                                                                                  |
-| bool                                        | HasHandle             | Show handle                                                                                                                                                                                                              |
-| bool                                        | ShowHeader            | Show header                                                                                                                                                                                                              |
-| bool                                        | IsOpen                | Open or close                                                                                                                                                                                                            |
-| bool                                        | IsDraggable           | Can be dragged(Useful if drawing gestures are made inside bottom sheet)                                                                                                                                                  |
-| List<[BottomSheetState](#bottomSheetState)> | States                | Allowed states. CurrentState must be a value of this collection.                                                                                                                                                         |
-| [BottomSheetState](#bottomSheetState)       | CurrentState          | Current state                                                                                                                                                                                                            |
-| [BottomSheetHeader](#bottomSheetHeader)     | Header                | Configure header                                                                                                                                                                                                         |
-| double                                      | PeekHeight            | Set peek height(requires at least iOS 16 -- all other platforms are supported). The header height will be added to the `PeekHeight` internally. Use `BottomSheetPeekBehavior` to calculate the height based on a `View`. |
-| [BottomSheetContent](#bottomSheetContent)   | Content               | Configure content                                                                                                                                                                                                        |
-| double                                      | Padding               | Padding                                                                                                                                                                                                                  |
-| Colors                                      | BackgroundColor       | Background color                                                                                                                                                                                                         |
-| bool                                        | IgnoreSafeArea        | Ignore safe area(currently only implemented in iOS)                                                                                                                                                                      |
-| float                                       | CornerRadius          | Top left and top right corner radius                                                                                                                                                                                     |
-| [BottomSheetStyle](#bottomSheetStyle)       | BottomSheetStyle      | Style built in components                                                                                                                                                                                                |
-| Color                                       | WindowBackgroundColor | Window background color. If BottomSheet is non-modal no window color is applied                                                                                                                                          |
+Add the XAML namespace:
+```
+xmlns:bottomsheet="http://pluginmauibottomsheet.com"
+```
 
-### BottomSheetState
-| Name   | Description        |
-|--------|--------------------|
-| Peek   | Fractional height  |
-| Medium | Half screen height |
-| Large  | Full screen height |
+Create a simple bottom sheet:
+```xaml
+<bottomsheet:BottomSheet x:Name="MyBottomSheet" IsOpen="{Binding IsSheetOpen}">
+    <bottomsheet:BottomSheet.Content>
+        <bottomsheet:BottomSheetContent>
+            <Label Text="Hello from Bottom Sheet!" />
+        </bottomsheet:BottomSheetContent>
+    </bottomsheet:BottomSheet.Content>
+</bottomsheet:BottomSheet>
+```
 
-### BottomSheetHeader
-| Type                                                                            | Name                | Description                                                                                          |
-|---------------------------------------------------------------------------------|---------------------|------------------------------------------------------------------------------------------------------|
-| string                                                                          | TitleText           | Title text                                                                                           |
-| Button                                                                          | TopLeftButton       | Top left button                                                                                      |
-| Button                                                                          | TopRightButton      | Top right button                                                                                     |
-| DataTemplate                                                                    | HeaderDataTemplate  | Custom view. If set HeaderAppearance, TitleText and TopLeft-and Right buttons are ignored.           |
-| [BottomSheetHeaderButtonAppearanceMode](#bottomSheetHeaderButtonAppearanceMode) | HeaderAppearance    | Set which buttons should be displayed.                                                               |
-| bool                                                                            | ShowCloseButton     | Built in button to close the BottomSheet. Build in Button will replace top right or top left button. |
-| [CloseButtonPosition](#closeButtonPosition)                                     | CloseButtonPosition | Show button on the left or right                                                                     |
+## 📖 API Reference
 
-### BottomSheetHeaderButtonAppearanceMode
-| Name               | Description                         |
-|--------------------|-------------------------------------|
-| None               | Don't show a button                 |
-| LeftAndRightButton | Show a button on the left and right |
-| LeftButton         | Show a button on the left           |
-| RightButton        | Show a button on the right          |
+### 🔧 Core Properties
 
-### CloseButtonPosition
-| Name  | Description              |
-|-------|--------------------------|
-| Left  | Show button on the left  |
-| Right | Show button on the right |
+| Property                | Type                     | Description                                               |
+|-------------------------|--------------------------|-----------------------------------------------------------|
+| `IsModal`               | `bool`                   | Enable/disable interaction with content under BottomSheet |
+| `IsCancelable`          | `bool`                   | Allow user to close via gestures or background click      |
+| `HasHandle`             | `bool`                   | Show/hide the drag handle                                 |
+| `ShowHeader`            | `bool`                   | Show/hide the header section                              |
+| `IsOpen`                | `bool`                   | Control open/close state                                  |
+| `IsDraggable`           | `bool`                   | Enable/disable drag gestures                              |
+| `States`                | `List<BottomSheetState>` | Allowed states (Peek, Medium, Large)                      |
+| `CurrentState`          | `BottomSheetState`       | Current display state                                     |
+| `PeekHeight`            | `double`                 | Height when in peek state (iOS 16+)                       |
+| `Padding`               | `double`                 | Internal padding                                          |
+| `BackgroundColor`       | `Color`                  | Background color                                          |
+| `IgnoreSafeArea`        | `bool`                   | Ignore safe area (iOS only)                               |
+| `CornerRadius`          | `float`                  | Top corner radius                                         |
+| `WindowBackgroundColor` | `Color`                  | Window background (modal only)                            |
 
-### BottomSheetContent
-| Type         | Name            | Description                                                                       |
-|--------------|-----------------|-----------------------------------------------------------------------------------|
-| View         | Content         | View content. Xaml usage can be simplified as ContentProperty attribute is added. |
-| DataTemplate | ContentTemplate | View template will be inflated when the BottomSheet is opened.                    |
+### 🎭 BottomSheet States
+
+| State    | Description                      |
+|----------|----------------------------------|
+| `Peek`   | Fractional height (customizable) |
+| `Medium` | Half screen height               |
+| `Large`  | Full screen height               |
+
+### 🎨 Header Configuration
+
+| Property              | Type                                    | Description                                              |
+|-----------------------|-----------------------------------------|----------------------------------------------------------|
+| `TitleText`           | `string`                                | Title text displayed in header                           |
+| `TopLeftButton`       | `Button`                                | Custom button for top-left position                      |
+| `TopRightButton`      | `Button`                                | Custom button for top-right position                     |
+| `HeaderDataTemplate`  | `DataTemplate`                          | Custom view template (overrides other header properties) |
+| `HeaderAppearance`    | `BottomSheetHeaderButtonAppearanceMode` | Controls which buttons are displayed                     |
+| `ShowCloseButton`     | `bool`                                  | Show built-in close button                               |
+| `CloseButtonPosition` | `CloseButtonPosition`                   | Position of close button (Left/Right)                    |
+
+### 📱 Content Configuration
+
+| Property          | Type           | Description               |
+|-------------------|----------------|---------------------------|
+| `Content`         | `View`         | Direct view content       |
+| `ContentTemplate` | `DataTemplate` | Template for lazy loading |
 
 > [!CAUTION]
 > Be careful when using `Content` because the Content will be created even if the BottomSheet isn't open and this may have a negative performance impact.
 > `Content` should only be used with navigation and not in `BottomSheets` added directly to a `Layout`.
 
-### BottomSheetStyle
-| Type                                              | Name        | Description |
-|---------------------------------------------------|-------------|-------------|
-| [BottomSheetHeaderStyle](#bottomSheetHeaderStyle) | HeaderStyle | Style class |
+### 🎨 Styling Options
 
-### BottomSheetHeaderStyle
-| Type           | Name                            | Description                          |
-|----------------|---------------------------------|--------------------------------------|
-| Color          | TitleTextColor                  | Title text color                     |
-| double         | TitleTextFontSize               | Title text font size                 |
-| FontAttributes | TitleTextFontAttributes         | Title text font attributes           |
-| string         | TitleTextFontFamily             | Title text font family               |
-| bool           | TitleTextFontAutoScalingEnabled | Title text font auto scaling enabled |
-| double         | CloseButtonHeightRequest        | Close button height request          |
-| double         | CloseButtonWidthRequest         | Close button width request           |
-| Color          | CloseButtonTintColor            | Close button tint color              |
+#### BottomSheet Style Properties
 
-## Interaction
+| Property      | Type                     | Description                               |
+|---------------|--------------------------|-------------------------------------------|
+| `HeaderStyle` | `BottomSheetHeaderStyle` | Styling configuration for header elements |
 
-#### Commands
-`TopRightButtonCommand` `TopRightButtonCommandParameter`
+#### BottomSheet Header Style Properties
 
-`TopLeftButtonCommand` `TopLeftButtonCommandParameter`
+| Property                          | Type             | Description                          |
+|-----------------------------------|------------------|--------------------------------------|
+| `TitleTextColor`                  | `Color`          | Color of the title text              |
+| `TitleTextFontSize`               | `double`         | Font size of the title text          |
+| `TitleTextFontAttributes`         | `FontAttributes` | Font attributes (Bold, Italic, None) |
+| `TitleTextFontFamily`             | `string`         | Font family name for title text      |
+| `TitleTextFontAutoScalingEnabled` | `bool`           | Enable automatic font scaling        |
+| `CloseButtonHeightRequest`        | `double`         | Requested height for close button    |
+| `CloseButtonWidthRequest`         | `double`         | Requested width for close button     |
+| `CloseButtonTintColor`            | `Color`          | Tint color for close button icon     |
 
-`ClosingCommand` `ClosingCommandParameter`
+## 🎪 Advanced Examples
 
-`ClosedCommand` `ClosedCommandParameter`
+### 📋 Complete XAML Example
 
-`OpeningCommand` `OpeningCommandParameter`
-
-`OpenedCommand` `OpenedCommandParameter`
-
-#### Events
-`Closing`
-`Closed`
-`Opening`
-`Opened`
-
-# Platform specifics
-
-## MacCatalyst
-By design sheets are always [modal](https://developer.apple.com/design/human-interface-guidelines/sheets#macOS).
-
-## [Android](https://developer.android.com/reference/com/google/android/material/bottomsheet/BottomSheetDialog#BottomSheetDialog(android.content.Context))
-
-#### Themes
-`BottomSheets` are themed by default based on `ThemeOverlay.MaterialComponents.BottomSheetDialog`.
-To enable EdgeToEdge by default the derived theme sets the `navigationBarColor` to transparent.
-You can create you own themes and apply them to different `BottomSheets`.
-
-To set a custom theme call the platform specific extension method before the sheet is opened.
-```
-MyBottomSheet.On<Android>().SetTheme(Resource.Style.My_Awesome_BottomSheetDialog)
-```
-
-#### Edge to edge
-EdgeToEdge support is built-in and enabled by default. 
-If you create your own theme make sure to derive from `ThemeOverlay.MaterialComponents.BottomSheetDialog` and that `navigationBarColor` is translucent. 
-Otherwise, EdgeToEdge is disabled for that sheet. To disable EdgeToEdge you can also set `<item name="enableEdgeToEdge">false</item>` in your theme.
-
-### [MaxHeight](https://developer.android.com/reference/com/google/android/material/bottomsheet/BottomSheetBehavior#setMaxHeight(int)) and [MaxWidth](https://developer.android.com/reference/com/google/android/material/bottomsheet/BottomSheetBehavior#setMaxWidth(int))
-To override the MaxHeight or MaxWidth call the platform specific extension method before the sheet is opened.
-
-```
-MyBottomSheet.On<Android>().SetMaxHeight(MaxValue);
-MyBottomSheet.On<Android>().SetMaxWidth(MaxValue);
-
-or
-
-xmlns:androidBottomsheet="http://pluginmauibottomsheet.com/platformconfiguration/android"
-androidBottomsheet:BottomSheet.MaxWidth="300"
-```
-
-### [Margin](https://learn.microsoft.com/en-us/dotnet/maui/user-interface/align-position?view=net-maui-9.0#position-controls)
-
-Set the BottomSheet margin.
-The margin will only be applied on the left on right.
-
-```
-MyBottomSheet.On<Android>().SetMargin(new Thickness(10, 0, 10, 0));
-
-or
-
-xmlns:androidBottomsheet="http://pluginmauibottomsheet.com/platformconfiguration/android"
-androidBottomsheet:BottomSheet.Margin="10,0,10,0"
-```
-
-### [HalfExpandedRatio](https://developer.android.com/reference/com/google/android/material/bottomsheet/BottomSheetBehavior#setHalfExpandedRatio(float))
-```
-MyBottomSheet.On<Android>().SetHalfExpanedRatio = 0.8f;
-
-or
-
-xmlns:androidBottomsheet="http://pluginmauibottomsheet.com/platformconfiguration/android"
-androidBottomsheet:BottomSheet.HalfExpandedRatio="0.8"
-```
-# Style
-
-With `BottomSheet.BottomSheetStyle` built in components as e.g. `BottomSheetHeader.Title` or the Close button can be styled.
-You can either style each BottomSheet individually or use [styles](https://learn.microsoft.com/dotnet/maui/user-interface/styles/xaml?view=net-maui-9.0).
-
-```
-<bottomsheet:BottomSheet>
+```xaml
+<bottomsheet:BottomSheet
+    x:Name="AdvancedBottomSheet"
+    Padding="20"
+    CornerRadius="20"
+    HasHandle="True"
+    IgnoreSafeArea="True"
+    IsCancelable="True"
+    IsDraggable="True"
+    IsModal="True"
+    IsOpen="{Binding IsOpen}"
+    ShowHeader="True"
+    States="Peek,Medium,Large"
+    CurrentState="Medium"
+    WindowBackgroundColor="Black">
+    
+    <!-- Header Configuration -->
+    <bottomsheet:BottomSheet.Header>
+        <bottomsheet:BottomSheetHeader
+            CloseButtonPosition="Right"
+            HeaderAppearance="LeftAndRightButton"
+            ShowCloseButton="True"
+            TitleText="My Awesome Sheet">
+            <bottomsheet:BottomSheetHeader.TopLeftButton>
+                <Button Command="{Binding LeftButtonCommand}" Text="Cancel" />
+            </bottomsheet:BottomSheetHeader.TopLeftButton>
+            <bottomsheet:BottomSheetHeader.TopRightButton>
+                <Button Command="{Binding RightButtonCommand}" Text="Save" />
+            </bottomsheet:BottomSheetHeader.TopRightButton>
+        </bottomsheet:BottomSheetHeader>
+    </bottomsheet:BottomSheet.Header>
+    
+    <!-- Content with Peek Height Behavior -->
+    <bottomsheet:BottomSheet.Content>
+        <bottomsheet:BottomSheetContent>
+            <bottomsheet:BottomSheetContent.ContentTemplate>
+                <DataTemplate>
+                    <VerticalStackLayout>
+                        <!-- Peek Content -->
+                        <ContentView>
+                            <ContentView.Behaviors>
+                                <bottomsheet:BottomSheetPeekBehavior />
+                            </ContentView.Behaviors>
+                            <Label Text="This content is visible in peek mode" />
+                        </ContentView>
+                        
+                        <!-- Full Content -->
+                        <Grid>
+                            <Label Text="This content appears when expanded" />
+                            <!-- Your content here -->
+                        </Grid>
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </bottomsheet:BottomSheetContent.ContentTemplate>
+        </bottomsheet:BottomSheetContent>
+    </bottomsheet:BottomSheet.Content>
+    
+    <!-- Styling -->
     <bottomsheet:BottomSheet.BottomSheetStyle>
         <bottomsheet:BottomSheetStyle>
             <bottomsheet:BottomSheetStyle.HeaderStyle>
-                <bottomsheet:BottomSheetHeaderStyle TitleTextColor="Aqua" CloseButtonTintColor="Aqua"/>
+                <bottomsheet:BottomSheetHeaderStyle 
+                    TitleTextColor="Blue" 
+                    TitleTextFontSize="18"
+                    TitleTextFontAttributes="Bold"
+                    CloseButtonTintColor="Red"/>
             </bottomsheet:BottomSheetStyle.HeaderStyle>
         </bottomsheet:BottomSheetStyle>
     </bottomsheet:BottomSheet.BottomSheetStyle>
 </bottomsheet:BottomSheet>
 ```
 
-```
+### 🎨 Global Styling
+
+```xaml
 <Style TargetType="bottomsheet:BottomSheet">
     <Setter Property="BottomSheetStyle">
         <Setter.Value>
@@ -260,97 +274,169 @@ You can either style each BottomSheet individually or use [styles](https://learn
 </Style>
 ```
 
-# XAML usage
+## 🧭 Navigation System
 
-In order to make use of sheet within XAML you can use this namespace:
-xmlns:bottomsheet="http://pluginmauibottomsheet.com"
+### 🚀 Setup Navigation
 
-`BottomSheet` is a `View` and can be added in any layout or control which accepts `View`.
+Register your bottom sheets for navigation:
 
-To open/close a `BottomSheet` simply set `IsOpen` property to true/false.
+```csharp
+// Basic registration
+builder.Services.AddBottomSheet<UserProfilePage>("UserProfile");
 
+// With ViewModel binding
+builder.Services.AddBottomSheet<UserProfileSheet, UserProfileViewModel>("UserProfile");
+
+// With default configuration
+builder.Services.AddBottomSheet<UserProfilePage>("UserProfile", (sheet, page) =>
+{
+    sheet.States = [BottomSheetState.Medium, BottomSheetState.Large];
+    sheet.CurrentState = BottomSheetState.Large;
+    sheet.ShowHeader = true;
+    sheet.Header = new BottomSheetHeader()
+    {
+        TitleText = page.Title,
+    };
+});
 ```
-<bottomsheet:BottomSheet
-    x:Name="ModalBottomSheet"
-    Padding="20"
-    CornerRadius="{Binding CornerRadius}"
-    HasHandle="{Binding HasHandle}"
-    IgnoreSafeArea="True"
-    IsCancelable="{Binding IsCancelable}"
-    IsDraggable="{Binding IsDraggable}"
-    IsModal="{Binding IsModal, Mode=TwoWay}"
-    IsOpen="{Binding IsOpen}"
-    ShowHeader="{Binding ShowHeader}"
-    States="Peek,Medium,Large"
-    WindowBackgroundColor="{Binding WindowBackgroundColor, Mode=TwoWay}">
-    <bottomsheet:BottomSheet.Header>
-        <bottomsheet:BottomSheetHeader
-            CloseButtonPosition="{Binding CloseButtonPosition}"
-            HeaderAppearance="{Binding HeaderButtonAppearanceMode}"
-            ShowCloseButton="{Binding ShowCloseButton}"
-            TitleText="{Binding Title}">
-            <bottomsheet:BottomSheetHeader.TopLeftButton>
-                <Button Command="{Binding TopLefButtonCommand}" Text="Top left" />
-            </bottomsheet:BottomSheetHeader.TopLeftButton>
-            <bottomsheet:BottomSheetHeader.TopRightButton>
-                <Button Command="{Binding TopRightButtonCommand}" Text="Top right" />
-            </bottomsheet:BottomSheetHeader.TopRightButton>
-        </bottomsheet:BottomSheetHeader>
-    </bottomsheet:BottomSheet.Header>
-    <bottomsheet:BottomSheet.Content>
-        <bottomsheet:BottomSheetContent>
-            <bottomsheet:BottomSheetContent.ContentTemplate>
-                <DataTemplate x:DataType="local:ShowCaseViewModel">
-                    <VerticalStackLayout>
-                        <ContentView>
-                            <ContentView.Behaviors>
-                                <bottomsheet:BottomSheetPeekBehavior />
-                            </ContentView.Behaviors>
-                            <Label Text="PeekHeight reference view " />
-                        </ContentView>
-                        <Grid>
-                            <Label Text="Some other view" />
-                        </Grid>
-                    </VerticalStackLayout>
-                </DataTemplate>
-            </bottomsheet:BottomSheetContent.ContentTemplate>
-        </bottomsheet:BottomSheetContent>
-    </bottomsheet:BottomSheet.Content>
-</bottomsheet:BottomSheet>
+
+### 🎯 Using Navigation Service
+
+```csharp
+public class MainViewModel
+{
+    private readonly IBottomSheetNavigationService _navigationService;
+
+    public MainViewModel(IBottomSheetNavigationService navigationService)
+    {
+        _navigationService = navigationService;
+    }
+
+    // Navigate to a bottom sheet
+    public async Task ShowUserProfile()
+    {
+        await _navigationService.NavigateTo("UserProfile");
+    }
+
+    // Navigate with parameters
+    public async Task ShowUserProfile(int userId)
+    {
+        var parameters = new BottomSheetNavigationParameters
+        {
+            { "UserId", userId },
+            { "Mode", "Edit" },
+            { "ShowActions", true }
+        };
+        
+        await _navigationService.NavigateTo("UserProfile", parameters);
+    }
+
+    // Navigate with parameters and custom configuration
+    public async Task ShowProductDetails(Product product)
+    {
+        var parameters = new BottomSheetNavigationParameters
+        {
+            { "Product", product },
+            { "Category", product.CategoryId },
+            { "ReadOnly", false }
+        };
+
+        await _navigationService.NavigateTo("ProductDetails", parameters, configure: sheet =>
+        {
+            sheet.Header.TitleText = product.Name;
+            sheet.CurrentState = BottomSheetState.Large;
+            sheet.HasHandle = true;
+        });
+    }
+
+    // Navigate with ViewModel and parameters
+    public async Task ShowEditForm<T>(T model, string formType)
+    {
+        var parameters = new BottomSheetNavigationParameters
+        {
+            { "Model", model },
+            { "FormType", formType },
+            { "Timestamp", DateTime.Now }
+        };
+
+        await _navigationService.NavigateTo<EditFormViewModel>("EditForm", parameters);
+    }
+
+    // Navigate with complex object parameters
+    public async Task ShowOrderSummary(Order order, List<OrderItem> items, decimal total)
+    {
+        var parameters = new BottomSheetNavigationParameters
+        {
+            { "Order", order },
+            { "OrderItems", items },
+            { "Total", total },
+            { "Currency", "USD" },
+            { "CanEdit", order.Status == OrderStatus.Draft }
+        };
+
+        await _navigationService.NavigateTo("OrderSummary", parameters);
+    }
+
+    // Go back with result parameters
+    public async Task CloseWithResult()
+    {
+        var resultParameters = new BottomSheetNavigationParameters
+        {
+            { "Result", "Success" },
+            { "ModifiedData", GetModifiedData() },
+            { "HasChanges", true }
+        };
+
+        await _navigationService.GoBack(resultParameters);
+    }
+
+    // Go back to specific sheet with parameters
+    public async Task GoBackToSheet(string targetSheet)
+    {
+        var parameters = new BottomSheetNavigationParameters
+        {
+            { "ReturnReason", "UserCancelled" },
+            { "Timestamp", DateTime.Now }
+        };
+
+        await _navigationService.GoBack(parameters, targetSheet);
+    }
+
+    // Clear all sheets with notification parameters
+    public async Task CloseAllSheets()
+    {
+        var parameters = new BottomSheetNavigationParameters
+        {
+            { "CloseReason", "ForceClose" },
+            { "SaveState", true }
+        };
+
+        await _navigationService.ClearBottomSheetStack(parameters);
+    }
+}
 ```
-To set the PeekHeight based on a view inside the `BottomSheetContent` attach the `BottomSheetPeekBehavior` to the view.
+
+### 🔄 Navigation Lifecycle
+
+Implement `INavigationAware` for lifecycle events:
+
+```csharp
+public class UserProfileViewModel : INavigationAware
+{
+    public void OnNavigatedTo(IBottomSheetNavigationParameters parameters)
+    {
+        // Sheet opened
+        var userId = parameters.GetValue<string>("UserId");
+        LoadUserData(userId);
+    }
+
+    public void OnNavigatedFrom(IBottomSheetNavigationParameters parameters)
+    {
+        // Sheet closed or another sheet opened
+        SaveChanges();
+    }
+}
 ```
-<bottomsheet:BottomSheet.Content>
-    <bottomsheet:BottomSheetContent>
-        <bottomsheet:BottomSheetContent.ContentTemplate>
-            <DataTemplate x:DataType="local:ShowCaseViewModel">
-                <VerticalStackLayout>
-                    <ContentView>
-                        <ContentView.Behaviors>
-                            <bottomsheet:BottomSheetPeekBehavior />
-                        </ContentView.Behaviors>
-                        <Label Text="Peek content"/>
-                    </ContentView>
-                    <Grid
-                        <Label Text="Main content"/>
-                    </Grid>
-                </VerticalStackLayout>
-            </DataTemplate>
-        </bottomsheet:BottomSheetContent.ContentTemplate>
-    </bottomsheet:BottomSheetContent>
-</bottomsheet:BottomSheet.Content>
-```
-The peek height will be equal to the `ContentView` height.
-
-# Navigation Awareness
-
-To enable the `ViewModel` of a `BottomSheet` to participate in the navigation lifecycle, implement the `INavigationAware` interface. This interface defines two lifecycle methods:
-
-- OnNavigatedTo(IBottomSheetNavigationParameters parameters): Called when the BottomSheet is navigated to.
-- OnNavigatedFrom(IBottomSheetNavigationParameters parameters): Called when navigating away from the BottomSheet.
-
-Implementing these methods allows the `ViewModel` to handle initialization, cleanup, or state persistence tasks based on the navigation context.
-Additionally, any `BottomSheetNavigationParameters` passed during navigation will be available through the parameters argument, enabling the `ViewModel` to access incoming or outgoing data as needed.
 
 > [!TIP]
 > Not only can the BottomSheet’s `ViewModel` implement `INavigationAware`, but so can the `ViewModel` of the parent view that launched the `BottomSheet`. This allows the parent to respond when:
@@ -359,193 +445,174 @@ Additionally, any `BottomSheetNavigationParameters` passed during navigation wil
 >
 > This is especially useful for suspending or restoring state in the parent view while modals are active.
 
-> [!IMPORTANT]  
-> When using the `IsOpen` to manage the visibility of a `BottomSheet`, the parent `ViewModel` can implement `INavigationAware` to respond to the lifecycle of the `BottomSheet`.
-> This allows the parent `ViewModel` to handle actions when:
+### 🛡️ Navigation Confirmation
 
-| Scenario                                       | `INavigationAware` on Parent Triggered? |
-|------------------------------------------------|-----------------------------------------|
-| BottomSheet opened via navigation              | ❌ No                                    |
-| BottomSheet opened without navigation (IsOpen) | ✅ Yes                                   |
+Implement confirmation dialogs:
 
-```
-public class UserViewModel : IConfirmNavigationAsync
+```csharp
+public class EditUserViewModel : IConfirmNavigationAsync
 {
-    public void OnNavigatedFrom(IBottomSheetNavigationParameters parameters)
+    public async Task<bool> CanNavigateAsync(IBottomSheetNavigationParameters? parameters)
     {
-    }
-
-    public void OnNavigatedTo(IBottomSheetNavigationParameters parameters)
-    {
-    }
-}
-```
-
-# Confirming navigation
-
-A `BottomSheet` or its associated `ViewModel` can determine whether a navigation operation is allowed by implementing either the `IConfirmNavigation` or `IConfirmNavigationAsync` interface.
-
-When one of these interfaces is implemented, the navigation system checks the result of the confirmation method:
-
-- If the method returns `true`, the navigation proceeds—this may result in the current `BottomSheet` being closed or another `BottomSheet` being opened above it.
-- If the method returns `false`, the navigation is canceled—the current `BottomSheet` remains open, and no new one is shown.
-
-For `BottomSheets` that are added directly to a layout (not navigated to), the navigation system checks whether `BottomSheet.Parent` or its `ViewModel` implements `IConfirmNavigation` or `IConfirmNavigationAsync`.
-
-> **Note:** `IBottomSheetNavigationParameters` are only passed when a `BottomSheet` is shown or closed via navigation. If a `BottomSheet` is closed with a gesture (such as swipe down).
-
-```
-public class UserViewModel : IConfirmNavigationAsync
-{
-    public Task<bool> CanNavigateAsync(IBottomSheetNavigationParameters? parameters)
-    {
-        return Shell.Current.CurrentPage.DisplayAlert(
-            "Warning",
-            "Would you like to save?",
-            "Yes",
-            "No");
-    }
-}
-
-public class UserViewModel : IConfirmNavigation
-{
-    public Task<bool> CanNavigateAsync(IBottomSheetNavigationParameters? parameters)
-    {
+        if (HasUnsavedChanges)
+        {
+            return await Shell.Current.CurrentPage.DisplayAlert(
+                "Unsaved Changes",
+                "You have unsaved changes. Do you want to discard them?",
+                "Discard",
+                "Cancel");
+        }
         return true;
     }
 }
 ```
 
-# Navigation
+> [!IMPORTANT]  
+> When using the `IsOpen` to manage the visibility of a `BottomSheet`, the parent `ViewModel` can implement `INavigationAware` to respond to the lifecycle of the `BottomSheet`.
+> This allows the parent `ViewModel` to handle actions when:
 
-> [!CAUTION]
-> Never mix navigation with `BottomSheet.IsOpen`. This will lead to unexpected behavior and is not supported.
-> Either open and close `BottomSheet` using `IsOpen` or use navigation.
+## 🎯 Event Handling
 
-`IBottomSheetNavigationService` is be registered automatically and can be resolved. 
+### 📱 Commands
 
-```
-private readonly IBottomSheetNavigationService _bottomSheetNavigationService;
-
-public MainViewModel(IBottomSheetNavigationService bottomSheetNavigationService)
+```csharp
+public class MyViewModel
 {
-  _bottomSheetNavigationService = bottomSheetNavigationService;
+    public ICommand TopLeftButtonCommand { get; }
+    public ICommand TopRightButtonCommand { get; }
+    public ICommand OpeningCommand { get; }
+    public ICommand OpenedCommand { get; }
+    public ICommand ClosingCommand { get; }
+    public ICommand ClosedCommand { get; }
 }
 ```
 
-Register named `BottomSheets` for navigation
+### 🎭 Events
 
-```
-builder.Services.AddBottomSheet<ShowCasePage>("Showcase");
-```
-
-Navigate to the registered `BottomSheet`
-
-```
-_bottomSheetNavigationService.NavigateTo("Showcase");
+```csharp
+MyBottomSheet.Opening += OnOpening;
+MyBottomSheet.Opened += OnOpened;
+MyBottomSheet.Closing += OnClosing;
+MyBottomSheet.Closed += OnClosed;
 ```
 
-Close a top most `BottomSheet`
-```
-_bottomSheetNavigationService.GoBack();
-```
+## 🔧 Platform-Specific Features
 
-Close all open `BottomSheets`(Last In - First Out)
-```
-_bottomSheetNavigationService.ClearBottomSheetStack();
-```
+### 🤖 Android
 
-By default `ShowCasePage.BindingContext` will be assigned to `BottomSheet.BindingContext` as in [Shell navigation](https://learn.microsoft.com/dotnet/architecture/maui/dependency-injection).
+#### 🎨 Custom Themes
 
-Wire your `BottomSheet` to a `ViewModel` to simplify navigation.
-
-```
-builder.Services.AddBottomSheet<SomeBottomSheet, SomeViewModel>("SomeBottomSheet");
+```csharp
+// Set custom theme before opening
+MyBottomSheet.On<Android>().SetTheme(Resource.Style.My_Awesome_BottomSheetDialog);
 ```
 
-To manually set the `ViewModel` it has to be available in the container
-```
-builder.Services.AddTransient<SomeViewModel>();
+#### 📏 Size Constraints
 
-_bottomSheetNavigationService.NavigateTo<SomeViewModel>("Showcase");
-```
-
-If `CopyPagePropertiesToBottomSheet` is enabled all applicable properties will be copied from the source page to the `BottomSheet` during navigation.
-
-```
-.UseBottomSheet(config => config.CopyPagePropertiesToBottomSheet = true);
+```csharp
+// Code approach
+MyBottomSheet.On<Android>().SetMaxHeight(800);
+MyBottomSheet.On<Android>().SetMaxWidth(600);
+MyBottomSheet.On<Android>().SetMargin(new Thickness(10, 0, 10, 0));
+MyBottomSheet.On<Android>().SetHalfExpanedRatio = 0.8f;
 ```
 
-Add a default `BottomSheet` navigation configuration
+```xaml
+<!-- XAML approach -->
+xmlns:androidBottomsheet="http://pluginmauibottomsheet.com/platformconfiguration/android"
 
-```
-builder.Services.AddBottomSheet<ShowCasePage>("Showcase",
-    (sheet, page) =>
-    {
-        sheet.States = [BottomSheetState.Medium, BottomSheetState.Large];
-        sheet.CurrentState = BottomSheetState.Large;
-        sheet.ShowHeader = true;
-        sheet.Header = new BottomSheetHeader()
-        {
-            TitleText = page.Title,
-        };
-    });
-```
-To override the default configuration
-```
-_bottomSheetNavigationService.NavigateTo("Showcase", configure: (sheet) =>
-{
-    sheet.Header.TitleText = "My new title";
-});
+<bottomsheet:BottomSheet
+    androidBottomsheet:BottomSheet.MaxWidth="300"
+    androidBottomsheet:BottomSheet.Margin="10,0,10,0"
+    androidBottomsheet:BottomSheet.HalfExpandedRatio="0.8">
+    <!-- Content -->
+</bottomsheet:BottomSheet>
 ```
 
-# BottomSheet lifecycle
+#### 🎨 Edge-to-Edge Support
 
-## Platform lifecycle events
+EdgeToEdge support is built-in and enabled by default.
+If you create your own theme make sure to derive from `ThemeOverlay.MaterialComponents.BottomSheetDialog` and that `navigationBarColor` is translucent.
 
-.NET MAUI defines delegates that are invoked in response to platform lifecycle events being raised.
-Handlers can be specified for these delegates, using named methods or anonymous functions, which are executed when the delegate is invoked.
-This mechanism enables apps to be notified when common platform lifecycle events are raised.
+To disable:
 
-> [!IMPORTANT]
-> The `ConfigureLifecycleEvents` method is in the `Microsoft.Maui.LifecycleEvents` namespace.
-
-The following table lists the BottomSheet delegates that are invoked in response to Android lifecycle events being raised:
-
-| Delegate                   | Arguments              | Description                                                    | Comments                                                                                         |
-|----------------------------|------------------------|----------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
-| `OnBottomSheetBackPressed` | `Android.App.Activity` | Invoked when the activity has detected a press of the back key | Will only be invoked if BottomSheet is not cancelable(Limitation of Android's BottomSheetDialog) |
-
+```xml
+<item name="enableEdgeToEdge">false</item>
 ```
+
+### 💻 MacCatalyst
+
+By design, sheets are always [modal](https://developer.apple.com/design/human-interface-guidelines/sheets#macOS) on macOS.
+
+### 📱 Platform Considerations
+
+| Feature       | iOS     | Android | MacCatalyst |
+|---------------|---------|---------|-------------|
+| Edge-to-Edge  | ✅       | ✅       | ✅           |
+| PeekHeight    | iOS 16+ | ✅       | ❌           |
+| Custom Themes | ❌       | ✅       | ❌           |
+| Modal Only    | ❌       | ❌       | ✅           |
+
+## 🔄 Lifecycle Events
+
+### 📱 Platform Lifecycle Integration
+
+```csharp
 using Microsoft.Maui.LifecycleEvents;
 using Plugin.Maui.BottomSheet.LifecycleEvents;
 
-namespace PlatformLifecycleDemo
+public static class MauiProgram
 {
-    public static class MauiProgram
+    public static MauiApp CreateMauiApp()
     {
-        public static MauiApp CreateMauiApp()
+        var builder = MauiApp.CreateBuilder();
+        builder
+            .UseMauiApp<App>()
+            .UseBottomSheet();
+        
+        #if ANDROID
+        builder.ConfigureLifecycleEvents(events =>
         {
-            var builder = MauiApp.CreateBuilder();
-            builder
-                .UseMauiApp<App>()
-                .UseBottomSheet();
-            
-            #if ANDROID
-            builder.ConfigureLifecycleEvents(events =>
+            events.AddAndroid(android =>
             {
-                events.AddAndroid(android =>
+                android.OnBottomSheetBackPressed(activity =>
                 {
-                    android.OnBottomSheetBackPressed(activity =>
-                    {
-                        Debug.WriteLine("BACK PRESSED");
-                    });
+                    // Handle back button press
+                    Debug.WriteLine("BottomSheet back button pressed");
                 });
             });
-            #endif
+        });
+        #endif
 
-            return builder.Build();
-        }
+        return builder.Build();
     }
 }
 ```
+
+## 🚨 Important Notes & Best Practices
+
+### 🎯 Performance Tips
+
+- Use `ContentTemplate` instead of `Content` for better performance
+- Implement lazy loading for complex content
+- Consider using `INavigationAware` for proper lifecycle management
+
+### 🔄 Navigation Best Practices
+
+- **Don't mix** `IsOpen` with navigation methods
+- Always implement `IConfirmNavigation` for forms with user input
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+- 🐛 [Bug Reports](https://github.com/lucacivale/Maui.BottomSheet/issues)
+- 💬 [Discussions](https://github.com/lucacivale/Maui.BottomSheet/discussions)
+
+---
+
+<div>
+<b>Made with ❤️ for the .NET MAUI community</b>
+</div>
