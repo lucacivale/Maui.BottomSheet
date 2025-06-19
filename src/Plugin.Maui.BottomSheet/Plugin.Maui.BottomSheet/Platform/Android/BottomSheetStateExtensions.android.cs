@@ -3,15 +3,16 @@ namespace Plugin.Maui.BottomSheet.Platform.Android;
 using Google.Android.Material.BottomSheet;
 
 /// <summary>
-/// <see cref="BottomSheetState"/> extension methods.
+/// Extension methods for converting between BottomSheetState enum and Android platform constants.
 /// </summary>
 internal static class BottomSheetStateExtensions
 {
     /// <summary>
-    /// Get <see cref="BottomSheetBehavior"/> state constant from <see cref="BottomSheetState"/> enum.
+    /// Converts a BottomSheetState enum value to the corresponding Android platform state constant.
     /// </summary>
-    /// <param name="state">State.</param>
-    /// <returns>Behavior state constant.</returns>
+    /// <param name="state">The bottom sheet state to convert.</param>
+    /// <returns>The Android BottomSheetBehavior state constant.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the state is not recognized.</exception>
     public static int ToPlatformState(this BottomSheetState state)
     {
         return state switch
@@ -24,10 +25,11 @@ internal static class BottomSheetStateExtensions
     }
 
     /// <summary>
-    /// Get <see cref="BottomSheetState"/> from <see cref="BottomSheetBehavior"/> state constant.
+    /// Converts an Android platform state constant to the corresponding BottomSheetState enum value.
     /// </summary>
-    /// <param name="state">Constant value.</param>
-    /// <returns>Behavior state.</returns>
+    /// <param name="state">The Android state constant to convert.</param>
+    /// <returns>The corresponding BottomSheetState enum value.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the state constant is not recognized.</exception>
     public static BottomSheetState ToBottomSheetState(this int state)
     {
         return state switch

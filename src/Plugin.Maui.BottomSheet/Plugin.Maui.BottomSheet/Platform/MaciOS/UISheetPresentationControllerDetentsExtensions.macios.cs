@@ -3,15 +3,15 @@ namespace Plugin.Maui.BottomSheet.Platform.MaciOS;
 using UIKit;
 
 /// <summary>
-/// UISheetPresentationControllerDetent collection extension methods.
+/// Provides extension methods for UISheetPresentationControllerDetent collections.
 /// </summary>
 internal static class UISheetPresentationControllerDetentsExtensions
 {
     /// <summary>
-    /// Get the largest detent identifier of the collection.
+    /// Gets the largest detent identifier from a collection of detents.
     /// </summary>
-    /// <param name="detents">Detent collection.</param>
-    /// <returns>Largest detent.</returns>
+    /// <param name="detents">The collection of detents to analyze.</param>
+    /// <returns>The identifier of the largest detent in the collection.</returns>
     public static UISheetPresentationControllerDetentIdentifier LargestDetentIdentifier(this IEnumerable<UISheetPresentationControllerDetent> detents)
     {
         var largestDetent = detents.Last();
@@ -36,6 +36,11 @@ internal static class UISheetPresentationControllerDetentsExtensions
         return largestDetentIdentifier;
     }
 
+    /// <summary>
+    /// Determines the detent identifier for a given detent by comparing with system detents.
+    /// </summary>
+    /// <param name="largestDetent">The detent to identify.</param>
+    /// <returns>The corresponding detent identifier (Medium or Large).</returns>
     private static UISheetPresentationControllerDetentIdentifier LargestDetentIdentifier(UISheetPresentationControllerDetent largestDetent)
     {
         using var mediumDetent = UISheetPresentationControllerDetent.CreateMediumDetent();

@@ -1,32 +1,39 @@
-namespace Plugin.Maui.BottomSheet.Hosting;
-
-/// <summary>
-/// <see cref="MauiAppBuilder"/> extension methods.
-/// </summary>
-public static class MauiAppBuilderExtensions
+namespace Plugin.Maui.BottomSheet.Hosting
 {
     /// <summary>
-    /// Register all required services for the plugin.
+    /// Provides extension methods for <see cref="MauiAppBuilder"/> to register and configure
+    /// the BottomSheet plugin and its required services.
     /// </summary>
-    /// <param name="builder"><see cref="MauiAppBuilder"/>.</param>
-    /// <param name="configuration">Plugin configuration.</param>
-    /// <returns>Builder.</returns>
-    public static MauiAppBuilder UseBottomSheet(this MauiAppBuilder builder, Action<Configuration>? configuration = null)
+    public static class MauiAppBuilderExtensions
     {
-        var config = new Configuration();
-        configuration?.Invoke(config);
+        /// <summary>
+        /// Registers all necessary handlers and services required by the BottomSheet plugin.
+        /// Optionally applies configuration settings using the provided delegate.
+        /// </summary>
+        /// <param name="builder">The <see cref="MauiAppBuilder"/> instance to configure.</param>
+        /// <param name="configuration">
+        /// An optional delegate for configuring plugin-specific options with a <see cref="Configuration"/> instance.
+        /// </param>
+        /// <returns>
+        /// The same <see cref="MauiAppBuilder"/> instance, enabling method chaining.
+        /// </returns>
+        public static MauiAppBuilder UseBottomSheet(this MauiAppBuilder builder, Action<Configuration>? configuration = null)
+        {
+            var config = new Configuration();
+            configuration?.Invoke(config);
 
-        builder
-            .ConfigureMauiHandlers(x =>
-            {
-                x.AddHandler<BottomSheet, Handlers.BottomSheetHandler>();
-#if IOS || MACCATALYST
-                x.AddHandler<Platform.MaciOS.CloseButton, Handlers.CloseButtonHandler>();
-#endif
-            })
-            .Services
-                .AddSingleton<Navigation.IBottomSheetNavigationService, Navigation.BottomSheetNavigationService>()
-                .AddSingleton(config);
-        return builder;
+            builder
+                .ConfigureMauiHandlers(x =>
+                {
+                    x.AddHandler<BottomSheet, Handlers.BottomSheetHandler>();
+    #if IOS || MACCATALYST
+                    x.AddHandler<Platform.MaciOS.CloseButton, Handlers.CloseButtonHandler>();
+    #endif
+                })
+                .Services
+                    .AddSingleton<Navigation.IBottomSheetNavigationService, Navigation.BottomSheetNavigationService>()
+                    .AddSingleton(config);
+            return builder;
+        }
     }
 }

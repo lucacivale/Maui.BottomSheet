@@ -6,173 +6,173 @@ using Microsoft.Maui;
 using Microsoft.Maui.Controls;
 
 /// <summary>
-/// Bottom sheets are surfaces containing supplementary content that are anchored to the bottom of the screen.
+/// Represents a bottom sheet interface providing supplementary content anchored to the bottom of the screen.
 /// </summary>
 public interface IBottomSheet : IView, IPadding, ISafeAreaView
 {
     /// <summary>
-    /// Event will be invoked when <see cref="IBottomSheet"/> is closing.
+    /// Occurs when the bottom sheet is closing.
     /// </summary>
     event EventHandler Closing;
 
     /// <summary>
-    /// Event will be invoked when <see cref="IBottomSheet"/> is closed.
+    /// Occurs when the bottom sheet has been closed.
     /// </summary>
     event EventHandler Closed;
 
     /// <summary>
-    /// Event will be invoked when <see cref="IBottomSheet"/> is opening.
+    /// Occurs when the bottom sheet is opening.
     /// </summary>
     event EventHandler Opening;
 
     /// <summary>
-    /// Event will be invoked when <see cref="IBottomSheet"/> is opened.
+    /// Occurs when the bottom sheet has been opened.
     /// </summary>
     event EventHandler Opened;
 
     /// <summary>
-    /// Gets or sets parent.
+    /// Gets or sets the parent element of the bottom sheet.
     /// </summary>
     new Element Parent { get; set; }
 
     /// <summary>
-    /// Gets or sets binding context.
+    /// Gets or sets the binding context for data binding operations.
     /// </summary>
     object? BindingContext { get; set; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the <see cref="IBottomSheet"/> can be closed with gestures or manually.
+    /// Gets or sets a value indicating whether the bottom sheet can be dismissed by user gestures or interactions.
     /// </summary>
     bool IsCancelable { get; set; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether showing a handle at the top.
+    /// Gets or sets a value indicating whether a drag handle is displayed at the top of the bottom sheet.
     /// </summary>
     bool HasHandle { get; set; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether showing the <see cref="BottomSheetHeader"/>.
+    /// Gets or sets a value indicating whether the header section is displayed.
     /// </summary>
     bool ShowHeader { get; set; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the <see cref="IBottomSheet"/>. is open.
+    /// Gets or sets a value indicating whether the bottom sheet is currently open.
     /// </summary>
     bool IsOpen { get; set; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the <see cref="IBottomSheet"/>. is modal.
+    /// Gets or sets a value indicating whether the bottom sheet is presented modally.
     /// </summary>
     bool IsModal { get; set; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether showing the <see cref="IBottomSheet"/>. can be dragged.
+    /// Gets or sets a value indicating whether the bottom sheet can be dragged by the user.
     /// </summary>
-    /// <remarks>Useful to draw inside the <see cref="IBottomSheet"/>.</remarks>
+    /// <remarks>Useful for controlling interaction when drawing inside the bottom sheet.</remarks>
     bool IsDraggable { get; set; }
 
     /// <summary>
-    /// Gets or sets the Color which will fill the background of an element. This is a bindable property.
+    /// Gets or sets the background color of the bottom sheet.
     /// </summary>
     Color BackgroundColor { get; set; }
 
     /// <summary>
-    /// Gets or sets the <see cref="BottomSheetHeader"/>.
+    /// Gets or sets the header configuration for the bottom sheet.
     /// </summary>
     BottomSheetHeader? Header { get; set; }
 
     /// <summary>
-    /// Gets or sets allowed <see cref="IBottomSheet"/> states.
+    /// Gets or sets the collection of allowed states for the bottom sheet.
     /// </summary>
     ICollection<BottomSheetState> States { get; set; }
 
     /// <summary>
-    /// Gets or sets current <see cref="IBottomSheet"/> state.
+    /// Gets or sets the current state of the bottom sheet.
     /// </summary>
     BottomSheetState CurrentState { get; set; }
 
     /// <summary>
-    /// Gets or sets current corner radius.
+    /// Gets or sets the corner radius of the bottom sheet.
     /// </summary>
     float CornerRadius { get; set; }
 
     /// <summary>
-    /// Gets or sets the <see cref="IBottomSheet"/> background color.
+    /// Gets or sets the background color of the window behind the bottom sheet.
     /// </summary>
     Color WindowBackgroundColor { get; set; }
 
     /// <summary>
-    /// Gets or sets the PeekHeight.
+    /// Gets or sets the height of the bottom sheet when in peek state.
     /// </summary>
     double PeekHeight { get; set; }
 
     /// <summary>
-    /// Gets or sets style for built-in components.
+    /// Gets or sets the style configuration for built-in components.
     /// </summary>
     public BottomSheetStyle BottomSheetStyle { get; set; }
 
     /// <summary>
-    /// Gets or sets the executed command when the <see cref="IBottomSheet"/> is closing.
+    /// Gets or sets the command executed when the bottom sheet is closing.
     /// </summary>
     ICommand? ClosingCommand { get; set; }
 
     /// <summary>
-    /// Gets or sets the <see cref="ClosingCommand"/> parameter.
+    /// Gets or sets the parameter passed to the closing command.
     /// </summary>
     object? ClosingCommandParameter { get; set; }
 
     /// <summary>
-    /// Gets or sets the executed command when the <see cref="IBottomSheet"/> is closed.
+    /// Gets or sets the command executed when the bottom sheet has been closed.
     /// </summary>
     ICommand? ClosedCommand { get; set; }
 
     /// <summary>
-    /// Gets or sets the <see cref="ClosedCommand"/> parameter.
+    /// Gets or sets the parameter passed to the closed command.
     /// </summary>
     object? ClosedCommandParameter { get; set; }
 
     /// <summary>
-    /// Gets or sets the executed command when the <see cref="IBottomSheet"/> is opening.
+    /// Gets or sets the command executed when the bottom sheet is opening.
     /// </summary>
     ICommand? OpeningCommand { get; set; }
 
     /// <summary>
-    /// Gets or sets the <see cref="OpeningCommand"/> parameter.
+    /// Gets or sets the parameter passed to the opening command.
     /// </summary>
     object? OpeningCommandParameter { get; set; }
 
     /// <summary>
-    /// Gets or sets the executed command when the <see cref="IBottomSheet"/> is opened.
+    /// Gets or sets the command executed when the bottom sheet has been opened.
     /// </summary>
     ICommand? OpenedCommand { get; set; }
 
     /// <summary>
-    /// Gets or sets the <see cref="OpenedCommand"/> parameter.
+    /// Gets or sets the parameter passed to the opened command.
     /// </summary>
     object? OpenedCommandParameter { get; set; }
 
     /// <summary>
-    /// Gets or sets the content <see cref="DataTemplate"/>.
+    /// Gets or sets the content configuration for the bottom sheet.
     /// </summary>
     BottomSheetContent? Content { get; set; }
 
     /// <summary>
-    /// Raise <see cref="Opening"/> event.
+    /// Triggers the opening event for the bottom sheet.
     /// </summary>
     internal void OnOpeningBottomSheet();
 
     /// <summary>
-    /// Raise <see cref="Opened"/> event.
+    /// Triggers the opened event for the bottom sheet.
     /// </summary>
     internal void OnOpenedBottomSheet();
 
     /// <summary>
-    /// Raise <see cref="Closing"/> event.
+    /// Triggers the closing event for the bottom sheet.
     /// </summary>
     internal void OnClosingBottomSheet();
 
     /// <summary>
-    /// Raise <see cref="Closed"/> event.
+    /// Triggers the closed event for the bottom sheet.
     /// </summary>
     internal void OnClosedBottomSheet();
 }

@@ -3,11 +3,13 @@ namespace Plugin.Maui.BottomSheet;
 using System.ComponentModel;
 using System.Windows.Input;
 
-/// <inheritdoc cref="IBottomSheet" />
+/// <summary>
+/// Implementation of a bottom sheet control that provides supplementary content anchored to the bottom of the screen.
+/// </summary>
 public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet>
 {
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the modal presentation mode.
     /// </summary>
     public static readonly BindableProperty IsModalProperty =
         BindableProperty.Create(
@@ -17,7 +19,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             defaultValue: true);
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the corner radius of the bottom sheet.
     /// </summary>
     public static readonly BindableProperty CornerRadiusProperty =
         BindableProperty.Create(
@@ -27,7 +29,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             defaultValue: 20.0f);
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the window background color behind the bottom sheet.
     /// </summary>
     public static readonly BindableProperty WindowBackgroundColorProperty =
         BindableProperty.Create(
@@ -37,7 +39,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             defaultValueCreator: _ => Color.FromArgb("#80000000"));
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the safe area ignore setting.
     /// </summary>
     public static readonly BindableProperty IgnoreSafeAreaProperty =
         BindableProperty.Create(
@@ -46,7 +48,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             typeof(BottomSheet));
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the collection of available bottom sheet states.
     /// </summary>
     public static readonly BindableProperty StatesProperty =
         BindableProperty.Create(
@@ -73,7 +75,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             });
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the current state of the bottom sheet.
     /// </summary>
     public static readonly BindableProperty CurrentStateProperty =
         BindableProperty.Create(
@@ -96,7 +98,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             });
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the cancelable setting.
     /// </summary>
     public static readonly BindableProperty IsCancelableProperty =
         BindableProperty.Create(
@@ -107,7 +109,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             defaultBindingMode: BindingMode.TwoWay);
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the drag handle visibility.
     /// </summary>
     public static readonly BindableProperty HasHandleProperty =
         BindableProperty.Create(
@@ -118,7 +120,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             defaultBindingMode: BindingMode.TwoWay);
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the header visibility.
     /// </summary>
     public static readonly BindableProperty ShowHeaderProperty =
         BindableProperty.Create(
@@ -128,7 +130,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             defaultBindingMode: BindingMode.TwoWay);
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the open state of the bottom sheet.
     /// </summary>
     public static readonly BindableProperty IsOpenProperty =
         BindableProperty.Create(
@@ -138,7 +140,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             defaultBindingMode: BindingMode.TwoWay);
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the draggable setting.
     /// </summary>
     public static readonly BindableProperty IsDraggableProperty =
         BindableProperty.Create(
@@ -149,7 +151,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             defaultBindingMode: BindingMode.TwoWay);
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the peek height when in peek state.
     /// </summary>
     public static readonly BindableProperty PeekHeightProperty =
         BindableProperty.Create(
@@ -159,7 +161,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             defaultValue: 0.00);
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the header configuration.
     /// </summary>
     public static readonly BindableProperty HeaderProperty =
         BindableProperty.Create(
@@ -169,7 +171,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             propertyChanged: OnHeaderChanged);
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the content configuration.
     /// </summary>
     public static readonly BindableProperty ContentProperty =
         BindableProperty.Create(
@@ -179,7 +181,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             propertyChanged: OnContentChanged);
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the padding around the content.
     /// </summary>
     public static readonly BindableProperty PaddingProperty =
         BindableProperty.Create(
@@ -189,7 +191,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             defaultValue: new Thickness(5));
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the command executed when closing.
     /// </summary>
     public static readonly BindableProperty ClosingCommandProperty =
         BindableProperty.Create(
@@ -198,7 +200,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             typeof(BottomSheet));
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the closing command parameter.
     /// </summary>
     public static readonly BindableProperty ClosingCommandParameterProperty =
         BindableProperty.Create(
@@ -207,7 +209,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             typeof(BottomSheet));
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the command executed when closed.
     /// </summary>
     public static readonly BindableProperty ClosedCommandProperty =
         BindableProperty.Create(
@@ -216,7 +218,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             typeof(BottomSheet));
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the closed command parameter.
     /// </summary>
     public static readonly BindableProperty ClosedCommandParameterProperty =
         BindableProperty.Create(
@@ -225,7 +227,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             typeof(BottomSheet));
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the command executed when opening.
     /// </summary>
     public static readonly BindableProperty OpeningCommandProperty =
         BindableProperty.Create(
@@ -234,7 +236,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             typeof(BottomSheet));
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the opening command parameter.
     /// </summary>
     public static readonly BindableProperty OpeningCommandParameterProperty =
         BindableProperty.Create(
@@ -243,7 +245,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             typeof(BottomSheet));
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the command executed when opened.
     /// </summary>
     public static readonly BindableProperty OpenedCommandProperty =
         BindableProperty.Create(
@@ -252,7 +254,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             typeof(BottomSheet));
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the opened command parameter.
     /// </summary>
     public static readonly BindableProperty OpenedCommandParameterProperty =
         BindableProperty.Create(
@@ -261,7 +263,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             typeof(BottomSheet));
 
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the bottom sheet style configuration.
     /// </summary>
     public static readonly BindableProperty BottomSheetStyleProperty =
         BindableProperty.Create(
@@ -310,7 +312,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the <see cref="IBottomSheet"/> ignores safe areas.
+    /// Gets or sets a value indicating whether the bottom sheet ignores safe area constraints.
     /// </summary>
     public bool IgnoreSafeArea { get => (bool)GetValue(IgnoreSafeAreaProperty); set => SetValue(IgnoreSafeAreaProperty, value); }
 
@@ -388,7 +390,11 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         set => SetValue(StatesProperty, value);
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets the platform-specific configuration for this bottom sheet.
+    /// </summary>
+    /// <typeparam name="T">The platform type.</typeparam>
+    /// <returns>The platform element configuration.</returns>
     public IPlatformElementConfiguration<T, BottomSheet> On<T>()
         where T : IConfigPlatform
     {
@@ -425,7 +431,9 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     }
 #pragma warning restore CA1033
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Called when the binding context changes, propagating the change to child elements.
+    /// </summary>
     protected override void OnBindingContextChanged()
     {
         base.OnBindingContextChanged();
@@ -441,6 +449,11 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         }
     }
 
+    /// <summary>
+    /// Executes the specified command with the given parameter if the command can be executed.
+    /// </summary>
+    /// <param name="command">The command to execute.</param>
+    /// <param name="commandParameter">The parameter to pass to the command.</param>
     private static void ExecuteCommand(ICommand? command, object? commandParameter)
     {
         if (command?.CanExecute(commandParameter) == true)
@@ -449,20 +462,47 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         }
     }
 
+    /// <summary>
+    /// Handles changes to the States property.
+    /// </summary>
+    /// <param name="bindable">The bindable object.</param>
+    /// <param name="oldvalue">The old value.</param>
+    /// <param name="newvalue">The new value.</param>
     private static void OnStatesPropertyChanged(BindableObject bindable, object oldvalue, object newvalue)
         => ((BottomSheet)bindable).OnStatesPropertyChanged((List<BottomSheetState>)newvalue);
 
+    /// <summary>
+    /// Handles changes to the Header property.
+    /// </summary>
+    /// <param name="bindable">The bindable object.</param>
+    /// <param name="oldvalue">The old value.</param>
+    /// <param name="newvalue">The new value.</param>
     private static void OnHeaderChanged(BindableObject bindable, object oldvalue, object newvalue)
         => ((BottomSheet)bindable).OnHeaderChanged((BottomSheetHeader)newvalue);
 
+    /// <summary>
+    /// Handles changes to the Content property.
+    /// </summary>
+    /// <param name="bindable">The bindable object.</param>
+    /// <param name="oldvalue">The old value.</param>
+    /// <param name="newvalue">The new value.</param>
     private static void OnContentChanged(BindableObject bindable, object oldvalue, object newvalue)
         => ((BottomSheet)bindable).OnContentChanged((BottomSheetContent)newvalue);
 
+    /// <summary>
+    /// Raises the specified event with the given event arguments.
+    /// </summary>
+    /// <param name="eventName">The name of the event to raise.</param>
+    /// <param name="eventArgs">The event arguments.</param>
     private void RaiseEvent(string eventName, EventArgs eventArgs)
     {
         _eventManager.HandleEvent(this, eventArgs, eventName);
     }
 
+    /// <summary>
+    /// Handles the internal logic when the States property changes.
+    /// </summary>
+    /// <param name="newvalue">The new states collection.</param>
     private void OnStatesPropertyChanged(List<BottomSheetState> newvalue)
     {
         if (!newvalue.IsStateAllowed(CurrentState))
@@ -476,6 +516,10 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         }
     }
 
+    /// <summary>
+    /// Handles the internal logic when the Header property changes.
+    /// </summary>
+    /// <param name="newValue">The new header value.</param>
     private void OnHeaderChanged(BottomSheetHeader newValue)
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
@@ -486,6 +530,10 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         }
     }
 
+    /// <summary>
+    /// Handles the internal logic when the Content property changes.
+    /// </summary>
+    /// <param name="newValue">The new content value.</param>
     private void OnContentChanged(BottomSheetContent newValue)
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract

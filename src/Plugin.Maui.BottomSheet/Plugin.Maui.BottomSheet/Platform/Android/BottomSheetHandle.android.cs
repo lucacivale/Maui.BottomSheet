@@ -14,7 +14,7 @@ namespace Plugin.Maui.BottomSheet.Platform.Android;
 using Microsoft.Maui.Platform;
 
 /// <summary>
-/// Handle view.
+/// Creates and manages the drag handle view for bottom sheets.
 /// </summary>
 internal sealed class BottomSheetHandle : IDisposable
 {
@@ -26,7 +26,7 @@ internal sealed class BottomSheetHandle : IDisposable
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheetHandle"/> class.
     /// </summary>
-    /// <param name="context">Context.</param>
+    /// <param name="context">The Android context.</param>
     public BottomSheetHandle(AContext.Context context)
     {
         _context = context;
@@ -46,7 +46,7 @@ internal sealed class BottomSheetHandle : IDisposable
     }
 
     /// <summary>
-    /// Gets handle view.
+    /// Gets the handle view with default styling and dimensions.
     /// </summary>
     public AView Handle
     {
@@ -76,20 +76,26 @@ internal sealed class BottomSheetHandle : IDisposable
     }
 
     /// <summary>
-    /// Remove handle view.
+    /// Removes the handle view from its parent.
     /// </summary>
     public void Remove()
     {
         Handle.RemoveFromParent();
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Releases all resources used by the handle.
+    /// </summary>
     public void Dispose()
     {
         Dispose(true);
         GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// Releases managed and unmanaged resources.
+    /// </summary>
+    /// <param name="disposing">True if disposing managed resources.</param>
     private void Dispose(bool disposing)
     {
         if (!disposing)

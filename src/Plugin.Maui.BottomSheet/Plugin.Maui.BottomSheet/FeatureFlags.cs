@@ -1,7 +1,7 @@
 ﻿namespace Plugin.Maui.BottomSheet;
 
 /// <summary>
-/// Represents the configuration for enabling or disabling various plugin features.
+/// Configuration options for enabling or disabling various plugin features.
 /// </summary>
 public sealed class FeatureFlags
 {

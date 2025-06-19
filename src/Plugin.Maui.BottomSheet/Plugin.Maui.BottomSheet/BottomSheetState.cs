@@ -1,23 +1,23 @@
 namespace Plugin.Maui.BottomSheet;
 
 /// <summary>
-/// Allowed <see cref="IBottomSheet"/> states.
+/// Represents the available states for a bottom sheet.
 /// </summary>
 [Flags]
 public enum BottomSheetState
 {
     /// <summary>
-    /// Only <see cref="Peek"/> state is allowed. <see cref="IBottomSheet"/> height is set by <see cref="Peek"/>.
+    /// The bottom sheet shows only a peek of content at a specified height.
     /// </summary>
     Peek = 1,
 
     /// <summary>
-    /// Only <see cref="Medium"/> state is allowed. <see cref="IBottomSheet"/> height is half screen size.
+    /// The bottom sheet expands to half the screen height.
     /// </summary>
     Medium = 2,
 
     /// <summary>
-    /// Only <see cref="Large"/> state is allowed. <see cref="IBottomSheet"/> height is screen size.
+    /// The bottom sheet expands to full screen height.
     /// </summary>
     Large = 4,
 }

@@ -2,19 +2,24 @@ using AndroidX.Activity;
 
 namespace Plugin.Maui.BottomSheet.Platform.Android;
 
-/// <inheritdoc />
+/// <summary>
+/// Handles back button press events for bottom sheet dialogs.
+/// </summary>
 internal sealed class BottomSheetDialogOnBackPressedCallback : OnBackPressedCallback
 {
     private readonly WeakEventManager _eventManager = new();
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BottomSheetDialogOnBackPressedCallback"/> class.
+    /// </summary>
+    /// <param name="enabled">Whether the callback is enabled.</param>
     public BottomSheetDialogOnBackPressedCallback(bool enabled)
         : base(enabled)
     {
     }
 
     /// <summary>
-    /// Back button pressed.
+    /// Occurs when the back button is pressed.
     /// </summary>
     public event EventHandler BackPressed
     {
@@ -22,7 +27,9 @@ internal sealed class BottomSheetDialogOnBackPressedCallback : OnBackPressedCall
         remove => _eventManager.RemoveEventHandler(value);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Handles the back button press event.
+    /// </summary>
     public override void HandleOnBackPressed()
     {
         _eventManager.HandleEvent(this, EventArgs.Empty, nameof(BackPressed));

@@ -1,8 +1,6 @@
 namespace Plugin.Maui.BottomSheet.Navigation;
 
 /// <summary>
-/// Navigation parameters.
+/// Represents a collection of key-value pairs used for passing data during bottom sheet navigation.
 /// </summary>
-#pragma warning disable CA1710
 public interface IBottomSheetNavigationParameters : IDictionary<string, object>;
-#pragma warning restore CA1710

@@ -1,12 +1,12 @@
 namespace Plugin.Maui.BottomSheet;
 
 /// <summary>
-/// Style built in <see cref="BottomSheet"/> components.
+/// Style configuration for built-in bottom sheet components.
 /// </summary>
 public sealed class BottomSheetStyle : BindableObject
 {
     /// <summary>
-    /// Bindable property.
+    /// Bindable property for the header style configuration.
     /// </summary>
     public static readonly BindableProperty HeaderStyleProperty =
         BindableProperty.Create(
@@ -16,7 +16,7 @@ public sealed class BottomSheetStyle : BindableObject
             defaultValue: new BottomSheetHeaderStyle());
 
     /// <summary>
-    /// Gets or sets style class for <see cref="BottomSheetHeader"/>.
+    /// Gets or sets the style configuration for the bottom sheet header.
     /// </summary>
     public BottomSheetHeaderStyle HeaderStyle { get => (BottomSheetHeaderStyle)GetValue(HeaderStyleProperty); set => SetValue(HeaderStyleProperty, value); }
 }

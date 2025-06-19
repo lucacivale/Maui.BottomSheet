@@ -4,16 +4,16 @@ using Plugin.Maui.BottomSheet.Navigation;
 namespace Plugin.Maui.BottomSheet;
 
 /// <summary>
-/// Collection of navigation helper methods.
+/// Provides helper methods for MVVM navigation patterns and bottom sheet lifecycle management.
 /// </summary>
 internal static class MvvmHelpers
 {
     /// <summary>
-    /// Determines whether <paramref name="bottomSheet"/> accepts being navigated away from.
+    /// Determines whether the specified bottom sheet can be navigated away from by checking both synchronous and asynchronous navigation confirmation.
     /// </summary>
-    /// <param name="bottomSheet">The <see cref="IBottomSheet"/> to navigate from.</param>
-    /// <param name="parameters">Navigation parameters.</param>
-    /// <returns>Can navigate away from <see cref="IBottomSheet"/>.</returns>
+    /// <param name="bottomSheet">The bottom sheet to navigate from.</param>
+    /// <param name="parameters">The navigation parameters.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains true if navigation is allowed; otherwise, false.</returns>
     [SuppressMessage("Usage", "MethodHasAsyncOverload: ReSharper disable once MethodHasAsyncOverload", Justification = "False positive.")]
     [SuppressMessage("Performance", "CA1849: Call async methods when in an async method", Justification = "False positive.")]
     [SuppressMessage("Usage", "VSTHRD103: Call async methods when in an async method", Justification = "False positive.")]
@@ -25,31 +25,31 @@ internal static class MvvmHelpers
     }
 
     /// <summary>
-    /// Invokes the <see cref="INavigationAware.OnNavigatedFrom"/> method on both the view and its ViewModel, if they implement <see cref="INavigationAware"/>.
+    /// Invokes the OnNavigatedFrom method on both the view and its ViewModel if they implement INavigationAware.
     /// </summary>
-    /// <param name="view"> The view object that is being navigated from. This may be a visual element or a container such as a page or bottom sheet.</param>
-    /// <param name="parameters"> Optional navigation parameters associated with the navigation event. </param>
+    /// <param name="view">The view object that is being navigated from.</param>
+    /// <param name="parameters">The navigation parameters associated with the navigation event.</param>
     internal static void OnNavigatedFrom(object? view, IBottomSheetNavigationParameters parameters)
     {
         InvokeViewAndViewModelAction<INavigationAware>(view, v => v.OnNavigatedFrom(parameters));
     }
 
     /// <summary>
-    /// Invokes the <see cref="INavigationAware.OnNavigatedFrom"/> method on both the view and its ViewModel, if they implement <see cref="INavigationAware"/>.
+    /// Invokes the OnNavigatedTo method on both the view and its ViewModel if they implement INavigationAware.
     /// </summary>
-    /// <param name="view"> The view object that is being navigated to. This may be a visual element or a container such as a page or bottom sheet.</param>
-    /// <param name="parameters"> Optional navigation parameters associated with the navigation event. </param>
+    /// <param name="view">The view object that is being navigated to.</param>
+    /// <param name="parameters">The navigation parameters associated with the navigation event.</param>
     internal static void OnNavigatedTo(object? view, IBottomSheetNavigationParameters parameters)
     {
         InvokeViewAndViewModelAction<INavigationAware>(view, v => v.OnNavigatedTo(parameters));
     }
 
     /// <summary>
-    /// Determines whether <paramref name="bottomSheet"/> accepts being navigated away from.
+    /// Determines whether the specified bottom sheet can be navigated away from using synchronous navigation confirmation.
     /// </summary>
-    /// <param name="bottomSheet">The <see cref="IBottomSheet"/> to navigate from.</param>
-    /// <param name="parameters">Navigation parameters.</param>
-    /// <returns>Can navigate away from <see cref="IBottomSheet"/>.</returns>
+    /// <param name="bottomSheet">The bottom sheet to navigate from.</param>
+    /// <param name="parameters">The navigation parameters.</param>
+    /// <returns>True if navigation is allowed; otherwise, false.</returns>
     [SuppressMessage("Usage", "SuspiciousTypeConversion.Global: ReSharper disable once SuspiciousTypeConversion.Global", Justification = "False positive.")]
     private static bool CanNavigate(IBottomSheet bottomSheet, IBottomSheetNavigationParameters parameters)
     {
@@ -88,11 +88,11 @@ internal static class MvvmHelpers
     }
 
     /// <summary>
-    /// Determines whether <paramref name="bottomSheet"/> accepts being navigated away from.
+    /// Determines whether the specified bottom sheet can be navigated away from using asynchronous navigation confirmation.
     /// </summary>
-    /// <param name="bottomSheet">The <see cref="IBottomSheet"/> to navigate from.</param>
-    /// <param name="parameters">Navigation parameters.</param>
-    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    /// <param name="bottomSheet">The bottom sheet to navigate from.</param>
+    /// <param name="parameters">The navigation parameters.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains true if navigation is allowed; otherwise, false.</returns>
     [SuppressMessage("Usage", "SuspiciousTypeConversion.Global: ReSharper disable once SuspiciousTypeConversion.Global", Justification = "False positive.")]
     private static async Task<bool> CanNavigateAsync(IBottomSheet bottomSheet, IBottomSheetNavigationParameters parameters)
     {
@@ -130,6 +130,12 @@ internal static class MvvmHelpers
         return canNavigate;
     }
 
+    /// <summary>
+    /// Invokes an action on both the view and its ViewModel if they implement the specified interface type.
+    /// </summary>
+    /// <typeparam name="T">The interface type to check for and invoke the action on.</typeparam>
+    /// <param name="view">The view object to check and invoke the action on.</param>
+    /// <param name="action">The action to invoke on objects that implement the interface.</param>
     private static void InvokeViewAndViewModelAction<T>(object? view, Action<T> action)
         where T : class
     {

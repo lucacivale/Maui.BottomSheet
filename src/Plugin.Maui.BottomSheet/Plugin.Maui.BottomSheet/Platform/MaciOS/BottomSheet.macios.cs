@@ -3,7 +3,7 @@ namespace Plugin.Maui.BottomSheet.Platform.MaciOS;
 using UIKit;
 
 /// <summary>
-/// BottomSheet container view including Handle, Header and Content.
+/// Container for bottom sheet functionality including handle, header and content on macOS and iOS platforms.
 /// </summary>
 internal sealed class BottomSheet : IDisposable
 {
@@ -15,7 +15,7 @@ internal sealed class BottomSheet : IDisposable
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheet"/> class.
     /// </summary>
-    /// <param name="mauiContext">Context.</param>
+    /// <param name="mauiContext">The MAUI context for platform services.</param>
     public BottomSheet(IMauiContext mauiContext)
     {
         _bottomSheetUIViewController = new BottomSheetUIViewController(mauiContext);
@@ -33,7 +33,7 @@ internal sealed class BottomSheet : IDisposable
     }
 
     /// <summary>
-    /// BottomSheet state changed.
+    /// Occurs when the bottom sheet state changes.
     /// </summary>
     public event EventHandler<BottomSheetStateChangedEventArgs> StateChanged
     {
@@ -42,7 +42,7 @@ internal sealed class BottomSheet : IDisposable
     }
 
     /// <summary>
-    /// Confirm dismiss.
+    /// Occurs when the bottom sheet dismissal needs confirmation.
     /// </summary>
     public event EventHandler ConfirmDismiss
     {
@@ -51,7 +51,7 @@ internal sealed class BottomSheet : IDisposable
     }
 
     /// <summary>
-    /// BottomSheet dismissed.
+    /// Occurs when the bottom sheet is dismissed.
     /// </summary>
     public event EventHandler Dismissed
     {
@@ -60,7 +60,7 @@ internal sealed class BottomSheet : IDisposable
     }
 
     /// <summary>
-    /// Frame changed.
+    /// Occurs when the bottom sheet frame changes.
     /// </summary>
     public event EventHandler<Rect> FrameChanged
     {
@@ -69,15 +69,15 @@ internal sealed class BottomSheet : IDisposable
     }
 
     /// <summary>
-    /// Gets a value indicating whether the sheet is being presented.
+    /// Gets a value indicating whether the bottom sheet is currently being presented.
     /// </summary>
     public bool IsOpen { get; private set; }
 
     /// <summary>
-    /// Open the bottom sheet.
+    /// Opens the bottom sheet with the specified configuration.
     /// </summary>
-    /// <param name="bottomSheet">Virtual view.</param>
-    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    /// <param name="bottomSheet">The virtual view containing bottom sheet configuration.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public async Task OpenAsync(IBottomSheet bottomSheet)
     {
         if (bottomSheet.Header is not null)
@@ -114,7 +114,7 @@ internal sealed class BottomSheet : IDisposable
     }
 
     /// <summary>
-    /// Show header.
+    /// Shows the header section of the bottom sheet.
     /// </summary>
     public void ShowHeader()
     {
@@ -122,7 +122,7 @@ internal sealed class BottomSheet : IDisposable
     }
 
     /// <summary>
-    /// Hide header.
+    /// Hides the header section of the bottom sheet.
     /// </summary>
     public void HideHeader()
     {
@@ -130,9 +130,9 @@ internal sealed class BottomSheet : IDisposable
     }
 
     /// <summary>
-    /// Close the bottom sheet.
+    /// Closes the bottom sheet asynchronously.
     /// </summary>
-    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public async Task CloseAsync()
     {
         await _bottomSheetUIViewController.CloseAsync().ConfigureAwait(true);
@@ -141,91 +141,91 @@ internal sealed class BottomSheet : IDisposable
     }
 
     /// <summary>
-    /// Set the <see cref="Plugin.Maui.BottomSheet.BottomSheetHeader"/>.
+    /// Sets the header configuration and style for the bottom sheet.
     /// </summary>
-    /// <param name="header">Header.</param>
-    /// <param name="style">Style.</param>
+    /// <param name="header">The header configuration.</param>
+    /// <param name="style">The header style settings.</param>
     public void SetHeader(Plugin.Maui.BottomSheet.BottomSheetHeader header, BottomSheetHeaderStyle style)
     {
         _bottomSheetUIViewController.AddHeader(header, style);
     }
 
     /// <summary>
-    /// Set header style.
+    /// Sets the header style for the bottom sheet.
     /// </summary>
-    /// <param name="style">Style.</param>
+    /// <param name="style">The header style settings.</param>
     public void SetHeaderStyle(BottomSheetHeaderStyle style)
     {
         _bottomSheetUIViewController.SetHeaderStyle(style);
     }
 
     /// <summary>
-    /// Set peek height.
+    /// Sets the peek height for the bottom sheet when in peek state.
     /// </summary>
-    /// <param name="peekHeight">Peek height.</param>
+    /// <param name="peekHeight">The peek height value.</param>
     public void SetPeekHeight(double peekHeight)
     {
         _bottomSheetUIViewController.SetPeekHeight(peekHeight);
     }
 
     /// <summary>
-    /// Set the <see cref="Plugin.Maui.BottomSheet.BottomSheetContent"/>.
+    /// Sets the content for the bottom sheet.
     /// </summary>
-    /// <param name="content">Content.</param>
+    /// <param name="content">The content to display in the bottom sheet.</param>
     public void SetContent(BottomSheetContent? content)
     {
         _bottomSheetContent = content;
     }
 
     /// <summary>
-    /// Sets whether this dialog is cancelable.
+    /// Sets whether the bottom sheet can be canceled by user interaction.
     /// </summary>
-    /// <param name="isCancelable">Whether the dialog should be canceled when touched outside the window or by slide.</param>
+    /// <param name="isCancelable">True if the bottom sheet should be cancelable, false otherwise.</param>
     public void SetIsCancelable(bool isCancelable)
     {
         _bottomSheetUIViewController.ModalInPresentation = !isCancelable;
     }
 
     /// <summary>
-    /// Set modal.
+    /// Sets whether the bottom sheet should be presented modally.
     /// </summary>
-    /// <param name="isModal">Is modal.</param>
+    /// <param name="isModal">True if the bottom sheet should be modal, false otherwise.</param>
     public void SetIsModal(bool isModal)
     {
         _bottomSheetUIViewController.IsModal = isModal;
     }
 
     /// <summary>
-    /// Sets whether this dialog shows a handle.
+    /// Sets whether the bottom sheet should display a drag handle.
     /// </summary>
-    /// <param name="hasHandle">Whether the dialog should show a handle.</param>
+    /// <param name="hasHandle">True if the bottom sheet should show a handle, false otherwise.</param>
     public void SetHasHandle(bool hasHandle)
     {
         _bottomSheetUIViewController.SetPrefersGrabberVisible(hasHandle);
     }
 
     /// <summary>
-    /// Sets corner radius.
+    /// Sets the corner radius for the bottom sheet.
     /// </summary>
-    /// <param name="cornerRadius">Corner radius.</param>
+    /// <param name="cornerRadius">The corner radius value.</param>
     public void SetCornerRadius(float cornerRadius)
     {
         _bottomSheetUIViewController.SetCornerRadius(cornerRadius);
     }
 
     /// <summary>
-    /// Sets window background color.
+    /// Sets the window background color for the bottom sheet.
     /// </summary>
-    /// <param name="color">Color.</param>
+    /// <param name="color">The background color to apply.</param>
     public void SetWindowBackgroundColor(Color color)
     {
         _bottomSheetUIViewController.SetWindowBackgroundColor(color);
     }
 
     /// <summary>
-    /// Set current state.
+    /// Sets the current state of the bottom sheet.
     /// </summary>
-    /// <param name="state">State to apply.</param>
+    /// <param name="state">The state to apply to the bottom sheet.</param>
     public void SetState(BottomSheetState state)
     {
         switch (state)
@@ -270,9 +270,9 @@ internal sealed class BottomSheet : IDisposable
     }
 
     /// <summary>
-    /// Set allowed bottom sheet states.
+    /// Sets the available states for the bottom sheet.
     /// </summary>
-    /// <param name="states">Allowed states.</param>
+    /// <param name="states">The collection of allowed states.</param>
     public void SetStates(IEnumerable<BottomSheetState> states)
     {
         List<UISheetPresentationControllerDetent> detents = [];
@@ -297,43 +297,43 @@ internal sealed class BottomSheet : IDisposable
     }
 
     /// <summary>
-    /// Sets whether this dialog is draggable.
+    /// Sets whether the bottom sheet is draggable.
     /// </summary>
-    /// <param name="isDraggable">Whether the dialog should is draggable.</param>
+    /// <param name="isDraggable">True if the bottom sheet should be draggable, false otherwise.</param>
     public void SetIsDraggable(bool isDraggable)
     {
         _bottomSheetUIViewController.Draggable = isDraggable;
     }
 
     /// <summary>
-    /// Sets the background color.
+    /// Sets the background color for the bottom sheet.
     /// </summary>
-    /// <param name="color">Color.</param>
+    /// <param name="color">The background color to apply.</param>
     public void SetBackgroundColor(Color color)
     {
         _bottomSheetUIViewController.SetBackgroundColor(color);
     }
 
     /// <summary>
-    /// Sets padding.
+    /// Sets the padding for the bottom sheet content.
     /// </summary>
-    /// <param name="padding">Thickness.</param>
+    /// <param name="padding">The padding thickness to apply.</param>
     public void SetPadding(Thickness padding)
     {
         _bottomSheetUIViewController.SetPadding(padding);
     }
 
     /// <summary>
-    /// Set ignore safe area.
+    /// Sets whether the bottom sheet should ignore safe area constraints.
     /// </summary>
-    /// <param name="ignoreSafeArea">Ignore safe area.</param>
+    /// <param name="ignoreSafeArea">True if safe area should be ignored, false otherwise.</param>
     public void SetIgnoreSafeArea(bool ignoreSafeArea)
     {
         _bottomSheetUIViewController.SetIgnoreSafeArea(ignoreSafeArea);
     }
 
     /// <summary>
-    /// Dispose <see cref="BottomSheet"/>.
+    /// Releases all resources used by the bottom sheet.
     /// </summary>
     public void Dispose()
     {
@@ -341,6 +341,10 @@ internal sealed class BottomSheet : IDisposable
         GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// Releases managed and unmanaged resources.
+    /// </summary>
+    /// <param name="disposing">True if disposing managed resources.</param>
     private void Dispose(bool disposing)
     {
         if (!disposing)
@@ -354,6 +358,11 @@ internal sealed class BottomSheet : IDisposable
         _bottomSheetUIViewController.Dispose();
     }
 
+    /// <summary>
+    /// Handles state change events from the UI view controller and forwards them.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The state change event arguments.</param>
     private void BottomSheetUIViewControllerOnStateChanged(object? sender, BottomSheetStateChangedEventArgs e)
     {
         _eventManager.HandleEvent(
@@ -362,6 +371,11 @@ internal sealed class BottomSheet : IDisposable
             nameof(StateChanged));
     }
 
+    /// <summary>
+    /// Handles confirm dismiss events from the UI view controller and forwards them.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
     private void BottomSheetUIViewControllerOnConfirmDismiss(object? sender, EventArgs e)
     {
         _eventManager.HandleEvent(
@@ -370,6 +384,11 @@ internal sealed class BottomSheet : IDisposable
             nameof(ConfirmDismiss));
     }
 
+    /// <summary>
+    /// Handles frame change events from the UI view controller and forwards them.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The frame change event arguments.</param>
     private void BottomSheetUIViewControllerOnFrameChanged(object? sender, Rect e)
     {
         _eventManager.HandleEvent(
