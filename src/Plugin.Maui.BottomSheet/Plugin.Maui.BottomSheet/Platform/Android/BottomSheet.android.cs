@@ -159,6 +159,11 @@ internal sealed class BottomSheet : IDisposable
         }
     }
 
+    /// <summary>
+    /// Gets a reference to the BottomSheetDialog.
+    /// </summary>
+    public AndroidX.AppCompat.App.AppCompatDialog? Dialog => _bottomSheetDialog;
+
     /// <inheritdoc/>
     public void Dispose()
     {

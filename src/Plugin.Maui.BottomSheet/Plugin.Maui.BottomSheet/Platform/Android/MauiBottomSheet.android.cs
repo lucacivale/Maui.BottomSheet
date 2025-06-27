@@ -11,7 +11,7 @@ namespace Plugin.Maui.BottomSheet.Platform.Android;
 using Microsoft.Maui.Platform;
 
 /// <inheritdoc />
-internal sealed class MauiBottomSheet : AndroidView
+public sealed class MauiBottomSheet : AndroidView
 {
     private readonly IMauiContext _mauiContext;
     private readonly BottomSheet _bottomSheet;
@@ -36,6 +36,11 @@ internal sealed class MauiBottomSheet : AndroidView
     /// Gets a value indicating whether the bottom sheet is open.
     /// </summary>
     public bool IsOpen => _bottomSheet.IsShowing;
+
+    /// <summary>
+    /// Gets a reference to the Android BottomSheetDialog if the bottom sheet is open.
+    /// </summary>
+    public AndroidX.AppCompat.App.AppCompatDialog? Dialog => _bottomSheet.Dialog;
 
     /// <summary>
     /// Set allowed bottom sheet states.

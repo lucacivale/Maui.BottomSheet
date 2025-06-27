@@ -19,6 +19,16 @@
                 Command="{Binding OpenNonModalShowcaseCommand}"
                 HorizontalOptions="Center"
                 Text="Open non-modal showcase" />
+            <HorizontalStackLayout
+                HorizontalOptions="Start">
+                <CheckBox
+                    IsChecked="{Binding AboveTabBar, Mode=TwoWay}"
+                    CheckedChanged="CheckBox_CheckedChanged"
+                    VerticalOptions="Center" />
+                <Label
+                    Text="Show non-modal sheet above tab bar (Android only)"
+                    VerticalOptions="Center"/>
+            </HorizontalStackLayout>
             <Button
                 Command="{Binding OpenShowcasePageAsBottomSheetCommand}"
                 HorizontalOptions="Center"
@@ -193,6 +203,7 @@
                 IsOpen="{Binding IsNonModalOpen}"
                 ShowHeader="{Binding ShowHeader}"
                 States="Peek,Medium,Large"
+                Opened="NonModalBottomSheetNonEdgeToEdge_Opened"
                 WindowBackgroundColor="{Binding WindowBackgroundColor, Mode=TwoWay}">
                 <bottomsheet:BottomSheet.Header>
                     <bottomsheet:BottomSheetHeader
