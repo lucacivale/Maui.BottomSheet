@@ -9,7 +9,7 @@ using AsyncAwaitBestPractices;
 using UIKit;
 
 /// <inheritdoc />
-internal sealed class MauiBottomSheet : UIView
+public sealed class MauiBottomSheet : UIView
 {
     private readonly IMauiContext _mauiContext;
     private readonly BottomSheet _bottomSheet;
