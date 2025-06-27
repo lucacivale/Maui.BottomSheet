@@ -7,7 +7,7 @@ on:
 permissions:
   contents: read
   pull-requests: write
-  issues: read
+  issues: write
 
 env:
   ConfigFileName: platform_identification_config.json
