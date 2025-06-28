@@ -87,7 +87,7 @@ jobs:
           profile: Nexus 6
           ram-size: 3072M
           heap-size: 1024M
-          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none -accel off
+          emulator-options: -no-window -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
           disable-animations: true
           script: |
             echo "Emulator started, running tests..."
