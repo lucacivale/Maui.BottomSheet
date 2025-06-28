@@ -40,9 +40,6 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-          - name: Linux
-            os: ubuntu-22.04
-            gpu: swiftshader_indirect
           - name: macOS
             os: macos-15
             gpu: guest
@@ -67,12 +64,6 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-
-      - name: Install Android SDK Packages
-        run: dotnet android sdk install --package 'platform-tools' --package 'emulator' --package '${{ env.TEST_EMULATOR_IMAGE }}'
-
-      - name: Create Emulator
-        run: dotnet android avd create --name ${{ env.TEST_EMULATOR_NAME }} --sdk '${{ env.TEST_EMULATOR_IMAGE }}' --force
                
       - name: Install .NET MAUI Android
         run: dotnet workload install maui-android --source https://api.nuget.org/v3/index.json
@@ -86,6 +77,12 @@ jobs:
           --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
           --version "10.0.0-prerelease*"
 
+      - name: Install Android SDK Packages
+        run: dotnet android sdk install --package 'platform-tools' --package 'emulator' --package '${{ env.TEST_EMULATOR_IMAGE }}'
+
+      - name: Create Emulator
+        run: dotnet android avd create --name ${{ env.TEST_EMULATOR_NAME }} --sdk '${{ env.TEST_EMULATOR_IMAGE }}' --force
+            
       - name: Publish Android Plugin.Maui.BottomSheet.Tests.App
         run: dotnet publish tests\Plugin.Maui.BottomSheet.Tests.App/Plugin.Maui.BottomSheet.Tests.App.csproj -c ${{ env.Configuration }} -f ${{ env.DOTNETFrameworkVersion }}-android -r ${{ env.TEST_RUNTIME_IDENTIFIER }} -p:TestingMode=XHarness -p:AndroidSdkDirectory=$ANDROID_SDK_ROOT
 
@@ -106,6 +103,7 @@ jobs:
           rm -rf ./artifacts/bin
           rm -rf ./artifacts/obj
         if: ${{ always() }}
+
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         if: ${{ always() }}
@@ -144,20 +142,22 @@ jobs:
         run: |
           for i in $(seq 1 3)
           do
-            xharness apple test
-              --target ios-simulator-64
-              --app tests/artifacts/bin/Plugin.Maui.BottomSheet.Tests.App/debug_net10.0-ios_iossimulator-arm64/Plugin.Maui.BottomSheet.Tests.App.app
-              --output-directory artifacts/test-results
-              --timeout="00:03:00"
-              --launch-timeout=00:06:00
+            dotnet xharness apple test \
+              --target ios-simulator-64 \
+              --timeout="00:03:00" \
+              --launch-timeout=00:06:00 \
+              --app tests/artifacts/bin/Plugin.Maui.BottomSheet.Tests.App/debug_net10.0-ios_iossimulator-arm64/Plugin.Maui.BottomSheet.Tests.App.app \
+              --output-directory artifacts/test-results \
             && code=0 && break || code=$? && sleep 15
           done
           exit $code
+
       - name: Clean up build artifacts before upload
         run: |
           rm -rf ./artifacts/bin
           rm -rf ./artifacts/obj
         if: ${{ always() }}
+  
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         if: ${{ always() }}
@@ -203,6 +203,7 @@ jobs:
           rm -rf ./artifacts/bin
           rm -rf ./artifacts/obj
         if: ${{ always() }}
+
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         if: ${{ always() }}
