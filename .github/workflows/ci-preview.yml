@@ -39,9 +39,9 @@ jobs:
     runs-on: macos-15
 
     env:
-      TEST_RUNTIME_IDENTIFIER: android-arm64
+      TEST_RUNTIME_IDENTIFIER: android-x86_64
       TEST_EMULATOR_NAME: XHarnessEmulator
-      TEST_EMULATOR_IMAGE: system-images;android-35;google_apis;arm64-v8a
+      TEST_EMULATOR_IMAGE: system-images;android-35;google_apis;x86_64
     
     steps:
       - uses: actions/checkout@v4
@@ -129,7 +129,7 @@ jobs:
 
       - name: Test Android
         run: xharness android test
-          --app tests/artifacts/publish/Plugin.Maui.BottomSheet.Tests.App/release_net10.0-android_android-arm64/com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
+          --app tests/artifacts/publish/Plugin.Maui.BottomSheet.Tests.App/release_net10.0-android_android-x64/com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
           --package-name com.companyname.plugin.maui.bottomsheet.tests.app
           --instrumentation devicerunners.xharness.maui.XHarnessInstrumentation
           --output-directory artifacts/test-results
