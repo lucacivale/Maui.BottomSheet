@@ -99,6 +99,8 @@ jobs:
           --force
 
       - name: Start Emulator
+        env:
+          ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL: 300
         run: |
           $ANDROID_SDK_ROOT/emulator/emulator \
           -avd ${{ env.TEST_EMULATOR_NAME }} \
@@ -110,6 +112,9 @@ jobs:
           -cores 4 \
           -memory 4096
 
+      - name: List emulators
+        run: $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/avdmanager list avd -c      
+      
       - name: Test Android
         run: xharness android test
           --app tests/artifacts/publish/Plugin.Maui.BottomSheet.Tests.App/release_net10.0-android_android-arm64/com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
