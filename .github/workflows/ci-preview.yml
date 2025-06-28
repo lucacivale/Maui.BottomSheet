@@ -67,16 +67,14 @@ jobs:
 
       - name: Install Android SDK Components
         run: |
-          cd $ANDROID_SDK_ROOT/cmdline-tools/latest/bin
-
-          sdkmanager --update
-          sdkmanager "platform-tools"
-          sdkmanager "platforms;android-35"
-          sdkmanager "build-tools;35.0.0"
-          sdkmanager "emulator"
-          sdkmanager "system-images;android-35;google_apis;arm64-v8a"
-          sdkmanager "system-images;android-35;google_apis_playstore;arm64-v8a"
-          yes | sdkmanager --licenses
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --update
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platform-tools"
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platforms;android-35"
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "build-tools;35.0.0"
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "emulator"
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "system-images;android-35;google_apis;arm64-v8a"
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "system-images;android-35;google_apis_playstore;arm64-v8a"
+          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
 
       
       - name: Install .NET MAUI Workload
