@@ -101,10 +101,6 @@ jobs:
           Write-Host "Emulator is ready!"
           & adb devices -l
 
-      - name: List emulators
-        shell: pwsh
-        run: "$env:ANDROID_SDK_ROOT\cmdline-tools\latest\bin\avdmanager.bat" list avd -c
-
       - name: List Available Devices for XHarness
         run: |
           echo "=== ADB Devices ==="
