@@ -1,7 +1,6 @@
 name: Build for CI
 
 on:
-  workflow_dispatch:
   push:
     branches: [ "v10" ]
     paths-ignore:
@@ -37,12 +36,12 @@ jobs:
   
   Test-Plugin_Maui_BottomSheet-Android:
     
-    runs-on: windows-latest
+    runs-on: macos-15
 
     env:
-      TEST_RUNTIME_IDENTIFIER: android-x64
+      TEST_RUNTIME_IDENTIFIER: android-arm64
       TEST_EMULATOR_NAME: XHarnessEmulator
-      TEST_EMULATOR_IMAGE: system-images;android-35;google_apis;x86_64
+      TEST_EMULATOR_IMAGE: system-images;android-35;google_apis;arm64-v8a
     
     steps:
       - uses: actions/checkout@v4
@@ -62,44 +61,51 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Install Android SDK Components
-        shell: pwsh
         run: |
-          & "$env:ANDROID_SDK_ROOT\cmdline-tools\latest\bin\sdkmanager.bat" --update
-          & "$env:ANDROID_SDK_ROOT\cmdline-tools\latest\bin\sdkmanager.bat" "platform-tools"
-          & "$env:ANDROID_SDK_ROOT\cmdline-tools\latest\bin\sdkmanager.bat" "platforms;android-35"
-          & "$env:ANDROID_SDK_ROOT\cmdline-tools\latest\bin\sdkmanager.bat" "build-tools;35.0.0"
-          & "$env:ANDROID_SDK_ROOT\cmdline-tools\latest\bin\sdkmanager.bat" "emulator"
-          & "$env:ANDROID_SDK_ROOT\cmdline-tools\latest\bin\sdkmanager.bat" "${{ env.TEST_EMULATOR_IMAGE }}"
-          echo "y" | & "$env:ANDROID_SDK_ROOT\cmdline-tools\latest\bin\sdkmanager.bat" --licenses
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --update
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platform-tools"
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platforms;android-35"
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "build-tools;35.0.0"
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "emulator"
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "${{ env.TEST_EMULATOR_IMAGE }}"
+          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
 
-      - name: Create Emulator
-        shell: pwsh
+      - name: Enable KVM group perms
         run: |
-          & "$env:ANDROID_SDK_ROOT\cmdline-tools\latest\bin\avdmanager.bat" create avd `
-          --name "${{ env.TEST_EMULATOR_NAME }}" `
-          --package "${{ env.TEST_EMULATOR_IMAGE }}" `
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      
+      - name: Create Emulator
+        run: |
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/avdmanager create avd \
+          --name "${{ env.TEST_EMULATOR_NAME }}" \
+          --package "${{ env.TEST_EMULATOR_IMAGE }}" \
+          --device "pixel_8" \
           --force
 
       - name: Start Emulator
-        shell: pwsh
         env:
           ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL: 300
         run: |
-          Start-Process -FilePath "$env:ANDROID_SDK_ROOT\emulator\emulator.exe" -ArgumentList `
-          "-avd", "${{ env.TEST_EMULATOR_NAME }}", `
-          "-gpu", "host", `
-          "-no-snapshot", `
-          "-no-boot-anim", `
-          "-no-window", `
-          "-no-audio", `
-          "-cores", "4", `
-          "-memory", "4096" -NoNewWindow
+          $ANDROID_SDK_ROOT/emulator/emulator \
+          -avd ${{ env.TEST_EMULATOR_NAME }} \
+          -gpu host \
+          -no-snapshot \
+          -no-boot-anim \
+          -no-window \
+          -no-audio \
+          -cores 4 \
+          -memory 4096 &
           
-          Write-Host "Waiting for emulator to boot..."
-          & adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d ''\r'') ]]; do sleep 1; done; input keyevent 82'
+          echo "Waiting for emulator to boot..."
+          adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done; input keyevent 82'
           
-          Write-Host "Emulator is ready!"
-          & adb devices -l
+          echo "Emulator is ready!"
+          adb devices -l
+
+      - name: List emulators
+        run: $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/avdmanager list avd -c
 
       - name: List Available Devices for XHarness
         run: |
@@ -119,11 +125,11 @@ jobs:
           --version "10.0.0-prerelease*"
 
       - name: Publish Android Plugin.Maui.BottomSheet.Tests.App
-        run: dotnet publish tests\Plugin.Maui.BottomSheet.Tests.App\Plugin.Maui.BottomSheet.Tests.App.csproj -c ${{ env.Configuration }} -f ${{ env.DOTNETFrameworkVersion }}-android -r ${{ env.TEST_RUNTIME_IDENTIFIER }} -p:TestingMode=XHarness -p:AndroidSdkDirectory=$env:ANDROID_SDK_ROOT
+        run: dotnet publish tests/Plugin.Maui.BottomSheet.Tests.App/Plugin.Maui.BottomSheet.Tests.App.csproj -c ${{ env.Configuration }} -f ${{ env.DOTNETFrameworkVersion }}-android -r ${{ env.TEST_RUNTIME_IDENTIFIER }} -p:TestingMode=XHarness -p:AndroidSdkDirectory=$ANDROID_SDK_ROOT
 
       - name: Test Android
         run: xharness android test
-          --app tests\artifacts\publish\Plugin.Maui.BottomSheet.Tests.App\release_net10.0-android_android-x64\com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
+          --app tests/artifacts/publish/Plugin.Maui.BottomSheet.Tests.App/release_net10.0-android_android-arm64/com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
           --package-name com.companyname.plugin.maui.bottomsheet.tests.app
           --instrumentation devicerunners.xharness.maui.XHarnessInstrumentation
           --output-directory artifacts/test-results
@@ -132,10 +138,9 @@ jobs:
         run: dotnet xharness android adb -- emu kill
 
       - name: Clean up build artifacts before upload
-        shell: pwsh
         run: |
-          Remove-Item -Recurse -Force .\artifacts\bin -ErrorAction SilentlyContinue
-          Remove-Item -Recurse -Force .\artifacts\obj -ErrorAction SilentlyContinue
+          rm -rf ./artifacts/bin
+          rm -rf ./artifacts/obj
         if: ${{ always() }}
 
       - name: Upload Artifacts
@@ -143,7 +148,7 @@ jobs:
         if: ${{ always() }}
         with:
           name: Test Results (XHarness) - Android
-          path: .\artifacts
+          path: ./artifacts
   
   Test-Plugin_Maui_BottomSheet-ios:
 
