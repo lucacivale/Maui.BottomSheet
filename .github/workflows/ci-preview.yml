@@ -56,7 +56,7 @@ jobs:
           --version "10.0.0-prerelease*"
 
       - name: Publish Android Plugin.Maui.BottomSheet.Tests.App
-        run: dotnet publish ${{ env.TestsAppPath }} -c ${{ env.Configuration }} -f ${{ DOTNETFrameworkVersion }}-android -r android-arm64 -p:TestingMode=XHarness
+        run: dotnet publish ${{ env.TestsAppPath }} -c ${{ env.Configuration }} -f ${{ env.DOTNETFrameworkVersion }}-android -r android-arm64 -p:TestingMode=XHarness
 
       - name: Test Android
         run: xharness android test
@@ -87,7 +87,7 @@ jobs:
           --version "10.0.0-prerelease*"
         
       - name: Build iOS Plugin.Maui.BottomSheet.Tests.App
-        run: dotnet build ${{ env.TestsAppPath }} -c Debug -f ${{ DOTNETFrameworkVersion }}-ios -r iossimulator-arm64 -p:TestingMode=XHarness
+        run: dotnet build ${{ env.TestsAppPath }} -c Debug -f ${{ env.DOTNETFrameworkVersion }}-ios -r iossimulator-arm64 -p:TestingMode=XHarness
 
       - name: Test iOS
         run: xharness apple test
@@ -117,7 +117,7 @@ jobs:
           --version "10.0.0-prerelease*"
         
       - name: Build MacCatalyst Plugin.Maui.BottomSheet.Tests.App
-        run: dotnet build ${{ env.TestsAppPath }} -c Debug -f ${{ DOTNETFrameworkVersion }}-maccatalyst -r maccatalyst-arm64 -p:TestingMode=XHarness
+        run: dotnet build ${{ env.TestsAppPath }} -c Debug -f ${{ env.DOTNETFrameworkVersion }}-maccatalyst -r maccatalyst-arm64 -p:TestingMode=XHarness
 
       - name: Test MacCatalyst
         run: xharness apple test
