@@ -67,6 +67,8 @@ jobs:
 
       - name: Install Android SDK Components
         run: |
+          cd $ANDROID_SDK_ROOT/cmdline-tools/latest/bin
+
           sdkmanager --update
           sdkmanager "platform-tools"
           sdkmanager "platforms;android-35"
