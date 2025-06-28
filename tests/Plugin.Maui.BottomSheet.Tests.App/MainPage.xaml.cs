@@ -1,4 +1,4 @@
-﻿namespace MauiApp1;
+﻿namespace Plugin.Maui.BottomSheet.Tests.App;
 
 public partial class MainPage : ContentPage
 {

@@ -52,7 +52,7 @@ public class BottomSheetStyleTests
         var style = new BottomSheetStyle();
 
         // Act
-        style.HeaderStyle = null;
+        style.HeaderStyle = null!;
 
         // Assert
         Assert.Null(style.HeaderStyle);
@@ -65,12 +65,12 @@ public class BottomSheetStyleTests
         var style = new BottomSheetStyle();
         var newHeaderStyle = new BottomSheetHeaderStyle();
         var propertyChangedTriggered = false;
-        string changedPropertyName = null;
+        string changedPropertyName = null!;
 
         style.PropertyChanged += (sender, e) =>
         {
             propertyChangedTriggered = true;
-            changedPropertyName = e.PropertyName;
+            changedPropertyName = e.PropertyName!;
         };
 
         // Act
@@ -107,7 +107,7 @@ public class BottomSheetStyleTests
         // Arrange
         var style = new BottomSheetStyle
         {
-            HeaderStyle = null
+            HeaderStyle = null!
         };
         var bindingContext = new object();
 

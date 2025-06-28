@@ -7,9 +7,12 @@
     <PackageVersion Include="Microsoft.DotNet.XHarness.TestRunners.Xunit" Version="10.0.0-prerelease.25327.1" />
     <PackageVersion Include="DeviceRunners.UITesting.Maui" Version="0.1.0-preview.5" />
     <PackageVersion Include="DeviceRunners.UITesting.Xunit" Version="0.1.0-preview.5" />
+    <PackageVersion Include="DeviceRunners.XHarness.Xunit" Version="0.1.0-preview.5" />
+    <PackageVersion Include="DeviceRunners.XHarness.Maui" Version="0.1.0-preview.5" />
     <PackageVersion Include="AndroidSdk" Version="0.25.0" />
     <PackageVersion Include="AppleDev" Version="0.6.6" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0-preview.4.25258.110" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="10.0.0-preview.4.25258.110" />
     <PackageVersion Include="Microsoft.Maui.Controls" Version="10.0.0-preview.4.25263.4" />
     <PackageVersion Include="Microsoft.Maui.Controls.Compatibility" Version="10.0.0-preview.4.25263.4" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
@@ -20,7 +23,7 @@
     <PackageVersion Include="System.Security.Cryptography.X509Certificates" Version="4.3.2" />
     <PackageVersion Include="coverlet.collector" Version="6.0.2" />
     <PackageVersion Include="xunit" Version="2.9.2" />
-    <PackageVersion Include="xunit.runner.utility" Version="2.6.6" />
+    <PackageVersion Include="xunit.runner.utility" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
   </ItemGroup>
 </Project>

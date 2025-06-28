@@ -231,7 +231,7 @@ public class BottomSheetHeaderStyleTests
         var style = new BottomSheetHeaderStyle();
         
         // Act
-        style.TitleTextFontFamily = null;
+        style.TitleTextFontFamily = null!;
         
         // Assert
         Assert.Null(style.TitleTextFontFamily);

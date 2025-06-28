@@ -629,10 +629,4 @@ public class BottomSheetTests
         Assert.NotEqual(BottomSheetState.Medium, sheet.CurrentState);
         Assert.Equal(BottomSheetState.Large, sheet.CurrentState);
     }
-    
-    [Fact]
-    public void Test()
-    {
-        Assert.False(true);
-    }
 }

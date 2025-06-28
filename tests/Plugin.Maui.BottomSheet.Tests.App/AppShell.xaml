@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Shell
-    x:Class="MauiApp1.AppShell"
+    x:Class="Plugin.Maui.BottomSheet.Tests.App.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:MauiApp1"
-    Title="MauiApp1">
+    xmlns:local="clr-namespace:Plugin.Maui.BottomSheet.Tests.App"
+    Title="Plugin.Maui.BottomSheet.Tests.App">
 
     <ShellContent
         Title="Home"

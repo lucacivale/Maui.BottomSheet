@@ -7,7 +7,5 @@
         <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
         <UseArtifactsOutput>true</UseArtifactsOutput>
         <ArtifactsPath>$(MSBuildThisFileDirectory)artifacts</ArtifactsPath>
-
-        <IsMac>$([System.OperatingSystem]::IsMacOS())</IsMac>
     </PropertyGroup>
 </Project>
