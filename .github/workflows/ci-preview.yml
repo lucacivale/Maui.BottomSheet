@@ -11,7 +11,7 @@ on:
 env:
   DOTNET_VERSION: '10.0.100-preview.4.25258.110'
   PluginSolutionPath: 'src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet.sln'
-  TestsSolutionPath: 'tests\Plugin.Maui.BottomSheet.Tests\Plugin.Maui.BottomSheet.Tests.sln'
+  TestsAppPath: 'tests\Plugin.Maui.BottomSheet.Tests.App\Plugin.Maui.BottomSheet.Tests.App.csproj'
   Configuration: 'Release'
   DOTNETFrameworkVersion: 'net10.0'
 
@@ -56,7 +56,7 @@ jobs:
           --version "10.0.0-prerelease*"
 
       - name: Publish Android Plugin.Maui.BottomSheet.Tests.App
-        run: dotnet publish ${{ env.TestsSolutionPath }} -c ${{ env.Configuration }} -f $(DOTNETFrameworkVersion)-android -r android-arm64 -p:TestingMode=$(XHarness)
+        run: dotnet publish ${{ env.TestsAppPath }} -c ${{ env.Configuration }} -f $(DOTNETFrameworkVersion)-android -r android-arm64 -p:TestingMode=$(XHarness)
 
       - name: Test Android
         run: xharness android test
@@ -85,6 +85,15 @@ jobs:
           --global
           --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
           --version "10.0.0-prerelease*"
+        
+      - name: Build iOS Plugin.Maui.BottomSheet.Tests.App
+        run: dotnet build ${{ env.TestsAppPath }} -c Debug -f $(DOTNETFrameworkVersion)-ios -r iossimulator-arm64 -p:TestingMode=$(XHarness)
+
+      - name: Test iOS
+        run: xharness apple test
+          --target ios-simulator-64
+          --app tests/artifacts/bin/Plugin.Maui.BottomSheet.Tests.App/debug_net10.0-ios_iossimulator-arm64/Plugin.Maui.BottomSheet.Tests.App.app
+          --output-directory artifacts
 
   Test-Plugin_Maui_BottomSheet-maccatalyst:
 
@@ -106,11 +115,12 @@ jobs:
           --global
           --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json 
           --version "10.0.0-prerelease*"
-      - name: Build iOS Plugin.Maui.BottomSheet.Tests.App
-        run: dotnet build ${{ env.TestsSolutionPath }} -c Debug -f $(DOTNETFrameworkVersion)-ios -r iossimulator-arm64 -p:TestingMode=$(XHarness)
+        
+      - name: Build MacCatalyst Plugin.Maui.BottomSheet.Tests.App
+        run: dotnet build ${{ env.TestsAppPath }} -c Debug -f $(DOTNETFrameworkVersion)-maccatalyst -r maccatalyst-arm64 -p:TestingMode=$(XHarness)
 
       - name: Test iOS
         run: xharness apple test
           --target ios-simulator-64
-          --app tests/artifacts/bin/Plugin.Maui.BottomSheet.Tests.App/debug_net10.0-ios_iossimulator-arm64/Plugin.Maui.BottomSheet.Tests.App.app
+          --app tests/artifacts/bin/Plugin.Maui.BottomSheet.Tests.App/debug_net10.0-maccatalyst_maccatalyst-arm64/Plugin.Maui.BottomSheet.Tests.App.app
           --output-directory artifacts
