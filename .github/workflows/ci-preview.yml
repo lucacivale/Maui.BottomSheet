@@ -49,7 +49,7 @@ jobs:
     env:
       TEST_RUNTIME_IDENTIFIER: android-arm64
       TEST_EMULATOR_NAME: XHarnessEmulator
-      TEST_EMULATOR_IMAGE: system-images;android-35;google_apis;arm64
+      TEST_EMULATOR_IMAGE: system-images;android-35;google_apis;arm64-v8a
       
     steps:
       - uses: actions/checkout@v4
@@ -72,8 +72,7 @@ jobs:
           $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platforms;android-35"
           $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "build-tools;35.0.0"
           $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "emulator"
-          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "system-images;android-35;google_apis;arm64"
-          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "system-images;android-35;google_apis_playstore;arm64"
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "${{ env.TEST_EMULATOR_IMAGE }}"
           yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
       
       - name: Install .NET MAUI Workload
