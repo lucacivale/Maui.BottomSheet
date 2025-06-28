@@ -67,12 +67,15 @@ jobs:
 
       - name: Install Android SDK Components
         run: |
-          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager \
-            "platforms;android-35" \
-            "build-tools;35.0.0" \
-            "platform-tools" \
-            "system-images;android-35;google_apis;arm64-v8a"  \
-            "emulator"
+          sdkmanager --update
+          sdkmanager "platform-tools"
+          sdkmanager "platforms;android-35"
+          sdkmanager "build-tools;35.0.0"
+          sdkmanager "emulator"
+          sdkmanager "system-images;android-35;google_apis;arm64-v8a"
+          sdkmanager "system-images;android-35;google_apis_playstore;arm64-v8a"
+          yes | sdkmanager --licenses
+
       
       - name: Install .NET MAUI Workload
         run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
