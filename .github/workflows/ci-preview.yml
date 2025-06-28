@@ -78,6 +78,18 @@ jobs:
           $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "${{ env.TEST_EMULATOR_IMAGE }}"
           yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
           
+      - name: Install .NET MAUI Workload
+        run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
+        
+      - name: Install XHarness
+        run: dotnet tool install Microsoft.DotNet.XHarness.CLI
+          --global
+          --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
+          --version "10.0.0-prerelease*"
+      
+      - name: Publish Android Plugin.Maui.BottomSheet.Tests.App
+        run: dotnet publish tests/Plugin.Maui.BottomSheet.Tests.App/Plugin.Maui.BottomSheet.Tests.App.csproj -c ${{ env.Configuration }} -f ${{ env.DOTNETFrameworkVersion }}-android -r ${{ env.TEST_RUNTIME_IDENTIFIER }} -p:TestingMode=XHarness -p:AndroidSdkDirectory=$ANDROID_SDK_ROOT
+
       - name: Create Emulator
         run: |
           $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/avdmanager create avd \
@@ -90,26 +102,14 @@ jobs:
         run: |
           $ANDROID_SDK_ROOT/emulator/emulator \
           -avd ${{ env.TEST_EMULATOR_NAME }} \
-          -gpu ${{ matrix.platform.gpu }} \
+          -gpu host \
           -no-snapshot \
           -no-boot-anim \
           -no-window \
           -no-audio \
           -cores 4 \
           -memory 4096
-          
-      - name: Install .NET MAUI Workload
-        run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
-        
-      - name: Install XHarness
-        run: dotnet tool install Microsoft.DotNet.XHarness.CLI
-          --global
-          --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
-          --version "10.0.0-prerelease*"
-      
-      - name: Publish Android Plugin.Maui.BottomSheet.Tests.App
-        run: dotnet publish tests/Plugin.Maui.BottomSheet.Tests.App/Plugin.Maui.BottomSheet.Tests.App.csproj -c ${{ env.Configuration }} -f ${{ env.DOTNETFrameworkVersion }}-android -r ${{ env.TEST_RUNTIME_IDENTIFIER }} -p:TestingMode=XHarness -p:AndroidSdkDirectory=$ANDROID_SDK_ROOT
-          
+
       - name: Test Android
         run: xharness android test
           --app tests/artifacts/publish/Plugin.Maui.BottomSheet.Tests.App/release_net10.0-android_android-arm64/com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
