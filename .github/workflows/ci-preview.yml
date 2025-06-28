@@ -69,34 +69,81 @@ jobs:
           $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "emulator"
           $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "${{ env.TEST_EMULATOR_IMAGE }}"
           yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
-      
+
+
       - name: Create Emulator
         run: |
           $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/avdmanager create avd \
           --name "${{ env.TEST_EMULATOR_NAME }}" \
           --package "${{ env.TEST_EMULATOR_IMAGE }}" \
-          --device "pixel_8" \
           --force
+          
+          # Configure emulator for software rendering to avoid HVF issues
+          AVD_PATH="$HOME/.android/avd/${{ env.TEST_EMULATOR_NAME }}.avd"
+          CONFIG_FILE="$AVD_PATH/config.ini"
+          
+          if [ -f "$CONFIG_FILE" ]; then
+            echo "hw.gpu.enabled=yes" >> "$CONFIG_FILE"
+            echo "hw.gpu.mode=swiftshader_indirect" >> "$CONFIG_FILE"
+            echo "hw.ramSize=3072" >> "$CONFIG_FILE"
+            echo "disk.dataPartition.size=8G" >> "$CONFIG_FILE"
+            echo "hw.keyboard=yes" >> "$CONFIG_FILE"
+            echo "AVD configuration updated for software rendering"
+          fi
 
       - name: Start Emulator
         env:
-          ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL: 300
+          ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL: 600
         run: |
-          $ANDROID_SDK_ROOT/emulator/emulator \
+          echo "Starting ARM64 emulator with software acceleration..."
+          
+          # Disable hardware acceleration and use software rendering
+          export ANDROID_EMULATOR_USE_SYSTEM_LIBS=1
+          
+          # Start emulator in background with software acceleration
+          nohup $ANDROID_SDK_ROOT/emulator/emulator \
           -avd ${{ env.TEST_EMULATOR_NAME }} \
-          -gpu host \
-          -no-snapshot \
-          -no-boot-anim \
           -no-window \
           -no-audio \
-          -cores 4 \
-          -memory 4096 &
+          -no-boot-anim \
+          -no-snapshot \
+          -gpu swiftshader_indirect \
+          -accel off \
+          -memory 3072 \
+          -cores 2 \
+          -partition-size 8192 \
+          -wipe-data \
+          -qemu -machine virt > emulator.log 2>&1 &
           
-          echo "Waiting for emulator to boot..."
-          adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done; input keyevent 82'
+          echo "Waiting for emulator to start..."
           
-          echo "Emulator is ready!"
+          # Wait for device with timeout
+          timeout 600 adb wait-for-device || {
+            echo "Emulator startup timeout - dumping logs:"
+            cat emulator.log
+            exit 1
+          }
+          
+          echo "Device detected, waiting for system boot..."
+          
+          # Wait for system boot with timeout
+          timeout 300 bash -c '
+          while [ "`adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\''\r'\''`" != "1" ]; do 
+            echo "Still booting..."
+            sleep 10
+          done'
+          
+          if [ $? -eq 124 ]; then
+            echo "Boot timeout - dumping logs:"
+            cat emulator.log
+            exit 1
+          fi
+          
+          echo "Emulator ready!"
           adb devices -l
+          
+          # Unlock screen
+          adb shell input keyevent 82
 
       - name: List emulators
         run: $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/avdmanager list avd -c
@@ -108,7 +155,7 @@ jobs:
 
           echo "=== XHarness Device Detection ==="
           xharness android state --adb
-          
+
       - name: Install .NET MAUI Workload
         run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
 
