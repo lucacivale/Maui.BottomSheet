@@ -78,7 +78,6 @@ jobs:
           & "$env:ANDROID_SDK_ROOT\cmdline-tools\latest\bin\avdmanager.bat" create avd `
           --name "${{ env.TEST_EMULATOR_NAME }}" `
           --package "${{ env.TEST_EMULATOR_IMAGE }}" `
-          --device "pixel_8" `
           --force
 
       - name: Start Emulator
@@ -101,6 +100,10 @@ jobs:
           
           Write-Host "Emulator is ready!"
           & adb devices -l
+
+      - name: List emulators
+        shell: pwsh
+        run: "$env:ANDROID_SDK_ROOT\cmdline-tools\latest\bin\avdmanager.bat" list avd -c
 
       - name: List Available Devices for XHarness
         run: |
