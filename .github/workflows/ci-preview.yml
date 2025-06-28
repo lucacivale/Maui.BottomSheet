@@ -65,8 +65,8 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
                
-      - name: Install .NET MAUI Android
-        run: dotnet workload install maui-android --source https://api.nuget.org/v3/index.json
+      - name: Install .NET Android
+        run: dotnet workload install android --source https://api.nuget.org/v3/index.json
          
       - name: Install .NET MAUI Workload
         run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
@@ -142,7 +142,7 @@ jobs:
         run: |
           for i in $(seq 1 3)
           do
-            dotnet xharness apple test \
+            xharness apple test \
               --target ios-simulator-64 \
               --timeout="00:03:00" \
               --launch-timeout=00:06:00 \
