@@ -59,18 +59,21 @@ jobs:
         with:
           distribution: 'microsoft'
           java-version: '21'
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
     
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Install .NET MAUI Android
-        run: dotnet workload install maui-android --source https://api.nuget.org/v3/index.json
-              
+      - name: Install Android SDK Components
+        run: |
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager \
+            "platforms;android-35" \
+            "build-tools;35.0.0" \
+            "platform-tools" \
+            "emulator"
+      
+      
       - name: Install .NET MAUI Workload
         run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
         
