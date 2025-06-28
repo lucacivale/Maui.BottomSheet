@@ -65,6 +65,9 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
       - name: Install Android SDK Components
         run: |
           $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --update
