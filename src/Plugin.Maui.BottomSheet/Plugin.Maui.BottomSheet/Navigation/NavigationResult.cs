@@ -6,12 +6,12 @@ namespace Plugin.Maui.BottomSheet.Navigation;
 internal sealed class NavigationResult : INavigationResult
 {
     /// <summary>
-    /// Gets or sets whether the navigation completed successfully.
+    /// Gets or sets a value indicating  whether the navigation completed successfully.
     /// </summary>
     public bool Success { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets whether the navigation was cancelled.
+    /// Gets or sets a value indicating  whether the navigation was cancelled.
     /// </summary>
     public bool Cancelled { get; set; }
 

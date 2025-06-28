@@ -1,0 +1,75 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>$(NETVersion)-android</TargetFrameworks>
+        <TargetFrameworks Condition="!$([MSBuild]::IsOSPlatform('linux'))">$(TargetFrameworks);$(NETVersion)-ios;</TargetFrameworks>
+        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);</TargetFrameworks>
+
+        <OutputType>Exe</OutputType>
+        <RootNamespace>MauiApp1</RootNamespace>
+        <UseMaui>true</UseMaui>
+        <SingleProject>true</SingleProject>
+        
+        <DefineConstants Condition="'$(CI)' != 'true'">$(DefineConstants);INCLUDE_FAILING_TESTS</DefineConstants>
+        <DefineConstants Condition="'$(TestingMode)' == 'NonInteractiveVisual'">$(DefineConstants);MODE_NON_INTERACTIVE_VISUAL</DefineConstants>
+        <DefineConstants Condition="'$(TestingMode)' == 'XHarness'">$(DefineConstants);MODE_XHARNESS</DefineConstants>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <ApplicationTitle>MauiApp1</ApplicationTitle>
+        <ApplicationId>com.companyname.mauiapp1</ApplicationId>
+        <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+        <ApplicationVersion>1</ApplicationVersion>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4"/>
+        <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128"/>
+        <MauiImage Include="Resources\Images\*"/>
+        <MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185"/>
+        <MauiFont Include="Resources\Fonts\*"/>
+        <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="coverlet.collector">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+
+        <PackageReference Include="xunit" />
+        <PackageReference Include="xunit.runner.utility" />
+        <PackageReference Include="xunit.runner.visualstudio">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        
+        <PackageReference Include="DeviceRunners.Cli" />
+        <PackageReference Include="DeviceRunners.UITesting.Maui" />
+        <PackageReference Include="DeviceRunners.UITesting.Xunit" />
+
+        <PackageReference Include="DeviceRunners.VisualRunners.Maui" />
+        <PackageReference Include="DeviceRunners.VisualRunners.Xunit" />
+        
+        <PackageReference Include="Microsoft.Maui.Controls" />
+        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" />
+        
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TestingMode)' == 'XHarness'">
+        <PackageReference Include="DeviceRunners.XHarness.Xunit" />
+        <PackageReference Include="DeviceRunners.XHarness.Maui" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Plugin.Maui.BottomSheet.Tests\Plugin.Maui.BottomSheet.Tests\Plugin.Maui.BottomSheet.Tests.csproj" />
+    </ItemGroup>
+
+    <Target Name="RemoveVisualStudioTestRunner" BeforeTargets="_ComputeAppxPackagePayload">
+        <ItemGroup>
+            <_VisualStudioTestRunnerFiles Include="@(PackagingOutputs)" Condition="$([System.String]::Copy('%(PackagingOutputs.FullPath)').Contains('xunit.runner.visualstudio'))" />
+            <PackagingOutputs Remove="@(_VisualStudioTestRunnerFiles)" />
+        </ItemGroup>
+    </Target>
+</Project>

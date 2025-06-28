@@ -1,0 +1,17 @@
+<Project>
+    <PropertyGroup>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+    </PropertyGroup>
+
+    <Target Name="AddApplePlatformsFolder" BeforeTargets="_MauiRemovePlatformCompileItems">
+        <ItemGroup Condition=" '$(SingleProject)' == 'true' ">
+            <Compile
+                    Condition=" '$(TargetPlatformIdentifier)' == 'ios' or '$(TargetPlatformIdentifier)' == 'maccatalyst' "
+                    Include="$(PlatformsProjectFolder)Apple\**\*$(DefaultLanguageSourceExtension)">
+                <ExcludeFromCurrentConfiguration>false</ExcludeFromCurrentConfiguration>
+            </Compile>
+        </ItemGroup>
+    </Target>
+</Project>

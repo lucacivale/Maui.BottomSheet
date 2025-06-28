@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.Maui.BottomSheet.Tests", "Plugin.Maui.BottomSheet.Tests\Plugin.Maui.BottomSheet.Tests.csproj", "{4FBC0FF6-2436-4E89-BC6D-BE6805C16F15}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.Maui.BottomSheet", "..\..\src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet.csproj", "{286675CC-7856-4C2B-BC6D-25CE7389A7C6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MauiApp1", "..\MauiApp1\MauiApp1.csproj", "{D05CA632-5597-4E5A-B436-E4586172184E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4FBC0FF6-2436-4E89-BC6D-BE6805C16F15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FBC0FF6-2436-4E89-BC6D-BE6805C16F15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FBC0FF6-2436-4E89-BC6D-BE6805C16F15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FBC0FF6-2436-4E89-BC6D-BE6805C16F15}.Release|Any CPU.Build.0 = Release|Any CPU
+		{286675CC-7856-4C2B-BC6D-25CE7389A7C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{286675CC-7856-4C2B-BC6D-25CE7389A7C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{286675CC-7856-4C2B-BC6D-25CE7389A7C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{286675CC-7856-4C2B-BC6D-25CE7389A7C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D05CA632-5597-4E5A-B436-E4586172184E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D05CA632-5597-4E5A-B436-E4586172184E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D05CA632-5597-4E5A-B436-E4586172184E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D05CA632-5597-4E5A-B436-E4586172184E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

@@ -12,7 +12,7 @@ internal sealed class BottomSheetStack : Stack<IBottomSheet>
     public IBottomSheet Current => Peek();
 
     /// <summary>
-    /// Gets whether the stack contains no bottom sheets.
+    /// Gets a value indicating whether the stack contains no bottom sheets.
     /// </summary>
     public bool IsEmpty => Count == 0;
 
