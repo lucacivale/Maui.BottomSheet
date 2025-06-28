@@ -68,11 +68,9 @@ jobs:
       - name: Install Android SDK Components
         run: |
           $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager \
-            "platforms;android-35" \
-            "build-tools;35.0.0" \
+            "${{ env.TEST_EMULATOR_IMAGE }}" \
             "platform-tools" \
             "emulator"
-      
       
       - name: Install .NET MAUI Workload
         run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
@@ -82,9 +80,6 @@ jobs:
           --global
           --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
           --version "10.0.0-prerelease*"
-
-      - name: Install Android SDK Packages
-        run: dotnet android sdk install --package 'platform-tools' --package 'emulator' --package '${{ env.TEST_EMULATOR_IMAGE }}'
 
       - name: Create Emulator
         run: dotnet android avd create --name ${{ env.TEST_EMULATOR_NAME }} --sdk '${{ env.TEST_EMULATOR_IMAGE }}' --force
