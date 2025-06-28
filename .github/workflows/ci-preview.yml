@@ -50,19 +50,19 @@ jobs:
         run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
         
       - name: Install XHarness
-        run: dotnet tool install Microsoft.DotNet.XHarness.CLI \
-          --global \
-          --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json \
+        run: dotnet tool install Microsoft.DotNet.XHarness.CLI
+          --global
+          --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
           --version "10.0.0-prerelease*"
 
       - name: Publish Android Plugin.Maui.BottomSheet.Tests.App
         run: dotnet publish ${{ env.TestsSolutionPath }} -c ${{ env.Configuration }} -f $(DOTNETFrameworkVersion)-android -r android-arm64 -p:TestingMode=$(XHarness)
 
       - name: Test Android
-        run: xharness android test \
-          --app tests/artifacts/publish/Plugin.Maui.BottomSheet.Tests.App/release_net10.0-android_android-arm64/com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk \
-          --package-name com.companyname.plugin.maui.bottomsheet.tests.app \
-          --instrumentation devicerunners.xharness.maui.XHarnessInstrumentation \
+        run: xharness android test
+          --app tests/artifacts/publish/Plugin.Maui.BottomSheet.Tests.App/release_net10.0-android_android-arm64/com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
+          --package-name com.companyname.plugin.maui.bottomsheet.tests.app
+          --instrumentation devicerunners.xharness.maui.XHarnessInstrumentation
           --output-directory artifacts
   
   Test-Plugin_Maui_BottomSheet-ios:
@@ -81,9 +81,9 @@ jobs:
         run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
         
       - name: Install XHarness
-        run: dotnet tool install Microsoft.DotNet.XHarness.CLI \
-          --global \
-          --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json \
+        run: dotnet tool install Microsoft.DotNet.XHarness.CLI
+          --global
+          --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
           --version "10.0.0-prerelease*"
 
   Test-Plugin_Maui_BottomSheet-maccatalyst:
@@ -102,15 +102,15 @@ jobs:
         run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
         
       - name: Install XHarness
-        run: dotnet tool install Microsoft.DotNet.XHarness.CLI \
-          --global \
-          --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json \
+        run: dotnet tool install Microsoft.DotNet.XHarness.CLI
+          --global
+          --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json 
           --version "10.0.0-prerelease*"
       - name: Build iOS Plugin.Maui.BottomSheet.Tests.App
         run: dotnet build ${{ env.TestsSolutionPath }} -c Debug -f $(DOTNETFrameworkVersion)-ios -r iossimulator-arm64 -p:TestingMode=$(XHarness)
 
       - name: Test iOS
-        run: xharness apple test \
-          --target ios-simulator-64 \
-          --app tests/artifacts/bin/Plugin.Maui.BottomSheet.Tests.App/debug_net10.0-ios_iossimulator-arm64/Plugin.Maui.BottomSheet.Tests.App.app \
+        run: xharness apple test
+          --target ios-simulator-64
+          --app tests/artifacts/bin/Plugin.Maui.BottomSheet.Tests.App/debug_net10.0-ios_iossimulator-arm64/Plugin.Maui.BottomSheet.Tests.App.app
           --output-directory artifacts
