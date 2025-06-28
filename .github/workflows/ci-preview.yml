@@ -72,10 +72,9 @@ jobs:
           $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platforms;android-35"
           $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "build-tools;35.0.0"
           $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "emulator"
-          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "system-images;android-35;google_apis;arm64-v8a"
-          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "system-images;android-35;google_apis_playstore;arm64-v8a"
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "system-images;android-35;google_apis;arm64"
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "system-images;android-35;google_apis_playstore;arm64"
           yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
-
       
       - name: Install .NET MAUI Workload
         run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
@@ -85,16 +84,24 @@ jobs:
           --global
           --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
           --version "10.0.0-prerelease*"
-
-      - name: Create Emulator
-        run: dotnet android avd create --name ${{ env.TEST_EMULATOR_NAME }} --sdk '${{ env.TEST_EMULATOR_IMAGE }}' --force
-            
+      
       - name: Publish Android Plugin.Maui.BottomSheet.Tests.App
         run: dotnet publish tests\Plugin.Maui.BottomSheet.Tests.App/Plugin.Maui.BottomSheet.Tests.App.csproj -c ${{ env.Configuration }} -f ${{ env.DOTNETFrameworkVersion }}-android -r ${{ env.TEST_RUNTIME_IDENTIFIER }} -p:TestingMode=XHarness -p:AndroidSdkDirectory=$ANDROID_SDK_ROOT
 
+      - name: Create Emulator
+        run: |
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/avdmanager create avd \
+          --name "${{ env.TEST_EMULATOR_NAME }}" \
+          --package "${{ env.TEST_EMULATOR_IMAGE }}" \
+          --device "pixel_9" \
+          --force
+
       - name: Start Emulator
-        run: dotnet android avd start --name ${{ env.TEST_EMULATOR_NAME }} --gpu ${{ matrix.platform.gpu }} --wait-boot --no-window --no-snapshot --no-audio --no-boot-anim
-        
+        run: |
+          $ANDROID_SDK_ROOT/emulator/emulator \
+          -avd ${{ env.TEST_EMULATOR_NAME }} -gpu ${{ matrix.platform.gpu }} -wait-boot -no-snapshot -no-boot-anim -no-window -no-audio &
+          adb wait-for-device
+
       - name: Test Android
         run: xharness android test
           --app tests/artifacts/publish/Plugin.Maui.BottomSheet.Tests.App/release_net10.0-android_android-arm64/com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
