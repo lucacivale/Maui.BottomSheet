@@ -19,7 +19,7 @@ jobs:
   Build-Plugin_Maui_BottomSheet:
 
     runs-on: windows-latest
-      
+    
     steps:
       - uses: actions/checkout@v4
 
@@ -36,13 +36,13 @@ jobs:
   
   Test-Plugin_Maui_BottomSheet-Android:
     
-    runs-on: windows-latest
+    runs-on: macos-15
 
     env:
-      TEST_RUNTIME_IDENTIFIER: android-arm64
+      TEST_RUNTIME_IDENTIFIER: android-x86
       TEST_EMULATOR_NAME: XHarnessEmulator
-      TEST_EMULATOR_IMAGE: system-images;android-35;google_apis;arm64-v8a
-      
+      TEST_EMULATOR_IMAGE: system-images;android-35;google_apis;x86_64
+    
     steps:
       - uses: actions/checkout@v4
 
@@ -51,7 +51,7 @@ jobs:
         with:
           distribution: 'microsoft'
           java-version: '21'
-    
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
@@ -62,29 +62,29 @@ jobs:
 
       - name: Install Android SDK Components
         run: |
-          $ANDROID_SDK_ROOT\cmdline-tools\latest\bin\sdkmanager --update
-          $ANDROID_SDK_ROOT\cmdline-tools\latest\bin\sdkmanager "platform-tools"
-          $ANDROID_SDK_ROOT\cmdline-tools\latest\bin\sdkmanager "platforms;android-35"
-          $ANDROID_SDK_ROOT\cmdline-tools\latest\bin\sdkmanager "build-tools;35.0.0"
-          $ANDROID_SDK_ROOT\cmdline-tools\latest\bin\sdkmanager "emulator"
-          $ANDROID_SDK_ROOT\cmdline-tools\latest\bin\sdkmanager "${{ env.TEST_EMULATOR_IMAGE }}"
-          yes | $ANDROID_SDK_ROOT\cmdline-tools\latest\bin\sdkmanager --licenses
-          
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --update
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platform-tools"
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platforms;android-35"
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "build-tools;35.0.0"
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "emulator"
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "${{ env.TEST_EMULATOR_IMAGE }}"
+          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
+
       - name: Install .NET MAUI Workload
         run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
-        
+
       - name: Install XHarness
         run: dotnet tool install Microsoft.DotNet.XHarness.CLI
           --global
           --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
           --version "10.0.0-prerelease*"
-      
+
       - name: Publish Android Plugin.Maui.BottomSheet.Tests.App
-        run: dotnet publish tests\Plugin.Maui.BottomSheet.Tests.App\Plugin.Maui.BottomSheet.Tests.App.csproj -c ${{ env.Configuration }} -f ${{ env.DOTNETFrameworkVersion }}-android -r ${{ env.TEST_RUNTIME_IDENTIFIER }} -p:TestingMode=XHarness -p:AndroidSdkDirectory=$ANDROID_SDK_ROOT
+        run: dotnet publish tests/Plugin.Maui.BottomSheet.Tests.App/Plugin.Maui.BottomSheet.Tests.App.csproj -c ${{ env.Configuration }} -f ${{ env.DOTNETFrameworkVersion }}-android -r ${{ env.TEST_RUNTIME_IDENTIFIER }} -p:TestingMode=XHarness -p:AndroidSdkDirectory=$ANDROID_SDK_ROOT
 
       - name: Create Emulator
         run: |
-          $ANDROID_SDK_ROOT\cmdline-tools\latest\bin\avdmanager create avd \
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/avdmanager create avd \
           --name "${{ env.TEST_EMULATOR_NAME }}" \
           --package "${{ env.TEST_EMULATOR_IMAGE }}" \
           --device "pixel_8" \
@@ -94,7 +94,7 @@ jobs:
         env:
           ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL: 300
         run: |
-          $ANDROID_SDK_ROOT\emulator\emulator \
+          $ANDROID_SDK_ROOT/emulator/emulator \
           -avd ${{ env.TEST_EMULATOR_NAME }} \
           -gpu host \
           -no-snapshot \
@@ -111,7 +111,7 @@ jobs:
           adb devices -l
 
       - name: List emulators
-        run: $ANDROID_SDK_ROOT\cmdline-tools\latest\bin\avdmanager list avd -c      
+        run: $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/avdmanager list avd -c
 
       - name: List Available Devices for XHarness
         run: |
@@ -123,31 +123,31 @@ jobs:
 
       - name: Test Android
         run: xharness android test
-          --app tests\artifacts\publish\Plugin.Maui.BottomSheet.Tests.App\release_net10.0-android_android-arm64\com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
+          --app tests/artifacts/publish/Plugin.Maui.BottomSheet.Tests.App/release_net10.0-android_android-x86/com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
           --package-name com.companyname.plugin.maui.bottomsheet.tests.app
           --instrumentation devicerunners.xharness.maui.XHarnessInstrumentation
           --output-directory artifacts/test-results
-        
+
       - name: Shutdown the Emulator
         run: dotnet xharness android adb -- emu kill
 
       - name: Clean up build artifacts before upload
         run: |
-          rm -rf .\artifacts\bin
-          rm -rf .\artifacts\obj
+          rm -rf ./artifacts/bin
+          rm -rf ./artifacts/obj
         if: ${{ always() }}
 
       - name: Upload Artifacts
-        uses: actions\upload-artifact@v4
+        uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
           name: Test Results (XHarness) - Android
-          path: .\artifacts
+          path: ./artifacts
   
   Test-Plugin_Maui_BottomSheet-ios:
 
     runs-on: macos-15
-         
+    
     steps:
       - uses: actions/checkout@v4
 
@@ -158,14 +158,14 @@ jobs:
 
       - name: Install .NET MAUI Workload
         run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
-        
+
       - name: Install XHarness
         run: dotnet tool install Microsoft.DotNet.XHarness.CLI
           --global
           --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
           --version "10.0.0-prerelease*"
-        
-      - name: Set Xcode version ${{env.XCODE_VERSION }} 
+
+      - name: Set Xcode version ${{env.XCODE_VERSION }}
         run: sudo xcode-select -s /Applications/Xcode_${{env.XCODE_VERSION }}.app
 
       - name: Build iOS Plugin.Maui.BottomSheet.Tests.App
@@ -190,7 +190,7 @@ jobs:
           rm -rf ./artifacts/bin
           rm -rf ./artifacts/obj
         if: ${{ always() }}
-  
+
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         if: ${{ always() }}
@@ -212,16 +212,16 @@ jobs:
 
       - name: Install .NET MAUI Workload
         run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
-        
+
       - name: Install XHarness
         run: dotnet tool install Microsoft.DotNet.XHarness.CLI
           --global
-          --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json 
+          --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
           --version "10.0.0-prerelease*"
 
       - name: Set Xcode version ${{env.XCODE_VERSION }}
         run: sudo xcode-select -s /Applications/Xcode_${{env.XCODE_VERSION }}.app
-        
+
       - name: Build MacCatalyst Plugin.Maui.BottomSheet.Tests.App
         run: dotnet build tests/Plugin.Maui.BottomSheet.Tests.App/Plugin.Maui.BottomSheet.Tests.App.csproj -c Debug -f ${{ env.DOTNETFrameworkVersion }}-maccatalyst -r maccatalyst-arm64 -p:TestingMode=XHarness
 
