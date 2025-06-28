@@ -18,7 +18,7 @@ jobs:
   Build-Plugin_Maui_BottomSheet:
 
     runs-on: windows-latest
-
+      
     steps:
       - uses: actions/checkout@v4
 
@@ -35,16 +35,44 @@ jobs:
   
   Test-Plugin_Maui_BottomSheet-Android:
     
-    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - name: Linux
+            os: ubuntu-22.04
+            gpu: swiftshader_indirect
+          - name: macOS
+            os: macos-15
+            gpu: guest
+    name: Android (${{ matrix.platform.name }})
+    runs-on: ${{ matrix.platform.os }}
 
+    env:
+      TEST_RUNTIME_IDENTIFIER: android-arm64
+      TEST_EMULATOR_NAME: XHarnessEmulator
+      TEST_EMULATOR_IMAGE: system-images;android-35;google_apis;arm64
+      
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'microsoft'
+          java-version: '21'
+            
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
+      - name: Install Android SDK Packages
+        run: dotnet android sdk install --package 'platform-tools' --package 'emulator' --package '${{ env.TEST_EMULATOR_IMAGE }}'
+
+      - name: Create Emulator
+        run: dotnet android avd create --name ${{ env.TEST_EMULATOR_NAME }} --sdk '${{ env.TEST_EMULATOR_IMAGE }}' --force
+            
       - name: Install .NET MAUI Workload
         run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
         
@@ -55,14 +83,31 @@ jobs:
           --version "10.0.0-prerelease*"
 
       - name: Publish Android Plugin.Maui.BottomSheet.Tests.App
-        run: dotnet publish tests\Plugin.Maui.BottomSheet.Tests.App\Plugin.Maui.BottomSheet.Tests.App.csproj -c ${{ env.Configuration }} -f ${{ env.DOTNETFrameworkVersion }}-android -r android-arm64 -p:TestingMode=XHarness
+        run: dotnet publish tests\Plugin.Maui.BottomSheet.Tests.App/Plugin.Maui.BottomSheet.Tests.App.csproj -c ${{ env.Configuration }} -f ${{ env.DOTNETFrameworkVersion }}-android -r ${{ env.TEST_RUNTIME_IDENTIFIER }} -p:TestingMode=XHarness -p:AndroidSdkDirectory=$ANDROID_SDK_ROOT
 
+      - name: Start Emulator
+        run: dotnet android avd start --name ${{ env.TEST_EMULATOR_NAME }} --gpu ${{ matrix.platform.gpu }} --wait-boot --no-window --no-snapshot --no-audio --no-boot-anim
+        
       - name: Test Android
         run: xharness android test
           --app tests/artifacts/publish/Plugin.Maui.BottomSheet.Tests.App/release_net10.0-android_android-arm64/com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
           --package-name com.companyname.plugin.maui.bottomsheet.tests.app
           --instrumentation devicerunners.xharness.maui.XHarnessInstrumentation
           --output-directory artifacts
+        
+      - name: Shutdown the Emulator
+        run: dotnet xharness android adb -- emu kill
+      - name: Clean up build artifacts before upload
+        run: |
+          rm -rf ./artifacts/bin
+          rm -rf ./artifacts/obj
+        if: ${{ always() }}
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: Test Results (XHarness) - Android (${{ matrix.platform.name }})
+          path: ./artifacts
   
   Test-Plugin_Maui_BottomSheet-ios:
 
@@ -86,13 +131,25 @@ jobs:
           --version "10.0.0-prerelease*"
         
       - name: Build iOS Plugin.Maui.BottomSheet.Tests.App
-        run: dotnet build tests/Plugin.Maui.BottomSheet.Tests.App\Plugin.Maui.BottomSheet.Tests.App.csproj -c Debug -f ${{ env.DOTNETFrameworkVersion }}-ios -r iossimulator-arm64 -p:TestingMode=XHarness
+        run: dotnet build tests/Plugin.Maui.BottomSheet.Tests.App/Plugin.Maui.BottomSheet.Tests.App.csproj -c Debug -f ${{ env.DOTNETFrameworkVersion }}-ios -r iossimulator-arm64 -p:TestingMode=XHarness
 
       - name: Test iOS
         run: xharness apple test
           --target ios-simulator-64
           --app tests/artifacts/bin/Plugin.Maui.BottomSheet.Tests.App/debug_net10.0-ios_iossimulator-arm64/Plugin.Maui.BottomSheet.Tests.App.app
           --output-directory artifacts
+
+      - name: Clean up build artifacts before upload
+        run: |
+          rm -rf ./artifacts/bin
+          rm -rf ./artifacts/obj
+        if: ${{ always() }}
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: Test Results (XHarness) - iOS
+          path: ./artifacts
 
   Test-Plugin_Maui_BottomSheet-maccatalyst:
 
@@ -123,3 +180,15 @@ jobs:
           --target ios-simulator-64
           --app tests/artifacts/bin/Plugin.Maui.BottomSheet.Tests.App/debug_net10.0-maccatalyst_maccatalyst-arm64/Plugin.Maui.BottomSheet.Tests.App.app
           --output-directory artifacts
+
+      - name: Clean up build artifacts before upload
+        run: |
+          rm -rf ./artifacts/bin
+          rm -rf ./artifacts/obj
+        if: ${{ always() }}
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: Test Results (XHarness) - iOS
+          path: ./artifacts
