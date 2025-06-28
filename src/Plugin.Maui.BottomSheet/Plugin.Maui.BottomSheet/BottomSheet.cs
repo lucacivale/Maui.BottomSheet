@@ -509,11 +509,6 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         {
             CurrentState = newvalue[0];
         }
-
-        if (newvalue.Count == 0)
-        {
-            IsDraggable = false;
-        }
     }
 
     /// <summary>

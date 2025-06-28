@@ -64,7 +64,7 @@ public sealed class BottomSheetHeader : BindableObject
             nameof(HeaderDataTemplate),
             typeof(DataTemplate),
             typeof(BottomSheetHeader));
-    
+
     /// <summary>
     /// Bindable property for the direct content.
     /// </summary>
@@ -128,7 +128,7 @@ public sealed class BottomSheetHeader : BindableObject
     /// Gets or sets the parent element of this header.
     /// </summary>
     public Element? Parent { get; set; }
-    
+
     /// <summary>
     /// Creates and returns the content view, using either the template or direct content.
     /// </summary>

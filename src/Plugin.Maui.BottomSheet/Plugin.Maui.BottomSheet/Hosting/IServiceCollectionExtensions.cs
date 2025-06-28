@@ -78,7 +78,7 @@ public static class IServiceCollectionExtensions
     }
 
     /// <summary>
-    /// Registers a <typeparamref name="T"/> ContentPage as a <see cref="BottomSheet"/> with an associated view model <typeparamref name="TViewModel"/>, 
+    /// Registers a <typeparamref name="T"/> ContentPage as a <see cref="BottomSheet"/> with an associated view model <typeparamref name="TViewModel"/>,
     /// by the specified name, and applies custom configuration.
     /// </summary>
     /// <typeparam name="T">The ContentPage type to register as <see cref="BottomSheet"/>. Must implement <see cref="IView"/>.</typeparam>

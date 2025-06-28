@@ -44,8 +44,11 @@ internal sealed partial class BottomSheetHandler
     };
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="BottomSheetHandler"/> class.
     /// Handles bottom sheet behavior and maps properties between a virtual view and a native view implementation.
     /// </summary>
+    /// <param name="mapper">Property mapper.</param>
+    /// <param name="commandMapper">Command mapper.</param>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "S1118:Utility classes should not have public constructors", Justification = "Must be public.")]
     public BottomSheetHandler(IPropertyMapper? mapper, CommandMapper? commandMapper)
         : base(mapper ?? _bottomSheetMapper, commandMapper)
@@ -53,6 +56,7 @@ internal sealed partial class BottomSheetHandler
     }
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="BottomSheetHandler"/> class.
     /// Handles the lifecycle and behavior of a BottomSheet component within a .NET MAUI application.
     /// Implements behavior mappings between the BottomSheet interface and its platform-specific representation.
     /// </summary>
@@ -63,9 +67,11 @@ internal sealed partial class BottomSheetHandler
     }
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="BottomSheetHandler"/> class.
     /// Represents the handler responsible for managing the behavior and presentation
     /// of a bottom sheet within a .NET MAUI application.
     /// </summary>
+    /// <param name="context">Maui context.</param>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "S1118:Utility classes should not have public constructors", Justification = "Must be public.")]
     public BottomSheetHandler(IMauiContext context)
         : base(_bottomSheetMapper)
@@ -74,7 +80,7 @@ internal sealed partial class BottomSheetHandler
     }
 
     /// <summary>
-    /// Indicates whether the connection process is currently underway.
+    /// Gets a value indicating whether the connection process is currently underway.
     /// </summary>
     /// <remarks>
     /// This property reflects the state of connectivity during specific
@@ -103,9 +109,11 @@ internal sealed partial class BottomSheetHandler
     /// <returns>A task that represents the asynchronous operation of opening the bottom sheet.</returns>
     internal partial Task OpenAsync();
 
+    /// <summary>
     /// Closes the currently open bottom sheet asynchronously and releases any associated resources or handlers.
     /// This method ensures that the bottom sheet is properly closed, its handler is disconnected,
     /// and navigation events are triggered as necessary when the sheet is dismissed.
+    /// </summary>
     /// <returns>A task that represents the asynchronous operation of closing the bottom sheet.</returns>
     internal partial Task CloseAsync();
 }

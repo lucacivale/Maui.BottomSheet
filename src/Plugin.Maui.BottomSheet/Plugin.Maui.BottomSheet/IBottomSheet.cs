@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 namespace Plugin.Maui.BottomSheet;
 
 using System;
@@ -159,20 +161,24 @@ public interface IBottomSheet : IView, IPadding, ISafeAreaView
     /// <summary>
     /// Triggers the opening event for the bottom sheet.
     /// </summary>
-    internal void OnOpeningBottomSheet();
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void OnOpeningBottomSheet();
 
     /// <summary>
     /// Triggers the opened event for the bottom sheet.
     /// </summary>
-    internal void OnOpenedBottomSheet();
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void OnOpenedBottomSheet();
 
     /// <summary>
     /// Triggers the closing event for the bottom sheet.
     /// </summary>
-    internal void OnClosingBottomSheet();
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void OnClosingBottomSheet();
 
     /// <summary>
     /// Triggers the closed event for the bottom sheet.
     /// </summary>
-    internal void OnClosedBottomSheet();
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void OnClosedBottomSheet();
 }

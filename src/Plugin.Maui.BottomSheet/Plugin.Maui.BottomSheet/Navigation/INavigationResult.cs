@@ -6,12 +6,12 @@ namespace Plugin.Maui.BottomSheet.Navigation;
 public interface INavigationResult
 {
     /// <summary>
-    /// Gets whether the navigation completed successfully without errors.
+    /// Gets a value indicating whether the navigation completed successfully without errors.
     /// </summary>
     bool Success { get; }
 
     /// <summary>
-    /// Gets whether the navigation was cancelled by user or system action.
+    /// Gets a value indicating whether the navigation was cancelled by user or system action.
     /// </summary>
     bool Cancelled { get; }
 
