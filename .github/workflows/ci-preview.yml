@@ -83,7 +83,7 @@ jobs:
           $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/avdmanager create avd \
           --name "${{ env.TEST_EMULATOR_NAME }}" \
           --package "${{ env.TEST_EMULATOR_IMAGE }}" \
-          --device "pixel_9" \
+          --device "pixel_8" \
           --force
 
       - name: Start Emulator
