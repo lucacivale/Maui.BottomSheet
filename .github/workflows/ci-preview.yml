@@ -36,18 +36,10 @@ jobs:
   
   Test-Plugin_Maui_BottomSheet-Android:
     
-    strategy:
-      fail-fast: false
-      matrix:
-        platform:
-          - name: macOS
-            os: macos-15
-            gpu: guest
-    name: Android (${{ matrix.platform.name }})
-    runs-on: ${{ matrix.platform.os }}
+    runs-on: macos-15
 
     env:
-      TEST_RUNTIME_IDENTIFIER: android-arm64v8a
+      TEST_RUNTIME_IDENTIFIER: android-arm64
       TEST_EMULATOR_NAME: XHarnessEmulator
       TEST_EMULATOR_IMAGE: system-images;android-35;google_apis;arm64-v8a
       
@@ -135,7 +127,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
-          name: Test Results (XHarness) - Android (${{ matrix.platform.name }})
+          name: Test Results (XHarness) - Android
           path: ./artifacts
   
   Test-Plugin_Maui_BottomSheet-ios:
