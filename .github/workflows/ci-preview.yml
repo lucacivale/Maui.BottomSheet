@@ -64,6 +64,9 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
                
       - name: Install .NET Android
         run: dotnet workload install android --source https://api.nuget.org/v3/index.json
@@ -208,5 +211,5 @@ jobs:
         uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
-          name: Test Results (XHarness) - iOS
+          name: Test Results (XHarness) - MacCatalyst
           path: ./artifacts
