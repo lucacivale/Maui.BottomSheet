@@ -66,8 +66,7 @@ jobs:
       - name: Start Emulator
         run: |
           $env:ANDROID_EMULATOR_USE_SYSTEM_LIBS=1
-          Start-Process -FilePath "$env:ANDROID_SDK_ROOT\emulator\emulator.exe" -ArgumentList "-avd test -no-window -no-boot-anim -gpu off" -PassThru
-          Start-Sleep -Seconds 30
+          Start-Process -FilePath "$env:ANDROID_SDK_ROOT\emulator\emulator.exe" -ArgumentList "-avd ${{ env.TEST_EMULATOR_NAME }} -no-window -no-boot-anim -gpu off" -PassThru
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
