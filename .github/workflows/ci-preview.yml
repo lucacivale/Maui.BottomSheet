@@ -88,16 +88,16 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Install emulator
-        run: sdkmanager "platform-tools" "platforms;android-21" "emulator" "system-images;android-21;default;x86_64"
+        run: sdkmanager "platform-tools" "platforms;android-30" "emulator" "system-images;android-30;default;x86_64"
 
       - name: Create Android emulator
-        run: avdmanager create avd -n ${{ env.TEST_EMULATOR_NAME }} -k "system-images;android-21;default;x86_64" --device "pixel"
+        run: avdmanager create avd -n ${{ env.TEST_EMULATOR_NAME }} -k "system-images;android-30;default;x86_64" --device "pixel"
 
       - name: Start Android Emulator
         run: |
           export ANDROID_AVD_HOME="$HOME/.config/.android/avd"
           $ANDROID_SDK_ROOT/emulator/emulator -list-avds
-          $ANDROID_SDK_ROOT/emulator/emulator -avd ${{ env.TEST_EMULATOR_NAME }} -no-snapshot -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim &
+          $ANDROID_SDK_ROOT/emulator/emulator -avd ${{ env.TEST_EMULATOR_NAME }} -no-snapshot -no-window -no-audio -no-boot-anim -accel on &
 
       - name: Wait for emulator to boot
         run: |
