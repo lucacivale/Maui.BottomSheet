@@ -122,7 +122,7 @@ jobs:
         
       - name: Test Android
         run: xharness android test
-          --app TestApp/com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
+          --app com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
           --package-name com.companyname.plugin.maui.bottomsheet.tests.app
           --instrumentation devicerunners.xharness.maui.XHarnessInstrumentation
           --output-directory artifacts\test-results
