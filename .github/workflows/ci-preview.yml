@@ -36,7 +36,7 @@ jobs:
   
   Test-Plugin_Maui_BottomSheet-Android:
     
-    runs-on: windows-latest
+    runs-on: macos-15
 
     env:
       TEST_RUNTIME_IDENTIFIER: android-x64
@@ -55,18 +55,25 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install Emulator and System Image
+      - name: Install Android SDK components
         run: |
-          sdkmanager "platform-tools" "platforms;android-35" "emulator" "system-images;android-35;google_apis;x86_64"
+          echo "y" | sdkmanager --install "platform-tools" "emulator" "platforms;android-30" "system-images;android-30;google_apis;x86_64"
 
-      - name: Create Android Emulator
+      - name: Create AVD
         run: |
-          echo "no" | avdmanager create avd -n ${{ env.TEST_EMULATOR_NAME }} -k "system-images;android-35;google_apis;x86_64" --device "pixel"
+          echo "no" | avdmanager create avd -n test -k "system-images;android-30;google_apis;x86_64" --device "pixel"
 
       - name: Start Emulator
         run: |
-          $env:ANDROID_EMULATOR_USE_SYSTEM_LIBS=1
-          Start-Process -FilePath "$env:ANDROID_SDK_ROOT\emulator\emulator.exe" -ArgumentList "-avd ${{ env.TEST_EMULATOR_NAME }} -no-window -no-boot-anim -gpu off" -PassThru
+          nohup emulator -avd test -no-window -no-audio -no-boot-anim &
+          adb wait-for-device
+          boot_completed=""
+          echo "Waiting for emulator to fully boot..."
+          until [[ "$boot_completed" == "1" ]]; do
+          boot_completed=$(adb shell getprop sys.boot_completed | tr -d '\r')
+          sleep 5
+          done
+          echo "Emulator booted!"
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
