@@ -125,15 +125,10 @@ jobs:
           --app com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
           --package-name com.companyname.plugin.maui.bottomsheet.tests.app
           --instrumentation devicerunners.xharness.maui.XHarnessInstrumentation
-          --output-directory artifacts\test-results
+          --output-directory artifacts/test-results
 
       - name: Shutdown the Emulator
-        run: dotnet xharness android adb -- emu kill
-
-      - name: Clean up build artifacts before upload
-        run: |
-          rm -rf ./artifacts/bin
-          rm -rf ./artifacts/obj
+        run: xharness android adb -- emu kill
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
