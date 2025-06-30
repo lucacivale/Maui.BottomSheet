@@ -82,18 +82,14 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install emulator and system image (API 23, x86_64)
-        run: |
-          sdkmanager "platform-tools" "platforms;android-23" "emulator" "system-images;android-23;default;x86_64"
+      - name: Install emulator
+        run: sdkmanager "platform-tools" "platforms;android-21" "emulator" "system-images;android-21;default;x86_64"
 
-      - name: Create Android Emulator (test)
-        run: |
-          echo "no" | avdmanager create avd -n test -k "system-images;android-23;default;x86_64" --device "pixel"
+      - name: Create Android emulator
+        run: avdmanager create avd -n test -k "system-images;android-21;default;x86_64" --device "pixel"
 
       - name: Start Android Emulator
-        run: |
-          echo "Starting emulator in background..."
-          nohup $ANDROID_SDK_ROOT/emulator/emulator -avd test -no-snapshot -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim &
+        run: $ANDROID_SDK_ROOT/emulator/emulator -avd test -no-snapshot -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim &
 
       - name: Wait for emulator to boot
         run: |
