@@ -58,13 +58,13 @@ jobs:
           run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
           
         - name: Publish Android Plugin.Maui.BottomSheet.Tests.App
-          run: dotnet publish tests\Plugin.Maui.BottomSheet.Tests.App\Plugin.Maui.BottomSheet.Tests.App.csproj -c ${{ env.Configuration }} -f ${{ env.DOTNETFrameworkVersion }}-android -r ${{ env.RUNTIME_IDENTIFIER }} -p:TestingMode=XHarness -p:AndroidSdkDirectory=$ANDROID_SDK_ROOT
+          run: dotnet publish tests/Plugin.Maui.BottomSheet.Tests.App/Plugin.Maui.BottomSheet.Tests.App.csproj -c ${{ env.Configuration }} -f ${{ env.DOTNETFrameworkVersion }}-android -r ${{ env.RUNTIME_IDENTIFIER }} -p:TestingMode=XHarness -p:AndroidSdkDirectory=$ANDROID_SDK_ROOT
 
         - name: Upload Android .apk
           uses: actions/upload-artifact@v4
           with:
             name: TestApp
-            path: tests\artifacts\publish\Plugin.Maui.BottomSheet.Tests.App\release_net10.0-android_${{ env.TEST_RUNTIME_IDENTIFIER }}\com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
+            path: tests/artifacts/publish/Plugin.Maui.BottomSheet.Tests.App/release_net10.0-android_${{ env.TEST_RUNTIME_IDENTIFIER }}/com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
 
         - name: Set artifact path
           id: set-artifact-path
