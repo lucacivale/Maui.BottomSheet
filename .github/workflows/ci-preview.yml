@@ -119,13 +119,10 @@ jobs:
           --global
           --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
           --version "10.0.0-prerelease*"
-
-      - name: List downloaded app artifact (test)
-        run: ls -lh
         
       - name: Test Android
         run: xharness android test
-          --app tests\artifacts\publish\Plugin.Maui.BottomSheet.Tests.App\release_net10.0-android_${{ env.RUNTIME_IDENTIFIER }}\com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
+          --app TestApp/com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
           --package-name com.companyname.plugin.maui.bottomsheet.tests.app
           --instrumentation devicerunners.xharness.maui.XHarnessInstrumentation
           --output-directory artifacts\test-results
@@ -135,14 +132,14 @@ jobs:
 
       - name: Clean up build artifacts before upload
         run: |
-          rm -rf .\artifacts/bin
-          rm -rf .\artifacts/obj
+          rm -rf ./artifacts/bin
+          rm -rf ./artifacts/obj
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Test Results (XHarness) - Android
-          path: .\artifacts
+          path: ./artifacts
   
   Test-Plugin_Maui_BottomSheet-ios:
 
