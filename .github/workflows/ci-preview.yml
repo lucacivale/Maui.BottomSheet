@@ -52,62 +52,42 @@ jobs:
           distribution: 'microsoft'
           java-version: '21'
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-
-      - name: Setup Android SDK
+      - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install Android SDK Components
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses
+
+      - name: Install Emulator and System Image
         run: |
-          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --update
-          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platform-tools"
-          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platforms;android-35"
-          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "build-tools;35.0.0"
-          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "emulator"
-          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "${{ env.TEST_EMULATOR_IMAGE }}"
-          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
-      
-      - name: Create Emulator
+          sdkmanager "platform-tools" "platforms;android-34" "emulator" "system-images;android-34;google_apis;x86_64"
+
+      - name: Create Android Emulator
         run: |
-          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/avdmanager create avd \
-          --name "${{ env.TEST_EMULATOR_NAME }}" \
-          --package "${{ env.TEST_EMULATOR_IMAGE }}" \
-          --device "pixel_8" \
-          --force
+          echo "no" | avdmanager create avd -n test -k "system-images;android-34;google_apis;x86_64" --device "pixel"
 
-      - name: Run Android Tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 35
-          target: google_apis
-          arch: arm64-v8a
-          profile: Nexus 6
-          ram-size: 3072M
-          heap-size: 1024M
-          emulator-options: -no-window -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
-          disable-animations: true
-          script: |
-            echo "Emulator started, running tests..."
-            adb devices -l
-
-            echo "=== XHarness Device Detection ==="
-            xharness android state --adb
-
-            echo "=== Running Android Tests ==="
-
-      - name: List emulators
-        run: $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/avdmanager list avd -c
-
-      - name: List Available Devices for XHarness
+      - name: Start Emulator
         run: |
-          echo "=== ADB Devices ==="
-          adb devices -l
+          $env:ANDROID_EMULATOR_USE_SYSTEM_LIBS=1
+          Start-Process -FilePath "$env:ANDROID_SDK_ROOT\emulator\emulator.exe" -ArgumentList "-avd test -no-window -no-boot-anim -gpu off" -PassThru
+          Start-Sleep -Seconds 30
 
-          echo "=== XHarness Device Detection ==="
-          xharness android state --adb
+      - name: Wait for Emulator Boot
+        run: |
+          $maxAttempts = 30
+          $attempt = 0
+          while ($attempt -lt $maxAttempts) {
+            $output = & "$env:ANDROID_SDK_ROOT\platform-tools\adb.exe" shell getprop sys.boot_completed
+            if ($output -eq "1") {
+              Write-Host "Emulator booted!"
+              break
+            }
+            Start-Sleep -Seconds 10
+            $attempt++
+          }
+          if ($attempt -eq $maxAttempts) {
+            throw "Emulator did not boot in time"
+          }
           
       - name: Install .NET MAUI Workload
         run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
