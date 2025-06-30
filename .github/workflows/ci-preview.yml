@@ -34,7 +34,7 @@ jobs:
       - name: Build Plugin.Maui.BottomSheet
         run: dotnet build ${{ env.PluginSolutionPath }} -c ${{ env.Configuration }}
   
-  Test-Build-Plugin_Maui_BottomSheet-Android:
+  Test-Plugin_Maui_BottomSheet-Android:
     
     runs-on: macos-15
     
@@ -64,7 +64,7 @@ jobs:
           uses: actions/upload-artifact@v4
           with:
             name: TestApp
-            path: tests/artifacts/publish/Plugin.Maui.BottomSheet.Tests.App/release_net10.0-android_${{ env.TEST_RUNTIME_IDENTIFIER }}/com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
+            path: tests/artifacts/publish/Plugin.Maui.BottomSheet.Tests.App/release_net10.0-android_${{ env.RUNTIME_IDENTIFIER }}/com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
 
         - name: Set artifact path
           id: set-artifact-path
@@ -79,9 +79,8 @@ jobs:
             path: ${{ steps.set-artifact-path.outputs.artifact-path }}
            
   Test-Test-Plugin_Maui_BottomSheet-Android:
-    name: Android Emulator & Test (Ubuntu)
     runs-on: ubuntu-latest
-    needs: Test-Build-Plugin_Maui_BottomSheet-Android
+    needs: Test-Plugin_Maui_BottomSheet-Android
 
     steps:
       - name: Download Android app artifact
@@ -129,7 +128,7 @@ jobs:
         
       - name: Test Android
         run: xharness android test
-          --app tests\artifacts\publish\Plugin.Maui.BottomSheet.Tests.App\release_net10.0-android_${{ env.TEST_RUNTIME_IDENTIFIER }}\com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
+          --app tests\artifacts\publish\Plugin.Maui.BottomSheet.Tests.App\release_net10.0-android_${{ env.RUNTIME_IDENTIFIER }}\com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
           --package-name com.companyname.plugin.maui.bottomsheet.tests.app
           --instrumentation devicerunners.xharness.maui.XHarnessInstrumentation
           --output-directory artifacts\test-results
