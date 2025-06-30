@@ -65,7 +65,7 @@ jobs:
 
       - name: Start Emulator
         run: |
-          nohup emulator -avd test -no-window -no-audio -no-boot-anim &
+          $ANDROID_SDK_ROOT/emulator/emulator -avd test -no-window -no-audio -no-boot-anim &
           adb wait-for-device
           boot_completed=""
           echo "Waiting for emulator to fully boot..."
