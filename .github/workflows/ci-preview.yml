@@ -9,10 +9,10 @@ on:
     branches: [ "v10" ]
 
 env:
-  DOTNET_VERSION: '10.0.100-preview.4.25258.110'
   PluginSolutionPath: 'src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet.sln'
   Configuration: 'Release'
   DOTNETFrameworkVersion: 'net10.0'
+  DOTNET_VERSION: '10.0.100-preview.4.25258.110'
   XCODE_VERSION: 16.4
 
 jobs:
@@ -36,110 +36,119 @@ jobs:
   
   Test-Plugin_Maui_BottomSheet-Android:
     
-    runs-on: macos-15
-
     env:
-      TEST_RUNTIME_IDENTIFIER: android-arm64
+      RUNTIME_IDENTIFIER: android-arm64
       TEST_EMULATOR_NAME: XHarnessEmulator
       TEST_EMULATOR_IMAGE: system-images;android-28;default;arm64-v8a
-    
+
+    strategy:
+      matrix:
+        include:
+          - runner: macos-latest
+            phase: build
+          - runner: ubuntu-latest
+            phase: test
+    runs-on: ${{ matrix.runner }}
+
     steps:
-      - uses: actions/checkout@v4
+        - uses: actions/checkout@v4
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'microsoft'
-          java-version: '21'
+        - name: Setup .NET
+          if: matrix.phase == 'build'
+          uses: actions/setup-dotnet@v4
+          with:
+            dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install emulator and system image
-        run: |
-          sdkmanager "platform-tools" "platforms;android-28" "emulator" "system-images;android-28;default;arm64-v8a"
-    
-      - name: Create Android Emulator
-        run: |
-          echo "no" | avdmanager create avd -n test -k "system-images;android-28;default;arm64-v8a" --device "pixel"
-
-      - name: Start Emulator
-        run: |
-          $ANDROID_SDK_ROOT/emulator/emulator -avd test -no-window -no-audio -no-boot-anim &
-          adb wait-for-device
-          boot_completed=""
-          echo "Waiting for emulator to fully boot..."
-          until [[ "$boot_completed" == "1" ]]; do
-          boot_completed=$(adb shell getprop sys.boot_completed | tr -d '\r')
-          sleep 5
-          done
-          echo "Emulator booted!"
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-
-      - name: Install .NET MAUI Workload
-        run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
-
-      - name: Install XHarness
-        run: dotnet tool install Microsoft.DotNet.XHarness.CLI
-          --global
-          --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
-          --version "10.0.0-prerelease*"
+        - name: Install .NET MAUI Workload
+          if: matrix.phase == 'build'
+          run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
           
-      - name: Install .NET MAUI Workload
-        run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
+        - name: Publish Android Plugin.Maui.BottomSheet.Tests.App
+          if: matrix.phase == 'build'
+          run: dotnet publish tests\Plugin.Maui.BottomSheet.Tests.App\Plugin.Maui.BottomSheet.Tests.App.csproj -c ${{ env.Configuration }} -f ${{ env.DOTNETFrameworkVersion }}-android -r ${{ env.RUNTIME_IDENTIFIER }} -p:TestingMode=XHarness -p:AndroidSdkDirectory=$ANDROID_SDK_ROOT
 
-      - name: Install XHarness
-        run: dotnet tool install Microsoft.DotNet.XHarness.CLI
-          --global
-          --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
-          --version "10.0.0-prerelease*"
+        - name: Upload Android .apk
+          if: matrix.phase == 'build'
+          uses: actions/upload-artifact@v4
+          with:
+            name: TestApp
+            path: tests\artifacts\publish\Plugin.Maui.BottomSheet.Tests.App\release_net10.0-android_${{ env.TEST_RUNTIME_IDENTIFIER }}\com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
 
-      - name: Publish Android Plugin.Maui.BottomSheet.Tests.App
-        run: dotnet publish tests\Plugin.Maui.BottomSheet.Tests.App\Plugin.Maui.BottomSheet.Tests.App.csproj -c ${{ env.Configuration }} -f ${{ env.DOTNETFrameworkVersion }}-android -r ${{ env.TEST_RUNTIME_IDENTIFIER }} -p:TestingMode=XHarness -p:AndroidSdkDirectory=$ANDROID_SDK_ROOT
+        - name: Download Android app artifact (test)
+          if: matrix.phase == 'test'
+          uses: actions/download-artifact@v4
+          with:
+            name: TestApp
+            
+        - name: Setup Java
+          if: matrix.phase == 'test'
+          uses: actions/setup-java@v4
+          with:
+            distribution: 'microsoft'
+            java-version: '21'
 
-      - name: Wait for Emulator Boot
-        run: |
-          $maxAttempts = 60
-          $attempt = 0
-          while ($attempt -lt $maxAttempts) {
-            $output = & "$env:ANDROID_SDK_ROOT\platform-tools\adb.exe" shell getprop sys.boot_completed
-            if ($output -eq "1") {
-              Write-Host "Emulator booted!"
-              break
-            }
-            Start-Sleep -Seconds 10
-            $attempt++
-          }
-          if ($attempt -eq $maxAttempts) {
-            throw "Emulator did not boot in time"
-          }
+        - name: Set up Android SDK
+          if: matrix.phase == 'test'
+          uses: android-actions/setup-android@v3
+
+        - name: Install emulator and system image (API 23, x86_64)
+          if: matrix.phase == 'test'
+          run: |
+            sdkmanager "platform-tools" "platforms;android-23" "emulator" "system-images;android-23;default;x86_64"
+
+        - name: Create Android Emulator (test)
+          if: matrix.phase == 'test'
+          run: |
+            echo "no" | avdmanager create avd -n test -k "system-images;android-23;default;x86_64" --device "pixel"
+
+        - name: Start Android Emulator and Wait for Boot
+          if: matrix.phase == 'test'
+          run: |
+            $ANDROID_SDK_ROOT/emulator/emulator -avd test -no-window -no-boot-anim -gpu swiftshader_indirect -noaudio -no-snapshot -accel on -wait-boot-complete &
+            export PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools
+            boot_completed=""
+            until [[ "$boot_completed" == "1" ]]; do
+              boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
+              echo "Waiting for emulator to boot..."
+              sleep 5
+            done
+            echo "Emulator is ready!"
+            
+        - name: Install XHarness
+          if: matrix.phase == 'test'
+          run: dotnet tool install Microsoft.DotNet.XHarness.CLI
+            --global
+            --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
+            --version "10.0.0-prerelease*"
+
+        - name: List downloaded app artifact (test)
+          if: matrix.phase == 'test'
+          run: ls -lh
           
-      - name: Test Android
-        run: xharness android test
-          --app tests\artifacts\publish\Plugin.Maui.BottomSheet.Tests.App\release_net10.0-android_${{ env.TEST_RUNTIME_IDENTIFIER }}\com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
-          --package-name com.companyname.plugin.maui.bottomsheet.tests.app
-          --instrumentation devicerunners.xharness.maui.XHarnessInstrumentation
-          --output-directory artifacts\test-results
+        - name: Test Android
+          if: matrix.phase == 'test'
+          run: xharness android test
+            --app tests\artifacts\publish\Plugin.Maui.BottomSheet.Tests.App\release_net10.0-android_${{ env.TEST_RUNTIME_IDENTIFIER }}\com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
+            --package-name com.companyname.plugin.maui.bottomsheet.tests.app
+            --instrumentation devicerunners.xharness.maui.XHarnessInstrumentation
+            --output-directory artifacts\test-results
 
-      - name: Shutdown the Emulator
-        run: dotnet xharness android adb -- emu kill
-
-      - name: Clean up build artifacts before upload
-        run: |
-          rm -rf .\artifacts/bin
-          rm -rf .\artifacts/obj
-        if: ${{ always() }}
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
-        if: ${{ always() }}
-        with:
-          name: Test Results (XHarness) - Android
-          path: .\artifacts
+        - name: Shutdown the Emulator
+          if: matrix.phase == 'test'
+          run: dotnet xharness android adb -- emu kill
+  
+        - name: Clean up build artifacts before upload
+          if: matrix.phase == 'test'
+          run: |
+            rm -rf .\artifacts/bin
+            rm -rf .\artifacts/obj
+  
+        - name: Upload Artifacts
+          if: matrix.phase == 'test'
+          uses: actions/upload-artifact@v4
+          with:
+            name: Test Results (XHarness) - Android
+            path: .\artifacts
   
   Test-Plugin_Maui_BottomSheet-ios:
 
