@@ -105,16 +105,18 @@ jobs:
         run: |
           echo "no" | avdmanager create avd -n test -k "system-images;android-23;default;x86_64" --device "pixel"
 
-      - name: Start Android Emulator and Wait for Boot
+      - name: Start Android Emulator
         run: |
-          $ANDROID_SDK_ROOT/emulator/emulator -avd test -no-window -no-boot-anim -gpu swiftshader_indirect -noaudio -no-snapshot -accel on -wait-boot-complete &
-          export PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools
-          boot_completed=""
-          until [[ "$boot_completed" == "1" ]]; do
-            boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
-            echo "Waiting for emulator to boot..."
-            sleep 5
-          done
+          echo "Starting emulator in background..."
+          nohup $ANDROID_SDK_ROOT/emulator/emulator -avd test -no-snapshot -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim &
+
+      - name: Wait for emulator to boot
+        run: |
+          echo "Waiting for emulator to boot..."
+          timeout 300 bash -c 'until $ANDROID_SDK_ROOT/platform-tools/adb shell getprop sys.boot_completed | grep -q "1"; do
+          echo "Still waiting for emulator..."
+          sleep 5
+          done'
           echo "Emulator is ready!"
           
       - name: Install XHarness
