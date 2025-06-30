@@ -91,13 +91,13 @@ jobs:
         run: sdkmanager "platform-tools" "platforms;android-21" "emulator" "system-images;android-21;default;x86_64"
 
       - name: Create Android emulator
-        run: $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/avdmanager create avd -n ${{ env.TEST_EMULATOR_NAME }} -k "system-images;android-21;default;x86_64" --device "pixel"
-
-      - name: List AVDs
-        run: $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/avdmanager list avd
+        run: avdmanager create avd -n ${{ env.TEST_EMULATOR_NAME }} -k "system-images;android-21;default;x86_64" --device "pixel"
 
       - name: Start Android Emulator
-        run: $ANDROID_SDK_ROOT/emulator/emulator -avd ${{ env.TEST_EMULATOR_NAME }} -no-snapshot -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim &
+        run: |
+          export ANDROID_AVD_HOME="$HOME/.config/.android/avd"
+          $ANDROID_SDK_ROOT/emulator/emulator -list-avds
+          emulator -avd ${{ env.TEST_EMULATOR_NAME }} -no-snapshot -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim &
 
       - name: Wait for emulator to boot
         run: |
