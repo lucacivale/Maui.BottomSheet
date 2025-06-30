@@ -97,7 +97,7 @@ jobs:
         run: |
           export ANDROID_AVD_HOME="$HOME/.config/.android/avd"
           $ANDROID_SDK_ROOT/emulator/emulator -list-avds
-          emulator -avd ${{ env.TEST_EMULATOR_NAME }} -no-snapshot -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim &
+          $ANDROID_SDK_ROOT/emulator/emulator -avd ${{ env.TEST_EMULATOR_NAME }} -no-snapshot -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim &
 
       - name: Wait for emulator to boot
         run: |
