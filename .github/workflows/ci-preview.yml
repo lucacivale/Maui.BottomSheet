@@ -36,7 +36,7 @@ jobs:
   
   Test-Plugin_Maui_BottomSheet-Android:
     
-    runs-on: macos-15
+    runs-on: windows-latest
 
     env:
       TEST_RUNTIME_IDENTIFIER: android-arm64
@@ -67,9 +67,8 @@ jobs:
           echo "no" | avdmanager create avd -n test -k "system-images;android-34;google_apis;x86_64" --device "pixel"
 
       - name: Start Emulator
-        shell: pwsh
         run: |
-          $env:ANDROID_EMULATOR_USE_SYSTEM_LIBS = "1"
+          $env:ANDROID_EMULATOR_USE_SYSTEM_LIBS=1
           Start-Process -FilePath "$env:ANDROID_SDK_ROOT\emulator\emulator.exe" -ArgumentList "-avd test -no-window -no-boot-anim -gpu off" -PassThru
           Start-Sleep -Seconds 30
 
