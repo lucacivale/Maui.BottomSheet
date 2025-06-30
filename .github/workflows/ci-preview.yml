@@ -38,9 +38,6 @@ jobs:
     
     runs-on: macos-15
     
-    outputs:
-      artifact-path: ${{ steps.set-artifact-path.outputs.artifact-path }}
-      
     env:
       RUNTIME_IDENTIFIER: android-arm64
       TEST_EMULATOR_NAME: XHarnessEmulator
@@ -65,18 +62,6 @@ jobs:
           with:
             name: TestApp
             path: tests/artifacts/publish/Plugin.Maui.BottomSheet.Tests.App/release_net10.0-android_${{ env.RUNTIME_IDENTIFIER }}/com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
-
-        - name: Set artifact path
-          id: set-artifact-path
-          run: |
-            ARTIFACT=$(find . -type f \( -name "*.apk" -o -name "*.aab" \) | head -n 1)
-            echo "artifact-path=$ARTIFACT" >> $GITHUB_OUTPUT
-
-        - name: Upload Android build artifact
-          uses: actions/upload-artifact@v4
-          with:
-            name: TestApp
-            path: ${{ steps.set-artifact-path.outputs.artifact-path }}
            
   Test-Test-Plugin_Maui_BottomSheet-Android:
     runs-on: ubuntu-latest
