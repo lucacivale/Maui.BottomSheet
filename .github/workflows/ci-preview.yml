@@ -14,6 +14,9 @@ env:
   DOTNETFrameworkVersion: 'net10.0'
   DOTNET_VERSION: '10.0.100-preview.4.25258.110'
   XCODE_VERSION: 16.4
+  ANDROID_RUNTIME_IDENTIFIER: android-x64
+  iOS_RUNTIME_IDENTIFIER: iossimulator-arm64
+  MACCATALYST_RUNTIME_IDENTIFIER: maccatalyst-arm64
 
 jobs:
   Build-Plugin_Maui_BottomSheet:
@@ -38,11 +41,6 @@ jobs:
     
     runs-on: macos-15
     
-    env:
-      RUNTIME_IDENTIFIER: android-x64
-      TEST_EMULATOR_NAME: XHarnessEmulator
-      TEST_EMULATOR_IMAGE: system-images;android-28;default;x86_64
-
     steps:
         - uses: actions/checkout@v4
 
@@ -55,22 +53,22 @@ jobs:
           run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
           
         - name: Publish Android Plugin.Maui.BottomSheet.Tests.App
-          run: dotnet publish tests/Plugin.Maui.BottomSheet.Tests.App/Plugin.Maui.BottomSheet.Tests.App.csproj -c ${{ env.Configuration }} -f ${{ env.DOTNETFrameworkVersion }}-android -r ${{ env.RUNTIME_IDENTIFIER }} -p:TestingMode=XHarness -p:AndroidSdkDirectory=$ANDROID_SDK_ROOT
+          run: dotnet publish tests/Plugin.Maui.BottomSheet.Tests.App/Plugin.Maui.BottomSheet.Tests.App.csproj -c ${{ env.Configuration }} -f ${{ env.DOTNETFrameworkVersion }}-android -r ${{ env.ANDROID_RUNTIME_IDENTIFIER }} -p:TestingMode=XHarness -p:AndroidSdkDirectory=$ANDROID_SDK_ROOT
 
         - name: Upload Android .apk
           uses: actions/upload-artifact@v4
           with:
             name: TestApp
-            path: tests/artifacts/publish/Plugin.Maui.BottomSheet.Tests.App/release_net10.0-android_${{ env.RUNTIME_IDENTIFIER }}/com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
+            path: tests/artifacts/publish/Plugin.Maui.BottomSheet.Tests.App/release_net10.0-android_${{ env.ANDROID_RUNTIME_IDENTIFIER }}/com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
            
   Test-Test-Plugin_Maui_BottomSheet-Android:
     runs-on: ubuntu-latest
     needs: Test-Plugin_Maui_BottomSheet-Android
 
     env:
-      RUNTIME_IDENTIFIER: android-arm64
       TEST_EMULATOR_NAME: XHarnessEmulator
-      TEST_EMULATOR_IMAGE: system-images;android-28;default;arm64-v8a
+      TEST_EMULATOR_PLATFORM_TOOLS: platforms;android-30
+      TEST_EMULATOR_IMAGE: system-images;android-30;default;x86_64
       
     steps:
       - name: Download Android app artifact
@@ -88,10 +86,10 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Install emulator
-        run: sdkmanager "platform-tools" "platforms;android-30" "emulator" "system-images;android-30;default;x86_64"
+        run: sdkmanager "platform-tools" "${{ env.TEST_EMULATOR_PLATFORM_TOOLS }}" "emulator" "${{ env.TEST_EMULATOR_IMAGE }}"
 
       - name: Create Android emulator
-        run: avdmanager create avd -n ${{ env.TEST_EMULATOR_NAME }} -k "system-images;android-30;default;x86_64" --device "pixel"
+        run: avdmanager create avd -n ${{ env.TEST_EMULATOR_NAME }} -k "${{ env.TEST_EMULATOR_IMAGE }}" --device "pixel"
 
       - name: Enable KVM
         run: |
@@ -161,7 +159,7 @@ jobs:
         run: sudo xcode-select -s /Applications/Xcode_${{env.XCODE_VERSION }}.app
 
       - name: Build iOS Plugin.Maui.BottomSheet.Tests.App
-        run: dotnet build tests/Plugin.Maui.BottomSheet.Tests.App/Plugin.Maui.BottomSheet.Tests.App.csproj -c Debug -f ${{ env.DOTNETFrameworkVersion }}-ios -r iossimulator-arm64 -p:TestingMode=XHarness
+        run: dotnet build tests/Plugin.Maui.BottomSheet.Tests.App/Plugin.Maui.BottomSheet.Tests.App.csproj -c Debug -f ${{ env.DOTNETFrameworkVersion }}-ios -r ${{ env.iOS_RUNTIME_IDENTIFIER }} -p:TestingMode=XHarness
 
       - name: Test iOS
         run: |
@@ -171,7 +169,7 @@ jobs:
               --target ios-simulator-64 \
               --timeout="00:03:00" \
               --launch-timeout=00:06:00 \
-              --app tests/artifacts/bin/Plugin.Maui.BottomSheet.Tests.App/debug_net10.0-ios_iossimulator-arm64/Plugin.Maui.BottomSheet.Tests.App.app \
+              --app tests/artifacts/bin/Plugin.Maui.BottomSheet.Tests.App/debug_net10.0-ios_${{ env.iOS_RUNTIME_IDENTIFIER }}/Plugin.Maui.BottomSheet.Tests.App.app \
               --output-directory artifacts/test-results \
             && code=0 && break || code=$? && sleep 15
           done
@@ -215,12 +213,12 @@ jobs:
         run: sudo xcode-select -s /Applications/Xcode_${{env.XCODE_VERSION }}.app
 
       - name: Build MacCatalyst Plugin.Maui.BottomSheet.Tests.App
-        run: dotnet build tests/Plugin.Maui.BottomSheet.Tests.App/Plugin.Maui.BottomSheet.Tests.App.csproj -c Debug -f ${{ env.DOTNETFrameworkVersion }}-maccatalyst -r maccatalyst-arm64 -p:TestingMode=XHarness
+        run: dotnet build tests/Plugin.Maui.BottomSheet.Tests.App/Plugin.Maui.BottomSheet.Tests.App.csproj -c Debug -f ${{ env.DOTNETFrameworkVersion }}-maccatalyst -r ${{ env.MACCATALYST_RUNTIME_IDENTIFIER }} -p:TestingMode=XHarness
 
       - name: Test MacCatalyst
         run: xharness apple test
           --target maccatalyst
-          --app tests/artifacts/bin/Plugin.Maui.BottomSheet.Tests.App/debug_net10.0-maccatalyst_maccatalyst-arm64/Plugin.Maui.BottomSheet.Tests.App.app
+          --app tests/artifacts/bin/Plugin.Maui.BottomSheet.Tests.App/debug_net10.0-maccatalyst_${{ env.MACCATALYST_RUNTIME_IDENTIFIER }}/Plugin.Maui.BottomSheet.Tests.App.app
           --output-directory artifacts/test-results
 
       - name: Clean up build artifacts before upload
