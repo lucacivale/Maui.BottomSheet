@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Plugin.Maui.BottomSheet;
 
 /// <summary>
@@ -17,6 +19,7 @@ public class BottomSheetContentNotSetException : NullReferenceException
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheetContentNotSetException"/> class.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public BottomSheetContentNotSetException()
     {
     }
@@ -26,6 +29,7 @@ public class BottomSheetContentNotSetException : NullReferenceException
     /// </summary>
     /// <param name="message">The message that describes the error.</param>
     /// <param name="innerException">The exception that is the cause of the current exception.</param>
+    [ExcludeFromCodeCoverage]
     public BottomSheetContentNotSetException(string message, Exception innerException)
         : base(message, innerException)
     {

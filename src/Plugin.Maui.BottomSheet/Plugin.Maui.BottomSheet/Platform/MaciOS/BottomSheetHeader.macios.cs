@@ -274,7 +274,7 @@ internal sealed class BottomSheetHeader : IDisposable
         }
 
         ArgumentNullException.ThrowIfNull(_virtualHeaderView);
-        
+
         _virtualHeaderView.SizeChanged += VirtualHeaderViewOnSizeChanged;
         _bottomSheetHeader.PropertyChanged += BottomSheetHeaderOnPropertyChanged;
 

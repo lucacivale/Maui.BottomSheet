@@ -1,6 +1,8 @@
 namespace Plugin.Maui.BottomSheet;
 
+#if ANDROID
 using Microsoft.Maui.Platform;
+#endif
 
 /// <summary>
 /// Style configuration for built-in bottom sheet header components.

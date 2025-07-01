@@ -11,7 +11,6 @@ using Microsoft.Maui.Handlers;
 /// The <c>BottomSheetHandler</c> manages the lifecycle, property synchronization, and feature integration
 /// with the native <see cref="Plugin.Maui.BottomSheet.Platform.MaciOS"/> view, interfacing between cross-platform and platform-specific code.
 /// </remarks>
-
 internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Platform.MaciOS.MauiBottomSheet>
 {
     /// <summary>
@@ -74,6 +73,7 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
         {
             return;
         }
+
         handler.PlatformView.SetIsCancelable();
     }
 
@@ -88,6 +88,7 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
         {
             return;
         }
+
         handler.PlatformView.SetHasHandle();
     }
 
@@ -102,6 +103,7 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
         {
             return;
         }
+
         handler.PlatformView.SetShowHeader();
     }
 
@@ -116,6 +118,7 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
         {
             return;
         }
+
         handler.PlatformView.SetIsOpenAsync().SafeFireAndForget(continueOnCapturedContext: false);
     }
 
@@ -130,6 +133,7 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
         {
             return;
         }
+
         handler.PlatformView.SetIsDraggable();
     }
 
@@ -144,6 +148,7 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
         {
             return;
         }
+
         handler.PlatformView.SetHeader();
     }
 
@@ -158,6 +163,7 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
         {
             return;
         }
+
         handler.PlatformView.SetStates();
     }
 
@@ -172,6 +178,7 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
         {
             return;
         }
+
         handler.PlatformView.SetCurrentState();
     }
 
@@ -197,6 +204,7 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
         {
             return;
         }
+
         handler.PlatformView.SetContent();
     }
 
@@ -211,6 +219,7 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
         {
             return;
         }
+
         handler.PlatformView.SetPadding();
     }
 
@@ -225,6 +234,7 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
         {
             return;
         }
+
         handler.PlatformView.SetBottomSheetBackgroundColor();
     }
 
@@ -239,6 +249,7 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
         {
             return;
         }
+
         handler.PlatformView.SetIgnoreSafeArea();
     }
 
@@ -253,6 +264,7 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
         {
             return;
         }
+
         handler.PlatformView.SetCornerRadius();
     }
 
@@ -267,6 +279,7 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
         {
             return;
         }
+
         handler.PlatformView.SetWindowBackgroundColor();
     }
 
@@ -281,6 +294,7 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
         {
             return;
         }
+
         handler.PlatformView.SetIsModal();
     }
 
@@ -295,6 +309,7 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
         {
             return;
         }
+
         handler.PlatformView.SetBottomSheetStyle();
     }
 }
