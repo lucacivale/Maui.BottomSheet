@@ -52,14 +52,14 @@ jobs:
         - name: Install .NET MAUI Workload
           run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
           
-        - name: Publish Android Plugin.Maui.BottomSheet.Tests.App
-          run: dotnet publish tests/Plugin.Maui.BottomSheet.Tests.App/Plugin.Maui.BottomSheet.Tests.App.csproj -c ${{ env.Configuration }} -f ${{ env.DOTNETFrameworkVersion }}-android -r ${{ env.ANDROID_RUNTIME_IDENTIFIER }} -p:TestingMode=XHarness -p:AndroidSdkDirectory=$ANDROID_SDK_ROOT
+        - name: Publish Android Plugin.Maui.BottomSheet.Tests.Application
+          run: dotnet publish tests/Plugin.Maui.BottomSheet.Tests.Application/Plugin.Maui.BottomSheet.Tests.Application.csproj -c ${{ env.Configuration }} -f ${{ env.DOTNETFrameworkVersion }}-android -r ${{ env.ANDROID_RUNTIME_IDENTIFIER }} -p:TestingMode=XHarness -p:AndroidSdkDirectory=$ANDROID_SDK_ROOT
 
         - name: Upload Android .apk
           uses: actions/upload-artifact@v4
           with:
             name: TestApp
-            path: tests/artifacts/publish/Plugin.Maui.BottomSheet.Tests.App/release_net10.0-android_${{ env.ANDROID_RUNTIME_IDENTIFIER }}/com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
+            path: tests/artifacts/publish/Plugin.Maui.BottomSheet.Tests.Application/release_net10.0-android_${{ env.ANDROID_RUNTIME_IDENTIFIER }}/com.companyname.plugin.maui.bottomsheet.tests.application-Signed.apk
            
   Test-Test-Plugin_Maui_BottomSheet-Android:
     runs-on: ubuntu-latest
@@ -120,8 +120,8 @@ jobs:
         
       - name: Test Android
         run: xharness android test
-          --app com.companyname.plugin.maui.bottomsheet.tests.app-Signed.apk
-          --package-name com.companyname.plugin.maui.bottomsheet.tests.app
+          --app com.companyname.plugin.maui.bottomsheet.tests.application-Signed.apk
+          --package-name com.companyname.plugin.maui.bottomsheet.tests.application
           --instrumentation devicerunners.xharness.maui.XHarnessInstrumentation
           --output-directory artifacts/test-results
 
@@ -158,8 +158,8 @@ jobs:
       - name: Set Xcode version ${{env.XCODE_VERSION }}
         run: sudo xcode-select -s /Applications/Xcode_${{env.XCODE_VERSION }}.app
 
-      - name: Build iOS Plugin.Maui.BottomSheet.Tests.App
-        run: dotnet build tests/Plugin.Maui.BottomSheet.Tests.App/Plugin.Maui.BottomSheet.Tests.App.csproj -c Debug -f ${{ env.DOTNETFrameworkVersion }}-ios -r ${{ env.iOS_RUNTIME_IDENTIFIER }} -p:TestingMode=XHarness
+      - name: Build iOS Plugin.Maui.BottomSheet.Tests.Application
+        run: dotnet build tests/Plugin.Maui.BottomSheet.Tests.Application/Plugin.Maui.BottomSheet.Tests.Application.csproj -c Debug -f ${{ env.DOTNETFrameworkVersion }}-ios -r ${{ env.iOS_RUNTIME_IDENTIFIER }} -p:TestingMode=XHarness
 
       - name: Test iOS
         run: |
@@ -169,7 +169,7 @@ jobs:
               --target ios-simulator-64 \
               --timeout="00:03:00" \
               --launch-timeout=00:06:00 \
-              --app tests/artifacts/bin/Plugin.Maui.BottomSheet.Tests.App/debug_net10.0-ios_${{ env.iOS_RUNTIME_IDENTIFIER }}/Plugin.Maui.BottomSheet.Tests.App.app \
+              --app tests/artifacts/bin/Plugin.Maui.BottomSheet.Tests.Application/debug_net10.0-ios_${{ env.iOS_RUNTIME_IDENTIFIER }}/Plugin.Maui.BottomSheet.Tests.Application.app \
               --output-directory artifacts/test-results \
             && code=0 && break || code=$? && sleep 15
           done
@@ -212,13 +212,13 @@ jobs:
       - name: Set Xcode version ${{env.XCODE_VERSION }}
         run: sudo xcode-select -s /Applications/Xcode_${{env.XCODE_VERSION }}.app
 
-      - name: Build MacCatalyst Plugin.Maui.BottomSheet.Tests.App
-        run: dotnet build tests/Plugin.Maui.BottomSheet.Tests.App/Plugin.Maui.BottomSheet.Tests.App.csproj -c Debug -f ${{ env.DOTNETFrameworkVersion }}-maccatalyst -r ${{ env.MACCATALYST_RUNTIME_IDENTIFIER }} -p:TestingMode=XHarness
+      - name: Build MacCatalyst Plugin.Maui.BottomSheet.Tests.Application
+        run: dotnet build tests/Plugin.Maui.BottomSheet.Tests.Application/Plugin.Maui.BottomSheet.Tests.Application.csproj -c Debug -f ${{ env.DOTNETFrameworkVersion }}-maccatalyst -r ${{ env.MACCATALYST_RUNTIME_IDENTIFIER }} -p:TestingMode=XHarness
 
       - name: Test MacCatalyst
         run: xharness apple test
           --target maccatalyst
-          --app tests/artifacts/bin/Plugin.Maui.BottomSheet.Tests.App/debug_net10.0-maccatalyst_${{ env.MACCATALYST_RUNTIME_IDENTIFIER }}/Plugin.Maui.BottomSheet.Tests.App.app
+          --app tests/artifacts/bin/Plugin.Maui.BottomSheet.Tests.Application/debug_net10.0-maccatalyst_${{ env.MACCATALYST_RUNTIME_IDENTIFIER }}/Plugin.Maui.BottomSheet.Tests.Application.app
           --output-directory artifacts/test-results
 
       - name: Clean up build artifacts before upload
