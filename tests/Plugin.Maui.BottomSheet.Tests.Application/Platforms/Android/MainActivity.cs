@@ -2,7 +2,7 @@
 using Android.Content.PM;
 using Android.OS;
 
-namespace Plugin.Maui.BottomSheet.Tests.App;
+namespace Plugin.Maui.BottomSheet.Tests.Application;
 
 [Activity(Theme = "@style/Maui.SplashTheme",
     MainLauncher = true,

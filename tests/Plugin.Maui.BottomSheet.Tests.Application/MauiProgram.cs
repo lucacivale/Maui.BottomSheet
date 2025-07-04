@@ -2,7 +2,7 @@
 using DeviceRunners.XHarness;
 #endif
 
-namespace Plugin.Maui.BottomSheet.Tests.App;
+namespace Plugin.Maui.BottomSheet.Tests.Application;
 
 using DeviceRunners.UITesting;
 using DeviceRunners.VisualRunners;

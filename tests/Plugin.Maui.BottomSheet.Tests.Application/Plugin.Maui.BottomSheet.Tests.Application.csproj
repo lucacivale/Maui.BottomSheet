@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>$(NETVersion)-android</TargetFrameworks>
-        <TargetFrameworks Condition="!$([MSBuild]::IsOSPlatform('linux'))">$(TargetFrameworks);$(NETVersion)-ios;$(NETVersion)-maccatalyst;</TargetFrameworks>
+        <TargetFrameworks Condition="!$([MSBuild]::IsOSPlatform('linux'))">$(TargetFrameworks);$(NETVersion)-ios;$(NETVersion)-maccatalyst</TargetFrameworks>
         <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);</TargetFrameworks>
 
         <OutputType>Exe</OutputType>
-        <RootNamespace>MauiApp1</RootNamespace>
+        <RootNamespace>Plugin.Maui.BottomSheet.Tests.Application</RootNamespace>
         <UseMaui>true</UseMaui>
         <SingleProject>true</SingleProject>
         
@@ -14,8 +14,8 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <ApplicationTitle>Plugin.Maui.BottomSheet.Tests.App</ApplicationTitle>
-        <ApplicationId>com.companyname.plugin.maui.bottomsheet.tests.app</ApplicationId>
+        <ApplicationTitle>Plugin.Maui.BottomSheet.Tests.Application</ApplicationTitle>
+        <ApplicationId>com.companyname.plugin.maui.bottomsheet.tests.application</ApplicationId>
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
         <ApplicationVersion>1</ApplicationVersion>
     </PropertyGroup>
@@ -61,7 +61,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Plugin.Maui.BottomSheet.Tests\Plugin.Maui.BottomSheet.Tests\Plugin.Maui.BottomSheet.Tests.csproj" />
+        <ProjectReference Include="..\Plugin.Maui.BottomSheet.Tests\Plugin.Maui.BottomSheet.Tests.csproj" />
     </ItemGroup>
 
     <Target Name="RemoveVisualStudioTestRunner" BeforeTargets="_ComputeAppxPackagePayload">
