@@ -20,7 +20,6 @@ env:
 
 jobs:
   Build-Plugin_Maui_BottomSheet:
-
     runs-on: windows-latest
     
     steps:
@@ -36,34 +35,119 @@ jobs:
 
       - name: Build Plugin.Maui.BottomSheet
         run: dotnet build ${{ env.PluginSolutionPath }} -c ${{ env.Configuration }}
-  
-  Test-Plugin_Maui_BottomSheet-Android:
-    
+
+  Build-Test-Applications:
     runs-on: macos-15
+    needs: Build-Plugin_Maui_BottomSheet
+    
+    strategy:
+      matrix:
+        include:
+          - platform: android
+            framework: ${{ env.DOTNETFrameworkVersion }}-android
+            runtime: ${{ env.ANDROID_RUNTIME_IDENTIFIER }}
+            build-config: ${{ env.Configuration }}
+            build-command: publish
+          - platform: ios
+            framework: ${{ env.DOTNETFrameworkVersion }}-ios
+            runtime: ${{ env.iOS_RUNTIME_IDENTIFIER }}
+            build-config: Debug
+            build-command: build
+          - platform: maccatalyst
+            framework: ${{ env.DOTNETFrameworkVersion }}-maccatalyst
+            runtime: ${{ env.MACCATALYST_RUNTIME_IDENTIFIER }}
+            build-config: Debug
+            build-command: build
     
     steps:
-        - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-        - name: Setup .NET
-          uses: actions/setup-dotnet@v4
-          with:
-            dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
-        - name: Install .NET MAUI Workload
-          run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
-          
-        - name: Publish Android Plugin.Maui.BottomSheet.Tests.Application
-          run: dotnet publish tests/Plugin.Maui.BottomSheet.Tests.Application/Plugin.Maui.BottomSheet.Tests.Application.csproj -c ${{ env.Configuration }} -f ${{ env.DOTNETFrameworkVersion }}-android -r ${{ env.ANDROID_RUNTIME_IDENTIFIER }} -p:TestingMode=XHarness -p:AndroidSdkDirectory=$ANDROID_SDK_ROOT
+      - name: Install .NET MAUI Workload
+        run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
 
-        - name: Upload Android .apk
-          uses: actions/upload-artifact@v4
-          with:
-            name: TestApp
-            path: tests/artifacts/publish/Plugin.Maui.BottomSheet.Tests.Application/release_net10.0-android_${{ env.ANDROID_RUNTIME_IDENTIFIER }}/com.companyname.plugin.maui.bottomsheet.tests.application-Signed.apk
-           
-  Test-Test-Plugin_Maui_BottomSheet-Android:
+      - name: Set Xcode version ${{ env.XCODE_VERSION }}
+        if: matrix.platform != 'android'
+        run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app
+
+      - name: Build/Publish ${{ matrix.platform }} Test Application
+        run: dotnet ${{ matrix.build-command }} tests/Plugin.Maui.BottomSheet.Tests.Application/Plugin.Maui.BottomSheet.Tests.Application.csproj -c ${{ matrix.build-config }} -f ${{ matrix.framework }} -r ${{ matrix.runtime }} -p:TestingMode=XHarness ${{ matrix.platform == 'android' && '-p:AndroidSdkDirectory=$ANDROID_SDK_ROOT' || '' }}
+
+      - name: Upload Android APK
+        if: matrix.platform == 'android'
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestApp-${{ matrix.platform }}
+          path: tests/artifacts/publish/Plugin.Maui.BottomSheet.Tests.Application/${{ matrix.build-config == env.Configuration && 'release' || 'debug' }}_${{ matrix.framework }}_${{ matrix.runtime }}/com.companyname.plugin.maui.bottomsheet.tests.application-Signed.apk
+
+      - name: Upload iOS/MacCatalyst App
+        if: matrix.platform != 'android'
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestApp-${{ matrix.platform }}
+          path: tests/artifacts/bin/Plugin.Maui.BottomSheet.Tests.Application/${{ matrix.build-config == env.Configuration && 'release' || 'debug' }}_${{ matrix.framework }}_${{ matrix.runtime }}/Plugin.Maui.BottomSheet.Tests.Application.app
+
+  Test-Apple-Platforms:
+    runs-on: macos-15
+    needs: Build-Test-Applications
+    
+    strategy:
+      matrix:
+        include:
+          - platform: ios
+            target: ios-simulator-64
+            timeout: "00:03:00"
+            launch-timeout: "00:06:00"
+            retry-attempts: 3
+          - platform: maccatalyst
+            target: maccatalyst
+            timeout: "00:05:00"
+            launch-timeout: "00:05:00"
+            retry-attempts: 1
+    
+    steps:
+      - name: Download ${{ matrix.platform }} app artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: TestApp-${{ matrix.platform }}
+          path: ./app
+
+      - name: Install XHarness
+        run: dotnet tool install Microsoft.DotNet.XHarness.CLI
+          --global
+          --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
+          --version "10.0.0-prerelease*"
+
+      - name: Set Xcode version ${{ env.XCODE_VERSION }}
+        run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app
+
+      - name: Test ${{ matrix.platform }}
+        run: |
+          for i in $(seq 1 ${{ matrix.retry-attempts }})
+          do
+            xharness apple test \
+              --target ${{ matrix.target }} \
+              --timeout="${{ matrix.timeout }}" \
+              --launch-timeout=${{ matrix.launch-timeout }} \
+              --app ./app/Plugin.Maui.BottomSheet.Tests.Application.app \
+              --output-directory artifacts/test-results \
+            && code=0 && break || code=$? && sleep 15
+          done
+          exit $code
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: Test Results (XHarness) - ${{ matrix.platform }}
+          path: ./artifacts
+
+  Test-Android-Platform:
     runs-on: ubuntu-latest
-    needs: Test-Plugin_Maui_BottomSheet-Android
+    needs: Build-Test-Applications
 
     env:
       TEST_EMULATOR_NAME: XHarnessEmulator
@@ -74,7 +158,8 @@ jobs:
       - name: Download Android app artifact
         uses: actions/download-artifact@v4
         with:
-          name: TestApp
+          name: TestApp-android
+          path: ./app
             
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -120,7 +205,7 @@ jobs:
         
       - name: Test Android
         run: xharness android test
-          --app com.companyname.plugin.maui.bottomsheet.tests.application-Signed.apk
+          --app ./app/com.companyname.plugin.maui.bottomsheet.tests.application-Signed.apk
           --package-name com.companyname.plugin.maui.bottomsheet.tests.application
           --instrumentation devicerunners.xharness.maui.XHarnessInstrumentation
           --output-directory artifacts/test-results
@@ -128,108 +213,8 @@ jobs:
       - name: Shutdown the Emulator
         run: xharness android adb -- emu kill
 
-      - name: Upload Artifacts
+      - name: Upload Test Results
         uses: actions/upload-artifact@v4
         with:
           name: Test Results (XHarness) - Android
-          path: ./artifacts
-  
-  Test-Plugin_Maui_BottomSheet-ios:
-
-    runs-on: macos-15
-    
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-
-      - name: Install .NET MAUI Workload
-        run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
-
-      - name: Install XHarness
-        run: dotnet tool install Microsoft.DotNet.XHarness.CLI
-          --global
-          --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
-          --version "10.0.0-prerelease*"
-
-      - name: Set Xcode version ${{env.XCODE_VERSION }}
-        run: sudo xcode-select -s /Applications/Xcode_${{env.XCODE_VERSION }}.app
-
-      - name: Build iOS Plugin.Maui.BottomSheet.Tests.Application
-        run: dotnet build tests/Plugin.Maui.BottomSheet.Tests.Application/Plugin.Maui.BottomSheet.Tests.Application.csproj -c Debug -f ${{ env.DOTNETFrameworkVersion }}-ios -r ${{ env.iOS_RUNTIME_IDENTIFIER }} -p:TestingMode=XHarness
-
-      - name: Test iOS
-        run: |
-          for i in $(seq 1 3)
-          do
-            xharness apple test \
-              --target ios-simulator-64 \
-              --timeout="00:03:00" \
-              --launch-timeout=00:06:00 \
-              --app tests/artifacts/bin/Plugin.Maui.BottomSheet.Tests.Application/debug_net10.0-ios_${{ env.iOS_RUNTIME_IDENTIFIER }}/Plugin.Maui.BottomSheet.Tests.Application.app \
-              --output-directory artifacts/test-results \
-            && code=0 && break || code=$? && sleep 15
-          done
-          exit $code
-
-      - name: Clean up build artifacts before upload
-        run: |
-          rm -rf ./artifacts/bin
-          rm -rf ./artifacts/obj
-        if: ${{ always() }}
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
-        if: ${{ always() }}
-        with:
-          name: Test Results (XHarness) - iOS
-          path: ./artifacts
-
-  Test-Plugin_Maui_BottomSheet-maccatalyst:
-
-    runs-on: macos-15
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-
-      - name: Install .NET MAUI Workload
-        run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
-
-      - name: Install XHarness
-        run: dotnet tool install Microsoft.DotNet.XHarness.CLI
-          --global
-          --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
-          --version "10.0.0-prerelease*"
-
-      - name: Set Xcode version ${{env.XCODE_VERSION }}
-        run: sudo xcode-select -s /Applications/Xcode_${{env.XCODE_VERSION }}.app
-
-      - name: Build MacCatalyst Plugin.Maui.BottomSheet.Tests.Application
-        run: dotnet build tests/Plugin.Maui.BottomSheet.Tests.Application/Plugin.Maui.BottomSheet.Tests.Application.csproj -c Debug -f ${{ env.DOTNETFrameworkVersion }}-maccatalyst -r ${{ env.MACCATALYST_RUNTIME_IDENTIFIER }} -p:TestingMode=XHarness
-
-      - name: Test MacCatalyst
-        run: xharness apple test
-          --target maccatalyst
-          --app tests/artifacts/bin/Plugin.Maui.BottomSheet.Tests.Application/debug_net10.0-maccatalyst_${{ env.MACCATALYST_RUNTIME_IDENTIFIER }}/Plugin.Maui.BottomSheet.Tests.Application.app
-          --output-directory artifacts/test-results
-
-      - name: Clean up build artifacts before upload
-        run: |
-          rm -rf ./artifacts/bin
-          rm -rf ./artifacts/obj
-        if: ${{ always() }}
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
-        if: ${{ always() }}
-        with:
-          name: Test Results (XHarness) - MacCatalyst
           path: ./artifacts
