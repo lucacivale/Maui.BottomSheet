@@ -95,12 +95,12 @@ jobs:
       matrix:
         include:
           - platform: ios
-            target: ios-simulator-64
+            target: iossimulator-arm64
             timeout: "00:03:00"
             launch-timeout: "00:06:00"
             retry-attempts: 3
           - platform: maccatalyst
-            target: maccatalyst
+            target: maccatalyst-arm64
             timeout: "00:05:00"
             launch-timeout: "00:05:00"
             retry-attempts: 1
