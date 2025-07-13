@@ -41,6 +41,11 @@ jobs:
     
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
         
       - name: Build Plugin.Maui.BottomSheet
         run: dotnet build src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet.csproj -c ${{ env.Configuration }}
@@ -67,10 +72,11 @@ jobs:
     
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set Xcode version ${{ env.XCODE_VERSION }}
-        if: matrix.platform != 'android'
-        run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app
+        
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Build/Publish ${{ matrix.platform }} Test Application
         run: dotnet ${{ matrix.build-command }} tests/Plugin.Maui.BottomSheet.Tests.Application/Plugin.Maui.BottomSheet.Tests.Application.csproj -c ${{ env.Configuration }} -f ${{ matrix.framework }} -r ${{ matrix.runtime }} -p:TestingMode=XHarness ${{ matrix.platform == 'android' && '-p:AndroidSdkDirectory=$ANDROID_SDK_ROOT' || '' }}
