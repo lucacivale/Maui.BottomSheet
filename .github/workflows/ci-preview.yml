@@ -16,6 +16,7 @@ env:
   ANDROID_RUNTIME_IDENTIFIER: android-x64
   iOS_RUNTIME_IDENTIFIER: iossimulator-arm64
   MACCATALYST_RUNTIME_IDENTIFIER: maccatalyst-arm64
+  MAUI_CACHE_KEY: maui-workload-${{ runner.os }}-10.0.100-preview.4.25258.110
 
 jobs:
   Prepare-Environment:
@@ -30,11 +31,16 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Install .NET MAUI Workload
-        run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
-
-      - name: Set Xcode version ${{ env.XCODE_VERSION }}
-        run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app
-    
+        run: dotnet workload install maui
+        
+      - name: Cache MAUI workload
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.dotnet/workloads
+            ~/.dotnet/packs
+          key: ${{ env.MAUI_CACHE_KEY }}
+  
   Build-Plugin_Maui_BottomSheet:
     runs-on: macos-15
     needs: Prepare-Environment
@@ -47,6 +53,20 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
         
+      - name: Set Xcode version ${{ env.XCODE_VERSION }}
+        run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app
+
+      - name: Restore MAUI workload cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.dotnet/workloads
+            ~/.dotnet/packs
+          key: ${{ env.MAUI_CACHE_KEY }}
+          
+      - name: Install .NET MAUI Workload
+        run: dotnet workload install maui
+            
       - name: Build Plugin.Maui.BottomSheet
         run: dotnet build src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet.csproj -c ${{ env.Configuration }}
 
@@ -77,7 +97,21 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+          
+      - name: Set Xcode version ${{ env.XCODE_VERSION }}
+        run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app
 
+      - name: Restore MAUI workload cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.dotnet/workloads
+            ~/.dotnet/packs
+          key: ${{ env.MAUI_CACHE_KEY }}
+
+      - name: Install .NET MAUI Workload
+        run: dotnet workload install maui
+        
       - name: Build/Publish ${{ matrix.platform }} Test Application
         run: dotnet ${{ matrix.build-command }} tests/Plugin.Maui.BottomSheet.Tests.Application/Plugin.Maui.BottomSheet.Tests.Application.csproj -c ${{ env.Configuration }} -f ${{ matrix.framework }} -r ${{ matrix.runtime }} -p:TestingMode=XHarness ${{ matrix.platform == 'android' && '-p:AndroidSdkDirectory=$ANDROID_SDK_ROOT' || '' }}
 
