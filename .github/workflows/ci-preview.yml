@@ -16,7 +16,7 @@ env:
   ANDROID_RUNTIME_IDENTIFIER: android-x64
   iOS_RUNTIME_IDENTIFIER: iossimulator-arm64
   MACCATALYST_RUNTIME_IDENTIFIER: maccatalyst-arm64
-  MAUI_CACHE_KEY: maui-workload-${{ runner.os }}-10.0.100-preview.4.25258.110
+  MAUI_CACHE_KEY: maui-workload-macos-10.0.100-preview.4.25258.110
 
 jobs:
   Prepare-Environment:
