@@ -38,7 +38,6 @@ jobs:
         with:
           path: |
             ~/.dotnet/workloads
-            ~/.dotnet/packs
           key: ${{ env.MAUI_CACHE_KEY }}
   
   Build-Plugin_Maui_BottomSheet:
@@ -61,14 +60,13 @@ jobs:
         with:
           path: |
             ~/.dotnet/workloads
-            ~/.dotnet/packs
           key: ${{ env.MAUI_CACHE_KEY }}
           
       - name: Install .NET MAUI Workload
         run: dotnet workload install maui
             
       - name: Build Plugin.Maui.BottomSheet
-        run: dotnet build src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet.csproj -c ${{ env.Configuration }}
+        run: dotnet build src/Plugin.Maui.BottomSheet/Plugin.Maui.BottomSheet/Plugin.Maui.BottomSheet.csproj -c ${{ env.Configuration }}
 
   Build-Test-Applications:
     runs-on: macos-15
