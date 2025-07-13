@@ -46,17 +46,14 @@ jobs:
           - platform: android
             framework: ${{ env.DOTNETFrameworkVersion }}-android
             runtime: ${{ env.ANDROID_RUNTIME_IDENTIFIER }}
-            build-config: ${{ env.Configuration }}
             build-command: publish
           - platform: ios
             framework: ${{ env.DOTNETFrameworkVersion }}-ios
             runtime: ${{ env.iOS_RUNTIME_IDENTIFIER }}
-            build-config: Debug
             build-command: build
           - platform: maccatalyst
             framework: ${{ env.DOTNETFrameworkVersion }}-maccatalyst
             runtime: ${{ env.MACCATALYST_RUNTIME_IDENTIFIER }}
-            build-config: Debug
             build-command: build
     
     steps:
@@ -75,21 +72,21 @@ jobs:
         run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app
 
       - name: Build/Publish ${{ matrix.platform }} Test Application
-        run: dotnet ${{ matrix.build-command }} tests/Plugin.Maui.BottomSheet.Tests.Application/Plugin.Maui.BottomSheet.Tests.Application.csproj -c ${{ matrix.build-config }} -f ${{ matrix.framework }} -r ${{ matrix.runtime }} -p:TestingMode=XHarness ${{ matrix.platform == 'android' && '-p:AndroidSdkDirectory=$ANDROID_SDK_ROOT' || '' }}
+        run: dotnet ${{ matrix.build-command }} tests/Plugin.Maui.BottomSheet.Tests.Application/Plugin.Maui.BottomSheet.Tests.Application.csproj -c ${{ env.Configuration }} -f ${{ matrix.framework }} -r ${{ matrix.runtime }} -p:TestingMode=XHarness ${{ matrix.platform == 'android' && '-p:AndroidSdkDirectory=$ANDROID_SDK_ROOT' || '' }}
 
       - name: Upload Android APK
         if: matrix.platform == 'android'
         uses: actions/upload-artifact@v4
         with:
           name: TestApp-${{ matrix.platform }}
-          path: tests/artifacts/publish/Plugin.Maui.BottomSheet.Tests.Application/${{ matrix.build-config == env.Configuration && 'release' || 'debug' }}_${{ matrix.framework }}_${{ matrix.runtime }}/com.companyname.plugin.maui.bottomsheet.tests.application-Signed.apk
+          path: tests/Plugin.Maui.BottomSheet.Tests.Application/bin/Release/${{ matrix.framework }}/${{ matrix.framework }}/com.companyname.plugin.maui.bottomsheet.tests.application-Signed.apk
 
       - name: Upload iOS/MacCatalyst App
         if: matrix.platform != 'android'
         uses: actions/upload-artifact@v4
         with:
           name: TestApp-${{ matrix.platform }}
-          path: tests/artifacts/bin/Plugin.Maui.BottomSheet.Tests.Application/${{ matrix.build-config == env.Configuration && 'release' || 'debug' }}_${{ matrix.framework }}_${{ matrix.runtime }}/Plugin.Maui.BottomSheet.Tests.Application.app
+          path: tests/Plugin.Maui.BottomSheet.Tests.Application/bin/Release/${{ matrix.framework }}/${{ matrix.framework }}/Plugin.Maui.BottomSheet.Tests.Application.app
 
   Test-Apple-Platforms:
     runs-on: macos-15

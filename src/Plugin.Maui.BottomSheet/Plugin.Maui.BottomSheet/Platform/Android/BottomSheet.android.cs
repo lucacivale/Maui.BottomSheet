@@ -1,4 +1,5 @@
 #pragma warning disable SA1200
+using System.Diagnostics.CodeAnalysis;
 using Android.Content;
 using Android.Widget;
 using Google.Android.Material.BottomSheet;
@@ -26,7 +27,7 @@ using View = Microsoft.Maui.Controls.View;
 /// <summary>
 /// Android platform implementation of bottom sheet containing handle, header, and content components.
 /// </summary>
-internal sealed class BottomSheet : IDisposable
+internal sealed class BottomSheet : IAsyncDisposable, IDisposable
 {
     private const int HandleRow = 0;
     private const int HeaderRow = 1;
@@ -205,6 +206,21 @@ internal sealed class BottomSheet : IDisposable
 
             return new Rect(location[0], location[1] - 144, width, height);
         }
+    }
+
+    /// <summary>
+    /// Releases all resources used by the bottom sheet asynchronous.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    [SuppressMessage("Usage", "CA1816: Dispose methods should call SuppressFinalize", Justification = "This is handled by Dispose.")]
+    public async ValueTask DisposeAsync()
+    {
+        if (IsShowing)
+        {
+            await CloseAsync().ConfigureAwait(true);
+        }
+
+        Dispose();
     }
 
     /// <summary>

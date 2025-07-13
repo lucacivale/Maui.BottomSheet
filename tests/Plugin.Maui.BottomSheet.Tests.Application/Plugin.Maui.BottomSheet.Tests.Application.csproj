@@ -13,6 +13,23 @@
         <DefineConstants Condition="'$(TestingMode)' == 'XHarness'">$(DefineConstants);MODE_XHARNESS</DefineConstants>
     </PropertyGroup>
 
+    <PropertyGroup Condition="($(TargetFramework.Contains('-ios')) or $(TargetFramework.Contains('-maccatalyst'))) and '$(Configuration)' == 'Release'">
+        <MtouchLink>None</MtouchLink> <!-- Disable code linking entirely -->
+        <MtouchUseLlvm>True</MtouchUseLlvm> <!-- Disable LLVM compilation -->
+        <EnableSGenConc>True</EnableSGenConc> <!-- Disable concurrent garbage collection -->
+        <NoSymbolStrip>true</NoSymbolStrip>
+        <MtouchNoSymbolStrip>True</MtouchNoSymbolStrip>
+        <EmbedOnDemandResources>True</EmbedOnDemandResources>
+        <SuppressTrimAnalysisWarnings>True</SuppressTrimAnalysisWarnings> <!-- Suppress warnings -->
+        <EnableTrimAnalyzer>False</EnableTrimAnalyzer> <!-- Disable the trim analyzer -->
+        <MtouchExtraArgs>--aot=verbose</MtouchExtraArgs>
+        <MtouchExtraArgs>--aot-options=limit-llvm-stack=400MB</MtouchExtraArgs>
+        <MtouchExtraArgs>--aot=threads=1</MtouchExtraArgs>
+        <MtouchInterpreter>All</MtouchInterpreter>
+        <!--https://github.com/dotnet/maui/issues/27840-->
+        <Registrar>static</Registrar>
+    </PropertyGroup>    
+
     <PropertyGroup>
         <ApplicationTitle>Plugin.Maui.BottomSheet.Tests.Application</ApplicationTitle>
         <ApplicationId>com.companyname.plugin.maui.bottomsheet.tests.application</ApplicationId>
@@ -20,6 +37,10 @@
         <ApplicationVersion>1</ApplicationVersion>
     </PropertyGroup>
 
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
+    </ItemGroup>
+    
     <ItemGroup>
         <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4"/>
         <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128"/>
@@ -49,10 +70,15 @@
         <PackageReference Include="DeviceRunners.VisualRunners.Xunit" />
 
         <PackageReference Include="Microsoft.Maui.Controls" />
-        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" />
 
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" />
         <PackageReference Include="Microsoft.Extensions.Logging.Console" />
+
+        <PackageReference Include="NSubstitute" />
+        <PackageReference Include="NSubstitute.Analyzers.CSharp">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup Condition="'$(TestingMode)' == 'XHarness'">
@@ -61,7 +87,12 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Plugin.Maui.BottomSheet.Tests\Plugin.Maui.BottomSheet.Tests.csproj" />
+      <ProjectReference Include="..\..\src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet.csproj" />
+      <ProjectReference Include="..\Plugin.Maui.BottomSheet.Tests\Plugin.Maui.BottomSheet.Tests.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="Xunit"/>
     </ItemGroup>
 
     <Target Name="RemoveVisualStudioTestRunner" BeforeTargets="_ComputeAppxPackagePayload">
@@ -71,56 +102,56 @@
         </ItemGroup>
     </Target>
 
-<Target Name="TestAndroid">
-    <PropertyGroup>
-        <AndroidConfig>Release</AndroidConfig>
-        <AndroidFramework>net10.0-android</AndroidFramework>
-        <AndroidRuntime>android-arm64</AndroidRuntime>
-        <AndroidApkPath>../artifacts/publish/Plugin.Maui.BottomSheet.Tests.Application/release_$(AndroidFramework)_$(AndroidRuntime)/com.companyname.plugin.maui.bottomsheet.tests.application-Signed.apk</AndroidApkPath>
-        <AndroidPackageName>com.companyname.plugin.maui.bottomsheet.tests.application</AndroidPackageName>
-        <AndroidInstrumentation>devicerunners.xharness.maui.XHarnessInstrumentation</AndroidInstrumentation>
-        <TestOutputDir>artifacts/test-results</TestOutputDir>
-    </PropertyGroup>
-    <RemoveDir Directories="$(ProjectDir)artifacts"/>
-    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet publish -c $(AndroidConfig) -f $(AndroidFramework) -r $(AndroidRuntime) -p:TestingMode=XHarness" />
-    <Exec WorkingDirectory="$(ProjectDir)" Command="xharness android test --app &quot;$(AndroidApkPath)&quot; --package-name $(AndroidPackageName) --instrumentation $(AndroidInstrumentation) --output-directory &quot;$(TestOutputDir)&quot;" />
-</Target>
+    <Target Name="TestAndroid">
+        <PropertyGroup>
+            <AndroidConfig>Release</AndroidConfig>
+            <AndroidFramework>$(NETVersion)-android</AndroidFramework>
+            <AndroidRuntime>android-arm64</AndroidRuntime>
+            <AndroidApkPath>bin/Release/$(AndroidFramework)/$(AndroidRuntime)/com.companyname.plugin.maui.bottomsheet.tests.application-Signed.apk</AndroidApkPath>
+            <AndroidPackageName>com.companyname.plugin.maui.bottomsheet.tests.application</AndroidPackageName>
+            <AndroidInstrumentation>devicerunners.xharness.maui.XHarnessInstrumentation</AndroidInstrumentation>
+            <TestOutputDir>artifacts/test-results</TestOutputDir>
+        </PropertyGroup>
+        <RemoveDir Directories="$(ProjectDir)artifacts"/>
+        <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet publish -c $(AndroidConfig) -f $(AndroidFramework) -r $(AndroidRuntime) -p:TestingMode=XHarness" />
+        <Exec WorkingDirectory="$(ProjectDir)" Command="xharness android test --app &quot;$(AndroidApkPath)&quot; --package-name $(AndroidPackageName) --instrumentation $(AndroidInstrumentation) --output-directory &quot;$(TestOutputDir)&quot;" />
+    </Target>
 
-<Target Name="TestiOS">
-    <PropertyGroup>
-        <iOSConfig>Debug</iOSConfig>
-        <iOSFramework>net10.0-ios</iOSFramework>
-        <iOSRuntime>iossimulator-arm64</iOSRuntime>
-        <iOSAppPath>../artifacts/bin/Plugin.Maui.BottomSheet.Tests.Application/debug_$(iOSFramework)_$(iOSRuntime)/Plugin.Maui.BottomSheet.Tests.Application.app</iOSAppPath>
-        <iOSTarget>ios-simulator-64</iOSTarget>
-        <iOSTimeout>00:03:00</iOSTimeout>
-        <iOSLaunchTimeout>00:06:00</iOSLaunchTimeout>
-        <TestOutputDir>$(ProjectDir)artifacts/test-results</TestOutputDir>
-    </PropertyGroup>
-    <RemoveDir Directories="$(ProjectDir)artifacts"/>
-    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet build -c $(iOSConfig) -f $(iOSFramework) -r $(iOSRuntime) -p:TestingMode=XHarness" />
-    <Exec WorkingDirectory="$(ProjectDir)" Command="xharness apple test --target $(iOSTarget) --timeout=$(iOSTimeout) --launch-timeout=$(iOSLaunchTimeout) --app $(iOSAppPath) --output-directory $(TestOutputDir)" />
-</Target>
+    <Target Name="TestiOS">
+        <PropertyGroup>
+            <iOSConfig>Release</iOSConfig>
+            <iOSFramework>$(NETVersion)-ios</iOSFramework>
+            <iOSRuntime>iossimulator-arm64</iOSRuntime>
+            <iOSAppPath>bin/Release/$(iOSFramework)/$(iOSRuntime)/Plugin.Maui.BottomSheet.Tests.Application.app</iOSAppPath>
+            <iOSTarget>ios-simulator-64</iOSTarget>
+            <iOSTimeout>00:03:00</iOSTimeout>
+            <iOSLaunchTimeout>00:06:00</iOSLaunchTimeout>
+            <TestOutputDir>$(ProjectDir)artifacts/test-results</TestOutputDir>
+        </PropertyGroup>
+        <RemoveDir Directories="$(ProjectDir)artifacts"/>
+        <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet build -c $(iOSConfig) -f $(iOSFramework) -r $(iOSRuntime) -p:TestingMode=XHarness" />
+        <Exec WorkingDirectory="$(ProjectDir)" Command="xharness apple test --target $(iOSTarget) --timeout=$(iOSTimeout) --launch-timeout=$(iOSLaunchTimeout) --app $(iOSAppPath) --output-directory $(TestOutputDir)" />
+    </Target>
 
-<Target Name="TestMacCatalyst">
-    <PropertyGroup>
-        <MacCatalystConfig>Debug</MacCatalystConfig>
-        <MacCatalystFramework>net10.0-maccatalyst</MacCatalystFramework>
-        <MacCatalystRuntime>maccatalyst-arm64</MacCatalystRuntime>
-        <MacCatalystAppPath>../artifacts/bin/Plugin.Maui.BottomSheet.Tests.Application/debug_$(MacCatalystFramework)_$(MacCatalystRuntime)/Plugin.Maui.BottomSheet.Tests.Application.app</MacCatalystAppPath>
-        <MacCatalystTarget>maccatalyst</MacCatalystTarget>
-        <MacCatalystTimeout>00:05:00</MacCatalystTimeout>
-        <MacCatalystLaunchTimeout>00:05:00</MacCatalystLaunchTimeout>
-        <TestOutputDir>artifacts/test-results</TestOutputDir>
-    </PropertyGroup>
-    <RemoveDir Directories="$(ProjectDir)artifacts"/>
-    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet build -c $(MacCatalystConfig) -f $(MacCatalystFramework) -r $(MacCatalystRuntime) -p:TestingMode=XHarness" />
-    <Exec WorkingDirectory="$(ProjectDir)" Command="xharness apple test --target $(MacCatalystTarget) --timeout=$(MacCatalystTimeout) --launch-timeout=$(MacCatalystLaunchTimeout) --app &quot;$(MacCatalystAppPath)&quot; --output-directory &quot;$(TestOutputDir)&quot;" />
-</Target>
+    <Target Name="TestMacCatalyst">
+        <PropertyGroup>
+            <MacCatalystConfig>Release</MacCatalystConfig>
+            <MacCatalystFramework>$(NETVersion)-maccatalyst</MacCatalystFramework>
+            <MacCatalystRuntime>maccatalyst-arm64</MacCatalystRuntime>
+            <MacCatalystAppPath>bin/Release/$(MacCatalystFramework)/$(MacCatalystRuntime)/Plugin.Maui.BottomSheet.Tests.Application.app</MacCatalystAppPath>
+            <MacCatalystTarget>maccatalyst</MacCatalystTarget>
+            <MacCatalystTimeout>00:05:00</MacCatalystTimeout>
+            <MacCatalystLaunchTimeout>00:05:00</MacCatalystLaunchTimeout>
+            <TestOutputDir>artifacts/test-results</TestOutputDir>
+        </PropertyGroup>
+        <RemoveDir Directories="$(ProjectDir)artifacts"/>
+        <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet build -c $(MacCatalystConfig) -f $(MacCatalystFramework) -r $(MacCatalystRuntime) -p:TestingMode=XHarness" />
+        <Exec WorkingDirectory="$(ProjectDir)" Command="xharness apple test --target $(MacCatalystTarget) --timeout=$(MacCatalystTimeout) --launch-timeout=$(MacCatalystLaunchTimeout) --app &quot;$(MacCatalystAppPath)&quot; --output-directory &quot;$(TestOutputDir)&quot;" />
+    </Target>
 
-<Target Name="TestAll">
-    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet msbuild -t:TestAndroid" />
-    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet msbuild -t:TestiOS" />
-    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet msbuild -t:TestMacCatalyst" />
-</Target>
+    <Target Name="TestAll">
+        <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet msbuild -t:TestAndroid" />
+        <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet msbuild -t:TestiOS" />
+        <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet msbuild -t:TestMacCatalyst" />
+    </Target>
 </Project>

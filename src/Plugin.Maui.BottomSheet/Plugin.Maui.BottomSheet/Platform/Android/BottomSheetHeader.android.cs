@@ -27,9 +27,9 @@ internal sealed class BottomSheetHeader : IDisposable
 
     private readonly Context _context;
     private readonly IMauiContext _mauiContext;
-    private readonly Plugin.Maui.BottomSheet.BottomSheetHeader _bottomSheetHeader;
-    private readonly BottomSheetHeaderLayoutChangeListener _headerLayoutChangeListener;
 
+    private Plugin.Maui.BottomSheet.BottomSheetHeader _bottomSheetHeader;
+    private BottomSheetHeaderLayoutChangeListener _headerLayoutChangeListener;
     private BottomSheetHeaderStyle _headerStyle;
 
     private RelativeLayout? _headerLayout;
@@ -551,5 +551,8 @@ internal sealed class BottomSheetHeader : IDisposable
         Remove();
 
         _headerLayoutChangeListener.Dispose();
+
+        _bottomSheetHeader = null!;
+        _headerLayoutChangeListener = null!;
     }
 }

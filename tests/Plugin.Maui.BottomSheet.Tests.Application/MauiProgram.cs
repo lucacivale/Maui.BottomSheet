@@ -6,6 +6,7 @@ namespace Plugin.Maui.BottomSheet.Tests.Application;
 
 using DeviceRunners.UITesting;
 using DeviceRunners.VisualRunners;
+using Hosting;
 using Microsoft.Extensions.Logging;
 
 public static class MauiProgram
@@ -26,7 +27,7 @@ public static class MauiProgram
             .ConfigureUITesting()
 #if MODE_XHARNESS
 			.UseXHarnessTestRunner(conf => conf
-                .AddTestAssembly(typeof(BottomSheetTests).Assembly)
+                .AddTestAssembly(typeof(MauiProgram).Assembly)
 				.AddXunit())
 #endif
             .UseVisualTestRunner(conf => conf
@@ -44,7 +45,7 @@ public static class MauiProgram
 				})
 #endif
                 .AddConsoleResultChannel()
-                .AddTestAssembly(typeof(BottomSheetTests).Assembly)
+                .AddTestAssembly(typeof(MauiProgram).Assembly)
                 .AddXunit());
 
 #if DEBUG
@@ -53,6 +54,8 @@ public static class MauiProgram
 		builder.Logging.AddConsole();
 #endif
 
+	    builder.UseBottomSheet();
+        
         return builder.Build();
     }
 }

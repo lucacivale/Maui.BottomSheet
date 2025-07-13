@@ -1,3 +1,6 @@
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+
 namespace Plugin.Maui.BottomSheet.Handlers;
 
 using Microsoft.Maui.Handlers;
@@ -59,11 +62,20 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Mau
     /// Disconnects the handler from the platform-specific view and releases associated resources.
     /// </summary>
     /// <param name="platformView">The platform-specific view associated with the handler.</param>
-    protected override void DisconnectHandler(MauiBottomSheet platformView)
+    [SuppressMessage("Usage", "VSTHRD100: Avoid async void methods, because any exceptions not handled by the method will crash the process", Justification = "Exceptions are handled by the method.")]
+    [SuppressMessage("Design", "CA1031: Do not catch general exception types", Justification = "Catch all exceptions to prevent crash.")]
+    protected async override void DisconnectHandler(MauiBottomSheet platformView)
     {
         base.DisconnectHandler(platformView);
 
-        platformView.Cleanup();
+        try
+        {
+            await platformView.CleanupAsync().ConfigureAwait(true);
+        }
+        catch (Exception e)
+        {
+            Trace.TraceError($"Error while cleaning up bottom sheet: {e}");
+        }
     }
 
     /// <summary>
