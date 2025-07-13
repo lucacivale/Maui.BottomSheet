@@ -9,7 +9,6 @@ on:
     branches: [ "v10" ]
 
 env:
-  PluginSolutionPath: 'src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet.sln'
   Configuration: 'Release'
   DOTNETFrameworkVersion: 'net10.0'
   DOTNET_VERSION: '10.0.100-preview.4.25258.110'
@@ -34,7 +33,7 @@ jobs:
         run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
 
       - name: Build Plugin.Maui.BottomSheet
-        run: dotnet build ${{ env.PluginSolutionPath }} -c ${{ env.Configuration }}
+        run: dotnet build src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet.csproj -c ${{ env.Configuration }}
 
   Build-Test-Applications:
     runs-on: macos-15
@@ -79,14 +78,14 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: TestApp-${{ matrix.platform }}
-          path: tests/Plugin.Maui.BottomSheet.Tests.Application/bin/Release/${{ matrix.framework }}/${{ matrix.framework }}/com.companyname.plugin.maui.bottomsheet.tests.application-Signed.apk
+          path: tests/Plugin.Maui.BottomSheet.Tests.Application/bin/Release/${{ matrix.framework }}/${{ matrix.runtime }}/com.companyname.plugin.maui.bottomsheet.tests.application-Signed.apk
 
       - name: Upload iOS/MacCatalyst App
         if: matrix.platform != 'android'
         uses: actions/upload-artifact@v4
         with:
           name: TestApp-${{ matrix.platform }}
-          path: tests/Plugin.Maui.BottomSheet.Tests.Application/bin/Release/${{ matrix.framework }}/${{ matrix.framework }}/Plugin.Maui.BottomSheet.Tests.Application.app
+          path: tests/Plugin.Maui.BottomSheet.Tests.Application/bin/Release/${{ matrix.framework }}/${{ matrix.runtime }}/Plugin.Maui.BottomSheet.Tests.Application.app
 
   Test-Apple-Platforms:
     runs-on: macos-15
