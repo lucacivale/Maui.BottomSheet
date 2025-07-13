@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>$(NETVersion)-android</TargetFrameworks>
+        <TargetFrameworks>$(NETVersion);$(NETVersion)-android</TargetFrameworks>
         <TargetFrameworks Condition="!$([MSBuild]::IsOSPlatform('linux'))">$(TargetFrameworks);$(NETVersion)-ios;$(NETVersion)-maccatalyst</TargetFrameworks>
         <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);</TargetFrameworks>
 
-        <OutputType>Exe</OutputType>
+        <OutputType Condition="'$(TargetFramework)' != '$(NETVersion)'">Exe</OutputType>
         <RootNamespace>Plugin.Maui.BottomSheet.Tests.Application</RootNamespace>
         <UseMaui>true</UseMaui>
         <SingleProject>true</SingleProject>
