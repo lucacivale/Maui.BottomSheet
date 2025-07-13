@@ -44,16 +44,16 @@ jobs:
       matrix:
         include:
           - platform: android
-            framework: ${{ env.DOTNETFrameworkVersion }}-android
-            runtime: ${{ env.ANDROID_RUNTIME_IDENTIFIER }}
+            framework: net10.0-android
+            runtime: android-x64
             build-command: publish
           - platform: ios
-            framework: ${{ env.DOTNETFrameworkVersion }}-ios
-            runtime: ${{ env.iOS_RUNTIME_IDENTIFIER }}
+            framework: net10.0-ios
+            runtime: iossimulator-arm64
             build-command: build
           - platform: maccatalyst
-            framework: ${{ env.DOTNETFrameworkVersion }}-maccatalyst
-            runtime: ${{ env.MACCATALYST_RUNTIME_IDENTIFIER }}
+            framework: net10.0-maccatalyst
+            runtime: maccatalyst-arm64
             build-command: build
     
     steps:
