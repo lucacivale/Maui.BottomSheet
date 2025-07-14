@@ -94,19 +94,17 @@ jobs:
     runs-on: macos-15
     needs: Build-Test-Applications
     
+    env: 
+      timeout: 600
+      launch-timeout: 60
+      
     strategy:
       matrix:
         include:
           - platform: ios
             target: ios-simulator-64
-            timeout: "00:03:00"
-            launch-timeout: "00:06:00"
-            retry-attempts: 3
           - platform: maccatalyst
             target: maccatalyst
-            timeout: "00:05:00"
-            launch-timeout: "00:05:00"
-            retry-attempts: 1
     
     steps:
       - name: Download ${{ matrix.platform }} app artifact
@@ -115,30 +113,29 @@ jobs:
           name: TestApp-${{ matrix.platform }}
           path: ./app
 
-      - name: List downloaded files
-        run: |1
-          echo "Files downloaded to ./app directory:"
-          find ./app -type f -name "*" | sort
-
       - name: Install XHarness
         run: dotnet tool install Microsoft.DotNet.XHarness.CLI
           --global
           --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
-          --version "10.0.0-prerelease.25330.2"
+          --version "10.0.0-prerelease*"
 
+      - name: Launch iPhone Simulator
+        if: matrix.platform == 'ios' 
+        run: |
+          iPhone_UUID=$(xcrun simctl list devices --json | jq -r '.devices | to_entries | map(select(.key | contains("iOS"))) | sort_by(.key) | last | .value[] | select(.name | contains("iPhone")) | .udid' | head -1)
+          echo $iPhone_UUID
+          
+          xcrun simctl boot $iPhone_UUID
+          xcrun simctl bootstatus $iPhone_UUID -b
+          
       - name: Test ${{ matrix.platform }}
         run: |
-          for i in $(seq 1 ${{ matrix.retry-attempts }})
-          do
-            xharness apple test \
-              --target ${{ matrix.target }} \
-              --timeout="${{ matrix.timeout }}" \
-              --launch-timeout=${{ matrix.launch-timeout }} \
-              --app ./app \
-              --output-directory artifacts/test-results \
-            && code=0 && break || code=$? && sleep 15
-          done
-          exit $code
+          xharness apple test \
+            --target ${{ matrix.target }} \
+            --timeout="${{ env.timeout }}" \
+            --launch-timeout=${{ env.launch-timeout }} \
+            --app ./app \
+            --output-directory artifacts/test-results
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
@@ -202,7 +199,7 @@ jobs:
         run: dotnet tool install Microsoft.DotNet.XHarness.CLI
           --global
           --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
-          --version "10.0.0-prerelease.25330.2"
+          --version "10.0.0-prerelease*"
         
       - name: Test Android
         run: xharness android test
