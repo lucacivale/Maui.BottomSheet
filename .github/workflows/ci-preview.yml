@@ -133,7 +133,7 @@ jobs:
         run: |
           xharness apple test \
             --target ${{ matrix.target }} \
-            --device=${{ matrix.platform == 'ios' && env.IPHONE_UUID || '' }} \
+            ${{ matrix.platform == 'ios' && format('--device={0}', env.IPHONE_UUID) || '' }} \
             --timeout="${{ env.timeout }}" \
             --launch-timeout=${{ env.launch-timeout }} \
             --app ./app \
