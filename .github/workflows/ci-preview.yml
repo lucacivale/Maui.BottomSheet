@@ -134,7 +134,7 @@ jobs:
               --target ${{ matrix.target }} \
               --timeout="${{ matrix.timeout }}" \
               --launch-timeout=${{ matrix.launch-timeout }} \
-              --app ./app/Plugin.Maui.BottomSheet.Tests.Application.app \
+              --app ./app \
               --output-directory artifacts/test-results \
             && code=0 && break || code=$? && sleep 15
           done
