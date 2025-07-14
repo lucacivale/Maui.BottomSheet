@@ -16,33 +16,11 @@ env:
   ANDROID_RUNTIME_IDENTIFIER: android-x64
   iOS_RUNTIME_IDENTIFIER: iossimulator-arm64
   MACCATALYST_RUNTIME_IDENTIFIER: maccatalyst-arm64
-  MAUI_CACHE_KEY: maui-workload-macos-10.0.100-preview.4.25258.110
 
 jobs:
-  Prepare-Environment:
-    runs-on: macos-15
-    
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-
-      - name: Install .NET MAUI Workload
-        run: dotnet workload install maui
-        
-      - name: Cache MAUI workload
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.dotnet/workloads
-          key: ${{ env.MAUI_CACHE_KEY }}
   
   Build-Plugin_Maui_BottomSheet:
     runs-on: macos-15
-    needs: Prepare-Environment
     
     steps:
       - uses: actions/checkout@v4
@@ -54,13 +32,6 @@ jobs:
         
       - name: Set Xcode version ${{ env.XCODE_VERSION }}
         run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app
-
-      - name: Restore MAUI workload cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.dotnet/workloads
-          key: ${{ env.MAUI_CACHE_KEY }}
           
       - name: Install .NET MAUI Workload
         run: dotnet workload install maui
@@ -98,14 +69,6 @@ jobs:
           
       - name: Set Xcode version ${{ env.XCODE_VERSION }}
         run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app
-
-      - name: Restore MAUI workload cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.dotnet/workloads
-            ~/.dotnet/packs
-          key: ${{ env.MAUI_CACHE_KEY }}
 
       - name: Install .NET MAUI Workload
         run: dotnet workload install maui
@@ -156,7 +119,7 @@ jobs:
         run: dotnet tool install Microsoft.DotNet.XHarness.CLI
           --global
           --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
-          --version "10.0.0-prerelease*"
+          --version "10.0.0-prerelease.25330.2"
 
       - name: Test ${{ matrix.platform }}
         run: |
@@ -234,7 +197,7 @@ jobs:
         run: dotnet tool install Microsoft.DotNet.XHarness.CLI
           --global
           --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
-          --version "10.0.0-prerelease*"
+          --version "10.0.0-prerelease.25330.2"
         
       - name: Test Android
         run: xharness android test
