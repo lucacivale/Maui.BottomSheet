@@ -115,6 +115,11 @@ jobs:
           name: TestApp-${{ matrix.platform }}
           path: ./app
 
+      - name: List downloaded files
+        run: |1
+          echo "Files downloaded to ./app directory:"
+          find ./app -type f -name "*" | sort
+
       - name: Install XHarness
         run: dotnet tool install Microsoft.DotNet.XHarness.CLI
           --global
