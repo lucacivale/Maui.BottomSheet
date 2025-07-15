@@ -94,9 +94,6 @@ jobs:
     runs-on: macos-15
     needs: Build-Test-Applications
     
-    env: 
-      timeout: 600
-      
     strategy:
       matrix:
         include:
@@ -141,7 +138,6 @@ jobs:
           xharness apple test \
             --target ${{ matrix.target }} \
             ${{ matrix.platform == 'ios' && format('--device={0}', env.IPHONE_UUID) || '' }} \
-            --timeout=${{ env.timeout }} \
             --app ./app \
             --output-directory artifacts/test-results
 
