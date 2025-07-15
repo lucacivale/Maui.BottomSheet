@@ -146,7 +146,8 @@ jobs:
             --target ${{ matrix.target }} \
             ${{ matrix.platform == 'ios' && format('--device={0}', env.IPHONE_UUID) || '' }} \
             --app ./app/${{ matrix.runtime }}/Plugin.Maui.BottomSheet.Tests.Application.app \
-            --output-directory artifacts/test-results
+            --output-directory artifacts/test-results \
+            -v
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
