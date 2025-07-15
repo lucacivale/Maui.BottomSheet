@@ -96,7 +96,6 @@ jobs:
     
     env: 
       timeout: 600
-      launch-timeout: 60
       
     strategy:
       matrix:
@@ -113,6 +112,11 @@ jobs:
           name: TestApp-${{ matrix.platform }}
           path: ./app
 
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          
       - name: Install XHarness
         run: dotnet tool install Microsoft.DotNet.XHarness.CLI
           --global
@@ -135,7 +139,6 @@ jobs:
             --target ${{ matrix.target }} \
             ${{ matrix.platform == 'ios' && format('--device={0}', env.IPHONE_UUID) || '' }} \
             --timeout=${{ env.timeout }} \
-            --launch-timeout=${{ env.launch-timeout }} \
             --app ./app \
             --output-directory artifacts/test-results
 
@@ -160,7 +163,12 @@ jobs:
         with:
           name: TestApp-android
           path: ./app
-            
+                  
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
