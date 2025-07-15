@@ -1,9 +1,7 @@
 ﻿using Android.App;
 using Android.Runtime;
 
-namespace Plugin.Maui.BottomSheet.Tests.App;
-
-using MauiApp1;
+namespace Plugin.Maui.BottomSheet.Tests.Application;
 
 [Application]
 public class MainApplication : MauiApplication

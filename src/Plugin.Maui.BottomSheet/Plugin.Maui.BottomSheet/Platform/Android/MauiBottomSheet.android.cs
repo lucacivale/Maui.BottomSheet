@@ -69,14 +69,10 @@ internal sealed class MauiBottomSheet : AndroidView
     /// <summary>
     /// Cleans up resources and event handlers.
     /// </summary>
-    public void Cleanup()
+    /// <returns>A task representing the asynchronous operation.</returns>
+    public async Task CleanupAsync()
     {
-        _bottomSheet.Opened -= BottomSheetOnOpened;
-        _bottomSheet.Closed -= BottomSheetOnClosed;
-        _bottomSheet.StateChanged -= BottomSheetOnStateChanged;
-        _bottomSheet.BackPressed -= BottomSheetOnBackPressed;
-        _bottomSheet.LayoutChanged -= BottomSheetOnLayoutChanged;
-        _bottomSheet.Dispose();
+        await _bottomSheet.DisposeAsync().ConfigureAwait(true);
     }
 
     /// <summary>
@@ -309,7 +305,7 @@ internal sealed class MauiBottomSheet : AndroidView
             return;
         }
 
-        Cleanup();
+        _bottomSheet.Dispose();
     }
 
     /// <summary>

@@ -2,11 +2,13 @@
 using DeviceRunners.XHarness;
 #endif
 
-namespace Plugin.Maui.BottomSheet.Tests.App;
+namespace Plugin.Maui.BottomSheet.Tests.Application;
 
 using DeviceRunners.UITesting;
 using DeviceRunners.VisualRunners;
+using Hosting;
 using Microsoft.Extensions.Logging;
+using BottomSheetUnitTests = Plugin.Maui.BottomSheet.Tests.BottomSheetTests;
 
 public static class MauiProgram
 {
@@ -26,7 +28,7 @@ public static class MauiProgram
             .ConfigureUITesting()
 #if MODE_XHARNESS
 			.UseXHarnessTestRunner(conf => conf
-                .AddTestAssembly(typeof(BottomSheetTests).Assembly)
+                .AddTestAssemblies(typeof(MauiProgram).Assembly, typeof(BottomSheetUnitTests).Assembly)
 				.AddXunit())
 #endif
             .UseVisualTestRunner(conf => conf
@@ -44,7 +46,7 @@ public static class MauiProgram
 				})
 #endif
                 .AddConsoleResultChannel()
-                .AddTestAssembly(typeof(BottomSheetTests).Assembly)
+                .AddTestAssemblies(typeof(MauiProgram).Assembly, typeof(BottomSheetUnitTests).Assembly)
                 .AddXunit());
 
 #if DEBUG
@@ -53,6 +55,8 @@ public static class MauiProgram
 		builder.Logging.AddConsole();
 #endif
 
+	    builder.UseBottomSheet();
+        
         return builder.Build();
     }
 }

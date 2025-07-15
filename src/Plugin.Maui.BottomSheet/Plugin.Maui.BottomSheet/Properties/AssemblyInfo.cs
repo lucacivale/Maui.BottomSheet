@@ -5,3 +5,4 @@ using System.Runtime.CompilerServices;
 [assembly: XmlnsDefinition("http://pluginmauibottomsheet.com/platformconfiguration/android", "Plugin.Maui.BottomSheet.PlatformConfiguration.AndroidSpecific")]
 
 [assembly: InternalsVisibleTo("Plugin.Maui.BottomSheet.Tests")]
+[assembly: InternalsVisibleTo("Plugin.Maui.BottomSheet.Tests.Application")]

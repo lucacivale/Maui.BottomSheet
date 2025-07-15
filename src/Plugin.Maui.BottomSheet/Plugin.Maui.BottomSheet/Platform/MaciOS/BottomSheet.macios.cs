@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Plugin.Maui.BottomSheet.Platform.MaciOS;
 
 using UIKit;
@@ -5,7 +7,7 @@ using UIKit;
 /// <summary>
 /// Container for bottom sheet functionality including handle, header and content on macOS and iOS platforms.
 /// </summary>
-internal sealed class BottomSheet : IDisposable
+internal sealed class BottomSheet : IAsyncDisposable, IDisposable
 {
     private readonly BottomSheetUIViewController _bottomSheetUIViewController;
     private readonly WeakEventManager _eventManager = new();
@@ -45,15 +47,6 @@ internal sealed class BottomSheet : IDisposable
     /// Occurs when the bottom sheet dismissal needs confirmation.
     /// </summary>
     public event EventHandler ConfirmDismiss
-    {
-        add => _eventManager.AddEventHandler(value);
-        remove => _eventManager.RemoveEventHandler(value);
-    }
-
-    /// <summary>
-    /// Occurs when the bottom sheet is dismissed.
-    /// </summary>
-    public event EventHandler Dismissed
     {
         add => _eventManager.AddEventHandler(value);
         remove => _eventManager.RemoveEventHandler(value);
@@ -339,6 +332,25 @@ internal sealed class BottomSheet : IDisposable
     {
         Dispose(true);
         GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Releases all resources used by the bottom sheet asynchronous.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    [SuppressMessage("Usage", "CA1816: Dispose methods should call SuppressFinalize", Justification = "This is handled by Dispose.")]
+    public async ValueTask DisposeAsync()
+    {
+        if (IsOpen)
+        {
+            await CloseAsync().ConfigureAwait(true);
+            _eventManager.HandleEvent(
+                this,
+                EventArgs.Empty,
+                nameof(ConfirmDismiss));
+        }
+
+        Dispose();
     }
 
     /// <summary>

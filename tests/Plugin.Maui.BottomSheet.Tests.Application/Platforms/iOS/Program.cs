@@ -1,7 +1,7 @@
 ﻿using ObjCRuntime;
 using UIKit;
 
-namespace Plugin.Maui.BottomSheet.Tests.App;
+namespace Plugin.Maui.BottomSheet.Tests.Application;
 
 public class Program
 {

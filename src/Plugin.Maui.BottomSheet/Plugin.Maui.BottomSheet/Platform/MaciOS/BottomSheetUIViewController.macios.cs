@@ -467,7 +467,6 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         }
 
         _virtualBottomSheet.DisconnectHandlers();
-        _virtualBottomSheetContent?.DisconnectHandlers();
         _virtualBottomSheet.BottomSheet = null;
 
         HideHeader();

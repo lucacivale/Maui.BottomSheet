@@ -2,6 +2,7 @@
   <ItemGroup>
     <PackageVersion Include="DeviceRunners.VisualRunners.Maui" Version="0.1.0-preview.5" />
     <PackageVersion Include="DeviceRunners.VisualRunners.Xunit" Version="0.1.0-preview.5" />
+    <PackageVersion Include="JetBrains.dotMemoryUnit" Version="3.2.20220510" />
     <PackageVersion Include="Microsoft.DotNet.XHarness.DefaultAndroidEntryPoint.Xunit" Version="10.0.0-prerelease.25327.1" />
     <PackageVersion Include="Microsoft.DotNet.XHarness.TestRunners.Common" Version="10.0.0-prerelease.25327.1" />
     <PackageVersion Include="Microsoft.DotNet.XHarness.TestRunners.Xunit" Version="10.0.0-prerelease.25327.1" />
