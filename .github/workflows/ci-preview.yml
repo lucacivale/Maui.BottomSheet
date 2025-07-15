@@ -132,12 +132,30 @@ jobs:
           echo $iPhone_UUID
           echo "IPHONE_UUID=$iPhone_UUID" >> $GITHUB_ENV
           
+          # Disable watchdogs in simulator preferences BEFORE booting
+          xcrun simctl spawn booted launchctl setenv SIMCTL_CHILD_WATCHDOG_TIMEOUT 0 || true
+          
+          # Set CoreSimulator preferences to disable watchdogs
           defaults write com.apple.CoreSimulator.SimulatorTrampoline WatchdogTimeout -int 0
           defaults write com.apple.iphonesimulator AllowWatchdog -bool false
-
+          
+          # Also disable watchdogs at the system level
+          sudo defaults write /Library/Preferences/com.apple.CoreSimulator.SimulatorTrampoline WatchdogTimeout -int 0
+          sudo defaults write /Library/Preferences/com.apple.iphonesimulator AllowWatchdog -bool false
+          
+          # Boot the simulator
           xcrun simctl boot $iPhone_UUID
           xcrun simctl bootstatus $iPhone_UUID -b
           
+          # Verify watchdogs are disabled by checking the preferences
+          echo "Checking watchdog settings..."
+          defaults read com.apple.CoreSimulator.SimulatorTrampoline WatchdogTimeout || echo "WatchdogTimeout not set"
+          defaults read com.apple.iphonesimulator AllowWatchdog || echo "AllowWatchdog not set"
+          
+          # Wait for the simulator to fully start
+          sleep 15
+          
+          # Verify the simulator is running
           xcrun simctl list devices | grep "$iPhone_UUID"
       
       - name: Test ${{ matrix.platform }}
