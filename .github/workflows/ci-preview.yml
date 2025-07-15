@@ -134,7 +134,7 @@ jobs:
           xharness apple test \
             --target ${{ matrix.target }} \
             ${{ matrix.platform == 'ios' && format('--device={0}', env.IPHONE_UUID) || '' }} \
-            --timeout="${{ env.timeout }}" \
+            --timeout=${{ env.timeout }} \
             --launch-timeout=${{ env.launch-timeout }} \
             --app ./app \
             --output-directory artifacts/test-results
