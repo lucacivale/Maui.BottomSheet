@@ -132,17 +132,21 @@ jobs:
           echo $iPhone_UUID
           echo "IPHONE_UUID=$iPhone_UUID" >> $GITHUB_ENV
           
+          defaults write com.apple.CoreSimulator.SimulatorTrampoline WatchdogTimeout -int 0
+          defaults write com.apple.iphonesimulator AllowWatchdog -bool false
+
           xcrun simctl boot $iPhone_UUID
           xcrun simctl bootstatus $iPhone_UUID -b
           
+          xcrun simctl list devices | grep "$iPhone_UUID"
+      
       - name: Test ${{ matrix.platform }}
         run: |
           xharness apple test \
             --target ${{ matrix.target }} \
             ${{ matrix.platform == 'ios' && format('--device={0}', env.IPHONE_UUID) || '' }} \
             --app ./app/${{ matrix.runtime }}/Plugin.Maui.BottomSheet.Tests.Application.app \
-            --output-directory artifacts/test-results \
-            -v
+            --output-directory artifacts/test-results
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
