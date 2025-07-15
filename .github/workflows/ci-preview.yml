@@ -131,7 +131,6 @@ jobs:
           do
             xharness apple test \
               --target ${{ matrix.target }} \
-              ${{ matrix.platform == 'ios' && format('--device={0}', env.IPHONE_UUID) || '' }} \
               --app ./app/${{ matrix.runtime }}/Plugin.Maui.BottomSheet.Tests.Application.app \
               --output-directory artifacts/test-results \
             && code=0 && break || code=$? && sleep 15
