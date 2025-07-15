@@ -88,7 +88,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: TestApp-${{ matrix.platform }}
-          path: tests/Plugin.Maui.BottomSheet.Tests.Application/bin/Release/${{ matrix.framework }}/${{ matrix.runtime }}/Plugin.Maui.BottomSheet.Tests.Application.app
+          path: tests/Plugin.Maui.BottomSheet.Tests.Application/bin/Release/${{ matrix.framework }}
 
   Test-Apple-Platforms:
     runs-on: macos-15
@@ -99,8 +99,10 @@ jobs:
         include:
           - platform: ios
             target: ios-simulator-64
+            runtime: iossimulator-arm64
           - platform: maccatalyst
             target: maccatalyst
+            runtime: maccatalyst-arm64
     
     steps:
       - name: Download ${{ matrix.platform }} app artifact
@@ -138,7 +140,7 @@ jobs:
           xharness apple test \
             --target ${{ matrix.target }} \
             ${{ matrix.platform == 'ios' && format('--device={0}', env.IPHONE_UUID) || '' }} \
-            --app ./app \
+            --app ./app/${{ matrix.runtime }}/Plugin.Maui.BottomSheet.Tests.Application.app \
             --output-directory artifacts/test-results \
             -v
 
