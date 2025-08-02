@@ -180,6 +180,7 @@ internal sealed class BottomSheetHeader : IDisposable
     public void Remove()
     {
         _bottomSheetHeader.PropertyChanged -= BottomSheetHeaderOnPropertyChanged;
+        _headerStyle.PropertyChanged -= HeaderStyleOnPropertyChanged;
 
         _headerView?.RemoveOnLayoutChangeListener(_headerLayoutChangeListener);
         if (_headerLayout is not null)
@@ -288,6 +289,12 @@ internal sealed class BottomSheetHeader : IDisposable
         view?.LayoutParameters?.Dispose();
 
         mauiView?.DisconnectHandlers();
+
+        if (mauiView is not null)
+        {
+            mauiView.BindingContext = null;
+        }
+
         view?.Dispose();
     }
 
@@ -495,6 +502,31 @@ internal sealed class BottomSheetHeader : IDisposable
                 {
                     _headerLayout ??= CreateHeaderLayout();
                     ConfigureHeader();
+                }
+
+                break;
+            case nameof(Maui.BottomSheet.BottomSheetHeader.BindingContext):
+                if (_bottomSheetHeader.HasHeaderView()
+                    && _virtualHeaderView is not null)
+                {
+                    _virtualHeaderView.BindingContext = _bottomSheetHeader.BindingContext;
+                }
+                else
+                {
+                    if (_bottomSheetHeader.TopLeftButton is not null)
+                    {
+                        _bottomSheetHeader.TopLeftButton.BindingContext = _bottomSheetHeader.BindingContext;
+                    }
+
+                    if (_virtualTitleView is not null)
+                    {
+                        _virtualTitleView.BindingContext = _bottomSheetHeader.BindingContext;
+                    }
+
+                    if (_bottomSheetHeader.TopRightButton is not null)
+                    {
+                        _bottomSheetHeader.TopRightButton.BindingContext = _bottomSheetHeader.BindingContext;
+                    }
                 }
 
                 break;

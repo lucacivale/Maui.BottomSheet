@@ -55,7 +55,7 @@ public abstract class MemoryBaseTest<TPage, TView> : IAsyncLifetime
         await LoadContent(view);
     }
 
-    private async Task Disposing()
+    virtual async protected Task Disposing()
     {
         if (TryGetTarget(out TView? view) 
             && view is IBottomSheet bottomSheet)
@@ -66,6 +66,13 @@ public abstract class MemoryBaseTest<TPage, TView> : IAsyncLifetime
         view = null;
         bottomSheet = null!;
 
+        await ForceGc();
+
+        Assert.False(_weakView.TryGetTarget(out TView? _), $"{typeof(TView).Name} should be garbage collected");
+    }
+
+    async protected Task ForceGc()
+    {
         // Force multiple garbage collection cycles to ensure cleanup
         for (int i = 0; i < 3; i++)
         {
@@ -74,8 +81,6 @@ public abstract class MemoryBaseTest<TPage, TView> : IAsyncLifetime
             GC.Collect();
             await Task.Delay(100); // Allow time for cleanup
         }
-
-        Assert.False(_weakView.TryGetTarget(out TView? _), $"{typeof(TView).Name} should be garbage collected");
     }
     
     protected bool TryGetTarget([MaybeNullWhen(false), NotNullWhen(true)] out TView target)
@@ -83,6 +88,16 @@ public abstract class MemoryBaseTest<TPage, TView> : IAsyncLifetime
         bool result = _weakView.TryGetTarget(out target);
         
         Assert.True(result, $"Could not get {typeof(TView).Name} from weak reference.");
+
+        return result;
+    }
+    
+    protected bool TryGetTarget<TTarget>(WeakReference<TTarget> weakReference, [MaybeNullWhen(false), NotNullWhen(true)] out TTarget target)
+        where TTarget : class
+    {
+        bool result = weakReference.TryGetTarget(out target);
+        
+        Assert.True(result, $"Could not get {typeof(TTarget).Name} from weak reference.");
 
         return result;
     }

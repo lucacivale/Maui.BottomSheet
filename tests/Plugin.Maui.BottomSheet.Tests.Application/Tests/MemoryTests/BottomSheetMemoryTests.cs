@@ -5,7 +5,7 @@ using Xunit.Abstractions;
 
 namespace Plugin.Maui.BottomSheet.Tests.Application.Tests.MemoryTests;
 
-public class BottomSheetMemoryTests : MemoryBaseTest<EmptyContentPage, EmptyBottomSheet>
+public sealed class BottomSheetMemoryTests : MemoryBaseTest<EmptyContentPage, EmptyBottomSheet>
 {
     public BottomSheetMemoryTests(ITestOutputHelper testOutputHelper)
         : base(testOutputHelper)
@@ -69,12 +69,14 @@ public class BottomSheetMemoryTests : MemoryBaseTest<EmptyContentPage, EmptyBott
         }
     }
     
-    [UIFact]
-    public async Task BottomSheet_DoesNotLeak_WhenIgnoreSafeAreaIsToggled()
+    [UITheory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task BottomSheet_DoesNotLeak_WhenIgnoreSafeAreaIsToggled(bool ignoreSafeArea)
     {
         if (TryGetTarget(out var bottomSheet))
         {
-            bottomSheet.IgnoreSafeArea = true;
+            bottomSheet.IgnoreSafeArea = ignoreSafeArea;
             bottomSheet.IsOpen = true;
             await Task.Delay(1000);
             
@@ -83,12 +85,14 @@ public class BottomSheetMemoryTests : MemoryBaseTest<EmptyContentPage, EmptyBott
         }
     }
 
-    [UIFact]
-    public async Task BottomSheet_DoesNotLeak_WhenIsCancelableIsToggled()
+    [UITheory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task BottomSheet_DoesNotLeak_WhenIsCancelableIsToggled(bool isCancelable)
     {
         if (TryGetTarget(out var bottomSheet))
         {
-            bottomSheet.IsCancelable = false;
+            bottomSheet.IsCancelable = isCancelable;
             bottomSheet.IsOpen = true;
             await Task.Delay(1000);
             
@@ -97,12 +101,14 @@ public class BottomSheetMemoryTests : MemoryBaseTest<EmptyContentPage, EmptyBott
         }
     }
 
-    [UIFact]
-    public async Task BottomSheet_DoesNotLeak_WhenHasHandleIsSet()
+    [UITheory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task BottomSheet_DoesNotLeak_WhenHasHandleIsSet(bool hasHandle)
     {
         if (TryGetTarget(out var bottomSheet))
         {
-            bottomSheet.HasHandle = true;
+            bottomSheet.HasHandle = hasHandle;
             bottomSheet.IsOpen = true;
             await Task.Delay(1000);
             
@@ -111,12 +117,14 @@ public class BottomSheetMemoryTests : MemoryBaseTest<EmptyContentPage, EmptyBott
         }
     }
 
-    [UIFact]
-    public async Task BottomSheet_DoesNotLeak_WhenShowHeaderIsToggled()
+    [UITheory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task BottomSheet_DoesNotLeak_WhenShowHeaderIsToggled(bool showHeader)
     {
         if (TryGetTarget(out var bottomSheet))
         {
-            bottomSheet.ShowHeader = false;
+            bottomSheet.ShowHeader = showHeader;
             bottomSheet.IsOpen = true;
             await Task.Delay(1000);
 
@@ -125,12 +133,14 @@ public class BottomSheetMemoryTests : MemoryBaseTest<EmptyContentPage, EmptyBott
         }
     }
 
-    [UIFact]
-    public async Task BottomSheet_DoesNotLeak_WhenIsModalIsToggled()
+    [UITheory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task BottomSheet_DoesNotLeak_WhenIsModalIsToggled(bool isModal)
     {
         if (TryGetTarget(out var bottomSheet))
         {
-            bottomSheet.IsModal = true;
+            bottomSheet.IsModal = isModal;
             bottomSheet.IsOpen = true;
             await Task.Delay(1000);
 
@@ -139,12 +149,14 @@ public class BottomSheetMemoryTests : MemoryBaseTest<EmptyContentPage, EmptyBott
         }
     }
 
-    [UIFact]
-    public async Task BottomSheet_DoesNotLeak_WhenIsDraggableIsToggled()
+    [UITheory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task BottomSheet_DoesNotLeak_WhenIsDraggableIsToggled(bool isDraggable)
     {
         if (TryGetTarget(out var bottomSheet))
         {
-            bottomSheet.IsDraggable = false;
+            bottomSheet.IsDraggable = isDraggable;
             bottomSheet.IsOpen = true;
             await Task.Delay(1000);
 
@@ -223,11 +235,14 @@ public class BottomSheetMemoryTests : MemoryBaseTest<EmptyContentPage, EmptyBott
         }
     }
 
-    [UIFact]
-    public async Task BottomSheet_DoesNotLeak_WhenHeaderIsSet()
+    [UITheory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task BottomSheet_DoesNotLeak_WhenHeaderIsSet(bool showHeader)
     {
         if (TryGetTarget(out var bottomSheet))
         {
+            bottomSheet.ShowHeader = showHeader;
             bottomSheet.Header = new BottomSheetHeader();
             bottomSheet.IsOpen = true;
             await Task.Delay(1000);

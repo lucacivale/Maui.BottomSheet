@@ -484,6 +484,7 @@ internal sealed class BottomSheet : IAsyncDisposable, IDisposable
         if (IsShowing)
         {
             HideHeader();
+            _bottomSheetHeader?.Dispose();
         }
 
         _bottomSheetHeader = new BottomSheetHeader(
