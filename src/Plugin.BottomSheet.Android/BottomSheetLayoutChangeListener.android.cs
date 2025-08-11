@@ -1,4 +1,5 @@
 #pragma warning disable SA1200
+using AsyncAwaitBestPractices;
 using AView = Android.Views.View;
 #pragma warning restore SA1200
 
@@ -43,7 +44,7 @@ internal sealed class BottomSheetLayoutChangeListener : Java.Lang.Object, AView.
         int oldRight,
         int oldBottom)
     {
-        _eventManager.HandleEvent(
+        _eventManager.RaiseEvent(
             this,
             EventArgs.Empty,
             nameof(LayoutChange));

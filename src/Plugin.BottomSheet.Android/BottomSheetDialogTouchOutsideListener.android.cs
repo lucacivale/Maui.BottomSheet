@@ -1,16 +1,11 @@
-﻿#pragma warning disable SA1200
-using AView = Android.Views.View;
-#pragma warning restore SA1200
-
-namespace Plugin.BottomSheet.Android;
+﻿namespace Plugin.BottomSheet.Android;
 
 using AndroidX.AppCompat.App;
-using global::Android.Views;
 
 /// <summary>
 /// Handles touch events outside the bottom sheet for non-modal behavior.
 /// </summary>
-internal sealed class BottomSheetDialogTouchOutsideListener : Java.Lang.Object, AView.IOnTouchListener
+internal sealed class BottomSheetDialogTouchOutsideListener : Java.Lang.Object, View.IOnTouchListener
 {
     private readonly AppCompatActivity _activity;
 
@@ -29,7 +24,7 @@ internal sealed class BottomSheetDialogTouchOutsideListener : Java.Lang.Object, 
     /// <param name="v">The view that was touched.</param>
     /// <param name="e">The motion event details.</param>
     /// <returns>Always returns false to allow further event processing.</returns>
-    public bool OnTouch(AView? v, MotionEvent? e)
+    public bool OnTouch(View? v, MotionEvent? e)
     {
         _activity.DispatchTouchEvent(e);
 

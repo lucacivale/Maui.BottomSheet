@@ -1,8 +1,3 @@
-using AArgbEvaluator= Android.Animation.ArgbEvaluator;
-using AColor = Android.Graphics.Color;
-using AColorDrawable = Android.Graphics.Drawables.ColorDrawable;
-using AValueAnimator= Android.Animation.ValueAnimator;
-
 namespace Plugin.BottomSheet.Android;
 
 /// <summary>
@@ -17,10 +12,10 @@ internal static class ColorDrawableExtensions
     /// <param name="from">The starting ARGB color value.</param>
     /// <param name="to">The ending ARGB color value.</param>
     /// <param name="duration">The animation duration in milliseconds. Default is 250 ms.</param>
-    public static void AnimateChange(this AColorDrawable drawable, int from, int to, int duration = 250)
+    public static void AnimateChange(this ColorDrawable drawable, int from, int to, int duration = 250)
     {
-        using AArgbEvaluator evaluator = new();
-        using AValueAnimator? colorAnimation = AValueAnimator.OfObject(evaluator, from, to);
+        using ArgbEvaluator evaluator = new();
+        using ValueAnimator? colorAnimation = ValueAnimator.OfObject(evaluator, from, to);
 
         if (colorAnimation is not null)
         {
@@ -29,11 +24,11 @@ internal static class ColorDrawableExtensions
             {
                 if (args.Animation.AnimatedValue is not null)
                 {
-                    drawable.Color = AColor.Argb(
-                        AColor.GetAlphaComponent((int)args.Animation.AnimatedValue),
-                        AColor.GetRedComponent((int)args.Animation.AnimatedValue),
-                        AColor.GetGreenComponent((int)args.Animation.AnimatedValue),
-                        AColor.GetBlueComponent((int)args.Animation.AnimatedValue));
+                    drawable.Color = Color.Argb(
+                        Color.GetAlphaComponent((int)args.Animation.AnimatedValue),
+                        Color.GetRedComponent((int)args.Animation.AnimatedValue),
+                        Color.GetGreenComponent((int)args.Animation.AnimatedValue),
+                        Color.GetBlueComponent((int)args.Animation.AnimatedValue));
                 }
             };
             colorAnimation.Start();

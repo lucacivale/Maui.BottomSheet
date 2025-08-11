@@ -1,6 +1,7 @@
 namespace Plugin.BottomSheet.Android;
 
 using AndroidX.Activity;
+using AsyncAwaitBestPractices;
 
 /// <summary>
 /// Handles back button press events for bottom sheet dialogs.
@@ -32,6 +33,6 @@ internal sealed class BottomSheetDialogOnBackPressedCallback : OnBackPressedCall
     /// </summary>
     public override void HandleOnBackPressed()
     {
-        _eventManager.HandleEvent(this, EventArgs.Empty, nameof(BackPressed));
+        _eventManager.RaiseEvent(this, EventArgs.Empty, nameof(BackPressed));
     }
 }

@@ -1,5 +1,4 @@
 using System.Runtime.CompilerServices;
-using Android.Content;
 using Android.Util;
 
 namespace Plugin.BottomSheet.Android;
@@ -13,6 +12,13 @@ internal static class ContextExtensions
         EnsureMetrics(self);
 
         return ToPixelsUsingMetrics(dp);
+    }
+
+    public static double FromPixels(this Context self, double pixels)
+    {
+        EnsureMetrics(self);
+
+        return FromPixelsUsingMetrics(pixels);
     }
 
     private static void EnsureMetrics(Context context)
@@ -31,5 +37,11 @@ internal static class ContextExtensions
     private static float ToPixelsUsingMetrics(double dp)
     {
         return (float)Math.Ceiling((dp * _displayDensity) - 0.0000000001f);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static double FromPixelsUsingMetrics(double pixels)
+    {
+        return pixels / _displayDensity;
     }
 }

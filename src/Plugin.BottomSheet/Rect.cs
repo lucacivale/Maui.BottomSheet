@@ -1,6 +1,6 @@
 namespace Plugin.BottomSheet;
 
-public struct Rect
+internal record Rect
 {
     public Rect(double x, double y, double width, double height)
     {
@@ -11,10 +11,10 @@ public struct Rect
     }
 
     public double X { get; }
-    
-    public double Y { get;}
-    
+
+    public double Y { get; }
+
     public double Width { get; }
-    
+
     public double Height { get; }
 }

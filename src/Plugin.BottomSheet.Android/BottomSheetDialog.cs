@@ -1,0 +1,512 @@
+namespace Plugin.BottomSheet.Android;
+
+using AndroidX.CoordinatorLayout.Widget;
+using AsyncAwaitBestPractices;
+using global::Android.Content;
+using Google.Android.Material.Shape;
+
+/// <summary>
+/// Custom bottom sheet dialog with enhanced event handling and back press support.
+/// </summary>
+internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.BottomSheetDialog
+{
+    private const int HandleRow = 0;
+    private const int HeaderRow = 1;
+    private const int ContentRow = 2;
+
+    private const int HandleMargin = 5;
+    private const int HeaderMargin = 5;
+
+    private readonly WeakEventManager _eventManager = new();
+
+    private readonly BottomSheetDialogTouchOutsideListener _touchOutsideListener;
+    private readonly BottomSheetLayoutChangeListener _layoutChangeListener;
+    private readonly BottomSheetCallback _bottomSheetCallback;
+
+    private readonly GridLayout _sheetContainer;
+
+    private readonly ColorDrawable _backgroundColorDrawable;
+
+    private GridLayout.LayoutParams? _handleLayoutParams;
+    private GridLayout.LayoutParams? _headerLayoutParams;
+    private GridLayout.LayoutParams? _contentLayoutParams;
+
+    private BottomSheetHandle? _bottomSheetHandle;
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2213: Disposable fields should be disposed", Justification = "Is disposed in dismiss method.")]
+    private BottomSheetDialogOnBackPressedCallback? _onBackPressedCallback;
+
+    private List<BottomSheetState> _bottomSheetStates = [BottomSheetState.Medium, BottomSheetState.Large];
+    private bool _isModal;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BottomSheetDialog"/> class.
+    /// </summary>
+    /// <param name="context">The Android context.</param>
+    /// <param name="theme">The theme resource ID.</param>
+    /// <param name="bottomSheetCallback">The bottom sheet callback handler.</param>
+    public BottomSheetDialog(Context context, int theme)
+        : base(context, theme)
+    {
+        _bottomSheetCallback = new();
+        Behavior.AddBottomSheetCallback(_bottomSheetCallback);
+        Behavior.GestureInsetBottomIgnored = true;
+        Behavior.FitToContents = false;
+
+        if (Context is not AndroidX.AppCompat.App.AppCompatActivity activity)
+        {
+            throw new NotSupportedException($"{nameof(Context)} must be of type {nameof(AndroidX.AppCompat.App.AppCompatActivity)}.");
+        }
+
+        _touchOutsideListener = new BottomSheetDialogTouchOutsideListener(activity);
+
+        _backgroundColorDrawable = new ColorDrawable();
+
+        _sheetContainer = new GridLayout(Context)
+        {
+            Orientation = GridOrientation.Vertical,
+            RowCount = 4,
+            LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent),
+        };
+
+        _layoutChangeListener = new BottomSheetLayoutChangeListener();
+        _layoutChangeListener.LayoutChange += LayoutChangeListener_LayoutChange;
+    }
+
+    /// <summary>
+    /// Occurs when the bottom sheet layout changes.
+    /// </summary>
+    public event EventHandler LayoutChanged
+    {
+        add => _eventManager.AddEventHandler(value);
+        remove => _eventManager.RemoveEventHandler(value);
+    }
+
+    /// <summary>
+    /// Occurs when the back button is pressed.
+    /// </summary>
+    public event EventHandler BackPressed
+    {
+        add => _eventManager.AddEventHandler(value);
+        remove => _eventManager.RemoveEventHandler(value);
+    }
+
+    /// <summary>
+    /// Gets or sets the padding for the bottom sheet.
+    /// </summary>
+    public Thickness Padding
+    {
+        get => new(
+            Convert.ToDouble(Context.FromPixels(_sheetContainer.PaddingLeft)),
+            Convert.ToDouble(Context.FromPixels(_sheetContainer.PaddingTop)),
+            Convert.ToDouble(Context.FromPixels(_sheetContainer.PaddingRight)),
+            Convert.ToDouble(Context.FromPixels(_sheetContainer.PaddingBottom)));
+        set
+        {
+            _sheetContainer.SetPadding(
+                Convert.ToInt32(Context.ToPixels(value.Left)),
+                0,
+                Convert.ToInt32(Context.ToPixels(value.Right)),
+                0);
+        }
+    }
+
+    public double CornerRadius
+    {
+        get
+        {
+            if (_sheetContainer.Parent is View parent
+                && parent.Background is MaterialShapeDrawable shapeDrawable)
+            {
+                return Context.FromPixels(shapeDrawable.TopLeftCornerResolvedSize);
+            }
+
+            return 0;
+        }
+
+        set
+        {
+            if (_sheetContainer.Parent is View parent
+                && parent.Background is MaterialShapeDrawable shapeDrawable)
+            {
+                shapeDrawable.SetCornerSize(Context.ToPixels(value));
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the background color of the bottom sheet.
+    /// </summary>
+    public Color BackgroundColor
+    {
+        get
+        {
+            if (_sheetContainer.Parent is View bottomSheetFrame
+                && bottomSheetFrame.BackgroundTintList is not null)
+            {
+                return new Color(bottomSheetFrame.BackgroundTintList.DefaultColor);
+            }
+
+            return Color.Transparent;
+        }
+
+        set
+        {
+            if (_sheetContainer.Parent is View bottomSheetFrame)
+            {
+                bottomSheetFrame.BackgroundTintList = ColorStateList.ValueOf(value);
+            }
+        }
+    }
+
+    public Color WindowBackgroundColor
+    {
+        get
+        {
+            return _backgroundColorDrawable.Color;
+        }
+
+        set
+        {
+            if (IsModal)
+            {
+                _backgroundColorDrawable.AnimateChange(_backgroundColorDrawable.Color.ToArgb(), value);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets the frame rectangle of the bottom sheet in pixels.
+    /// </summary>
+    public Rect Frame
+    {
+        get
+        {
+            int[] location = new int[2];
+            ((View?)_sheetContainer.Parent)?.GetLocationOnScreen(location);
+
+            int height = Window?.DecorView.Height - location[1] ?? -1;
+            int width = _sheetContainer.Width;
+
+            return new Rect(location[0], location[1] - 144, width, height);
+        }
+    }
+
+    public bool IsModal
+    {
+        get => _isModal;
+        set
+        {
+            _isModal = value;
+
+            if (_sheetContainer.Parent?.Parent is CoordinatorLayout bottomSheetLayout
+                && bottomSheetLayout.FindViewById(Resource.Id.touch_outside) is View touchOutside)
+            {
+                if (_isModal == false)
+                {
+                    SetCanceledOnTouchOutside(false);
+                    touchOutside.SetOnTouchListener(_touchOutsideListener);
+
+                    if (IsShowing)
+                    {
+                        _backgroundColorDrawable.AnimateChange(_backgroundColorDrawable.Color.ToArgb(), Color.Transparent.ToArgb());
+                    }
+                }
+                else
+                {
+                    SetCanceledOnTouchOutside(true);
+                    touchOutside.SetOnTouchListener(null);
+
+                    if (IsShowing)
+                    {
+                        _backgroundColorDrawable.AnimateChange(_backgroundColorDrawable.Color.ToArgb(), WindowBackgroundColor);
+                    }
+                }
+            }
+        }
+    }
+
+    public bool HasHandle
+    {
+        get
+        {
+            return _sheetContainer.GetChildAt(HandleRow) is not null;
+        }
+
+        set
+        {
+            if (value)
+            {
+                _bottomSheetHandle = new BottomSheetHandle(Context);
+
+                _handleLayoutParams = new GridLayout.LayoutParams()
+                {
+                    TopMargin = Convert.ToInt32(Context.ToPixels(HandleMargin)),
+                    Width = Convert.ToInt32(Context.ToPixels(30)),
+                    Height = Convert.ToInt32(Context.ToPixels(5)),
+                    RowSpec = GridLayout.InvokeSpec(HandleRow),
+                };
+                _handleLayoutParams.SetGravity(GravityFlags.CenterHorizontal);
+
+                _sheetContainer.AddView(_bottomSheetHandle, _handleLayoutParams);
+            }
+            else
+            {
+                if (_bottomSheetHandle is not null)
+                {
+                    _bottomSheetHandle.LayoutParameters?.Dispose();
+                    _bottomSheetHandle.LayoutParameters = null;
+
+                    _bottomSheetHandle.RemoveFromParent();
+                    _bottomSheetHandle.Dispose();
+                    _bottomSheetHandle = null;
+                }
+            }
+        }
+    }
+
+    public BottomSheetState State { get => Behavior.State.ToBottomSheetState(); set => Behavior.State = value.ToPlatformState(); }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S6608:Prefer indexing instead of \"Enumerable\" methods on types implementing \"IList\"", Justification = "Improced readability.")]
+    public List<BottomSheetState> States
+    {
+        get => _bottomSheetStates;
+        set
+        {
+            _bottomSheetStates = value;
+
+            if (_bottomSheetStates.IsStateAllowed(State) == false)
+            {
+                State = _bottomSheetStates.First();
+            }
+
+            if (_bottomSheetStates.Contains(BottomSheetState.Peek) == false)
+            {
+                Behavior.SkipCollapsed = true;
+            }
+        }
+    }
+
+    public float HalfExpandedRatio { get => Behavior.HalfExpandedRatio; set => Behavior.HalfExpandedRatio = value; }
+
+    public int MaxHeight { get => Behavior.MaxHeight; set => Behavior.MaxHeight = value; }
+
+    public int MaxWidth { get => Behavior.MaxWidth; set => Behavior.MaxWidth = value; }
+
+    public Thickness Margin
+    {
+        get
+        {
+            if (_sheetContainer.Parent is not View bottomSheetFrame
+                || bottomSheetFrame.LayoutParameters is not ViewGroup.MarginLayoutParams marginLayoutParams)
+            {
+                return new(0);
+            }
+
+            return new Thickness(
+                Convert.ToDouble(marginLayoutParams.LeftMargin),
+                Convert.ToDouble(marginLayoutParams.RightMargin),
+                Convert.ToDouble(marginLayoutParams.TopMargin),
+                Convert.ToDouble(marginLayoutParams.BottomMargin)).FromPixels(Context);
+        }
+
+        set
+        {
+            if (_sheetContainer.Parent is View bottomSheetFrame
+                && bottomSheetFrame.LayoutParameters is ViewGroup.MarginLayoutParams marginLayoutParams)
+            {
+                var margin = value.ToPixels(Context);
+
+                marginLayoutParams.SetMargins(
+                    Convert.ToInt32(margin.Left),
+                    0,
+                    Convert.ToInt32(margin.Right),
+                    0);
+            }
+        }
+    }
+
+    public double PeekHeight
+    {
+        get => Context.FromPixels(Behavior.PeekHeight);
+        set
+        {
+            var height = (_sheetContainer.GetChildAt(HeaderRow)?.Height ?? 0)
+                + (_sheetContainer.GetChildAt(HeaderRow)?.Height ?? 0)
+                + Convert.ToInt32(Context.ToPixels(HandleMargin))
+                + Convert.ToInt32(Context.ToPixels(HeaderMargin))
+                + value;
+
+            Behavior.PeekHeight = Convert.ToInt32(height);
+        }
+    }
+
+    /// <summary>
+    /// Handles the back button press event.
+    /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1422: Validate platform compatibility - obsoleted APIs", Justification = "Needed for backwards compatibility.")]
+    public override void OnBackPressed()
+    {
+        base.OnBackPressed();
+
+        _eventManager.RaiseEvent(this, EventArgs.Empty, nameof(BackPressed));
+    }
+
+    /// <summary>
+    /// Shows the bottom sheet dialog.
+    /// </summary>
+    public override void Show()
+    {
+        _onBackPressedCallback = new BottomSheetDialogOnBackPressedCallback(true);
+        _onBackPressedCallback.BackPressed += OnBackPressedCallbackOnBackPressed;
+        OnBackPressedDispatcher.AddCallback(_onBackPressedCallback);
+
+        ShowEvent += BottomSheetDialog_ShowEvent;
+
+        base.Show();
+    }
+
+    public void Show(bool isModal, double cornerRadius, Thickness padding, Color backgroundColor, Color windowBackgroundColor)
+    {
+        EventHandler @event = null!;
+        @event = (s, e) =>
+        {
+            CornerRadius = cornerRadius;
+            BackgroundColor = backgroundColor;
+            Padding = padding;
+
+            if (isModal)
+            {
+                Window?.DecorView.PostDelayed(() => _backgroundColorDrawable.AnimateChange(_backgroundColorDrawable.Color.ToArgb(), windowBackgroundColor), 50);
+            }
+
+            ((BottomSheetDialog)s!).ShowEvent -= @event;
+        };
+        ShowEvent += @event;
+
+        base.Show();
+    }
+
+    /// <summary>
+    /// Dismisses the bottom sheet dialog and cleans up resources.
+    /// </summary>
+    public override void Dismiss()
+    {
+        _sheetContainer.RemoveOnLayoutChangeListener(_layoutChangeListener);
+
+        if (_onBackPressedCallback is not null)
+        {
+            _onBackPressedCallback.BackPressed -= OnBackPressedCallbackOnBackPressed;
+            _onBackPressedCallback.Remove();
+            _onBackPressedCallback.Dispose();
+        }
+
+        base.Dismiss();
+
+        _sheetContainer.RemoveAllViews();
+    }
+
+    public override void SetContentView(View view)
+    {
+        _sheetContainer.RemoveFromParent();
+
+        if (_sheetContainer.ChildCount > 0)
+        {
+            if (_sheetContainer.GetChildAt(ContentRow) is View content)
+            {
+                content.LayoutParameters?.Dispose();
+                content.LayoutParameters = null;
+            }
+
+            _sheetContainer.RemoveAllViews();
+        }
+
+        _contentLayoutParams = new GridLayout.LayoutParams()
+        {
+            RowSpec = GridLayout.InvokeSpec(ContentRow, 1f),
+            Height = 0,
+        };
+
+        _contentLayoutParams.SetGravity(GravityFlags.Fill);
+
+        _sheetContainer.AddView(view, _contentLayoutParams);
+
+        base.SetContentView(_sheetContainer);
+    }
+
+    public void SetHaderView(View view)
+    {
+        if (_sheetContainer.GetChildAt(HeaderRow) is View header)
+        {
+            header.RemoveFromParent();
+
+            header.LayoutParameters?.Dispose();
+            header.LayoutParameters = null;
+
+            if (header is ViewGroup viewGroup)
+            {
+                viewGroup.RemoveAllViews();
+            }
+        }
+
+        _headerLayoutParams = new GridLayout.LayoutParams()
+        {
+            TopMargin = Convert.ToInt32(Context.ToPixels(5)),
+            RowSpec = GridLayout.InvokeSpec(HeaderRow),
+        };
+        _headerLayoutParams.SetGravity(GravityFlags.Fill);
+
+        _sheetContainer.AddView(view, _headerLayoutParams);
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+
+        if (!disposing)
+        {
+            return;
+        }
+
+        _layoutChangeListener.Dispose();
+        _bottomSheetCallback?.Dispose();
+        _handleLayoutParams?.Dispose();
+        _headerLayoutParams?.Dispose();
+        _contentLayoutParams?.Dispose();
+        _touchOutsideListener.Dispose();
+        _backgroundColorDrawable.Dispose();
+        _bottomSheetHandle?.Dispose();
+        _sheetContainer.Dispose();
+    }
+
+    private void BottomSheetDialog_ShowEvent(object? sender, EventArgs e)
+    {
+        if (_sheetContainer.Parent is View parent
+            && parent.LayoutParameters is not null)
+        {
+            parent.LayoutParameters.Height = ViewGroup.LayoutParams.MatchParent;
+        }
+
+        _sheetContainer.AddOnLayoutChangeListener(_layoutChangeListener);
+    }
+
+    /// <summary>
+    /// Handles the back pressed callback event.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
+    private void OnBackPressedCallbackOnBackPressed(object? sender, EventArgs e)
+    {
+        _eventManager.RaiseEvent(this, EventArgs.Empty, nameof(BackPressed));
+    }
+
+    /// <summary>
+    /// Handles bottom sheet container layout change events.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
+    private void LayoutChangeListener_LayoutChange(object? sender, EventArgs e)
+    {
+        _eventManager.RaiseEvent(this, EventArgs.Empty, nameof(LayoutChanged));
+    }
+}

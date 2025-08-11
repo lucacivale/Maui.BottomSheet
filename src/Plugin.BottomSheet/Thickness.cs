@@ -1,19 +1,19 @@
 namespace Plugin.BottomSheet;
 
-public struct Thickness
+internal record Thickness
 {
-    public Thickness(int uniform)
+    public Thickness(double uniform)
     {
         Left = Top = Right = Bottom = uniform;
     }
 
-    public Thickness(int horizontal, int vertical)
+    public Thickness(double horizontal, double vertical)
     {
         Left = Right = horizontal;
         Top = Bottom = vertical;
     }
 
-    public Thickness(int left, int top, int right, int bottom)
+    public Thickness(double left, double top, double right, double bottom)
     {
         Left = left;
         Top = top;
@@ -21,11 +21,11 @@ public struct Thickness
         Bottom = bottom;
     }
 
-    public int Left { get; }
+    public double Left { get; }
 
-    public int Top { get; }
+    public double Top { get; }
 
-    public int Right { get; }
+    public double Right { get; }
 
-    public int Bottom { get; }
+    public double Bottom { get; }
 }
