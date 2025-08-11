@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.Maui.BottomSheet.Tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.Maui.BottomSheet.Tests", "..\..\tests\Plugin.Maui.BottomSheet.Tests\Plugin.Maui.BottomSheet.Tests.csproj", "{029E7314-890D-4798-AEDA-C2BC3FDA3778}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.BottomSheet.Android", "..\Plugin.BottomSheet.Android\Plugin.BottomSheet.Android.csproj", "{F886FBE6-9C21-43D8-8898-C2282F113F58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.BottomSheet", "..\Plugin.BottomSheet\Plugin.BottomSheet.csproj", "{BB5092A8-4939-421F-97B8-DC98EDA27AC7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +36,14 @@ Global
 		{029E7314-890D-4798-AEDA-C2BC3FDA3778}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{029E7314-890D-4798-AEDA-C2BC3FDA3778}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{029E7314-890D-4798-AEDA-C2BC3FDA3778}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F886FBE6-9C21-43D8-8898-C2282F113F58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F886FBE6-9C21-43D8-8898-C2282F113F58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F886FBE6-9C21-43D8-8898-C2282F113F58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F886FBE6-9C21-43D8-8898-C2282F113F58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB5092A8-4939-421F-97B8-DC98EDA27AC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB5092A8-4939-421F-97B8-DC98EDA27AC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB5092A8-4939-421F-97B8-DC98EDA27AC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB5092A8-4939-421F-97B8-DC98EDA27AC7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C104B7AE-9E2E-4FED-A471-86B675947A23} = {D75CD494-8DA2-47BE-ADB6-1022CC019720}
