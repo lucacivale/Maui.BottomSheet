@@ -1,6 +1,6 @@
 ﻿using Foundation;
 
-namespace Plugin.Maui.BottomSheet.Tests.App;
+namespace Plugin.Maui.BottomSheet.Tests.Application;
 
 [Register("AppDelegate")]
 public class AppDelegate : MauiUIApplicationDelegate

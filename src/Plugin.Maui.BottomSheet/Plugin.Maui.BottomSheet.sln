@@ -7,6 +7,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		..\..\Directory.Build.targets = ..\..\Directory.Build.targets
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{D75CD494-8DA2-47BE-ADB6-1022CC019720}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.Maui.BottomSheet.Tests.Application", "..\..\tests\Plugin.Maui.BottomSheet.Tests.Application\Plugin.Maui.BottomSheet.Tests.Application.csproj", "{C104B7AE-9E2E-4FED-A471-86B675947A23}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.Maui.BottomSheet.Tests", "..\..\tests\Plugin.Maui.BottomSheet.Tests\Plugin.Maui.BottomSheet.Tests.csproj", "{029E7314-890D-4798-AEDA-C2BC3FDA3778}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,5 +23,18 @@ Global
 		{5C5EE860-259B-4E5E-BAF8-852668297B64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C5EE860-259B-4E5E-BAF8-852668297B64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C5EE860-259B-4E5E-BAF8-852668297B64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C104B7AE-9E2E-4FED-A471-86B675947A23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C104B7AE-9E2E-4FED-A471-86B675947A23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C104B7AE-9E2E-4FED-A471-86B675947A23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C104B7AE-9E2E-4FED-A471-86B675947A23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C104B7AE-9E2E-4FED-A471-86B675947A23}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{029E7314-890D-4798-AEDA-C2BC3FDA3778}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{029E7314-890D-4798-AEDA-C2BC3FDA3778}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{029E7314-890D-4798-AEDA-C2BC3FDA3778}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{029E7314-890D-4798-AEDA-C2BC3FDA3778}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C104B7AE-9E2E-4FED-A471-86B675947A23} = {D75CD494-8DA2-47BE-ADB6-1022CC019720}
+		{029E7314-890D-4798-AEDA-C2BC3FDA3778} = {D75CD494-8DA2-47BE-ADB6-1022CC019720}
 	EndGlobalSection
 EndGlobal

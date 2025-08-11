@@ -9,7 +9,7 @@ namespace Plugin.Maui.BottomSheet.Platform.Android;
 /// </summary>
 internal sealed class BottomSheetHeaderLayoutChangeListener : Java.Lang.Object, AView.View.IOnLayoutChangeListener
 {
-    private readonly BottomSheetHeader _bottomSheetHeader;
+    private BottomSheetHeader _bottomSheetHeader;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheetHeaderLayoutChangeListener"/> class.
@@ -44,5 +44,17 @@ internal sealed class BottomSheetHeaderLayoutChangeListener : Java.Lang.Object, 
         int oldBottom)
     {
         _bottomSheetHeader.RaiseLayoutChangedEvent();
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+
+        if (!disposing)
+        {
+            return;
+        }
+
+        _bottomSheetHeader = null!;
     }
 }

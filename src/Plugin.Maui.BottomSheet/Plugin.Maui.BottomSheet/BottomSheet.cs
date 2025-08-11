@@ -281,6 +281,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     public BottomSheet()
     {
         _platformConfigurationRegistry = new Lazy<PlatformConfigurationRegistry<BottomSheet>>(() => new PlatformConfigurationRegistry<BottomSheet>(this));
+        Unloaded += OnUnloaded;
     }
 
     /// <inheritdoc/>
@@ -537,5 +538,17 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             newValue.Parent = this;
             newValue.BindingContext = BindingContext;
         }
+    }
+
+    /// <summary>
+    /// Disconnect handler manually.
+    /// Investigate why maui isn't calling disconnect handler.
+    /// </summary>
+    /// <param name="sender">Sender.</param>
+    /// <param name="e">Args.</param>
+    private void OnUnloaded(object? sender, EventArgs e)
+    {
+        Handler?.DisconnectHandler();
+        Unloaded -= OnUnloaded;
     }
 }

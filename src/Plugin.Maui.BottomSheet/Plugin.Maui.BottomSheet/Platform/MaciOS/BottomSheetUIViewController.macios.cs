@@ -277,7 +277,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
             return;
         }
 
-        _virtualBottomSheetLayout.Add(_bottomSheetHeader.View);
+        _virtualBottomSheetLayout.Add(_bottomSheetHeader.CreateVirtualHeaderView());
         _bottomSheetHeader.SizeChanged += BottomSheetHeaderOnSizeChanged;
         _bottomSheetHeader.CloseButtonClicked += BottomSheetControllerDelegateOnConfirmDismiss;
     }
@@ -310,6 +310,8 @@ internal sealed class BottomSheetUIViewController : UINavigationController
             return;
         }
 
+        HideHeader();
+        _bottomSheetHeader?.Dispose();
         _bottomSheetHeader = new BottomSheetHeader(header, style);
     }
 
@@ -467,7 +469,6 @@ internal sealed class BottomSheetUIViewController : UINavigationController
         }
 
         _virtualBottomSheet.DisconnectHandlers();
-        _virtualBottomSheetContent?.DisconnectHandlers();
         _virtualBottomSheet.BottomSheet = null;
 
         HideHeader();
@@ -523,7 +524,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     /// </summary>
     private void ApplyPeekHeight()
     {
-        var peekHeight = (_bottomSheetHeader?.View.Height ?? 0)
+        var peekHeight = (_bottomSheetHeader?.View?.Height ?? 0)
             + _peekHeight;
 
         if (_virtualBottomSheetLayout.IgnoreSafeArea)

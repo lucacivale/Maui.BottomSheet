@@ -8,8 +8,8 @@ using System.ComponentModel;
 internal sealed class BottomSheetHeader : IDisposable
 {
     private readonly WeakEventManager _eventManager = new();
-    private readonly Plugin.Maui.BottomSheet.BottomSheetHeader _bottomSheetHeader;
 
+    private Plugin.Maui.BottomSheet.BottomSheetHeader _bottomSheetHeader;
     private BottomSheetHeaderStyle _style;
 
     private View? _virtualHeaderView;
@@ -35,7 +35,7 @@ internal sealed class BottomSheetHeader : IDisposable
     /// </summary>
     ~BottomSheetHeader()
     {
-        Dispose();
+        Dispose(false);
     }
 
     /// <summary>
@@ -59,10 +59,7 @@ internal sealed class BottomSheetHeader : IDisposable
     /// <summary>
     /// Gets the header view, creating it if it doesn't exist.
     /// </summary>
-    public View View
-    {
-        get => _virtualHeaderView ??= CreateVirtualHeaderView();
-    }
+    public View? View => _virtualHeaderView;
 
     /// <summary>
     /// Sets the header style and updates related UI bindings.
@@ -74,17 +71,50 @@ internal sealed class BottomSheetHeader : IDisposable
 
         if (_virtualTitleView is not null)
         {
-            _virtualTitleView.BindingContext = style;
+            _virtualTitleView.BindingContext = _style;
         }
 
         if (_virtualTopLeftButton is CloseButton)
         {
-            _virtualTopLeftButton.BindingContext = style;
+            _virtualTopLeftButton.BindingContext = _style;
         }
         else if (_virtualTopRightButton is CloseButton)
         {
-            _virtualTopRightButton.BindingContext = style;
+            _virtualTopRightButton.BindingContext = _style;
         }
+    }
+
+    /// <summary>
+    /// Creates the virtual header view based on configuration, either custom or default layout.
+    /// </summary>
+    /// <returns>The created header view.</returns>
+    public View CreateVirtualHeaderView()
+    {
+        if (_virtualHeaderView is not null)
+        {
+            _virtualHeaderView.SizeChanged -= VirtualHeaderViewOnSizeChanged;
+        }
+
+        if (_bottomSheetHeader.HasHeaderView())
+        {
+            _virtualHeaderView = _bottomSheetHeader.CreateContent();
+        }
+        else
+        {
+            _virtualHeaderGridView = CreateHeaderGrid();
+            ConfigureHeader();
+
+            _virtualHeaderView = _virtualHeaderGridView;
+            _virtualHeaderView.BindingContext = _bottomSheetHeader.BindingContext;
+            _virtualHeaderView.Parent = _bottomSheetHeader.Parent;
+        }
+
+        ArgumentNullException.ThrowIfNull(_virtualHeaderView);
+
+        _virtualHeaderView.SizeChanged += VirtualHeaderViewOnSizeChanged;
+        _bottomSheetHeader.PropertyChanged += BottomSheetHeaderOnPropertyChanged;
+
+        return _virtualHeaderView;
     }
 
     /// <summary>
@@ -142,6 +172,7 @@ internal sealed class BottomSheetHeader : IDisposable
     /// </summary>
     public void Dispose()
     {
+        Dispose(true);
         GC.SuppressFinalize(this);
     }
 
@@ -191,6 +222,7 @@ internal sealed class BottomSheetHeader : IDisposable
     private void Remove(ref Label? view)
     {
         Remove(view);
+
         view = null;
     }
 
@@ -211,6 +243,11 @@ internal sealed class BottomSheetHeader : IDisposable
         }
 
         view?.DisconnectHandlers();
+
+        if (view is not null)
+        {
+            view.BindingContext = null;
+        }
     }
 
     /// <summary>
@@ -246,39 +283,6 @@ internal sealed class BottomSheetHeader : IDisposable
             this,
             EventArgs.Empty,
             nameof(CloseButtonClicked));
-    }
-
-    /// <summary>
-    /// Creates the virtual header view based on configuration, either custom or default layout.
-    /// </summary>
-    /// <returns>The created header view.</returns>
-    private View CreateVirtualHeaderView()
-    {
-        if (_virtualHeaderView is not null)
-        {
-            _virtualHeaderView.SizeChanged -= VirtualHeaderViewOnSizeChanged;
-        }
-
-        if (_bottomSheetHeader.HasHeaderView())
-        {
-            _virtualHeaderView = _bottomSheetHeader.CreateContent();
-        }
-        else
-        {
-            _virtualHeaderGridView = CreateHeaderGrid();
-            ConfigureHeader();
-
-            _virtualHeaderView = _virtualHeaderGridView;
-            _virtualHeaderView.BindingContext = _bottomSheetHeader.BindingContext;
-            _virtualHeaderView.Parent = _bottomSheetHeader.Parent;
-        }
-
-        ArgumentNullException.ThrowIfNull(_virtualHeaderView);
-
-        _virtualHeaderView.SizeChanged += VirtualHeaderViewOnSizeChanged;
-        _bottomSheetHeader.PropertyChanged += BottomSheetHeaderOnPropertyChanged;
-
-        return _virtualHeaderView;
     }
 
     /// <summary>
@@ -395,6 +399,24 @@ internal sealed class BottomSheetHeader : IDisposable
                 }
 
                 break;
+            case nameof(Maui.BottomSheet.BottomSheetHeader.BindingContext):
+                if (_virtualHeaderView is not null)
+                {
+                    _virtualHeaderView.BindingContext = _bottomSheetHeader.BindingContext;
+                }
+
+                break;
         }
+    }
+
+    private void Dispose(bool disposing)
+    {
+        if (!disposing)
+        {
+            return;
+        }
+
+        _bottomSheetHeader = null!;
+        _style = null!;
     }
 }

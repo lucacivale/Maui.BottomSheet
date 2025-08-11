@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": ".NET Meteor Debugger",
+            "type": "dotnet-meteor.debugger",
+            "request": "launch",
+            "preLaunchTask": "dotnet-meteor: Build"
+        },
+        {
+            "name": ".NET Metedor Profiler",
+            "type": "dotnet-meteor.debugger",
+            "request": "launch",
+            "profilerMode": "gcdump",
+            "preLaunchTask": "dotnet-meteor: Build"
+        }
+    ]
+}

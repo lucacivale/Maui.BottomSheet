@@ -26,7 +26,6 @@ internal sealed class MauiBottomSheet : UIView
     {
         _mauiContext = mauiContext;
         _bottomSheet = new BottomSheet(_mauiContext);
-        _bottomSheet.Dismissed += BottomSheetOnDismissed;
         _bottomSheet.StateChanged += BottomSheetOnStateChanged;
         _bottomSheet.ConfirmDismiss += BottomSheetOnConfirmDismiss;
         _bottomSheet.FrameChanged += BottomSheetOnFrameChanged;
@@ -63,9 +62,10 @@ internal sealed class MauiBottomSheet : UIView
     /// <summary>
     /// Cleans up resources used by the bottom sheet.
     /// </summary>
-    public void Cleanup()
+    /// <returns>A task representing the asynchronous operation.</returns>
+    public async Task CleanupAsync()
     {
-        _bottomSheet.Dispose();
+        await _bottomSheet.DisposeAsync().ConfigureAwait(true);
     }
 
     /// <summary>
@@ -307,11 +307,13 @@ internal sealed class MauiBottomSheet : UIView
     /// <param name="disposing">True if disposing managed resources.</param>
     protected override void Dispose(bool disposing)
     {
-        if (disposing)
+        if (!disposing)
         {
-            _bottomSheet.Dispose();
-            _semaphore.Dispose();
+            return;
         }
+
+        _bottomSheet.Dispose();
+        _semaphore.Dispose();
 
         base.Dispose(disposing);
     }
@@ -375,19 +377,6 @@ internal sealed class MauiBottomSheet : UIView
         catch
         {
             Trace.TraceError("Invoking IConfirmNavigation or IConfirmNavigationAsync failed.");
-        }
-    }
-
-    /// <summary>
-    /// Handles dismissed events from the bottom sheet and updates the virtual view state.
-    /// </summary>
-    /// <param name="sender">The event sender.</param>
-    /// <param name="e">The event arguments.</param>
-    private void BottomSheetOnDismissed(object? sender, EventArgs e)
-    {
-        if (_virtualView is not null)
-        {
-            _virtualView.IsOpen = false;
         }
     }
 
