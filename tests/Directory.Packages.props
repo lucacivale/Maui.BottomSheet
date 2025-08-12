@@ -14,8 +14,7 @@
     <PackageVersion Include="AppleDev" Version="0.6.6" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0-preview.4.25258.110" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="10.0.0-preview.4.25258.110" />
-    <PackageVersion Include="Microsoft.Maui.Controls" Version="10.0.0-preview.4.25263.4" />
-    <PackageVersion Include="Microsoft.Maui.Controls.Compatibility" Version="10.0.0-preview.4.25263.4" />
+    <PackageVersion Include="Microsoft.Maui.Controls" Version="10.0.0-preview.6.25359.8" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
     <PackageVersion Include="NSubstitute" Version="5.3.0" />
     <PackageVersion Include="NSubstitute.Analyzers.CSharp" Version="1.0.17" />

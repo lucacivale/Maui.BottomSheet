@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>$(NETVersion)-android</TargetFramework>
+        <TargetFrameworks>$(NETVersion)-android;$(LegacyNETVersion)-android;</TargetFrameworks>
 
         <SupportedOSPlatformVersion>21.0</SupportedOSPlatformVersion>
     </PropertyGroup>
@@ -28,4 +28,9 @@
 		<Using Include="Android.Animation"/>
 	</ItemGroup>
 
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>Plugin.Maui.BottomSheet</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
 </Project>

@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Plugin.Maui.BottomSheet.Handlers;
 
+using AsyncAwaitBestPractices;
 using Microsoft.Maui.Handlers;
 using Plugin.Maui.BottomSheet;
 
@@ -62,20 +63,11 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Mau
     /// Disconnects the handler from the platform-specific view and releases associated resources.
     /// </summary>
     /// <param name="platformView">The platform-specific view associated with the handler.</param>
-    [SuppressMessage("Usage", "VSTHRD100: Avoid async void methods, because any exceptions not handled by the method will crash the process", Justification = "Exceptions are handled by the method.")]
-    [SuppressMessage("Design", "CA1031: Do not catch general exception types", Justification = "Catch all exceptions to prevent crash.")]
-    protected async override void DisconnectHandler(MauiBottomSheet platformView)
+    protected override void DisconnectHandler(MauiBottomSheet platformView)
     {
         base.DisconnectHandler(platformView);
 
-        try
-        {
-            await platformView.CleanupAsync().ConfigureAwait(true);
-        }
-        catch (Exception e)
-        {
-            Trace.TraceError($"Error while cleaning up bottom sheet: {e}");
-        }
+        platformView.Cleanup();
     }
 
     /// <summary>
@@ -142,7 +134,7 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Mau
             return;
         }
 
-        handler.PlatformView.SetIsOpen();
+        handler.PlatformView.SetIsOpenAsync().SafeFireAndForget();
     }
 
     /// <summary>
@@ -187,7 +179,7 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Mau
             return;
         }
 
-        MauiBottomSheet.SetStates();
+        handler.PlatformView.SetStates();
     }
 
     /// <summary>
@@ -348,7 +340,5 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Mau
         {
             return;
         }
-
-        handler.PlatformView.SetBottomSheetStyle();
     }
 }

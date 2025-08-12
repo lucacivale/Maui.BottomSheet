@@ -18,7 +18,7 @@ internal sealed class BottomSheetHandle : LinearLayout
     {
         LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
 
-        var pixelPadding = Convert.ToInt32(context.ToPixels(Padding));
+        int pixelPadding = Convert.ToInt32(context.ToPixels(Padding));
 
         SetPadding(
             pixelPadding,
@@ -26,7 +26,7 @@ internal sealed class BottomSheetHandle : LinearLayout
             pixelPadding,
             pixelPadding);
 
-        var background = new GradientDrawable();
+        GradientDrawable background = new();
         background.SetShape(ShapeType.Rectangle);
         background.SetColor(ColorStateList.ValueOf(Color.ParseColor(HandleColor)));
         background.SetCornerRadius(context.ToPixels(CornerRadius));

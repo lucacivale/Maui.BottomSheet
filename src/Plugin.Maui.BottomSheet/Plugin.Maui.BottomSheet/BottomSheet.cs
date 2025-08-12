@@ -1,7 +1,9 @@
-namespace Plugin.Maui.BottomSheet;
-
+using Plugin.BottomSheet;
 using System.ComponentModel;
 using System.Windows.Input;
+using MauiThickness = Microsoft.Maui.Thickness;
+
+namespace Plugin.Maui.BottomSheet;
 
 /// <summary>
 /// Implementation of a bottom sheet control that provides supplementary content anchored to the bottom of the screen.
@@ -186,9 +188,9 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     public static readonly BindableProperty PaddingProperty =
         BindableProperty.Create(
             nameof(Padding),
-            typeof(Thickness),
+            typeof(MauiThickness),
             typeof(BottomSheet),
-            defaultValue: new Thickness(5));
+            defaultValue: new MauiThickness(5));
 
     /// <summary>
     /// Bindable property for the command executed when closing.
@@ -378,7 +380,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     public BottomSheetContent? Content { get => (BottomSheetContent?)GetValue(ContentProperty); set => SetValue(ContentProperty, value); }
 
     /// <inheritdoc/>
-    public Thickness Padding { get => (Thickness)GetValue(PaddingProperty); set => SetValue(PaddingProperty, value); }
+    public MauiThickness Padding { get => (MauiThickness)GetValue(PaddingProperty); set => SetValue(PaddingProperty, value); }
 
     /// <inheritdoc/>
     public BottomSheetStyle BottomSheetStyle { get => (BottomSheetStyle)GetValue(BottomSheetStyleProperty); set => SetValue(BottomSheetStyleProperty, value); }

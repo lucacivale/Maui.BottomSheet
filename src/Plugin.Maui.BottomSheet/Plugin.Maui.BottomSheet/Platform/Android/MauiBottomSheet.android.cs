@@ -1,18 +1,16 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using AsyncAwaitBestPractices;
 using Microsoft.Maui.LifecycleEvents;
 using Plugin.Maui.BottomSheet.Navigation;
+using Plugin.BottomSheet;
+using Plugin.BottomSheet.Android;
+using Microsoft.Maui.Platform;
+using Android.Content;
 using AActivity = Android.App.Activity;
 using AndroidLifecycle = Plugin.Maui.BottomSheet.LifecycleEvents.AndroidLifecycle;
-#pragma warning disable SA1200
-using Android.Content;
 using AndroidView = Android.Views.View;
-#pragma warning restore SA1200
 
 namespace Plugin.Maui.BottomSheet.Platform.Android;
-
-using Microsoft.Maui.Platform;
 
 /// <summary>
 /// Android platform implementation of the MAUI bottom sheet view handler.
@@ -20,10 +18,12 @@ using Microsoft.Maui.Platform;
 internal sealed class MauiBottomSheet : AndroidView
 {
     private readonly IMauiContext _mauiContext;
-    private readonly BottomSheet _bottomSheet;
+    private readonly BottomSheetDialog _bottomSheet;
     private readonly Context _context;
 
     private IBottomSheet? _virtualView;
+
+    private BottomSheetHeader? _bottomSheetHeader;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MauiBottomSheet"/> class.
@@ -35,9 +35,9 @@ internal sealed class MauiBottomSheet : AndroidView
     {
         _mauiContext = mauiContext;
         _context = context;
-        _bottomSheet = new BottomSheet(_context, _mauiContext);
-        _bottomSheet.Opened += BottomSheetOnOpened;
-        _bottomSheet.Closed += BottomSheetOnClosed;
+        _bottomSheet = new(_context, 0);
+        _bottomSheet.ShowEvent += BottomSheetOnOpened;
+        _bottomSheet.Canceled += BottomSheetOnClosed;
         _bottomSheet.StateChanged += BottomSheetOnStateChanged;
         _bottomSheet.BackPressed += BottomSheetOnBackPressed;
         _bottomSheet.LayoutChanged += BottomSheetOnLayoutChanged;
@@ -51,10 +51,14 @@ internal sealed class MauiBottomSheet : AndroidView
     /// <summary>
     /// Sets the allowed bottom sheet states. This method is intentionally empty on Android.
     /// </summary>
-    public static void SetStates()
+    public void SetStates()
     {
-        // Method intentionally left empty.
-        // On iOS and mac states must be set.
+        if (_virtualView is null)
+        {
+            return;
+        }
+
+        _bottomSheet.States = new(_virtualView.States);
     }
 
     /// <summary>
@@ -69,10 +73,15 @@ internal sealed class MauiBottomSheet : AndroidView
     /// <summary>
     /// Cleans up resources and event handlers.
     /// </summary>
-    /// <returns>A task representing the asynchronous operation.</returns>
-    public async Task CleanupAsync()
+    public void Cleanup()
     {
-        await _bottomSheet.DisposeAsync().ConfigureAwait(true);
+        _bottomSheet.ShowEvent -= BottomSheetOnOpened;
+        _bottomSheet.Canceled -= BottomSheetOnClosed;
+        _bottomSheet.StateChanged -= BottomSheetOnStateChanged;
+        _bottomSheet.BackPressed -= BottomSheetOnBackPressed;
+        _bottomSheet.LayoutChanged -= BottomSheetOnLayoutChanged;
+
+        _bottomSheet.Dispose();
     }
 
     /// <summary>
@@ -80,7 +89,7 @@ internal sealed class MauiBottomSheet : AndroidView
     /// </summary>
     public void SetIsCancelable()
     {
-        _bottomSheet.SetIsCancelable(_virtualView?.IsCancelable ?? false);
+        _bottomSheet.SetCancelable(_virtualView?.IsCancelable ?? false);
     }
 
     /// <summary>
@@ -88,14 +97,7 @@ internal sealed class MauiBottomSheet : AndroidView
     /// </summary>
     public void SetHasHandle()
     {
-        if (_virtualView?.HasHandle == false)
-        {
-            _bottomSheet.HideHandle();
-        }
-        else
-        {
-            _bottomSheet.AddHandle();
-        }
+        _bottomSheet.HasHandle = _virtualView?.HasHandle ?? false;
     }
 
     /// <summary>
@@ -103,12 +105,14 @@ internal sealed class MauiBottomSheet : AndroidView
     /// </summary>
     public void SetHeader()
     {
-        if (_virtualView?.Header is null)
-        {
-            return;
-        }
+        _bottomSheet.RemoveHeader();
 
-        _bottomSheet.SetHeader(_virtualView.Header, _virtualView.BottomSheetStyle.HeaderStyle);
+        _bottomSheetHeader = _virtualView?.Header;
+
+        if (_bottomSheet.IsShowing)
+        {
+            SetShowHeader();
+        }
     }
 
     /// <summary>
@@ -118,11 +122,14 @@ internal sealed class MauiBottomSheet : AndroidView
     {
         if (_virtualView?.ShowHeader == false)
         {
-            _bottomSheet.HideHeader();
+            _bottomSheet.RemoveHeader();
         }
         else
         {
-            _bottomSheet.AddHeader();
+            if (_bottomSheetHeader is not null)
+            {
+                _bottomSheet.SetHaderView(_bottomSheetHeader.CreateContent().ToPlatform(_mauiContext));
+            }
         }
     }
 
@@ -130,18 +137,24 @@ internal sealed class MauiBottomSheet : AndroidView
     /// Opens the bottom sheet asynchronously.
     /// </summary>
     /// <returns>A task representing the asynchronous operation.</returns>
-    public Task OpenAsync()
+    public async Task OpenAsync()
     {
         if (_virtualView is null)
         {
-            return Task.CompletedTask;
+            return;
         }
 
         _virtualView.OnOpeningBottomSheet();
-        _bottomSheet.Open(_virtualView);
-        _virtualView.OnOpenedBottomSheet();
 
-        return Task.CompletedTask;
+        await _bottomSheet.ShowAsync(
+            _virtualView.IsModal,
+            _virtualView.CornerRadius,
+            new(_virtualView.Padding.Left, _virtualView.Padding.Top, _virtualView.Padding.Right, _virtualView.Padding.Bottom),
+            _virtualView.BackgroundColor.ToPlatform(),
+            _virtualView.WindowBackgroundColor.ToPlatform())
+            .ConfigureAwait(true);
+
+        _virtualView.OnOpenedBottomSheet();
     }
 
     /// <summary>
@@ -153,7 +166,9 @@ internal sealed class MauiBottomSheet : AndroidView
         if (_virtualView?.IsOpen == true)
         {
             _virtualView.OnClosingBottomSheet();
-            await _bottomSheet.CloseAsync(false).ConfigureAwait(true);
+
+            await _bottomSheet.Dismiss().ConfigureAwait(true);
+
             SetFrame(true);
             _virtualView.OnClosedBottomSheet();
         }
@@ -162,29 +177,22 @@ internal sealed class MauiBottomSheet : AndroidView
     /// <summary>
     /// Sets the open state of the bottom sheet.
     /// </summary>
-    public void SetIsOpen()
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    public async Task SetIsOpenAsync()
     {
         if (_virtualView?.IsOpen == true)
         {
             if (_bottomSheet.IsShowing == false)
             {
-                _virtualView.OnOpeningBottomSheet();
-                _bottomSheet.Open(_virtualView);
-                _virtualView.OnOpenedBottomSheet();
+                await OpenAsync().ConfigureAwait(true);
             }
         }
         else
         {
-            _virtualView?.OnClosingBottomSheet();
-
             if (_bottomSheet.IsShowing)
             {
-                _bottomSheet.CloseAsync().SafeFireAndForget();
+                await CloseAsync().ConfigureAwait(true);
             }
-
-            SetFrame(true);
-
-            _virtualView?.OnClosedBottomSheet();
         }
     }
 
@@ -193,7 +201,7 @@ internal sealed class MauiBottomSheet : AndroidView
     /// </summary>
     public void SetIsDraggable()
     {
-        _bottomSheet.SetIsDraggable(_virtualView?.IsDraggable ?? false);
+        _bottomSheet.Draggable = _virtualView?.IsDraggable ?? false;
     }
 
     /// <summary>
@@ -206,7 +214,7 @@ internal sealed class MauiBottomSheet : AndroidView
             return;
         }
 
-        _bottomSheet.SetState(_virtualView.CurrentState);
+        _bottomSheet.State = _virtualView.CurrentState;
     }
 
     /// <summary>
@@ -219,7 +227,7 @@ internal sealed class MauiBottomSheet : AndroidView
             return;
         }
 
-        _bottomSheet.SetPeekHeight(Context.ToPixels(_virtualView.PeekHeight));
+        _bottomSheet.PeekHeight = Microsoft.Maui.Platform.ContextExtensions.ToPixels(Context, _virtualView.PeekHeight);
     }
 
     /// <summary>
@@ -232,7 +240,9 @@ internal sealed class MauiBottomSheet : AndroidView
             return;
         }
 
-        _bottomSheet.SetContent(_virtualView.Content);
+        _bottomSheet.RemoveContent();
+
+        _bottomSheet.SetContentView(_virtualView.Content.CreateContent().ToPlatform(_mauiContext));
     }
 
     /// <summary>
@@ -240,7 +250,7 @@ internal sealed class MauiBottomSheet : AndroidView
     /// </summary>
     public void SetIsModal()
     {
-        _bottomSheet.SetIsModal(_virtualView?.IsModal ?? true);
+        _bottomSheet.IsModal = _virtualView?.IsModal ?? true;
     }
 
     /// <summary>
@@ -248,10 +258,12 @@ internal sealed class MauiBottomSheet : AndroidView
     /// </summary>
     public void SetPadding()
     {
-        if (_virtualView is not null)
+        if (_virtualView is null)
         {
-            _bottomSheet.Padding = _virtualView.Padding;
+            return;
         }
+
+        _bottomSheet.Padding = new(_virtualView.Padding.Left, _virtualView.Padding.Top, _virtualView.Padding.Right, _virtualView.Padding.Bottom);
     }
 
     /// <summary>
@@ -259,10 +271,12 @@ internal sealed class MauiBottomSheet : AndroidView
     /// </summary>
     public void SetBottomSheetBackgroundColor()
     {
-        if (_virtualView?.BackgroundColor is not null)
+        if (_virtualView?.BackgroundColor is null)
         {
-            _bottomSheet.BackgroundColor = _virtualView.BackgroundColor;
+            return;
         }
+
+        _bottomSheet.BackgroundColor = _virtualView.BackgroundColor.ToPlatform();
     }
 
     /// <summary>
@@ -270,7 +284,7 @@ internal sealed class MauiBottomSheet : AndroidView
     /// </summary>
     public void SetCornerRadius()
     {
-        _bottomSheet.SetCornerRadius(_virtualView?.CornerRadius ?? 0);
+        _bottomSheet.CornerRadius = _virtualView?.CornerRadius ?? 0;
     }
 
     /// <summary>
@@ -278,18 +292,12 @@ internal sealed class MauiBottomSheet : AndroidView
     /// </summary>
     public void SetWindowBackgroundColor()
     {
-        _bottomSheet.SetWindowBackgroundColor(_virtualView?.WindowBackgroundColor ?? Colors.Transparent, true);
-    }
-
-    /// <summary>
-    /// Sets the bottom sheet style configuration.
-    /// </summary>
-    public void SetBottomSheetStyle()
-    {
-        if (_virtualView?.BottomSheetStyle is not null)
+        if (_virtualView?.WindowBackgroundColor is null)
         {
-            _bottomSheet.SetHeaderStyle(_virtualView.BottomSheetStyle.HeaderStyle);
+            return;
         }
+
+        _bottomSheet.WindowBackgroundColor = _virtualView.WindowBackgroundColor.ToPlatform();
     }
 
     /// <summary>
@@ -334,16 +342,16 @@ internal sealed class MauiBottomSheet : AndroidView
                 return;
             }
 
-            var parameters = BottomSheetNavigationParameters.Empty();
+            BottomSheetNavigationParameters parameters = BottomSheetNavigationParameters.Empty();
 
             if (_mauiContext.Services.GetRequiredService<IBottomSheetNavigationService>().NavigationStack().Contains(_virtualView))
             {
-                var result = await _mauiContext.Services.GetRequiredService<IBottomSheetNavigationService>().GoBackAsync(parameters).ConfigureAwait(true);
+                INavigationResult result = await _mauiContext.Services.GetRequiredService<IBottomSheetNavigationService>().GoBackAsync(parameters).ConfigureAwait(true);
 
                 if (result.Success == false
                     || result.Cancelled)
                 {
-                    _bottomSheet.SetState(_virtualView.CurrentState);
+                    _bottomSheet.State = _virtualView.CurrentState;
                 }
                 else
                 {
@@ -362,7 +370,7 @@ internal sealed class MauiBottomSheet : AndroidView
 
                 if (_virtualView.IsOpen)
                 {
-                    _bottomSheet.SetState(_virtualView.CurrentState);
+                    _bottomSheet.State = _virtualView.CurrentState;
                 }
                 else
                 {
@@ -383,18 +391,12 @@ internal sealed class MauiBottomSheet : AndroidView
     /// <param name="e">The state change event arguments.</param>
     private void BottomSheetOnStateChanged(object? sender, BottomSheetStateChangedEventArgs e)
     {
-        var state = e.State;
+        BottomSheetState state = e.State;
 
         if (_virtualView is null
             || state == _virtualView.CurrentState)
         {
             return;
-        }
-
-        if (!_virtualView.States.IsStateAllowed(state))
-        {
-            state = _virtualView.CurrentState;
-            _bottomSheet.SetState(state);
         }
 
         SetFrame();
@@ -408,7 +410,7 @@ internal sealed class MauiBottomSheet : AndroidView
     /// <param name="e">The event arguments.</param>
     private void BottomSheetOnBackPressed(object? sender, EventArgs e)
     {
-        var actions = _mauiContext.Services.GetRequiredService<ILifecycleEventService>().GetEventDelegates<Action<AActivity?>>(AndroidLifecycle.BottomSheetBackPressedEventName);
+        IEnumerable<Action<AActivity?>> actions = _mauiContext.Services.GetRequiredService<ILifecycleEventService>().GetEventDelegates<Action<AActivity?>>(AndroidLifecycle.BottomSheetBackPressedEventName);
 
         foreach (Action<AActivity?> action in actions)
         {
@@ -437,6 +439,11 @@ internal sealed class MauiBottomSheet : AndroidView
             return;
         }
 
-        _virtualView.Frame = isClosed ? Rect.Zero : _context.FromPixels(_bottomSheet.Frame);
+        _virtualView.Frame = isClosed ? Microsoft.Maui.Graphics.Rect.Zero : _context.FromPixels(
+            new Microsoft.Maui.Graphics.Rect(
+                Convert.ToDouble(_bottomSheet.Frame.X),
+                Convert.ToDouble(_bottomSheet.Frame.Y),
+                Convert.ToDouble(_bottomSheet.Frame.Width),
+                Convert.ToDouble(_bottomSheet.Frame.Height)));
     }
 }

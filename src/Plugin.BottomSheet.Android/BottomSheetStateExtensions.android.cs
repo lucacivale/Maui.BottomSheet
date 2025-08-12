@@ -1,6 +1,6 @@
-namespace Plugin.BottomSheet.Android;
-
 using Google.Android.Material.BottomSheet;
+
+namespace Plugin.BottomSheet.Android;
 
 /// <summary>
 /// Extension methods for converting between BottomSheetState enum and Android platform constants.

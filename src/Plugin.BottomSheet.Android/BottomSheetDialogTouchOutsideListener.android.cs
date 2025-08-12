@@ -1,6 +1,6 @@
-﻿namespace Plugin.BottomSheet.Android;
+﻿using AndroidX.AppCompat.App;
 
-using AndroidX.AppCompat.App;
+namespace Plugin.BottomSheet.Android;
 
 /// <summary>
 /// Handles touch events outside the bottom sheet for non-modal behavior.
@@ -26,7 +26,7 @@ internal sealed class BottomSheetDialogTouchOutsideListener : Java.Lang.Object, 
     /// <returns>Always returns false to allow further event processing.</returns>
     public bool OnTouch(View? v, MotionEvent? e)
     {
-        _activity.DispatchTouchEvent(e);
+        _ = _activity.DispatchTouchEvent(e);
 
         return false;
     }

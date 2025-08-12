@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Plugin.Maui.BottomSheet.Platform.MaciOS;
 
+using Plugin.BottomSheet;
 using UIKit;
 
 /// <summary>
@@ -85,7 +86,7 @@ internal sealed class BottomSheet : IAsyncDisposable, IDisposable
             ShowHeader();
         }
 
-        SetPadding(bottomSheet.Padding);
+        //SetPadding(bottomSheet.Padding);
         SetIsCancelable(bottomSheet.IsCancelable);
         SetState(bottomSheet.CurrentState);
         SetStates(bottomSheet.States);
@@ -313,7 +314,7 @@ internal sealed class BottomSheet : IAsyncDisposable, IDisposable
     /// <param name="padding">The padding thickness to apply.</param>
     public void SetPadding(Thickness padding)
     {
-        _bottomSheetUIViewController.SetPadding(padding);
+        //_bottomSheetUIViewController.SetPadding(padding);
     }
 
     /// <summary>

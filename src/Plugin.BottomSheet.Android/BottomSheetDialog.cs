@@ -1,9 +1,8 @@
-namespace Plugin.BottomSheet.Android;
-
 using AndroidX.CoordinatorLayout.Widget;
 using AsyncAwaitBestPractices;
-using global::Android.Content;
 using Google.Android.Material.Shape;
+
+namespace Plugin.BottomSheet.Android;
 
 /// <summary>
 /// Custom bottom sheet dialog with enhanced event handling and back press support.
@@ -22,6 +21,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
     private readonly BottomSheetDialogTouchOutsideListener _touchOutsideListener;
     private readonly BottomSheetLayoutChangeListener _layoutChangeListener;
     private readonly BottomSheetCallback _bottomSheetCallback;
+    private readonly BottomSheetDialogOnBackPressedCallback _onBackPressedCallback;
 
     private readonly GridLayout _sheetContainer;
 
@@ -32,9 +32,6 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
     private GridLayout.LayoutParams? _contentLayoutParams;
 
     private BottomSheetHandle? _bottomSheetHandle;
-
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2213: Disposable fields should be disposed", Justification = "Is disposed in dismiss method.")]
-    private BottomSheetDialogOnBackPressedCallback? _onBackPressedCallback;
 
     private List<BottomSheetState> _bottomSheetStates = [BottomSheetState.Medium, BottomSheetState.Large];
     private bool _isModal;
@@ -49,6 +46,8 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
         : base(context, theme)
     {
         _bottomSheetCallback = new();
+        _bottomSheetCallback.StateChanged += BottomSheetCallback_StateChanged;
+
         Behavior.AddBottomSheetCallback(_bottomSheetCallback);
         Behavior.GestureInsetBottomIgnored = true;
         Behavior.FitToContents = false;
@@ -71,6 +70,9 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
 
         _layoutChangeListener = new BottomSheetLayoutChangeListener();
         _layoutChangeListener.LayoutChange += LayoutChangeListener_LayoutChange;
+
+        _onBackPressedCallback = new BottomSheetDialogOnBackPressedCallback(true);
+        _onBackPressedCallback.BackPressed += OnBackPressedCallbackOnBackPressed;
     }
 
     /// <summary>
@@ -92,6 +94,24 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
     }
 
     /// <summary>
+    /// Occurs when the bottom sheet state changes.
+    /// </summary>
+    public event EventHandler<BottomSheetStateChangedEventArgs> StateChanged
+    {
+        add => _eventManager.AddEventHandler(value);
+        remove => _eventManager.RemoveEventHandler(value);
+    }
+
+    /// <summary>
+    /// Occurs when the bottom sheet is canceled.
+    /// </summary>
+    public event EventHandler Canceled
+    {
+        add => _eventManager.AddEventHandler(value);
+        remove => _eventManager.RemoveEventHandler(value);
+    }
+
+    /// <summary>
     /// Gets or sets the padding for the bottom sheet.
     /// </summary>
     public Thickness Padding
@@ -101,16 +121,15 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
             Convert.ToDouble(Context.FromPixels(_sheetContainer.PaddingTop)),
             Convert.ToDouble(Context.FromPixels(_sheetContainer.PaddingRight)),
             Convert.ToDouble(Context.FromPixels(_sheetContainer.PaddingBottom)));
-        set
-        {
+        set =>
             _sheetContainer.SetPadding(
                 Convert.ToInt32(Context.ToPixels(value.Left)),
                 0,
                 Convert.ToInt32(Context.ToPixels(value.Right)),
                 0);
-        }
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0046:Convert to conditional expression", Justification = "Decreases readability.")]
     public double CornerRadius
     {
         get
@@ -137,6 +156,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
     /// <summary>
     /// Gets or sets the background color of the bottom sheet.
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0046:Convert to conditional expression", Justification = "Decreases readability.")]
     public Color BackgroundColor
     {
         get
@@ -161,16 +181,12 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
 
     public Color WindowBackgroundColor
     {
-        get
-        {
-            return _backgroundColorDrawable.Color;
-        }
-
+        get => _backgroundColorDrawable.Color;
         set
         {
             if (IsModal)
             {
-                _backgroundColorDrawable.AnimateChange(_backgroundColorDrawable.Color.ToArgb(), value);
+                _backgroundColorDrawable.AnimateChangeAsync(_backgroundColorDrawable.Color.ToArgb(), value).SafeFireAndForget();
             }
         }
     }
@@ -209,7 +225,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
 
                     if (IsShowing)
                     {
-                        _backgroundColorDrawable.AnimateChange(_backgroundColorDrawable.Color.ToArgb(), Color.Transparent.ToArgb());
+                        _backgroundColorDrawable.AnimateChangeAsync(_backgroundColorDrawable.Color.ToArgb(), Color.Transparent.ToArgb()).SafeFireAndForget();
                     }
                 }
                 else
@@ -219,7 +235,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
 
                     if (IsShowing)
                     {
-                        _backgroundColorDrawable.AnimateChange(_backgroundColorDrawable.Color.ToArgb(), WindowBackgroundColor);
+                        _backgroundColorDrawable.AnimateChangeAsync(_backgroundColorDrawable.Color.ToArgb(), WindowBackgroundColor).SafeFireAndForget();
                     }
                 }
             }
@@ -228,11 +244,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
 
     public bool HasHandle
     {
-        get
-        {
-            return _sheetContainer.GetChildAt(HandleRow) is not null;
-        }
-
+        get => _sheetContainer.GetChildAt(HandleRow) is not null;
         set
         {
             if (value)
@@ -293,6 +305,9 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
 
     public int MaxWidth { get => Behavior.MaxWidth; set => Behavior.MaxWidth = value; }
 
+    public bool Draggable { get => Behavior.Draggable; set => Behavior.Draggable = value; }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0046:Convert to conditional expression", Justification = "Decreases readability.")]
     public Thickness Margin
     {
         get
@@ -315,7 +330,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
             if (_sheetContainer.Parent is View bottomSheetFrame
                 && bottomSheetFrame.LayoutParameters is ViewGroup.MarginLayoutParams marginLayoutParams)
             {
-                var margin = value.ToPixels(Context);
+                Thickness margin = value.ToPixels(Context);
 
                 marginLayoutParams.SetMargins(
                     Convert.ToInt32(margin.Left),
@@ -331,7 +346,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
         get => Context.FromPixels(Behavior.PeekHeight);
         set
         {
-            var height = (_sheetContainer.GetChildAt(HeaderRow)?.Height ?? 0)
+            double height = (_sheetContainer.GetChildAt(HeaderRow)?.Height ?? 0)
                 + (_sheetContainer.GetChildAt(HeaderRow)?.Height ?? 0)
                 + Convert.ToInt32(Context.ToPixels(HandleMargin))
                 + Convert.ToInt32(Context.ToPixels(HeaderMargin))
@@ -357,10 +372,6 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
     /// </summary>
     public override void Show()
     {
-        _onBackPressedCallback = new BottomSheetDialogOnBackPressedCallback(true);
-        _onBackPressedCallback.BackPressed += OnBackPressedCallbackOnBackPressed;
-        OnBackPressedDispatcher.AddCallback(_onBackPressedCallback);
-
         ShowEvent += BottomSheetDialog_ShowEvent;
 
         base.Show();
@@ -377,7 +388,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
 
             if (isModal)
             {
-                Window?.DecorView.PostDelayed(() => _backgroundColorDrawable.AnimateChange(_backgroundColorDrawable.Color.ToArgb(), windowBackgroundColor), 50);
+                _ = Window?.DecorView.PostDelayed(() => _backgroundColorDrawable.AnimateChangeAsync(_backgroundColorDrawable.Color.ToArgb(), windowBackgroundColor).SafeFireAndForget(), 50);
             }
 
             ((BottomSheetDialog)s!).ShowEvent -= @event;
@@ -387,39 +398,67 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
         base.Show();
     }
 
+    public async Task ShowAsync(bool isModal, double cornerRadius, Thickness padding, Color backgroundColor, Color windowBackgroundColor)
+    {
+        TaskCompletionSource taskCompletionSource = new();
+
+        EventHandler @event = null!;
+        @event = (s, e) =>
+        {
+            _ = taskCompletionSource.TrySetResult();
+
+            ((BottomSheetDialog)s!).ShowEvent -= @event;
+        };
+        ShowEvent += @event;
+
+        Show(isModal, cornerRadius, padding, backgroundColor, windowBackgroundColor);
+
+        await taskCompletionSource.Task.ConfigureAwait(true);
+    }
+
+    /// <summary>
+    /// Cancels the bottom sheet dialog.
+    /// </summary>
+    public override void Cancel()
+    {
+        _eventManager.RaiseEvent(this, EventArgs.Empty, nameof(Canceled));
+    }
+
     /// <summary>
     /// Dismisses the bottom sheet dialog and cleans up resources.
     /// </summary>
-    public override void Dismiss()
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "VSTHRD200:Use \"Async\" suffix for async methods", Justification = "Not applicable here. Hide base member.")]
+    public new async Task Dismiss()
     {
         _sheetContainer.RemoveOnLayoutChangeListener(_layoutChangeListener);
+        _onBackPressedCallback.Remove();
 
-        if (_onBackPressedCallback is not null)
+        await _backgroundColorDrawable.AnimateChangeAsync(_backgroundColorDrawable.Color.ToArgb(), Color.Transparent.ToArgb(), 100).ConfigureAwait(true);
+
+        TaskCompletionSource taskCompletionSource = new();
+
+        EventHandler @event = null!;
+        @event = (s, e) =>
         {
-            _onBackPressedCallback.BackPressed -= OnBackPressedCallbackOnBackPressed;
-            _onBackPressedCallback.Remove();
-            _onBackPressedCallback.Dispose();
-        }
+            _ = taskCompletionSource.TrySetResult();
+
+            ((BottomSheetDialog)s!).DismissEvent -= @event;
+        };
+        DismissEvent += @event;
 
         base.Dismiss();
 
         _sheetContainer.RemoveAllViews();
+
+        await taskCompletionSource.Task.ConfigureAwait(true);
     }
 
     public override void SetContentView(View view)
     {
         _sheetContainer.RemoveFromParent();
 
-        if (_sheetContainer.ChildCount > 0)
-        {
-            if (_sheetContainer.GetChildAt(ContentRow) is View content)
-            {
-                content.LayoutParameters?.Dispose();
-                content.LayoutParameters = null;
-            }
-
-            _sheetContainer.RemoveAllViews();
-        }
+        RemoveContent();
 
         _contentLayoutParams = new GridLayout.LayoutParams()
         {
@@ -434,7 +473,35 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
         base.SetContentView(_sheetContainer);
     }
 
+    public void RemoveContent()
+    {
+        if (_sheetContainer.ChildCount > 0)
+        {
+            if (_sheetContainer.GetChildAt(ContentRow) is View content)
+            {
+                content.LayoutParameters?.Dispose();
+                content.LayoutParameters = null;
+            }
+
+            _sheetContainer.RemoveAllViews();
+        }
+    }
+
     public void SetHaderView(View view)
+    {
+        RemoveHeader();
+
+        _headerLayoutParams = new GridLayout.LayoutParams()
+        {
+            TopMargin = Convert.ToInt32(Context.ToPixels(5)),
+            RowSpec = GridLayout.InvokeSpec(HeaderRow),
+        };
+        _headerLayoutParams.SetGravity(GravityFlags.Fill);
+
+        _sheetContainer.AddView(view, _headerLayoutParams);
+    }
+
+    public void RemoveHeader()
     {
         if (_sheetContainer.GetChildAt(HeaderRow) is View header)
         {
@@ -448,15 +515,6 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
                 viewGroup.RemoveAllViews();
             }
         }
-
-        _headerLayoutParams = new GridLayout.LayoutParams()
-        {
-            TopMargin = Convert.ToInt32(Context.ToPixels(5)),
-            RowSpec = GridLayout.InvokeSpec(HeaderRow),
-        };
-        _headerLayoutParams.SetGravity(GravityFlags.Fill);
-
-        _sheetContainer.AddView(view, _headerLayoutParams);
     }
 
     protected override void Dispose(bool disposing)
@@ -468,8 +526,9 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
             return;
         }
 
+        _onBackPressedCallback.Dispose();
         _layoutChangeListener.Dispose();
-        _bottomSheetCallback?.Dispose();
+        _bottomSheetCallback.Dispose();
         _handleLayoutParams?.Dispose();
         _headerLayoutParams?.Dispose();
         _contentLayoutParams?.Dispose();
@@ -488,6 +547,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
         }
 
         _sheetContainer.AddOnLayoutChangeListener(_layoutChangeListener);
+        OnBackPressedDispatcher.AddCallback(_onBackPressedCallback);
     }
 
     /// <summary>
@@ -508,5 +568,17 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
     private void LayoutChangeListener_LayoutChange(object? sender, EventArgs e)
     {
         _eventManager.RaiseEvent(this, EventArgs.Empty, nameof(LayoutChanged));
+    }
+
+    private void BottomSheetCallback_StateChanged(object? sender, BottomSheetStateChangedEventArgs e)
+    {
+        if (States.IsStateAllowed(e.State) == false)
+        {
+            State = e.State;
+        }
+        else
+        {
+            _eventManager.RaiseEvent(this, e, nameof(StateChanged));
+        }
     }
 }

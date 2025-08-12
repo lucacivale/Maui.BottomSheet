@@ -1,14 +1,11 @@
-#pragma warning disable SA1200
 using AsyncAwaitBestPractices;
-using AView = Android.Views.View;
-#pragma warning restore SA1200
 
 namespace Plugin.BottomSheet.Android;
 
 /// <summary>
 /// Monitors layout changes for bottom sheet views and content.
 /// </summary>
-internal sealed class BottomSheetLayoutChangeListener : Java.Lang.Object, AView.IOnLayoutChangeListener
+internal sealed class BottomSheetLayoutChangeListener : Java.Lang.Object, View.IOnLayoutChangeListener
 {
     private readonly WeakEventManager _eventManager = new();
 
@@ -34,7 +31,7 @@ internal sealed class BottomSheetLayoutChangeListener : Java.Lang.Object, AView.
     /// <param name="oldRight">The previous right position.</param>
     /// <param name="oldBottom">The previous bottom position.</param>
     public void OnLayoutChange(
-        AView? v,
+        View? v,
         int left,
         int top,
         int right,

@@ -1,7 +1,7 @@
-namespace Plugin.BottomSheet.Android;
-
 using AsyncAwaitBestPractices;
 using Google.Android.Material.BottomSheet;
+
+namespace Plugin.BottomSheet.Android;
 
 /// <summary>
 /// Handles bottom sheet behavior state change callbacks.

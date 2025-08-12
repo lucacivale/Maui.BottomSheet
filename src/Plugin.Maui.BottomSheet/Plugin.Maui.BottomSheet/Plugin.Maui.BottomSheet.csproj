@@ -11,18 +11,9 @@
             $(NETVersion)-maccatalyst</TargetFrameworks>
         <UseMaui>true</UseMaui>
         <SingleProject>true</SingleProject>
-        <Nullable>enable</Nullable>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <EnableNETAnalyzers>true</EnableNETAnalyzers>
-        <AnalysisMode>All</AnalysisMode>
-        <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
-        <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
-        <RunAnalyzers>true</RunAnalyzers>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
-        <!-- enable trimming and AOT analyzers on all platforms -->
-        <IsAotCompatible>true</IsAotCompatible>
         <Title>.NET MAUI BottomSheet</Title>
         <Description>
             Open native BottomSheets with .NET MAUI
@@ -32,16 +23,6 @@
             * Configurable header
             * MVVM support
         </Description>
-        <Owners>Luca Civale </Owners>
-        <Authors>Luca Civale</Authors>
-        <Company>Luca Civale</Company>
-        <Copyright>Luca Civale</Copyright>
-        <PackageProjectUrl>https://github.com/lucacivale/Maui.BottomSheet</PackageProjectUrl>
-        <RepositoryUrl>https://github.com/lucacivale/Maui.BottomSheet</RepositoryUrl>
-        <NeutralLanguage>en</NeutralLanguage>
-        <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <RepositoryType>git</RepositoryType>
         <PackageTags>dotnet; maui; bottomsheet;</PackageTags>
         <PackageIcon>Icon.png</PackageIcon>
         <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -54,18 +35,6 @@
 
     <ItemGroup>
         <PackageReference Include="AsyncAwaitBestPractices" Version="9.0.0" />
-        <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.12.19">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="SonarAnalyzer.CSharp" Version="9.32.0.97167">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
     </ItemGroup>
 
     <ItemGroup Condition="$(TargetFramework.StartsWith('$(LegacyNETVersion)'))">
@@ -73,13 +42,9 @@
     </ItemGroup>
 
     <ItemGroup Condition="$(TargetFramework.StartsWith('$(NETVersion)'))">
-        <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.0-preview.4.25263.4" />
+        <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.0-preview.6.25359.8" />
     </ItemGroup>
 
-	<ItemGroup Condition="$(TargetFramework.EndsWith('android'))">
-		<AndroidResource Include="Platform\Android\Resources\values\styles.xml" />
-	</ItemGroup>
-	
     <ItemGroup>
         <None Include="..\..\..\Icon.png">
             <Pack>True</Pack>
@@ -89,6 +54,14 @@
             <Pack>True</Pack>
             <PackagePath>\</PackagePath>
         </None>
+    </ItemGroup>
+	
+    <ItemGroup Condition="$(TargetFramework.EndsWith('android'))">
+      <ProjectReference Include="..\..\Plugin.BottomSheet.Android\Plugin.BottomSheet.Android.csproj" />
+    </ItemGroup>
+	
+    <ItemGroup>
+      <ProjectReference Include="..\..\Plugin.BottomSheet\Plugin.BottomSheet.csproj" />
     </ItemGroup>
 
 </Project>

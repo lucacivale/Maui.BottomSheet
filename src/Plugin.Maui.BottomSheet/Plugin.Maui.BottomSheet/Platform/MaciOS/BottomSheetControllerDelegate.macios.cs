@@ -1,5 +1,6 @@
 namespace Plugin.Maui.BottomSheet.Platform.MaciOS;
 
+using Plugin.BottomSheet;
 using UIKit;
 
 /// <summary>

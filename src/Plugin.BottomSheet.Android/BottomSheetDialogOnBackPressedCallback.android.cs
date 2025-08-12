@@ -1,7 +1,7 @@
-namespace Plugin.BottomSheet.Android;
-
 using AndroidX.Activity;
 using AsyncAwaitBestPractices;
+
+namespace Plugin.BottomSheet.Android;
 
 /// <summary>
 /// Handles back button press events for bottom sheet dialogs.

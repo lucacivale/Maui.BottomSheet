@@ -12,26 +12,27 @@ internal static class ColorDrawableExtensions
     /// <param name="from">The starting ARGB color value.</param>
     /// <param name="to">The ending ARGB color value.</param>
     /// <param name="duration">The animation duration in milliseconds. Default is 250 ms.</param>
-    public static void AnimateChange(this ColorDrawable drawable, int from, int to, int duration = 250)
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    public static async Task AnimateChangeAsync(this ColorDrawable drawable, int from, int to, int duration = 250)
     {
         using ArgbEvaluator evaluator = new();
         using ValueAnimator? colorAnimation = ValueAnimator.OfObject(evaluator, from, to);
 
         if (colorAnimation is not null)
         {
-            colorAnimation.SetDuration(duration);
-            colorAnimation.Update += (_, args) =>
-            {
-                if (args.Animation.AnimatedValue is not null)
-                {
-                    drawable.Color = Color.Argb(
-                        Color.GetAlphaComponent((int)args.Animation.AnimatedValue),
-                        Color.GetRedComponent((int)args.Animation.AnimatedValue),
-                        Color.GetGreenComponent((int)args.Animation.AnimatedValue),
-                        Color.GetBlueComponent((int)args.Animation.AnimatedValue));
-                }
-            };
+            //todo kann weg oder?
+            using Animator animator = colorAnimation.SetDuration(duration);
+
+            TaskCompletionSource taskCompletionSource = new();
+            using AnimationListener animationListener = new(taskCompletionSource);
+            using AnimationUpdateListener animationUpdateListener = new(drawable);
+
+            colorAnimation.AddListener(animationListener);
+            colorAnimation.AddUpdateListener(animationUpdateListener);
             colorAnimation.Start();
+
+            await taskCompletionSource.Task.ConfigureAwait(true);
+            colorAnimation.RemoveAllListeners();
         }
     }
 }
