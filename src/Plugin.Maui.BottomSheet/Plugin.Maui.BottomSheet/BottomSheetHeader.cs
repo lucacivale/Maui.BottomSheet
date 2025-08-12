@@ -5,8 +5,7 @@ using Microsoft.Maui.Controls;
 /// <summary>
 /// Represents the header section displayed at the top of a bottom sheet.
 /// </summary>
-[ContentProperty(nameof(Content))]
-public sealed class BottomSheetHeader : BindableObject
+public sealed class BottomSheetHeader : BottomSheetContentView
 {
     /// <summary>
     /// Bindable property for the title text.
@@ -56,25 +55,6 @@ public sealed class BottomSheetHeader : BindableObject
             defaultValue: CloseButtonPosition.TopRight);
 
     /// <summary>
-    /// Bindable property for the custom header data template.
-    /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
-    public static readonly BindableProperty HeaderDataTemplateProperty =
-        BindableProperty.Create(
-            nameof(HeaderDataTemplate),
-            typeof(DataTemplate),
-            typeof(BottomSheetHeader));
-
-    /// <summary>
-    /// Bindable property for the direct content.
-    /// </summary>
-    public static readonly BindableProperty ContentProperty =
-        BindableProperty.Create(
-            nameof(Content),
-            typeof(View),
-            typeof(BottomSheetContent));
-
-    /// <summary>
     /// Bindable property for the header button appearance mode.
     /// </summary>
     // ReSharper disable once MemberCanBePrivate.Global
@@ -110,45 +90,7 @@ public sealed class BottomSheetHeader : BindableObject
     public bool ShowCloseButton { get => (bool)GetValue(ShowCloseButtonProperty); set => SetValue(ShowCloseButtonProperty, value); }
 
     /// <summary>
-    /// Gets or sets the data template for creating a custom header view.
-    /// </summary>
-    public DataTemplate? HeaderDataTemplate { get => (DataTemplate?)GetValue(HeaderDataTemplateProperty); set => SetValue(HeaderDataTemplateProperty, value); }
-
-    /// <summary>
-    /// Gets or sets the direct content view for the bottom sheet.
-    /// </summary>
-    public View? Content { get => (View?)GetValue(ContentProperty); set => SetValue(ContentProperty, value); }
-
-    /// <summary>
     /// Gets or sets the appearance mode for header buttons.
     /// </summary>
     public BottomSheetHeaderButtonAppearanceMode HeaderAppearance { get => (BottomSheetHeaderButtonAppearanceMode)GetValue(HeaderAppearanceProperty); set => SetValue(HeaderAppearanceProperty, value); }
-
-    /// <summary>
-    /// Gets or sets the parent element of this header.
-    /// </summary>
-    public Element? Parent { get; set; }
-
-    /// <summary>
-    /// Creates and returns the content view, using either the template or direct content.
-    /// </summary>
-    /// <returns>The content view ready for display.</returns>
-    /// <exception cref="BottomSheetContentNotSetException">Thrown when neither Content nor HeaderDataTemplate is set.</exception>
-    public View CreateContent()
-    {
-        if (HeaderDataTemplate?.CreateContent() is View content)
-        {
-            Content = content;
-        }
-
-        if (Content is null)
-        {
-            throw new BottomSheetContentNotSetException($"{nameof(Content)} must be set before creating content.");
-        }
-
-        Content.BindingContext = BindingContext;
-        Content.Parent = Parent;
-
-        return Content;
-    }
 }

@@ -76,7 +76,7 @@ internal static class BottomSheetHeaderExtensions
     public static bool HasHeaderView(this BottomSheetHeader? bottomSheetHeader)
     {
         return bottomSheetHeader is not null
-            && (bottomSheetHeader.HeaderDataTemplate is not null
+            && (bottomSheetHeader.ContentTemplate is not null
                 || bottomSheetHeader.Content is not null);
     }
 }

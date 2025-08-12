@@ -1,5 +1,6 @@
 using System.Windows.Input;
 using NSubstitute;
+using Plugin.BottomSheet;
 using Plugin.Maui.BottomSheet.PlatformConfiguration.AndroidSpecific;
 
 namespace Plugin.Maui.BottomSheet.Tests;

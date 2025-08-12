@@ -220,7 +220,7 @@ public sealed class BottomSheetHeaderMemoryTests : MemoryBaseTest<EmptyContentPa
         {
             BottomSheetHeader header = new()
             {
-                HeaderDataTemplate = new DataTemplate(() =>
+                ContentTemplate = new DataTemplate(() =>
                 {
                     Label label = new()
                     {
@@ -289,7 +289,7 @@ public sealed class BottomSheetHeaderMemoryTests : MemoryBaseTest<EmptyContentPa
             
             BottomSheetHeader header = new()
             {
-                HeaderDataTemplate = new DataTemplate(() =>
+                ContentTemplate = new DataTemplate(() =>
                 {
                     Label label = new()
                     {
@@ -327,7 +327,7 @@ public sealed class BottomSheetHeaderMemoryTests : MemoryBaseTest<EmptyContentPa
             
             BottomSheetHeader header = new()
             {
-                HeaderDataTemplate = new DataTemplate(() =>
+                ContentTemplate = new DataTemplate(() =>
                 {
                     Label label = new()
                     {

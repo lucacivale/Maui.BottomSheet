@@ -433,7 +433,7 @@ public class BottomSheetHeaderExtensionsTests
         // Arrange
         var bottomSheetHeader = new BottomSheetHeader
         {
-            HeaderDataTemplate = null,
+            ContentTemplate = null,
             Content = null,
         };
 
@@ -450,7 +450,7 @@ public class BottomSheetHeaderExtensionsTests
         // Arrange
         var bottomSheetHeader = new BottomSheetHeader
         {
-            HeaderDataTemplate = new DataTemplate(() => new Label()),
+            ContentTemplate = new DataTemplate(() => new Label()),
             Content = null,
         };
 
@@ -467,7 +467,7 @@ public class BottomSheetHeaderExtensionsTests
         // Arrange
         var bottomSheetHeader = new BottomSheetHeader
         {
-            HeaderDataTemplate = null,
+            ContentTemplate = null,
             Content = new Label(),
         };
 
@@ -484,7 +484,7 @@ public class BottomSheetHeaderExtensionsTests
         // Arrange
         var bottomSheetHeader = new BottomSheetHeader
         {
-            HeaderDataTemplate = new DataTemplate(() => new Label()),
+            ContentTemplate = new DataTemplate(() => new Label()),
             Content = new Label(),
         };
 

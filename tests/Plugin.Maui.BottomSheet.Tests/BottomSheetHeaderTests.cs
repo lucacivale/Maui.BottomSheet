@@ -14,7 +14,7 @@ public class BottomSheetHeaderTests
         Assert.Null(header.TopRightButton);
         Assert.False(header.ShowCloseButton);
         Assert.Equal(CloseButtonPosition.TopRight, header.CloseButtonPosition);
-        Assert.Null(header.HeaderDataTemplate);
+        Assert.Null(header.ContentTemplate);
         Assert.Null(header.Content);
         Assert.Equal(BottomSheetHeaderButtonAppearanceMode.None, header.HeaderAppearance);
         Assert.Null(header.Parent);
@@ -98,10 +98,10 @@ public class BottomSheetHeaderTests
         var template = new DataTemplate(() => new Label { Text = "Template Content" });
 
         // Act
-        header.HeaderDataTemplate = template;
+        header.ContentTemplate = template;
 
         // Assert
-        Assert.Equal(template, header.HeaderDataTemplate);
+        Assert.Equal(template, header.ContentTemplate);
     }
 
     [Fact]
@@ -180,7 +180,7 @@ public class BottomSheetHeaderTests
         var bindingContext = new { Title = "Test" };
         var parent = new ContentPage();
 
-        header.HeaderDataTemplate = template;
+        header.ContentTemplate = template;
         header.BindingContext = bindingContext;
         header.Parent = parent;
 
@@ -205,7 +205,7 @@ public class BottomSheetHeaderTests
         var template = new DataTemplate(() => new Label { Text = "Template Content" });
 
         header.Content = directContent;
-        header.HeaderDataTemplate = template;
+        header.ContentTemplate = template;
 
         // Act
         var result = header.CreateContent();
@@ -235,7 +235,7 @@ public class BottomSheetHeaderTests
         var header = new BottomSheetHeader();
         var template = new DataTemplate(() => null); // Template returns null
 
-        header.HeaderDataTemplate = template;
+        header.ContentTemplate = template;
 
         // Act & Assert
         var exception = Assert.Throws<BottomSheetContentNotSetException>(() => header.CreateContent());

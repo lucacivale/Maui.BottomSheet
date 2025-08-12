@@ -41,18 +41,17 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
     /// </summary>
     /// <param name="context">The Android context.</param>
     /// <param name="theme">The theme resource ID.</param>
-    /// <param name="bottomSheetCallback">The bottom sheet callback handler.</param>
     public BottomSheetDialog(Context context, int theme)
         : base(context, theme)
     {
-        _bottomSheetCallback = new();
+        _bottomSheetCallback = new BottomSheetCallback();
         _bottomSheetCallback.StateChanged += BottomSheetCallback_StateChanged;
-
         Behavior.AddBottomSheetCallback(_bottomSheetCallback);
+
         Behavior.GestureInsetBottomIgnored = true;
         Behavior.FitToContents = false;
 
-        if (Context is not AndroidX.AppCompat.App.AppCompatActivity activity)
+        if (context is not AndroidX.AppCompat.App.AppCompatActivity activity)
         {
             throw new NotSupportedException($"{nameof(Context)} must be of type {nameof(AndroidX.AppCompat.App.AppCompatActivity)}.");
         }
@@ -377,28 +376,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
         base.Show();
     }
 
-    public void Show(bool isModal, double cornerRadius, Thickness padding, Color backgroundColor, Color windowBackgroundColor)
-    {
-        EventHandler @event = null!;
-        @event = (s, e) =>
-        {
-            CornerRadius = cornerRadius;
-            BackgroundColor = backgroundColor;
-            Padding = padding;
-
-            if (isModal)
-            {
-                _ = Window?.DecorView.PostDelayed(() => _backgroundColorDrawable.AnimateChangeAsync(_backgroundColorDrawable.Color.ToArgb(), windowBackgroundColor).SafeFireAndForget(), 50);
-            }
-
-            ((BottomSheetDialog)s!).ShowEvent -= @event;
-        };
-        ShowEvent += @event;
-
-        base.Show();
-    }
-
-    public async Task ShowAsync(bool isModal, double cornerRadius, Thickness padding, Color backgroundColor, Color windowBackgroundColor)
+    public async Task ShowAsync()
     {
         TaskCompletionSource taskCompletionSource = new();
 
@@ -411,7 +389,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
         };
         ShowEvent += @event;
 
-        Show(isModal, cornerRadius, padding, backgroundColor, windowBackgroundColor);
+        Show();
 
         await taskCompletionSource.Task.ConfigureAwait(true);
     }
@@ -441,15 +419,16 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
         EventHandler @event = null!;
         @event = (s, e) =>
         {
-            _ = taskCompletionSource.TrySetResult();
+            _sheetContainer.RemoveFromParent();
+            _sheetContainer.RemoveAllViews();
 
             ((BottomSheetDialog)s!).DismissEvent -= @event;
+
+            _ = taskCompletionSource.TrySetResult();
         };
         DismissEvent += @event;
 
         base.Dismiss();
-
-        _sheetContainer.RemoveAllViews();
 
         await taskCompletionSource.Task.ConfigureAwait(true);
     }

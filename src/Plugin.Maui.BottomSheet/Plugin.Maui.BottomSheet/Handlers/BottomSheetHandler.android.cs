@@ -1,12 +1,8 @@
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-
 namespace Plugin.Maui.BottomSheet.Handlers;
 
 using AsyncAwaitBestPractices;
 using Microsoft.Maui.Handlers;
 using Plugin.Maui.BottomSheet;
-
 using Plugin.Maui.BottomSheet.Platform.Android;
 
 /// <summary>
