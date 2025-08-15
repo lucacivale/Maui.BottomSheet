@@ -325,4 +325,9 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
 
         handler.PlatformView.SetBottomSheetStyle();
     }
+    
+    private static void MapCancel(BottomSheetHandler handler, IBottomSheet bottomSheet, object? sender)
+    {
+
+    }
 }

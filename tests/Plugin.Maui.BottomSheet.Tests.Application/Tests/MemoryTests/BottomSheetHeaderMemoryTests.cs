@@ -1,3 +1,4 @@
+using Plugin.BottomSheet;
 using Plugin.Maui.BottomSheet.Tests.Application.Mocks;
 using Plugin.Maui.BottomSheet.Tests.Application.Mocks.ViewModels;
 using Xunit.Abstractions;
@@ -23,22 +24,22 @@ public sealed class BottomSheetHeaderMemoryTests : MemoryBaseTest<EmptyContentPa
     }
 
     [UITheory]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton, false, CloseButtonPosition.TopLeft)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton, false, CloseButtonPosition.TopRight)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton, true, CloseButtonPosition.TopLeft)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton, true, CloseButtonPosition.TopRight)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftButton, false, CloseButtonPosition.TopLeft)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftButton, false, CloseButtonPosition.TopRight)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftButton, true, CloseButtonPosition.TopLeft)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftButton, true, CloseButtonPosition.TopRight)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.RightButton, false, CloseButtonPosition.TopLeft)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.RightButton, false, CloseButtonPosition.TopRight)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.RightButton, true, CloseButtonPosition.TopLeft)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.RightButton, true, CloseButtonPosition.TopRight)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton, false, BottomSheetHeaderCloseButtonPosition.TopLeft)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton, false, BottomSheetHeaderCloseButtonPosition.TopRight)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton, true, BottomSheetHeaderCloseButtonPosition.TopLeft)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton, true, BottomSheetHeaderCloseButtonPosition.TopRight)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftButton, false, BottomSheetHeaderCloseButtonPosition.TopLeft)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftButton, false, BottomSheetHeaderCloseButtonPosition.TopRight)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftButton, true, BottomSheetHeaderCloseButtonPosition.TopLeft)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftButton, true, BottomSheetHeaderCloseButtonPosition.TopRight)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.RightButton, false, BottomSheetHeaderCloseButtonPosition.TopLeft)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.RightButton, false, BottomSheetHeaderCloseButtonPosition.TopRight)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.RightButton, true, BottomSheetHeaderCloseButtonPosition.TopLeft)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.RightButton, true, BottomSheetHeaderCloseButtonPosition.TopRight)]
     public async Task BottomSheet_WithBindingContext_DoesNotLeak_WhenBuiltInHeaderIsShowed(
         BottomSheetHeaderButtonAppearanceMode headerAppearance,
         bool showCloseButton,
-        CloseButtonPosition closeButtonPosition)
+        BottomSheetHeaderCloseButtonPosition closeButtonPosition)
     {
         if (TryGetTarget(out EmptyBottomSheet? bottomSheet))
         {
@@ -77,22 +78,22 @@ public sealed class BottomSheetHeaderMemoryTests : MemoryBaseTest<EmptyContentPa
     }
     
     [UITheory]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton, false, CloseButtonPosition.TopLeft)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton, false, CloseButtonPosition.TopRight)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton, true, CloseButtonPosition.TopLeft)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton, true, CloseButtonPosition.TopRight)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftButton, false, CloseButtonPosition.TopLeft)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftButton, false, CloseButtonPosition.TopRight)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftButton, true, CloseButtonPosition.TopLeft)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftButton, true, CloseButtonPosition.TopRight)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.RightButton, false, CloseButtonPosition.TopLeft)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.RightButton, false, CloseButtonPosition.TopRight)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.RightButton, true, CloseButtonPosition.TopLeft)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.RightButton, true, CloseButtonPosition.TopRight)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton, false, BottomSheetHeaderCloseButtonPosition.TopLeft)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton, false, BottomSheetHeaderCloseButtonPosition.TopRight)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton, true, BottomSheetHeaderCloseButtonPosition.TopLeft)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton, true, BottomSheetHeaderCloseButtonPosition.TopRight)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftButton, false, BottomSheetHeaderCloseButtonPosition.TopLeft)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftButton, false, BottomSheetHeaderCloseButtonPosition.TopRight)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftButton, true, BottomSheetHeaderCloseButtonPosition.TopLeft)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftButton, true, BottomSheetHeaderCloseButtonPosition.TopRight)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.RightButton, false, BottomSheetHeaderCloseButtonPosition.TopLeft)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.RightButton, false, BottomSheetHeaderCloseButtonPosition.TopRight)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.RightButton, true, BottomSheetHeaderCloseButtonPosition.TopLeft)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.RightButton, true, BottomSheetHeaderCloseButtonPosition.TopRight)]
     public async Task BottomSheet_WithBindingContext_DoesNotLeak_WhenBuiltInHeaderIsChanged(
         BottomSheetHeaderButtonAppearanceMode headerAppearance,
         bool showCloseButton,
-        CloseButtonPosition closeButtonPosition)
+        BottomSheetHeaderCloseButtonPosition closeButtonPosition)
     {
         if (TryGetTarget(out EmptyBottomSheet? bottomSheet))
         {
@@ -154,22 +155,22 @@ public sealed class BottomSheetHeaderMemoryTests : MemoryBaseTest<EmptyContentPa
     }
     
     [UITheory]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton, false, CloseButtonPosition.TopLeft)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton, false, CloseButtonPosition.TopRight)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton, true, CloseButtonPosition.TopLeft)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton, true, CloseButtonPosition.TopRight)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftButton, false, CloseButtonPosition.TopLeft)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftButton, false, CloseButtonPosition.TopRight)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftButton, true, CloseButtonPosition.TopLeft)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftButton, true, CloseButtonPosition.TopRight)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.RightButton, false, CloseButtonPosition.TopLeft)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.RightButton, false, CloseButtonPosition.TopRight)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.RightButton, true, CloseButtonPosition.TopLeft)]
-    [InlineData(BottomSheetHeaderButtonAppearanceMode.RightButton, true, CloseButtonPosition.TopRight)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton, false, BottomSheetHeaderCloseButtonPosition.TopLeft)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton, false, BottomSheetHeaderCloseButtonPosition.TopRight)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton, true, BottomSheetHeaderCloseButtonPosition.TopLeft)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton, true, BottomSheetHeaderCloseButtonPosition.TopRight)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftButton, false, BottomSheetHeaderCloseButtonPosition.TopLeft)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftButton, false, BottomSheetHeaderCloseButtonPosition.TopRight)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftButton, true, BottomSheetHeaderCloseButtonPosition.TopLeft)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.LeftButton, true, BottomSheetHeaderCloseButtonPosition.TopRight)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.RightButton, false, BottomSheetHeaderCloseButtonPosition.TopLeft)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.RightButton, false, BottomSheetHeaderCloseButtonPosition.TopRight)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.RightButton, true, BottomSheetHeaderCloseButtonPosition.TopLeft)]
+    [InlineData(BottomSheetHeaderButtonAppearanceMode.RightButton, true, BottomSheetHeaderCloseButtonPosition.TopRight)]
     public async Task BottomSheet_WithBindingContext_DoesNotLeak_WhenBuiltInHeaderBindingContextIsChanged(
         BottomSheetHeaderButtonAppearanceMode headerAppearance,
         bool showCloseButton,
-        CloseButtonPosition closeButtonPosition)
+        BottomSheetHeaderCloseButtonPosition closeButtonPosition)
     {
         if (TryGetTarget(out EmptyBottomSheet? bottomSheet))
         {
@@ -271,7 +272,7 @@ public sealed class BottomSheetHeaderMemoryTests : MemoryBaseTest<EmptyContentPa
             bottomSheet.ShowHeader = true;
             bottomSheet.IsOpen = true;
             
-            await Task.Delay(1000);
+            await Task.Delay(2000);
 
             bottomSheet.IsOpen = false;
             

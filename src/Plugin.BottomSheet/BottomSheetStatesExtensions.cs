@@ -3,7 +3,7 @@ namespace Plugin.BottomSheet;
 /// <summary>
 /// Extension methods for working with bottom sheet states collections.
 /// </summary>
-public static class BottomSheetStatesExtensions
+internal static class BottomSheetStatesExtensions
 {
     /// <summary>
     /// Determines whether the specified state is allowed in the collection of states.

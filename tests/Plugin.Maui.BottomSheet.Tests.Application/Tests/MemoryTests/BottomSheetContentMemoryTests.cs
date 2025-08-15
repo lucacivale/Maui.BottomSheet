@@ -157,10 +157,7 @@ public class BottomSheetContentMemoryTests : MemoryBaseTest<EmptyContentPage, Em
             {
                 Content = new VerticalStackLayout
                 {
-                    new Label
-                    {
-                        Text = "Test2",
-                    },
+                    label2,
                 },
             };
             
@@ -178,7 +175,6 @@ public class BottomSheetContentMemoryTests : MemoryBaseTest<EmptyContentPage, Em
         }
     }
     
-    /* Todo test this
     [UIFact]
     public async Task BottomSheet_WithBindingContext_DoesNotLeak_WhenBindingContextChanged()
     {
@@ -212,5 +208,5 @@ public class BottomSheetContentMemoryTests : MemoryBaseTest<EmptyContentPage, Em
 
             await Task.Delay(1000);
         }
-    }*/
+    }
 }

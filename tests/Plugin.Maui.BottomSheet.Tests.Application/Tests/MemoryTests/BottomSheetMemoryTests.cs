@@ -3,6 +3,7 @@ using NSubstitute;
 using Plugin.BottomSheet;
 using Plugin.Maui.BottomSheet.Tests.Application.Mocks;
 using Xunit.Abstractions;
+using MauiThickness = Microsoft.Maui.Thickness;
 
 namespace Plugin.Maui.BottomSheet.Tests.Application.Tests.MemoryTests;
 
@@ -213,7 +214,7 @@ public sealed class BottomSheetMemoryTests : MemoryBaseTest<EmptyContentPage, Em
     {
         if (TryGetTarget(out var bottomSheet))
         {
-            bottomSheet.Padding = new Thickness(20, 20);
+            bottomSheet.Padding = new MauiThickness(20, 20);
             bottomSheet.IsOpen = true;
             await Task.Delay(1000);
 

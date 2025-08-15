@@ -1,4 +1,4 @@
-namespace Plugin.Maui.BottomSheet;
+namespace Plugin.BottomSheet;
 
 /// <summary>
 /// Specifies which buttons should be displayed in the bottom sheet header.

@@ -3,6 +3,7 @@ using NSubstitute;
 using Plugin.BottomSheet;
 using Plugin.Maui.BottomSheet.PlatformConfiguration.AndroidSpecific;
 using Xunit.Abstractions;
+using MauiThickness = Microsoft.Maui.Thickness;
 
 namespace Plugin.Maui.BottomSheet.Tests.Application.Tests;
 
@@ -30,7 +31,7 @@ public class BottomSheetTests : BaseTest<Mocks.EmptyContentPage, BottomSheet>
         Assert.False(View.IsOpen);
         Assert.True(View.IsDraggable);
         Assert.Equal(0.0, View.PeekHeight);
-        Assert.Equal(new Thickness(5), View.Padding);
+        Assert.Equal(new MauiThickness(5), View.Padding);
         Assert.NotNull(View.BottomSheetStyle);
         Assert.Single(View.States);
         Assert.Contains(BottomSheetState.Large, View.States);
@@ -192,7 +193,7 @@ public class BottomSheetTests : BaseTest<Mocks.EmptyContentPage, BottomSheet>
     public void Padding_CanBeSetAndRetrieved()
     {
         // Arrange
-        var padding = new Thickness(10, 15, 20, 25);
+        var padding = new MauiThickness(10, 15, 20, 25);
 
         // Act
         View.Padding = padding;
@@ -507,19 +508,19 @@ public class BottomSheetTests : BaseTest<Mocks.EmptyContentPage, BottomSheet>
         View.SetHalfExpandedRatio(0.3f);
         View.On<Android>().SetTheme(99);
         View.SetTheme(99);
-        View.On<Android>().SetMargin(new Thickness(10,20));
+        View.On<Android>().SetMargin(new MauiThickness(10,20));
 
         Assert.Equal(100, View.On<Android>().GetMaxHeight());
         Assert.Equal(200, View.On<Android>().GetMaxWidth());
         Assert.Equal(0.3f, View.On<Android>().GetHalfExpandedRatio());
         Assert.Equal(99, View.On<Android>().GetTheme());
-        Assert.Equal(new Thickness(10,20), View.On<Android>().GetMargin());
+        Assert.Equal(new MauiThickness(10,20), View.On<Android>().GetMargin());
             
         Assert.Equal(100, View.GetMaxHeight());
         Assert.Equal(200, View.GetMaxWidth());
         Assert.Equal(0.3f, View.GetHalfExpandedRatio());
         Assert.Equal(99, View.GetTheme());
-        Assert.Equal(new Thickness(10,20), View.GetMargin());
+        Assert.Equal(new MauiThickness(10,20), View.GetMargin());
 
         var sheetMock = Substitute.For<IBottomSheet>();
             

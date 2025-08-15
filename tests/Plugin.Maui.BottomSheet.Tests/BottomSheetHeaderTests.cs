@@ -1,3 +1,5 @@
+using Plugin.BottomSheet;
+
 namespace Plugin.Maui.BottomSheet.Tests;
 
 public class BottomSheetHeaderTests
@@ -13,7 +15,7 @@ public class BottomSheetHeaderTests
         Assert.Null(header.TopLeftButton);
         Assert.Null(header.TopRightButton);
         Assert.False(header.ShowCloseButton);
-        Assert.Equal(CloseButtonPosition.TopRight, header.CloseButtonPosition);
+        Assert.Equal(BottomSheetHeaderCloseButtonPosition.TopRight, header.CloseButtonPosition);
         Assert.Null(header.ContentTemplate);
         Assert.Null(header.Content);
         Assert.Equal(BottomSheetHeaderButtonAppearanceMode.None, header.HeaderAppearance);
@@ -76,9 +78,9 @@ public class BottomSheetHeaderTests
     }
 
     [Theory]
-    [InlineData(CloseButtonPosition.TopLeft)]
-    [InlineData(CloseButtonPosition.TopRight)]
-    public void CloseButtonPosition_ShouldSetAndGetValue(CloseButtonPosition position)
+    [InlineData(BottomSheetHeaderCloseButtonPosition.TopLeft)]
+    [InlineData(BottomSheetHeaderCloseButtonPosition.TopRight)]
+    public void CloseButtonPosition_ShouldSetAndGetValue(BottomSheetHeaderCloseButtonPosition position)
     {
         // Arrange
         var header = new BottomSheetHeader();
@@ -252,7 +254,7 @@ public class BottomSheetHeaderTests
         var defaultValue = header.CloseButtonPosition;
 
         // Assert
-        Assert.Equal(CloseButtonPosition.TopRight, defaultValue);
+        Assert.Equal(BottomSheetHeaderCloseButtonPosition.TopRight, defaultValue);
     }
 
     [Fact]

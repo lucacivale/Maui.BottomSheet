@@ -24,8 +24,6 @@ internal sealed class MauiBottomSheet : AndroidView
     private IBottomSheet? _virtualView;
     private BottomSheetDialog? _bottomSheet;
 
-    private BottomSheetHeader? _bottomSheetHeader;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="MauiBottomSheet"/> class.
     /// </summary>
@@ -110,19 +108,7 @@ internal sealed class MauiBottomSheet : AndroidView
     /// </summary>
     public void SetHeader()
     {
-        if (_bottomSheet is null)
-        {
-            return;
-        }
-
-        _bottomSheet.RemoveHeader();
-
-        _bottomSheetHeader = _virtualView?.Header;
-
-        if (_bottomSheet.IsShowing)
-        {
-            SetShowHeader();
-        }
+        SetShowHeader();
     }
 
     /// <summary>
@@ -141,9 +127,9 @@ internal sealed class MauiBottomSheet : AndroidView
         }
         else
         {
-            if (_bottomSheetHeader is not null)
+            if (_virtualView?.Header is not null)
             {
-                _bottomSheet.SetHaderView(_bottomSheetHeader.CreateContent().ToPlatform(_mauiContext));
+                _bottomSheet.SetHeaderView(_virtualView.Header.CreateContent().ToPlatform(_mauiContext));
             }
         }
     }
@@ -168,11 +154,15 @@ internal sealed class MauiBottomSheet : AndroidView
         SetStates();
         SetIsCancelable();
         SetHasHandle();
-        SetHeader();
         SetIsDraggable();
         SetCurrentState();
         SetShowHeader();
         SetContent();
+
+        _bottomSheet.HalfExpandedRatio = _virtualView.GetHalfExpandedRatio();
+        _bottomSheet.MaxHeight = _virtualView.GetMaxHeight();
+        _bottomSheet.MaxWidth = _virtualView.GetMaxWidth();
+        _bottomSheet.Margin = _virtualView.GetMargin().ToThickness();
 
         _virtualView.OnOpeningBottomSheet();
 
@@ -210,9 +200,11 @@ internal sealed class MauiBottomSheet : AndroidView
 
         _bottomSheet.Dispose();
         _bottomSheet = null;
+    }
 
-        _virtualView.Header?.Remove();
-        _virtualView.Content?.Remove();
+    public void Cancel()
+    {
+        _bottomSheet?.Cancel();
     }
 
     /// <summary>
@@ -233,7 +225,7 @@ internal sealed class MauiBottomSheet : AndroidView
         {
             if (_bottomSheet?.IsShowing == true)
             {
-                await CloseAsync().ConfigureAwait(true);
+                Cancel();
             }
         }
     }
@@ -284,12 +276,9 @@ internal sealed class MauiBottomSheet : AndroidView
     /// </summary>
     public void SetContent()
     {
-        _bottomSheet?.RemoveContent();
+        AndroidView view = _virtualView?.Content is not null ? _virtualView.Content.CreateContent().ToPlatform(_mauiContext) : new AndroidView(Context);
 
-        if (_virtualView?.Content is not null)
-        {
-            _bottomSheet?.SetContentView(_virtualView.Content.CreateContent().ToPlatform(_mauiContext));
-        }
+        _bottomSheet?.SetContentView(view);
     }
 
     /// <summary>

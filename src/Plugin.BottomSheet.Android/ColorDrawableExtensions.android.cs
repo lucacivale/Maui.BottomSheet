@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Plugin.BottomSheet.Android;
 
 /// <summary>
@@ -20,19 +22,19 @@ internal static class ColorDrawableExtensions
 
         if (colorAnimation is not null)
         {
-            //todo kann weg oder?
-            using Animator animator = colorAnimation.SetDuration(duration);
+            _ = colorAnimation.SetDuration(duration);
 
             TaskCompletionSource taskCompletionSource = new();
-            using AnimationListener animationListener = new(taskCompletionSource);
-            using AnimationUpdateListener animationUpdateListener = new(drawable);
+            using AnimationListener animationListener = new(drawable, taskCompletionSource);
 
             colorAnimation.AddListener(animationListener);
-            colorAnimation.AddUpdateListener(animationUpdateListener);
+            colorAnimation.AddUpdateListener(animationListener);
             colorAnimation.Start();
 
             await taskCompletionSource.Task.ConfigureAwait(true);
+
             colorAnimation.RemoveAllListeners();
+            colorAnimation.RemoveAllUpdateListeners();
         }
     }
 }

@@ -178,4 +178,7 @@ public interface IBottomSheet : IView, IPadding, ISafeAreaView
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public void OnClosedBottomSheet();
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void Cancel();
 }

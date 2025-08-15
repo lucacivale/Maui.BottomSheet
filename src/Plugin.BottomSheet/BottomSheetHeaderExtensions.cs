@@ -1,4 +1,4 @@
-namespace Plugin.Maui.BottomSheet;
+namespace Plugin.BottomSheet;
 
 /// <summary>
 /// Extension methods for working with bottom sheet headers.
@@ -10,7 +10,7 @@ internal static class BottomSheetHeaderExtensions
     /// </summary>
     /// <param name="bottomSheetHeader">The bottom sheet header to check.</param>
     /// <returns>True if a top left button is configured, false otherwise.</returns>
-    public static bool HasTopLeftButton(this BottomSheetHeader? bottomSheetHeader)
+    public static bool HasTopLeftButton(this IBottomSheetHeader? bottomSheetHeader)
     {
         return bottomSheetHeader is not null
             && bottomSheetHeader.HeaderAppearance is BottomSheetHeaderButtonAppearanceMode.LeftButton
@@ -24,11 +24,11 @@ internal static class BottomSheetHeaderExtensions
     /// </summary>
     /// <param name="bottomSheetHeader">The bottom sheet header to check.</param>
     /// <returns>True if a top left close button is configured, false otherwise.</returns>
-    public static bool HasTopLeftCloseButton(this BottomSheetHeader? bottomSheetHeader)
+    public static bool HasTopLeftCloseButton(this IBottomSheetHeader? bottomSheetHeader)
     {
         return bottomSheetHeader is not null
             && bottomSheetHeader.ShowCloseButton
-            && bottomSheetHeader.CloseButtonPosition == CloseButtonPosition.TopLeft;
+            && bottomSheetHeader.CloseButtonPosition == BottomSheetHeaderCloseButtonPosition.TopLeft;
     }
 
     /// <summary>
@@ -36,7 +36,7 @@ internal static class BottomSheetHeaderExtensions
     /// </summary>
     /// <param name="bottomSheetHeader">The bottom sheet header to check.</param>
     /// <returns>True if a top right button is configured, false otherwise.</returns>
-    public static bool HasTopRightButton(this BottomSheetHeader? bottomSheetHeader)
+    public static bool HasTopRightButton(this IBottomSheetHeader? bottomSheetHeader)
     {
         return bottomSheetHeader is not null
             && bottomSheetHeader.HeaderAppearance is BottomSheetHeaderButtonAppearanceMode.RightButton
@@ -50,11 +50,11 @@ internal static class BottomSheetHeaderExtensions
     /// </summary>
     /// <param name="bottomSheetHeader">The bottom sheet header to check.</param>
     /// <returns>True if a top right close button is configured, false otherwise.</returns>
-    public static bool HasTopRightCloseButton(this BottomSheetHeader? bottomSheetHeader)
+    public static bool HasTopRightCloseButton(this IBottomSheetHeader? bottomSheetHeader)
     {
         return bottomSheetHeader is not null
             && bottomSheetHeader.ShowCloseButton
-            && bottomSheetHeader.CloseButtonPosition == CloseButtonPosition.TopRight;
+            && bottomSheetHeader.CloseButtonPosition == BottomSheetHeaderCloseButtonPosition.TopRight;
     }
 
     /// <summary>
@@ -62,7 +62,7 @@ internal static class BottomSheetHeaderExtensions
     /// </summary>
     /// <param name="bottomSheetHeader">The bottom sheet header to check.</param>
     /// <returns>True if a title is configured, false otherwise.</returns>
-    public static bool HasTitle(this BottomSheetHeader? bottomSheetHeader)
+    public static bool HasTitle(this IBottomSheetHeader? bottomSheetHeader)
     {
         return bottomSheetHeader is not null
             && !string.IsNullOrWhiteSpace(bottomSheetHeader.TitleText);
@@ -73,7 +73,7 @@ internal static class BottomSheetHeaderExtensions
     /// </summary>
     /// <param name="bottomSheetHeader">The bottom sheet header to check.</param>
     /// <returns>True if a custom header view is configured, false otherwise.</returns>
-    public static bool HasHeaderView(this BottomSheetHeader? bottomSheetHeader)
+    public static bool HasHeaderView(this IBottomSheetHeader? bottomSheetHeader)
     {
         return bottomSheetHeader is not null
             && (bottomSheetHeader.ContentTemplate is not null

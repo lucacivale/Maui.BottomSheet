@@ -1,9 +1,9 @@
-﻿namespace Plugin.Maui.BottomSheet;
+﻿namespace Plugin.BottomSheet;
 
 /// <summary>
 /// Specifies the position of the close button in the bottom sheet header.
 /// </summary>
-public enum CloseButtonPosition
+public enum BottomSheetHeaderCloseButtonPosition
 {
     /// <summary>
     /// Positions the close button at the top left of the header.

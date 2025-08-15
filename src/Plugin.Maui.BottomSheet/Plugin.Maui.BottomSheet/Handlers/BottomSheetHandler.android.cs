@@ -337,4 +337,9 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Mau
             return;
         }
     }
+
+    private static void MapCancel(BottomSheetHandler handler, IBottomSheet bottomSheet, object? sender)
+    {
+        handler.PlatformView.Cancel();
+    }
 }

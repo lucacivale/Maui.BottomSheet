@@ -63,7 +63,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
         _sheetContainer = new GridLayout(Context)
         {
             Orientation = GridOrientation.Vertical,
-            RowCount = 4,
+            RowCount = 3,
             LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent),
         };
 
@@ -215,7 +215,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
             _isModal = value;
 
             if (_sheetContainer.Parent?.Parent is CoordinatorLayout bottomSheetLayout
-                && bottomSheetLayout.FindViewById(Resource.Id.touch_outside) is View touchOutside)
+                && bottomSheetLayout.FindViewById(_Microsoft.Android.Resource.Designer.Resource.Id.touch_outside) is View touchOutside)
             {
                 if (_isModal == false)
                 {
@@ -250,7 +250,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
             {
                 _bottomSheetHandle = new BottomSheetHandle(Context);
 
-                _handleLayoutParams = new GridLayout.LayoutParams()
+                _handleLayoutParams = new GridLayout.LayoutParams
                 {
                     TopMargin = Convert.ToInt32(Context.ToPixels(HandleMargin)),
                     Width = Convert.ToInt32(Context.ToPixels(30)),
@@ -300,9 +300,29 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
 
     public float HalfExpandedRatio { get => Behavior.HalfExpandedRatio; set => Behavior.HalfExpandedRatio = value; }
 
-    public int MaxHeight { get => Behavior.MaxHeight; set => Behavior.MaxHeight = value; }
+    public int MaxHeight
+    {
+        get => Behavior.MaxHeight;
+        set
+        {
+            if (value != int.MinValue)
+            {
+                Behavior.MaxHeight = value;
+            }
+        }
+    }
 
-    public int MaxWidth { get => Behavior.MaxWidth; set => Behavior.MaxWidth = value; }
+    public int MaxWidth
+    {
+        get => Behavior.MaxWidth;
+        set
+        {
+            if (value != int.MinValue)
+            {
+                Behavior.MaxWidth = value;
+            }
+        }
+    }
 
     public bool Draggable { get => Behavior.Draggable; set => Behavior.Draggable = value; }
 
@@ -342,14 +362,27 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
 
     public double PeekHeight
     {
-        get => Context.FromPixels(Behavior.PeekHeight);
+        get
+        {
+            double height = (_sheetContainer.GetChildAt(HeaderRow)?.Height ?? 0)
+                + (_sheetContainer.GetChildAt(HeaderRow)?.Height ?? 0)
+                + Convert.ToInt32(
+                    Context.ToPixels(
+                        HandleMargin
+                        + HeaderMargin));
+
+            return Context.FromPixels(Behavior.PeekHeight - height);
+        }
+
         set
         {
             double height = (_sheetContainer.GetChildAt(HeaderRow)?.Height ?? 0)
                 + (_sheetContainer.GetChildAt(HeaderRow)?.Height ?? 0)
-                + Convert.ToInt32(Context.ToPixels(HandleMargin))
-                + Convert.ToInt32(Context.ToPixels(HeaderMargin))
-                + value;
+                + Convert.ToInt32(
+                    Context.ToPixels(
+                        HandleMargin
+                        + HeaderMargin
+                        + value));
 
             Behavior.PeekHeight = Convert.ToInt32(height);
         }
@@ -437,36 +470,23 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
     {
         _sheetContainer.RemoveFromParent();
 
-        RemoveContent();
+        RemoveRow(ContentRow);
 
         _contentLayoutParams = new GridLayout.LayoutParams()
         {
             RowSpec = GridLayout.InvokeSpec(ContentRow, 1f),
             Height = 0,
         };
-
         _contentLayoutParams.SetGravity(GravityFlags.Fill);
+
+        view.Tag = ContentRow;
 
         _sheetContainer.AddView(view, _contentLayoutParams);
 
         base.SetContentView(_sheetContainer);
     }
 
-    public void RemoveContent()
-    {
-        if (_sheetContainer.ChildCount > 0)
-        {
-            if (_sheetContainer.GetChildAt(ContentRow) is View content)
-            {
-                content.LayoutParameters?.Dispose();
-                content.LayoutParameters = null;
-            }
-
-            _sheetContainer.RemoveAllViews();
-        }
-    }
-
-    public void SetHaderView(View view)
+    public void SetHeaderView(View view)
     {
         RemoveHeader();
 
@@ -477,23 +497,14 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
         };
         _headerLayoutParams.SetGravity(GravityFlags.Fill);
 
+        view.Tag = HeaderRow;
+
         _sheetContainer.AddView(view, _headerLayoutParams);
     }
 
     public void RemoveHeader()
     {
-        if (_sheetContainer.GetChildAt(HeaderRow) is View header)
-        {
-            header.RemoveFromParent();
-
-            header.LayoutParameters?.Dispose();
-            header.LayoutParameters = null;
-
-            if (header is ViewGroup viewGroup)
-            {
-                viewGroup.RemoveAllViews();
-            }
-        }
+        RemoveRow(HeaderRow);
     }
 
     protected override void Dispose(bool disposing)
@@ -515,6 +526,27 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
         _backgroundColorDrawable.Dispose();
         _bottomSheetHandle?.Dispose();
         _sheetContainer.Dispose();
+    }
+
+    private void RemoveRow(int row)
+    {
+        for (int i = 0; i < _sheetContainer.ChildCount; i++)
+        {
+            View? child = _sheetContainer.GetChildAt(i);
+
+            if (child is not null
+                && child.Tag is Java.Lang.Integer intTag
+                && intTag.IntValue() == row)
+            {
+                child.RemoveFromParent();
+                child.LayoutParameters?.Dispose();
+
+                if (child is ViewGroup viewGroup)
+                {
+                    viewGroup.RemoveAllViews();
+                }
+            }
+        }
     }
 
     private void BottomSheetDialog_ShowEvent(object? sender, EventArgs e)

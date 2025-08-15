@@ -11,5 +11,11 @@
 		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
 			<_Parameter1>Plugin.Maui.BottomSheet</_Parameter1>
 		</AssemblyAttribute>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>Plugin.Maui.BottomSheet.Tests</_Parameter1>
+		</AssemblyAttribute>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>Plugin.Maui.BottomSheet.Tests.Application</_Parameter1>
+		</AssemblyAttribute>
 	</ItemGroup>
 </Project>

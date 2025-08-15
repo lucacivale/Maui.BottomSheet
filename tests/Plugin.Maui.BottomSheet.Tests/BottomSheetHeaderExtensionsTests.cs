@@ -1,3 +1,5 @@
+using Plugin.BottomSheet;
+
 namespace Plugin.Maui.BottomSheet.Tests;
 
 /// <summary>
@@ -61,7 +63,7 @@ public class BottomSheetHeaderExtensionsTests
             HeaderAppearance = BottomSheetHeaderButtonAppearanceMode.LeftButton,
             TopLeftButton = new Button(),
             ShowCloseButton = true,
-            CloseButtonPosition = CloseButtonPosition.TopLeft,
+            CloseButtonPosition = BottomSheetHeaderCloseButtonPosition.TopLeft,
         };
 
         // Act
@@ -127,7 +129,7 @@ public class BottomSheetHeaderExtensionsTests
         var bottomSheetHeader = new BottomSheetHeader
         {
             ShowCloseButton = false,
-            CloseButtonPosition = CloseButtonPosition.TopLeft,
+            CloseButtonPosition = BottomSheetHeaderCloseButtonPosition.TopLeft,
         };
 
         // Act
@@ -144,7 +146,7 @@ public class BottomSheetHeaderExtensionsTests
         var bottomSheetHeader = new BottomSheetHeader
         {
             ShowCloseButton = true,
-            CloseButtonPosition = CloseButtonPosition.TopRight,
+            CloseButtonPosition = BottomSheetHeaderCloseButtonPosition.TopRight,
         };
 
         // Act
@@ -161,7 +163,7 @@ public class BottomSheetHeaderExtensionsTests
         var bottomSheetHeader = new BottomSheetHeader
         {
             ShowCloseButton = true,
-            CloseButtonPosition = CloseButtonPosition.TopLeft,
+            CloseButtonPosition = BottomSheetHeaderCloseButtonPosition.TopLeft,
         };
 
         // Act
@@ -227,7 +229,7 @@ public class BottomSheetHeaderExtensionsTests
             HeaderAppearance = BottomSheetHeaderButtonAppearanceMode.RightButton,
             TopRightButton = new Button(),
             ShowCloseButton = true,
-            CloseButtonPosition = CloseButtonPosition.TopRight,
+            CloseButtonPosition = BottomSheetHeaderCloseButtonPosition.TopRight,
         };
 
         // Act
@@ -293,7 +295,7 @@ public class BottomSheetHeaderExtensionsTests
         var bottomSheetHeader = new BottomSheetHeader
         {
             ShowCloseButton = false,
-            CloseButtonPosition = CloseButtonPosition.TopRight,
+            CloseButtonPosition = BottomSheetHeaderCloseButtonPosition.TopRight,
         };
 
         // Act
@@ -310,7 +312,7 @@ public class BottomSheetHeaderExtensionsTests
         var bottomSheetHeader = new BottomSheetHeader
         {
             ShowCloseButton = true,
-            CloseButtonPosition = CloseButtonPosition.TopLeft,
+            CloseButtonPosition = BottomSheetHeaderCloseButtonPosition.TopLeft,
         };
 
         // Act
@@ -327,7 +329,7 @@ public class BottomSheetHeaderExtensionsTests
         var bottomSheetHeader = new BottomSheetHeader
         {
             ShowCloseButton = true,
-            CloseButtonPosition = CloseButtonPosition.TopRight,
+            CloseButtonPosition = BottomSheetHeaderCloseButtonPosition.TopRight,
         };
 
         // Act

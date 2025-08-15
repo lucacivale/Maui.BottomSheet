@@ -129,7 +129,8 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             nameof(ShowHeader),
             typeof(bool),
             typeof(BottomSheet),
-            defaultBindingMode: BindingMode.TwoWay);
+            defaultBindingMode: BindingMode.TwoWay,
+            propertyChanged: OnShowHeaderPropertyChanged);
 
     /// <summary>
     /// Bindable property for the open state of the bottom sheet.
@@ -272,6 +273,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             nameof(BottomSheetStyle),
             typeof(BottomSheetStyle),
             typeof(BottomSheet),
+            propertyChanged: OnBottomSheetStylePropertyChanged,
             defaultValue: new BottomSheetStyle());
 
     private readonly WeakEventManager _eventManager = new();
@@ -429,10 +431,23 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     /// <inheritdoc/>
     void IBottomSheet.OnClosedBottomSheet()
     {
+        Header?.Remove();
+        Content?.Remove();
+
         RaiseEvent(nameof(Closed), EventArgs.Empty);
         ExecuteCommand(ClosedCommand, ClosedCommandParameter);
     }
+
+    void IBottomSheet.Cancel()
+    {
+        Handler?.Invoke(nameof(IBottomSheet.Cancel));
+    }
 #pragma warning restore CA1033
+
+    internal void OnCancel(object? sender, EventArgs e)
+    {
+        ((IBottomSheet)this).Cancel();
+    }
 
     /// <summary>
     /// Called when the binding context changes, propagating the change to child elements.
@@ -481,7 +496,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     /// <param name="oldvalue">The old value.</param>
     /// <param name="newvalue">The new value.</param>
     private static void OnHeaderChanged(BindableObject bindable, object oldvalue, object newvalue)
-        => ((BottomSheet)bindable).OnHeaderChanged((BottomSheetHeader)newvalue);
+        => ((BottomSheet)bindable).OnHeaderChanged((BottomSheetHeader)oldvalue, (BottomSheetHeader)newvalue);
 
     /// <summary>
     /// Handles changes to the Content property.
@@ -490,7 +505,13 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     /// <param name="oldvalue">The old value.</param>
     /// <param name="newvalue">The new value.</param>
     private static void OnContentChanged(BindableObject bindable, object oldvalue, object newvalue)
-        => ((BottomSheet)bindable).OnContentChanged((BottomSheetContent)newvalue);
+        => ((BottomSheet)bindable).OnContentChanged((BottomSheetContent)oldvalue, (BottomSheetContent)newvalue);
+
+    private static void OnShowHeaderPropertyChanged(BindableObject bindable, object oldValue, object newValue)
+        => ((BottomSheet)bindable).OnShowHeaderPropertyChanged();
+
+    private static void OnBottomSheetStylePropertyChanged(BindableObject bindable, object oldValue, object newValue)
+        => ((BottomSheet)bindable).OnBottomSheetStylePropertyChanged((BottomSheetStyle)oldValue, (BottomSheetStyle)newValue);
 
     /// <summary>
     /// Raises the specified event with the given event arguments.
@@ -518,8 +539,32 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     /// Handles the internal logic when the Header property changes.
     /// </summary>
     /// <param name="newValue">The new header value.</param>
-    private void OnHeaderChanged(BottomSheetHeader newValue)
+    private void OnHeaderChanged(BottomSheetHeader oldValue, BottomSheetHeader newValue)
     {
+        if (oldValue is not null)
+        {
+            oldValue.CloseButtonClicked -= OnCancel;
+            oldValue.Remove();
+        }
+
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (newValue is not null)
+        {
+            newValue.Parent = this;
+            newValue.BindingContext = BindingContext;
+            newValue.Style = BottomSheetStyle.HeaderStyle;
+            newValue.CloseButtonClicked += OnCancel;
+        }
+    }
+
+    /// <summary>
+    /// Handles the internal logic when the Content property changes.
+    /// </summary>
+    /// <param name="newValue">The new content value.</param>
+    private void OnContentChanged(BottomSheetContent oldValue, BottomSheetContent newValue)
+    {
+        oldValue?.Remove();
+
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (newValue is not null)
         {
@@ -528,17 +573,38 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         }
     }
 
-    /// <summary>
-    /// Handles the internal logic when the Content property changes.
-    /// </summary>
-    /// <param name="newValue">The new content value.</param>
-    private void OnContentChanged(BottomSheetContent newValue)
+    private void OnShowHeaderPropertyChanged()
     {
-        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (ShowHeader == false)
+        {
+            Header?.Remove();
+        }
+    }
+
+    private void OnBottomSheetStylePropertyChanged(BottomSheetStyle oldValue, BottomSheetStyle newValue)
+    {
+        if (oldValue is not null)
+        {
+            oldValue.PropertyChanged -= OnStylePropertyChanged;
+        }
+
         if (newValue is not null)
         {
-            newValue.Parent = this;
-            newValue.BindingContext = BindingContext;
+            if (Header is not null)
+            {
+                Header.Style = newValue.HeaderStyle;
+            }
+
+            newValue.PropertyChanged += OnStylePropertyChanged;
+        }
+    }
+
+    private void OnStylePropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (Header is not null
+            && e.PropertyName == nameof(BottomSheetStyle.HeaderStyle))
+        {
+            Header.Style = BottomSheetStyle.HeaderStyle;
         }
     }
 
