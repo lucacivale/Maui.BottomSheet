@@ -2,6 +2,7 @@
 using AAndroid = Microsoft.Maui.Controls.PlatformConfiguration.Android;
 using AndroidView = Android.Views.View;
 using Android.Graphics.Drawables;
+using Android.Views;
 using AndroidX.AppCompat.App;
 using AndroidX.Core.View;
 using Microsoft.Maui.Platform;
@@ -49,10 +50,12 @@ public partial class ShowCasePage : ContentPage
             sender is BottomSheet bottomSheet &&
             bottomSheet.Handler?.PlatformView is MauiBottomSheet platformView &&
             platformView.Dialog is AppCompatDialog dialog &&
-            dialog.Window?.DecorView is AndroidView decorView)
+            dialog.Window?.DecorView is AndroidView decorView &&
+            platformView.Context is AppCompatActivity activity)
         {
             // Show the bottom sheet above the tab bar.
             ViewCompat.SetOnApplyWindowInsetsListener(decorView, new CustomWindowInsetsListener(dialog));
+            decorView.SetOnTouchListener(new CustomTouchOutsideListener(activity));
         }
 #endif
     }
@@ -74,21 +77,47 @@ public partial class ShowCasePage : ContentPage
         {
             if (_bottomSheetDialog.Context.Resources is Android.Content.Res.Resources resources)
             {
+                int height = insets.ToWindowInsets()?.GetInsets(WindowInsetsCompat.Type.Ime()).Bottom ?? 0;
+
                 int resourceId = resources.GetIdentifier("design_bottom_navigation_height", "dimen", _bottomSheetDialog.Context.PackageName);
                 if (resourceId > 0)
                 {
-                    int height = resources.GetDimensionPixelSize(resourceId);
-                    _bottomSheetDialog.Window?.SetBackgroundDrawable(
-                        new InsetDrawable(
-                            drawable: new ColorDrawable(Colors.Transparent.ToPlatform()),
-                            insetLeft: 0,
-                            insetTop: 0,
-                            insetRight: 0,
-                            insetBottom: height));
+                    height += resources.GetDimensionPixelSize(resourceId);
                 }
+
+                _bottomSheetDialog.Window?.SetBackgroundDrawable(
+                    new InsetDrawable(
+                        drawable: new ColorDrawable(Colors.Transparent.ToPlatform()),
+                        insetLeft: 0,
+                        insetTop: 0,
+                        insetRight: 0,
+                        insetBottom: height));
             }
 
             return insets;
+        }
+    }
+
+    /// <summary>
+    /// Custom Touch outside listener for <see cref="BottomSheet"/>.
+    /// </summary>
+    internal sealed class CustomTouchOutsideListener : Java.Lang.Object, AndroidView.IOnTouchListener
+    {
+        private readonly AppCompatActivity _activity;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CustomTouchOutsideListener"/> class.
+        /// </summary>
+        /// <param name="activity"><see cref="AppCompatActivity"/>.</param>
+        public CustomTouchOutsideListener(AppCompatActivity activity)
+        {
+            _activity = activity;
+        }
+
+        bool AndroidView.IOnTouchListener.OnTouch(AndroidView? v, MotionEvent? e)
+        {
+            _activity.DispatchTouchEvent(e);
+            return false;
         }
     }
 #endif
