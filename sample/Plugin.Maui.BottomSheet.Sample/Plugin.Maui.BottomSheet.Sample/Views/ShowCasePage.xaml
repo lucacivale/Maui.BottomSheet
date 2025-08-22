@@ -8,6 +8,7 @@
     xmlns:vm="clr-namespace:Plugin.Maui.BottomSheet.Sample.ViewModels"
     x:DataType="vm:ShowCaseViewModel"
     Title="Examples of the BottomSheet"
+    Shell.TabBarIsVisible="False"
     Padding="20">
     <ContentPage.Content>
         <VerticalStackLayout Spacing="20">
