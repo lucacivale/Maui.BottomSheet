@@ -77,7 +77,11 @@ public partial class ShowCasePage : ContentPage
         {
             if (_bottomSheetDialog.Context.Resources is Android.Content.Res.Resources resources)
             {
-                int height = insets.ToWindowInsets()?.GetInsets(WindowInsetsCompat.Type.Ime()).Bottom ?? 0;
+                // Note: If we are not using the Resource.Style.ThemeOverlay_MaterialComponents_BottomSheetDialog theme
+                // (see SetTheme above), height must include insets.ToWindowInsets()?.SystemWindowInsetBottom.
+                // This becomes:
+                // int height = insets.ToWindowInsets()?.SystemWindowInsetBottom ?? 0;
+                int height = 0;
 
                 int resourceId = resources.GetIdentifier("design_bottom_navigation_height", "dimen", _bottomSheetDialog.Context.PackageName);
                 if (resourceId > 0)
