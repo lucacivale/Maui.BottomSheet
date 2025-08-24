@@ -8,6 +8,7 @@
         <RootNamespace>Plugin.Maui.BottomSheet.Tests.Application</RootNamespace>
         <UseMaui>true</UseMaui>
         <SingleProject>true</SingleProject>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
         
         <DefineConstants Condition="'$(TestingMode)' == 'NonInteractiveVisual'">$(DefineConstants);MODE_NON_INTERACTIVE_VISUAL</DefineConstants>
         <DefineConstants Condition="'$(TestingMode)' == 'XHarness'">$(DefineConstants);MODE_XHARNESS</DefineConstants>

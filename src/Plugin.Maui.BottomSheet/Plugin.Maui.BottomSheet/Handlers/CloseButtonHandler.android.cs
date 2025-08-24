@@ -1,3 +1,4 @@
+using Android.Views;
 using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
 using ACloseButton = Plugin.BottomSheet.Android.CloseButton;
@@ -25,7 +26,11 @@ internal sealed partial class CloseButtonHandler : ViewHandler<CloseButton, AClo
     {
         _ = MauiContext?.Context ?? throw new InvalidOperationException("Android Context is null, please check your MauiApplication.");
 
-        return new ACloseButton(MauiContext.Context);
+        var closeButton = new ACloseButton(MauiContext.Context);
+
+        closeButton.UpdateAutomationId(VirtualView);
+
+        return closeButton;
     }
 
     protected override void ConnectHandler(ACloseButton platformView)

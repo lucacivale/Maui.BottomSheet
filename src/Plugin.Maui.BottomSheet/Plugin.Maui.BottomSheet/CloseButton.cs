@@ -1,3 +1,6 @@
+using System.ComponentModel;
+using Microsoft.Maui.Handlers;
+
 namespace Plugin.Maui.BottomSheet;
 
 internal sealed class CloseButton : View
@@ -12,6 +15,8 @@ internal sealed class CloseButton : View
 
     public CloseButton(LayoutOptions horizontalOptions)
     {
+        HeightRequest = 40;
+        WidthRequest = 40;
         HorizontalOptions = horizontalOptions;
     }
 

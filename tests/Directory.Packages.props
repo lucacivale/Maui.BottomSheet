@@ -1,5 +1,6 @@
 <Project>
   <ItemGroup>
+    <PackageVersion Include="Appium.WebDriver" Version="8.0.0" />
     <PackageVersion Include="DeviceRunners.VisualRunners.Maui" Version="0.1.0-preview.5" />
     <PackageVersion Include="DeviceRunners.VisualRunners.Xunit" Version="0.1.0-preview.5" />
     <PackageVersion Include="JetBrains.dotMemoryUnit" Version="3.2.20220510" />

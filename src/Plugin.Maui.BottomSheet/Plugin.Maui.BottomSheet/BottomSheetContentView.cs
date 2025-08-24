@@ -69,50 +69,47 @@ public class BottomSheetContentView : BindableObject
         return Content;
     }
 
-    internal void Remove()
+    internal virtual void Remove()
     {
-        BindingContext = null;
-        Parent = null;
+        if (Content is not null)
+        {
+            Content.BindingContext = null;
+            Content.Parent = null;
+        }
 
         Content?.DisconnectHandlers();
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CS0618: Class 'Microsoft.Maui.Controls.Compatibility.Layout' is obsolete: 'Use Microsoft.Maui.Controls.Layout instead. For more information, see https://learn.microsoft.com/dotnet/maui/user-interface/layouts/custom'", Justification = "Views like ContentView still use compatibility layout. As long as Compatibility.Layout isn't removed we need this.")]
     protected override void OnBindingContextChanged()
     {
         base.OnBindingContextChanged();
 
-        if (Content is not null)
+        OnBindingContextChanged(Content);
+    }
+
+    protected void OnBindingContextChanged(View? content)
+    {
+        if (content is null)
         {
-            Content.BindingContext = BindingContext;
+            return;
+        }
 
-            if (Content is Layout layout)
-            {
-                foreach (View view in layout.Children.OfType<View>())
-                {
-                    view.BindingContext = Content.BindingContext;
-                }
-            }
+        content.BindingContext = BindingContext;
 
-            // Views like ContentView still use compatibility layout. As long as Compatibility.Layout isn't removed we need this.
-            else if (Content is Microsoft.Maui.Controls.Compatibility.Layout layoutController)
-            {
-                foreach (Element element in layoutController.Children)
-                {
-                    element.BindingContext = Content.BindingContext;
-                }
-            }
+        foreach (View view in content.GetVisualTreeDescendants().OfType<View>())
+        {
+            view.BindingContext = content.BindingContext;
         }
     }
 
-    private static void OnParentChanged(BindableObject bindable, object oldValue, object newValue)
-        => ((BottomSheetContentView)bindable).OnParentChanged((Element)newValue);
-
-    private void OnParentChanged(Element parent)
+    protected virtual void OnParentChanged(Element parent)
     {
         if (Content is not null)
         {
             Content.Parent = parent;
         }
     }
+
+    private static void OnParentChanged(BindableObject bindable, object oldValue, object newValue)
+        => ((BottomSheetContentView)bindable).OnParentChanged((Element)newValue);
 }

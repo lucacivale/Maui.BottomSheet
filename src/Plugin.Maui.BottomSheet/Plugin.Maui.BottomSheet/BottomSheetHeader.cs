@@ -87,7 +87,7 @@ public sealed class BottomSheetHeader : BottomSheetContentView, IBottomSheetHead
 
     private readonly WeakEventManager _weakEventManager = new();
 
-    private bool _isBuiltInHeader;
+    private Grid? _builtInHeaderLayout;
 
     public event EventHandler? CloseButtonClicked
     {
@@ -165,15 +165,15 @@ public sealed class BottomSheetHeader : BottomSheetContentView, IBottomSheetHead
 
     internal override View CreateContent()
     {
-        _isBuiltInHeader = this.HasHeaderView() == false;
+        View view;
 
         if (this.HasHeaderView())
         {
-            base.CreateContent();
+            view = base.CreateContent();
         }
         else
         {
-            Content = new Grid
+            _builtInHeaderLayout = new Grid
             {
                 RowDefinitions = new RowDefinitionCollection(new RowDefinition(GridLength.Star)),
                 ColumnDefinitions = new ColumnDefinitionCollection(
@@ -181,6 +181,7 @@ public sealed class BottomSheetHeader : BottomSheetContentView, IBottomSheetHead
                     new ColumnDefinition(new GridLength(2, GridUnitType.Star)),
                     new ColumnDefinition(GridLength.Star)),
                 ColumnSpacing = 5,
+                AutomationId = AutomationIds.Header,
             };
 
             if (this.HasTopLeftButton())
@@ -203,14 +204,40 @@ public sealed class BottomSheetHeader : BottomSheetContentView, IBottomSheetHead
             {
                 _ = TryAdd(CreateCloseButton(), CloseButtonColumn());
             }
+
+            view = _builtInHeaderLayout;
         }
 
-        if (Content is null)
+        return view;
+    }
+
+    internal override void Remove()
+    {
+        base.Remove();
+
+        if (_builtInHeaderLayout is not null)
         {
-            throw new BottomSheetContentNotSetException($"{nameof(Content)} must be set before creating content.");
+            _builtInHeaderLayout.BindingContext = null;
+            _builtInHeaderLayout.DisconnectHandlers();
+            _builtInHeaderLayout = null;
         }
+    }
 
-        return Content;
+    protected override void OnParentChanged(Element parent)
+    {
+        base.OnParentChanged(parent);
+
+        if (_builtInHeaderLayout is not null)
+        {
+            _builtInHeaderLayout.Parent = parent;
+        }
+    }
+
+    protected override void OnBindingContextChanged()
+    {
+        base.OnBindingContextChanged();
+
+        OnBindingContextChanged(_builtInHeaderLayout);
     }
 
     private static void OnTopLeftButtonPropertyChanged(BindableObject bindable, object oldValue, object newValue)
@@ -223,7 +250,7 @@ public sealed class BottomSheetHeader : BottomSheetContentView, IBottomSheetHead
         => ((BottomSheetHeader)bindable).OnShowCloseButtonPropertyChanged();
 
     private static void OnCloseButtonPositionPropertyChanged(BindableObject bindable, object oldValue, object newValue)
-        => ((BottomSheetHeader)bindable).OnCloseButtonPositionPropertyChanged();
+        => ((BottomSheetHeader)bindable).OnCloseButtonPositionPropertyChanged((BottomSheetHeaderCloseButtonPosition)oldValue);
 
     private static void OnHeaderAppearancePropertyChanged(BindableObject bindable, object oldValue, object newValue)
         => ((BottomSheetHeader)bindable).OnHeaderAppearancePropertyChanged();
@@ -299,12 +326,14 @@ public sealed class BottomSheetHeader : BottomSheetContentView, IBottomSheetHead
 
     private void OnShowCloseButtonPropertyChanged()
     {
-        ArrangeCloseButton();
+        ArrangeCloseButton(CloseButtonColumn());
     }
 
-    private void OnCloseButtonPositionPropertyChanged()
+    private void OnCloseButtonPositionPropertyChanged(BottomSheetHeaderCloseButtonPosition oldValue)
     {
-        ArrangeCloseButton();
+        int column = oldValue == BottomSheetHeaderCloseButtonPosition.TopLeft ? TopLeftButtonColumn : TopRightButtonColumn;
+
+        ArrangeCloseButton(column);
     }
 
     private void OnHeaderAppearancePropertyChanged()
@@ -323,7 +352,7 @@ public sealed class BottomSheetHeader : BottomSheetContentView, IBottomSheetHead
         if (this.HasTopRightButton() == false
             && this.HasTopRightCloseButton() == false)
         {
-            _ = TryRemove(TopLeftButtonColumn);
+            _ = TryRemove(TopRightButtonColumn);
         }
         else if (TryGetView(TopRightButtonColumn, out View? _) == false)
         {
@@ -337,8 +366,7 @@ public sealed class BottomSheetHeader : BottomSheetContentView, IBottomSheetHead
         bool ret = false;
         grid = null;
 
-        if (_isBuiltInHeader
-            && Content is Grid gridContent)
+        if (_builtInHeaderLayout is Grid gridContent)
         {
             grid = gridContent;
             ret = true;
@@ -372,7 +400,7 @@ public sealed class BottomSheetHeader : BottomSheetContentView, IBottomSheetHead
 
         if (TryGetView(column, out View? view))
         {
-            grid.RemoveAt(column);
+            grid.Remove(view);
 
             view.BindingContext = null;
             view.DisconnectHandlers();
@@ -393,6 +421,8 @@ public sealed class BottomSheetHeader : BottomSheetContentView, IBottomSheetHead
         {
             return false;
         }
+
+        _ = TryRemove(column);
 
         view.BindingContext = BindingContext;
         grid.Add(view, column);
@@ -420,25 +450,41 @@ public sealed class BottomSheetHeader : BottomSheetContentView, IBottomSheetHead
         {
             HorizontalTextAlignment = TextAlignment.Center,
             VerticalTextAlignment = TextAlignment.Center,
+            AutomationId = AutomationIds.HeaderTitle,
         };
         label.SetBinding(Label.TextProperty, static (BottomSheetHeader header) => header.TitleText, source: this);
 
         return TryAdd(label, TitleColumn);
     }
 
-    private void ArrangeCloseButton()
+    private void ArrangeCloseButton(int columnToRemove)
     {
-        _ = TryRemove(CloseButtonColumn());
+        _ = TryRemove(columnToRemove);
 
         if (ShowCloseButton)
         {
             TryAdd(CreateCloseButton(), CloseButtonColumn());
         }
+
+        if (this.HasTopLeftButton())
+        {
+            TryAdd(TopLeftButton, TopLeftButtonColumn);
+        }
+
+        if (this.HasTopRightButton())
+        {
+            TryAdd(TopRightButton, TopRightButtonColumn);
+        }
     }
 
     private CloseButton CreateCloseButton()
     {
-        CloseButton closeButton = new(CloseButtonHorizontalOptions());
+        CloseButton closeButton = new(CloseButtonHorizontalOptions())
+        {
+            AutomationId = AutomationIds.HeaderCloseButton,
+            VerticalOptions = LayoutOptions.Start,
+        };
+
         closeButton.Clicked += CloseButtonOnClicked;
 
         return closeButton;

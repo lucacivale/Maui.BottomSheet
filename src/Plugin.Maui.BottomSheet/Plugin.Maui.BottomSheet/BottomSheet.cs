@@ -575,9 +575,17 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
 
     private void OnShowHeaderPropertyChanged()
     {
-        if (ShowHeader == false)
+        if (Header is not null)
         {
-            Header?.Remove();
+            if (ShowHeader == false)
+            {
+                Header.Remove();
+            }
+            else
+            {
+                Header.Parent = this;
+                Header.BindingContext = BindingContext;
+            }
         }
     }
 

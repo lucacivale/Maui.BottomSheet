@@ -38,11 +38,6 @@ internal sealed class CloseButton : MaterialButton
 
     public override void SetHeight(int pixels)
     {
-        if (pixels <= 0)
-        {
-            return;
-        }
-
         base.SetHeight(pixels);
 
         SetIconSize();
@@ -50,11 +45,6 @@ internal sealed class CloseButton : MaterialButton
 
     public override void SetWidth(int pixels)
     {
-        if (pixels <= 0)
-        {
-            return;
-        }
-
         base.SetWidth(pixels);
 
         SetIconSize();

@@ -1,3 +1,6 @@
+using Android.Views;
+using Microsoft.Maui.Platform;
+
 namespace Plugin.Maui.BottomSheet.Handlers;
 
 using AsyncAwaitBestPractices;
@@ -52,7 +55,11 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Mau
         _ = MauiContext ?? throw new InvalidOperationException("MauiContext is null, please check your MauiApplication.");
         _ = MauiContext.Context ?? throw new InvalidOperationException("Android Context is null, please check your MauiApplication.");
 
-        return new MauiBottomSheet(MauiContext, MauiContext.Context);
+        var bottomSheet = new MauiBottomSheet(MauiContext, MauiContext.Context);
+
+        bottomSheet.UpdateAutomationId(VirtualView);
+
+        return bottomSheet;
     }
 
     /// <summary>

@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Plugin.BottomSheet.Tests.MainPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:shared="clr-namespace:Plugin.BottomSheet.Tests.Shared">
+    <ScrollView>
+        <VerticalStackLayout Padding="30,0" Spacing="25">
+            <Button
+                AutomationId="{x:Static shared:AutomationIds.OpenBottomSheetHeaderTestsPage}"
+                Clicked="Button_OnClicked"
+                Text="Open BottomSheetHeaderTests page" />
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

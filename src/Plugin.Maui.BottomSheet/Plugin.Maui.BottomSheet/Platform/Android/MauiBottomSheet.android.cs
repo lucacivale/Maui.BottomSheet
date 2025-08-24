@@ -168,6 +168,8 @@ internal sealed class MauiBottomSheet : AndroidView
 
         await _bottomSheet.ShowAsync().ConfigureAwait(true);
 
+        _bottomSheet.Window?.DecorView.UpdateAutomationId(_virtualView);
+
         SetPeekHeight();
         SetIsModal();
         SetPadding();
@@ -368,38 +370,35 @@ internal sealed class MauiBottomSheet : AndroidView
 
             BottomSheetNavigationParameters parameters = BottomSheetNavigationParameters.Empty();
 
+            bool closed = true;
             if (_mauiContext.Services.GetRequiredService<IBottomSheetNavigationService>().NavigationStack().Contains(_virtualView))
             {
                 INavigationResult result = await _mauiContext.Services.GetRequiredService<IBottomSheetNavigationService>().GoBackAsync(parameters).ConfigureAwait(true);
 
-                if (result.Success == false
-                    || result.Cancelled)
-                {
-                    _bottomSheet.State = _virtualView.CurrentState;
-                }
-                else
-                {
-                    SetFrame(true);
-                }
+                closed = !(result.Success == false
+                    || result.Cancelled);
             }
             else
             {
-                if (_virtualView.IsOpen
-                    && await MvvmHelpers.ConfirmNavigationAsync(_virtualView, parameters).ConfigureAwait(true))
+                if (await MvvmHelpers.ConfirmNavigationAsync(_virtualView, parameters).ConfigureAwait(true))
                 {
+                    await CloseAsync();
                     MvvmHelpers.OnNavigatedFrom(_virtualView, parameters);
                     MvvmHelpers.OnNavigatedTo(_virtualView.GetPageParent(), parameters);
-                    _virtualView.IsOpen = false;
-                }
-
-                if (_virtualView.IsOpen)
-                {
-                    _bottomSheet.State = _virtualView.CurrentState;
                 }
                 else
                 {
-                    SetFrame(true);
+                    closed = false;
                 }
+            }
+
+            if (closed == false)
+            {
+                _bottomSheet.State = _virtualView.CurrentState;
+            }
+            else
+            {
+                _virtualView.IsOpen = false;
             }
         }
         catch

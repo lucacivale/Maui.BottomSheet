@@ -1,4 +1,5 @@
 using AndroidX.CoordinatorLayout.Widget;
+using AndroidX.Core.View;
 using AsyncAwaitBestPractices;
 using Google.Android.Material.Shape;
 
@@ -35,6 +36,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
 
     private List<BottomSheetState> _bottomSheetStates = [BottomSheetState.Medium, BottomSheetState.Large];
     private bool _isModal;
+    private bool _isCancelable;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheetDialog"/> class.
@@ -123,9 +125,9 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
         set =>
             _sheetContainer.SetPadding(
                 Convert.ToInt32(Context.ToPixels(value.Left)),
-                0,
+                Convert.ToInt32(Context.ToPixels(value.Top)),
                 Convert.ToInt32(Context.ToPixels(value.Right)),
-                0);
+                Convert.ToInt32(Context.ToPixels(value.Bottom)));
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0046:Convert to conditional expression", Justification = "Decreases readability.")]
@@ -229,7 +231,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
                 }
                 else
                 {
-                    SetCanceledOnTouchOutside(true);
+                    SetCanceledOnTouchOutside(_isCancelable);
                     touchOutside.SetOnTouchListener(null);
 
                     if (IsShowing)
@@ -389,17 +391,6 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
     }
 
     /// <summary>
-    /// Handles the back button press event.
-    /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1422: Validate platform compatibility - obsoleted APIs", Justification = "Needed for backwards compatibility.")]
-    public override void OnBackPressed()
-    {
-        base.OnBackPressed();
-
-        _eventManager.RaiseEvent(this, EventArgs.Empty, nameof(BackPressed));
-    }
-
-    /// <summary>
     /// Shows the bottom sheet dialog.
     /// </summary>
     public override void Show()
@@ -443,6 +434,8 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
     public new async Task Dismiss()
     {
         _sheetContainer.RemoveOnLayoutChangeListener(_layoutChangeListener);
+
+        _onBackPressedCallback.BackPressed -= OnBackPressedCallbackOnBackPressed;
         _onBackPressedCallback.Remove();
 
         await _backgroundColorDrawable.AnimateChangeAsync(_backgroundColorDrawable.Color.ToArgb(), Color.Transparent.ToArgb(), 100).ConfigureAwait(true);
@@ -507,6 +500,15 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
         RemoveRow(HeaderRow);
     }
 
+    public override void SetCancelable(bool flag)
+    {
+        _isCancelable = flag;
+
+        base.SetCancelable(flag);
+
+        SetCanceledOnTouchOutside(_isCancelable);
+    }
+
     protected override void Dispose(bool disposing)
     {
         base.Dispose(disposing);
@@ -568,6 +570,11 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
     /// <param name="e">The event arguments.</param>
     private void OnBackPressedCallbackOnBackPressed(object? sender, EventArgs e)
     {
+        if (_isCancelable)
+        {
+            Cancel();
+        }
+
         _eventManager.RaiseEvent(this, EventArgs.Empty, nameof(BackPressed));
     }
 
