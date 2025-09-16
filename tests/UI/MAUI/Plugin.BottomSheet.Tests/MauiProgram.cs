@@ -26,8 +26,9 @@ public static class MauiProgram
         builder.Services.AddTransient<BottomSheetHeaderTestsViewModel>();
         Routing.RegisterRoute(Routes.BottomSheetHeaderTests, typeof(BottomSheetHeaderTests));
         
-        Console.WriteLine("BLABLABLA");
-
+        builder.Services.AddTransient<BottomSheetTestsViewModel>();
+        Routing.RegisterRoute(Routes.BottomSheetTests, typeof(BottomSheetTests));
+        
         return builder.Build();
     }
 }

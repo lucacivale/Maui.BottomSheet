@@ -330,4 +330,14 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
     {
 
     }
+
+    private static void MapMargin(BottomSheetHandler handler, IBottomSheet bottomSheet, object? sender)
+    {
+
+    }
+
+    private static void MapHalfExpandedRatio(BottomSheetHandler handler, IBottomSheet bottomSheet, object? sender)
+    {
+
+    }
 }

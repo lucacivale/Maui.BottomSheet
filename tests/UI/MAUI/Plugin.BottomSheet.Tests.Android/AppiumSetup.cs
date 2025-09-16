@@ -51,8 +51,8 @@ public sealed class AppiumSetup : IDisposable
 
 	public void Dispose()
 	{
-        UninstallApk();
-		_emulatorProcess.Shutdown();
+        //UninstallApk();
+		//_emulatorProcess.Shutdown();
 		_appiumService.Dispose();
 	}
 

@@ -32,5 +32,6 @@ internal sealed class BottomSheetHandle : LinearLayout
         background.SetCornerRadius(context.ToPixels(CornerRadius));
 
         Background = background;
+        Id = _Microsoft.Android.Resource.Designer.Resource.Id.Plugin_BottomSheet_Android_Handle;
     }
 }

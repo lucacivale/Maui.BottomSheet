@@ -6,4 +6,9 @@ public static class ShellExtensions
     {
         return shell.GoToAsync(Routes.BottomSheetHeaderTests);
     }
+    
+    public static Task GoToBottomSheetTestsAsync(this Shell shell)
+    {
+        return shell.GoToAsync(Routes.BottomSheetTests);
+    }
 }

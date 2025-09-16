@@ -63,7 +63,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             {
                 BottomSheetState.Large,
             },
-            validateValue: (_, value) =>
+            validateValue: (bindable, value) =>
             {
                 var result = true;
                 var states = (List<BottomSheetState>)value;
@@ -71,6 +71,12 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
                 if (states.Count == 0)
                 {
                     result = false;
+                }
+
+                if (bindable is BottomSheet bottomSheet
+                    && states.IsStateAllowed(bottomSheet.CurrentState) == false)
+                {
+                    System.Diagnostics.Trace.TraceError("The current state is not allowed in the states collection.");
                 }
 
                 return result;
@@ -527,11 +533,12 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     /// Handles the internal logic when the States property changes.
     /// </summary>
     /// <param name="newvalue">The new states collection.</param>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S6608:Prefer indexing instead of \"Enumerable\" methods on types implementing \"IList\"", Justification = "Improced readability.")]
     private void OnStatesPropertyChanged(List<BottomSheetState> newvalue)
     {
         if (!newvalue.IsStateAllowed(CurrentState))
         {
-            CurrentState = newvalue[0];
+            CurrentState = newvalue.First();
         }
     }
 

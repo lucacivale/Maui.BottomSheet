@@ -5,8 +5,10 @@ public static class AutomationIds
     public const string HeaderElementId = "Plugin.Maui.BottomSheet.BottomSheetHeader";
     public const string HeaderTitleElementId = "Plugin.Maui.BottomSheet.BottomSheetHeaderTitle";
     public const string HeaderCloseButtonElementId = "Plugin.Maui.BottomSheet.BottomSheetHeaderCloseButton";
+    public const string Handle = "Plugin.BottomSheet.Android.Handle";
     
     public const string OpenBottomSheetHeaderTestsPage = "OpenBottomSheetHeaderTestsPage";
+    public const string OpenBottomSheetTestsPage = "OpenBottomSheetTestsPage";
 }
 
 public static class BottomSheetHeaderTestsAutomationIds
@@ -15,6 +17,7 @@ public static class BottomSheetHeaderTestsAutomationIds
     public const string BottomSheetCustomHeader = "BottomSheetCustomHeader";
     public const string OpenBottomSheetBuiltInHeader = "OpenBottomSheetBuiltInHeader";
     public const string OpenBottomSheetCustomHeader = "OpenBottomSheetCustomHeader";
+    public const string IsCancelable = "IsCancelable";
     public const string ShowHeader = "ShowHeader";
     public const string ShowCloseButton = "ShowCloseButton";
     public const string Title = "Title";
@@ -36,4 +39,27 @@ public static class BottomSheetHeaderTestsAutomationIds
     public const string CloseBottomSheet = "CloseBottomSheet";
     public const string CustomHeader = "CustomHeader";
     public const string CustomHeaderButton = "CustomHeaderButton";
+}
+
+public static class BottomSheetTestsAutomationIds
+{
+    public const string BottomSheet = "BottomSheet";
+    public const string OpenBottomSheet = "OpenBottomSheet";
+    public const string SomeButton = "SomeButton";
+    public const string Content = "Content";
+    public const string CornerRadius = "CornerRadius";
+    public const string Margin = "Margin";
+    public const string Padding = "Padding";
+    public const string HalfExpandedRatio = "HalfExpandedRatio";
+    public const string IsModal = "IsModal";
+    public const string HasHandle = "HasHandle";
+    public const string IsCancelable = "IsCancelable";
+    public const string IsDraggable = "IsDraggable";
+    public const string ChangeWindowBackgroundColor = "ChangeWindowBackgroundColor";
+    public const string ChangeBackgroundColor = "ChangeBackgroundColor";
+    public const string MediumState = "MediumState";
+    public const string LargeState = "LargeState";
+    public const string CurrentMediumState = "CurrentMediumState";
+    public const string CurrentLargeState = "CurrentLargeState";
+    public const string DesignBottomSheet = "design_bottom_sheet";
 }

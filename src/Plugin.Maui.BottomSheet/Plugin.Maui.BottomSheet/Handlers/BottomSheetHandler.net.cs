@@ -205,8 +205,18 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, obj
     {
         throw new NotImplementedException();
     }
-    
+
     private static void MapCancel(BottomSheetHandler handler, IBottomSheet bottomSheet, object? sender)
+    {
+        throw new NotImplementedException();
+    }
+
+    private static void MapMargin(BottomSheetHandler handler, IBottomSheet bottomSheet, object? sender)
+    {
+        throw new NotImplementedException();
+    }
+
+    private static void MapHalfExpandedRatio(BottomSheetHandler handler, IBottomSheet bottomSheet, object? sender)
     {
         throw new NotImplementedException();
     }

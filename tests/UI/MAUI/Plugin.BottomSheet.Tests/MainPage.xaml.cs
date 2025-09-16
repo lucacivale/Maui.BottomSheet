@@ -14,4 +14,9 @@ public partial class MainPage : ContentPage
     {
         Shell.Current.GoToBottomSheetHeaderTestsAsync().SafeFireAndForget();
     }
+
+    private void OpenBottomSheetTestsPage(object? sender, EventArgs e)
+    {
+        Shell.Current.GoToBottomSheetTestsAsync().SafeFireAndForget();
+    }
 }

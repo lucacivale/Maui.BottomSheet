@@ -44,6 +44,8 @@ public class BottomSheetHeaderTestsBottomSheetBuiltInHeader : PomBase
     
     private IWebElement CloseBottomSheetElement => Wait.Until(d => d.FindElement(BottomSheetHeaderTestsAutomationIds.CloseBottomSheet));
     
+    private IWebElement IsCancelableElement => Wait.Until(d => d.FindElement(BottomSheetHeaderTestsAutomationIds.IsCancelable));
+    
     public bool IsOpen()
     {
         return App.TryFindElementByAutomationId(BottomSheetHeaderTestsAutomationIds.BottomSheetBuiltInHeader, out AppiumElement? element)
@@ -325,5 +327,23 @@ public class BottomSheetHeaderTestsBottomSheetBuiltInHeader : PomBase
                 && topRightOne.Displayed)
             || (App.TryFindElement(BottomSheetHeaderTestsAutomationIds.TopRightButtonTwo, out AppiumElement? topRightTwo)
                 && topRightTwo.Displayed);
+    }
+    
+    public async Task NonCancelableAsync()
+    {
+        if (IsCancelableElement.IsChecked())
+        {
+            IsCancelableElement.Click();
+            await WaitShortAsync();
+        }
+    }
+    
+    public async Task IsCancelableAsync()
+    {
+        if (IsCancelableElement.IsChecked() == false)
+        {
+            IsCancelableElement.Click();
+            await WaitShortAsync();
+        }
     }
 }

@@ -1,5 +1,4 @@
 using AndroidX.CoordinatorLayout.Widget;
-using AndroidX.Core.View;
 using AsyncAwaitBestPractices;
 using Google.Android.Material.Shape;
 
@@ -10,9 +9,8 @@ namespace Plugin.BottomSheet.Android;
 /// </summary>
 internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.BottomSheetDialog
 {
-    private const int HandleRow = 0;
-    private const int HeaderRow = 1;
-    private const int ContentRow = 2;
+    private const int HeaderRow = 0;
+    private const int ContentRow = 1;
 
     private const int HandleMargin = 5;
     private const int HeaderMargin = 5;
@@ -27,8 +25,9 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
     private readonly GridLayout _sheetContainer;
 
     private readonly ColorDrawable _backgroundColorDrawable;
+    private readonly Color _nonModalWindowBackgroundColor = Color.Transparent;
 
-    private GridLayout.LayoutParams? _handleLayoutParams;
+    private FrameLayout.LayoutParams? _handleLayoutParams;
     private GridLayout.LayoutParams? _headerLayoutParams;
     private GridLayout.LayoutParams? _contentLayoutParams;
 
@@ -37,6 +36,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
     private List<BottomSheetState> _bottomSheetStates = [BottomSheetState.Medium, BottomSheetState.Large];
     private bool _isModal;
     private bool _isCancelable;
+    private Color _windowBackgroundColor;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheetDialog"/> class.
@@ -117,17 +117,23 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
     /// </summary>
     public Thickness Padding
     {
-        get => new(
-            Convert.ToDouble(Context.FromPixels(_sheetContainer.PaddingLeft)),
-            Convert.ToDouble(Context.FromPixels(_sheetContainer.PaddingTop)),
-            Convert.ToDouble(Context.FromPixels(_sheetContainer.PaddingRight)),
-            Convert.ToDouble(Context.FromPixels(_sheetContainer.PaddingBottom)));
-        set =>
+        get =>
+            new(
+                Convert.ToDouble(Context.FromPixels(_sheetContainer.PaddingLeft)),
+                Convert.ToDouble(Context.FromPixels(_sheetContainer.PaddingTop)),
+                Convert.ToDouble(Context.FromPixels(_sheetContainer.PaddingRight)),
+                Convert.ToDouble(Context.FromPixels(_sheetContainer.PaddingBottom)));
+
+        set
+        {
+            var paddingPx = value.ToPixels(Context);
+
             _sheetContainer.SetPadding(
-                Convert.ToInt32(Context.ToPixels(value.Left)),
-                Convert.ToInt32(Context.ToPixels(value.Top)),
-                Convert.ToInt32(Context.ToPixels(value.Right)),
-                Convert.ToInt32(Context.ToPixels(value.Bottom)));
+                Convert.ToInt32(paddingPx.Left),
+                Convert.ToInt32(paddingPx.Top),
+                Convert.ToInt32(paddingPx.Right),
+                Convert.ToInt32(paddingPx.Bottom));
+        }
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0046:Convert to conditional expression", Justification = "Decreases readability.")]
@@ -182,10 +188,17 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
 
     public Color WindowBackgroundColor
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Sonar", "S4275: Refactor this getter so that it actually refers to the field '_windowBackgroundColor", Justification = "Return actual background color.")]
         get => _backgroundColorDrawable.Color;
         set
         {
-            if (IsModal)
+            if (value.Equals(_nonModalWindowBackgroundColor) == false)
+            {
+                _windowBackgroundColor = value;
+            }
+
+            if (IsModal
+                || value.Equals(_nonModalWindowBackgroundColor))
             {
                 _backgroundColorDrawable.AnimateChangeAsync(_backgroundColorDrawable.Color.ToArgb(), value).SafeFireAndForget();
             }
@@ -226,7 +239,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
 
                     if (IsShowing)
                     {
-                        _backgroundColorDrawable.AnimateChangeAsync(_backgroundColorDrawable.Color.ToArgb(), Color.Transparent.ToArgb()).SafeFireAndForget();
+                        WindowBackgroundColor = _nonModalWindowBackgroundColor;
                     }
                 }
                 else
@@ -236,7 +249,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
 
                     if (IsShowing)
                     {
-                        _backgroundColorDrawable.AnimateChangeAsync(_backgroundColorDrawable.Color.ToArgb(), WindowBackgroundColor).SafeFireAndForget();
+                        WindowBackgroundColor = _windowBackgroundColor;
                     }
                 }
             }
@@ -245,30 +258,32 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
 
     public bool HasHandle
     {
-        get => _sheetContainer.GetChildAt(HandleRow) is not null;
+        get => _bottomSheetHandle is not null;
         set
         {
+            if (_sheetContainer.Parent is not ViewGroup parent)
+            {
+                return;
+            }
+
             if (value)
             {
                 _bottomSheetHandle = new BottomSheetHandle(Context);
 
-                _handleLayoutParams = new GridLayout.LayoutParams
+                _handleLayoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent)
                 {
                     TopMargin = Convert.ToInt32(Context.ToPixels(HandleMargin)),
                     Width = Convert.ToInt32(Context.ToPixels(30)),
                     Height = Convert.ToInt32(Context.ToPixels(5)),
-                    RowSpec = GridLayout.InvokeSpec(HandleRow),
+                    Gravity = GravityFlags.CenterHorizontal | GravityFlags.Top,
                 };
-                _handleLayoutParams.SetGravity(GravityFlags.CenterHorizontal);
-
-                _sheetContainer.AddView(_bottomSheetHandle, _handleLayoutParams);
+                parent.AddView(_bottomSheetHandle, _handleLayoutParams);
             }
             else
             {
                 if (_bottomSheetHandle is not null)
                 {
                     _bottomSheetHandle.LayoutParameters?.Dispose();
-                    _bottomSheetHandle.LayoutParameters = null;
 
                     _bottomSheetHandle.RemoveFromParent();
                     _bottomSheetHandle.Dispose();
@@ -280,18 +295,12 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
 
     public BottomSheetState State { get => Behavior.State.ToBottomSheetState(); set => Behavior.State = value.ToPlatformState(); }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S6608:Prefer indexing instead of \"Enumerable\" methods on types implementing \"IList\"", Justification = "Improced readability.")]
     public List<BottomSheetState> States
     {
         get => _bottomSheetStates;
         set
         {
             _bottomSheetStates = value;
-
-            if (_bottomSheetStates.IsStateAllowed(State) == false)
-            {
-                State = _bottomSheetStates.First();
-            }
 
             if (_bottomSheetStates.Contains(BottomSheetState.Peek) == false)
             {
@@ -397,6 +406,8 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
     {
         ShowEvent += BottomSheetDialog_ShowEvent;
 
+        Window?.SetBackgroundDrawable(_backgroundColorDrawable);
+
         base.Show();
     }
 
@@ -438,7 +449,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
         _onBackPressedCallback.BackPressed -= OnBackPressedCallbackOnBackPressed;
         _onBackPressedCallback.Remove();
 
-        await _backgroundColorDrawable.AnimateChangeAsync(_backgroundColorDrawable.Color.ToArgb(), Color.Transparent.ToArgb(), 100).ConfigureAwait(true);
+        await _backgroundColorDrawable.AnimateChangeAsync(_backgroundColorDrawable.Color.ToArgb(), Color.Transparent.ToArgb(), 100);
 
         TaskCompletionSource taskCompletionSource = new();
 
@@ -553,6 +564,8 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
 
     private void BottomSheetDialog_ShowEvent(object? sender, EventArgs e)
     {
+        Window?.ClearFlags(WindowManagerFlags.DimBehind);
+
         if (_sheetContainer.Parent is View parent
             && parent.LayoutParameters is not null)
         {
@@ -592,7 +605,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
     {
         if (States.IsStateAllowed(e.State) == false)
         {
-            State = e.State;
+            State = States.First();
         }
         else
         {

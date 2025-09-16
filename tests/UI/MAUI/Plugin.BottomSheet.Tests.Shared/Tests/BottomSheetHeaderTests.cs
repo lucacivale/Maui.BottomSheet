@@ -44,7 +44,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     public async Task OpenBottomSheet()
     {
         var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
-        
+
         Assert.True(bottomSheet.IsOpen());
     }
     
@@ -270,6 +270,36 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
         await bottomSheet.ClickCloseButtonPositionRightAsync();
 
         Assert.True(bottomSheet.IsCloseButtonAlignedRight());
+    }
+    
+    [Fact]
+    [Trait("Category", "BottomSheetHeaderTests.CloseButton")]
+    public async Task NonCancelableSheet_CloseButtonClicked_BottomSheetClosed()
+    {
+        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+
+        await bottomSheet.NonCancelableAsync();
+        await bottomSheet.ShowHeaderAsync();
+        await bottomSheet.ShowCloseButtonAsync();
+
+        await bottomSheet.ClickHeaderCloseButtonAsync();
+
+        Assert.True(bottomSheet.IsOpen());
+    }
+    
+    [Fact]
+    [Trait("Category", "BottomSheetHeaderTests.CloseButton")]
+    public async Task CancelableSheet_CloseButtonClicked_BottomSheetClosed()
+    {
+        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+
+        await bottomSheet.IsCancelableAsync();
+        await bottomSheet.ShowHeaderAsync();
+        await bottomSheet.ShowCloseButtonAsync();
+
+        await bottomSheet.ClickHeaderCloseButtonAsync();
+
+        Assert.False(bottomSheet.IsOpen());
     }
     
     [Fact]

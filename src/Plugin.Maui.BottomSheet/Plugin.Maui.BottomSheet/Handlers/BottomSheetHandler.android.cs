@@ -349,4 +349,14 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Mau
     {
         handler.PlatformView.Cancel();
     }
+
+    private static void MapMargin(BottomSheetHandler handler, IBottomSheet bottomSheet, object? sender)
+    {
+        handler.PlatformView.SetMargin();
+    }
+
+    private static void MapHalfExpandedRatio(BottomSheetHandler handler, IBottomSheet bottomSheet, object? sender)
+    {
+        handler.PlatformView.SetHalfExpandedRatio();
+    }
 }

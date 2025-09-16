@@ -10,6 +10,11 @@
                 AutomationId="{x:Static shared:AutomationIds.OpenBottomSheetHeaderTestsPage}"
                 Clicked="Button_OnClicked"
                 Text="Open BottomSheetHeaderTests page" />
+
+            <Button
+                AutomationId="{x:Static shared:AutomationIds.OpenBottomSheetTestsPage}"
+                Clicked="OpenBottomSheetTestsPage"
+                Text="Open BottomSheetTests page" />
         </VerticalStackLayout>
     </ScrollView>
 

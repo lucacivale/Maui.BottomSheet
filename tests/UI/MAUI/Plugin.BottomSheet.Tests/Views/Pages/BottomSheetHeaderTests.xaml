@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8" ?>
-
 <ContentPage
     x:Class="Plugin.BottomSheet.Tests.Views.Pages.BottomSheetHeaderTests"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -10,7 +9,7 @@
     xmlns:viewModels="clr-namespace:Plugin.BottomSheet.Tests.ViewModels"
     x:DataType="viewModels:BottomSheetHeaderTestsViewModel">
     <ContentPage.Content>
-        <VerticalStackLayout>
+        <VerticalStackLayout Padding="30,0" Spacing="25">
             <Button
                 AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.OpenBottomSheetBuiltInHeader}"
                 Clicked="OpenBottomSheet"
@@ -22,8 +21,10 @@
             <mauibottomsheet:BottomSheet
                 x:Name="BottomSheet"
                 AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.BottomSheetBuiltInHeader}"
+                IsCancelable="{Binding IsCancelable}"
                 IsOpen="{Binding IsOpen}"
-                ShowHeader="{Binding ShowHeader}">
+                ShowHeader="{Binding ShowHeader}"
+                States="Medium">
                 <mauibottomsheet:BottomSheet.Header>
                     <mauibottomsheet:BottomSheetHeader
                         CloseButtonPosition="{Binding CloseButtonPosition}"
@@ -37,7 +38,7 @@
                     <mauibottomsheet:BottomSheetContent>
                         <Grid
                             ColumnDefinitions="*,*"
-                            RowDefinitions="30,30,40,80,80,55,50,50"
+                            RowDefinitions="30,30,40,80,80,55,50,50,30"
                             RowSpacing="20">
                             <Label Text="Show header:" VerticalOptions="Center" />
                             <Switch
@@ -209,6 +210,17 @@
                                 Clicked="CloseBottomSheet"
                                 HorizontalOptions="Center"
                                 Text="Close" />
+                            <Label
+                                Grid.Row="8"
+                                Text="Is cancelable:"
+                                VerticalOptions="Center" />
+                            <Switch
+                                Grid.Row="8"
+                                Grid.Column="1"
+                                AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.IsCancelable}"
+                                HorizontalOptions="Start"
+                                IsToggled="{Binding IsCancelable}"
+                                VerticalOptions="Center" />
                         </Grid>
                     </mauibottomsheet:BottomSheetContent>
                 </mauibottomsheet:BottomSheet.Content>

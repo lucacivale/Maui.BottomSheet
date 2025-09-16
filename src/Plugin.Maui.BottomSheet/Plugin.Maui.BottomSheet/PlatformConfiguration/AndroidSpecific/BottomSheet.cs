@@ -52,7 +52,24 @@ public static class BottomSheet
             "HalfExpandedRatio",
             typeof(float),
             typeof(BottomSheet),
-            defaultValue: 0.5f);
+            defaultValue: 0.5f,
+            propertyChanged: HalfExpandedRatioPropertyChanged,
+            validateValue: (bindable, value) =>
+            {
+                if (bindable.IsSet(HalfExpandedRatioProperty) == false)
+                {
+                    return true;
+                }
+
+                bool isValid = (float)value > 0;
+
+                if (isValid == false)
+                {
+                    System.Diagnostics.Trace.TraceError("HalfExpandedRatio must be greater than 0");
+                }
+
+                return isValid;
+            });
 
     /// <summary>
     /// Bindable property for the margin of the bottom sheet.
@@ -62,7 +79,8 @@ public static class BottomSheet
             "Margin",
             typeof(Thickness),
             typeof(BottomSheet),
-            defaultValue: Thickness.Zero);
+            defaultValue: Thickness.Zero,
+            propertyChanged: MarginPropertyChanged);
 
     /// <summary>
     /// Sets the half expanded ratio for the bottom sheet using platform configuration.
@@ -375,5 +393,21 @@ public static class BottomSheet
     private static int GetTheme(BindableObject element)
     {
         return (int)element.GetValue(ThemeProperty);
+    }
+
+    private static void MarginPropertyChanged(BindableObject bindable, object oldValue, object newValue)
+    {
+        if (bindable is Element element)
+        {
+            element.Handler?.Invoke(nameof(SetMargin));
+        }
+    }
+
+    private static void HalfExpandedRatioPropertyChanged(BindableObject bindable, object oldValue, object newValue)
+    {
+        if (bindable is Element element)
+        {
+            element.Handler?.Invoke(nameof(SetHalfExpandedRatio));
+        }
     }
 }

@@ -153,16 +153,15 @@ internal sealed class MauiBottomSheet : AndroidView
 
         SetStates();
         SetIsCancelable();
-        SetHasHandle();
         SetIsDraggable();
         SetCurrentState();
         SetShowHeader();
         SetContent();
 
-        _bottomSheet.HalfExpandedRatio = _virtualView.GetHalfExpandedRatio();
+        SetHalfExpandedRatio();
+        SetMargin();
         _bottomSheet.MaxHeight = _virtualView.GetMaxHeight();
         _bottomSheet.MaxWidth = _virtualView.GetMaxWidth();
-        _bottomSheet.Margin = _virtualView.GetMargin().ToThickness();
 
         _virtualView.OnOpeningBottomSheet();
 
@@ -170,12 +169,13 @@ internal sealed class MauiBottomSheet : AndroidView
 
         _bottomSheet.Window?.DecorView.UpdateAutomationId(_virtualView);
 
+        SetWindowBackgroundColor();
+        SetBottomSheetBackgroundColor();
+        SetHasHandle();
         SetPeekHeight();
         SetIsModal();
         SetPadding();
-        SetBottomSheetBackgroundColor();
         SetCornerRadius();
-        SetWindowBackgroundColor();
         SetFrame();
 
         _virtualView.OnOpenedBottomSheet();
@@ -230,6 +230,28 @@ internal sealed class MauiBottomSheet : AndroidView
                 Cancel();
             }
         }
+    }
+
+    public void SetMargin()
+    {
+        if (_bottomSheet is null
+            || _virtualView is null)
+        {
+            return;
+        }
+
+        _bottomSheet.Margin = _virtualView.GetMargin().ToThickness();
+    }
+
+    public void SetHalfExpandedRatio()
+    {
+        if (_bottomSheet is null
+            || _virtualView is null)
+        {
+            return;
+        }
+
+        _bottomSheet.HalfExpandedRatio = _virtualView.GetHalfExpandedRatio();
     }
 
     /// <summary>
@@ -382,7 +404,7 @@ internal sealed class MauiBottomSheet : AndroidView
             {
                 if (await MvvmHelpers.ConfirmNavigationAsync(_virtualView, parameters).ConfigureAwait(true))
                 {
-                    await CloseAsync();
+                    await CloseAsync().ConfigureAwait(true);
                     MvvmHelpers.OnNavigatedFrom(_virtualView, parameters);
                     MvvmHelpers.OnNavigatedTo(_virtualView.GetPageParent(), parameters);
                 }

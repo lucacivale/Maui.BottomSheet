@@ -19,6 +19,9 @@ public partial class BottomSheetHeaderTestsViewModel : ObservableObject
     private bool _showCloseButton;
     
     [ObservableProperty]
+    private bool _isCancelable;
+    
+    [ObservableProperty]
     private BottomSheetHeaderCloseButtonPosition _closeButtonPosition;
     
     [ObservableProperty]

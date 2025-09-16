@@ -39,6 +39,9 @@
         <Compile Update="..\Plugin.BottomSheet.Tests.Shared\POM\POMBase.cs">
           <Link>Shared\POM\POMBase.cs</Link>
         </Compile>
+        <Compile Update="..\Plugin.BottomSheet.Tests.Shared\Tests\BottomSheetTests.cs">
+          <Link>Shared\Tests\BottomSheetTests.cs</Link>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>
