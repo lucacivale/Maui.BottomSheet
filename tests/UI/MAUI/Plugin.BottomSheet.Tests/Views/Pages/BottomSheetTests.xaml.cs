@@ -62,4 +62,24 @@ public partial class BottomSheetTests
     {
         SomeButton.Text = "Clicked!";
     }
+
+    private void OpenStaticPeekBottomSheet_OnClicked(object? sender, EventArgs e)
+    {
+        PeekBottomSheetStaticHeight.IsOpen = true;
+    }
+
+    private void OpenDynamicPeekBottomSheet_OnClicked(object? sender, EventArgs e)
+    {
+        PeekBottomSheetDynamic.IsOpen = true;
+    }
+
+    private void OpenDynamicAdvancedPeekBottomSheet_OnClicked(object? sender, EventArgs e)
+    {
+        PeekBottomSheetDynamicAdvanced.IsOpen = true;
+    }
+
+    private void OpenStaticPeekWithBuiltInHeaderBottomSheet_OnClicked(object? sender, EventArgs e)
+    {
+        PeekBottomSheetStaticHeightWithBuiltInHeader.IsOpen = true;
+    }
 }

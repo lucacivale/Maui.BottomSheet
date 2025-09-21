@@ -278,13 +278,15 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     {
         var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
 
-        await bottomSheet.NonCancelableAsync();
         await bottomSheet.ShowHeaderAsync();
         await bottomSheet.ShowCloseButtonAsync();
+        await bottomSheet.NonCancelableAsync();
 
         await bottomSheet.ClickHeaderCloseButtonAsync();
 
         Assert.True(bottomSheet.IsOpen());
+
+        await bottomSheet.IsCancelableAsync();
     }
     
     [Fact]

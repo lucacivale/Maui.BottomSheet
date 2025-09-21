@@ -74,7 +74,7 @@ internal sealed class MauiBottomSheet : AndroidView
             return;
         }
 
-        _bottomSheet.Canceled -= BottomSheetOnClosed;
+        _bottomSheet.Canceled -= BottomSheetOnCanceled;
         _bottomSheet.StateChanged -= BottomSheetOnStateChanged;
         _bottomSheet.BackPressed -= BottomSheetOnBackPressed;
         _bottomSheet.LayoutChanged -= BottomSheetOnLayoutChanged;
@@ -146,7 +146,7 @@ internal sealed class MauiBottomSheet : AndroidView
         }
 
         _bottomSheet = new(_context, _virtualView.GetTheme());
-        _bottomSheet.Canceled += BottomSheetOnClosed;
+        _bottomSheet.Canceled += BottomSheetOnCanceled;
         _bottomSheet.StateChanged += BottomSheetOnStateChanged;
         _bottomSheet.BackPressed += BottomSheetOnBackPressed;
         _bottomSheet.LayoutChanged += BottomSheetOnLayoutChanged;
@@ -300,7 +300,7 @@ internal sealed class MauiBottomSheet : AndroidView
     /// </summary>
     public void SetContent()
     {
-        AndroidView view = _virtualView?.Content is not null ? _virtualView.Content.CreateContent().ToPlatform(_mauiContext) : new AndroidView(Context);
+        AndroidView view = _virtualView?.Content?.CreateContent().ToPlatform(_mauiContext) ?? new AndroidView(Context);
 
         _bottomSheet?.SetContentView(view);
     }
@@ -380,7 +380,7 @@ internal sealed class MauiBottomSheet : AndroidView
     /// <param name="e">The event arguments.</param>
     [SuppressMessage("Usage", "VSTHRD100: Avoid async void methods", Justification = "Is okay here.")]
     [SuppressMessage("Design", "CA1031: Do not catch general exception types", Justification = "Catch all exceptions to prevent crash.")]
-    private async void BottomSheetOnClosed(object? sender, EventArgs e)
+    private async void BottomSheetOnCanceled(object? sender, EventArgs e)
     {
         try
         {
@@ -402,7 +402,8 @@ internal sealed class MauiBottomSheet : AndroidView
             }
             else
             {
-                if (await MvvmHelpers.ConfirmNavigationAsync(_virtualView, parameters).ConfigureAwait(true))
+                if (_virtualView.IsCancelable
+                    && await MvvmHelpers.ConfirmNavigationAsync(_virtualView, parameters).ConfigureAwait(true))
                 {
                     await CloseAsync().ConfigureAwait(true);
                     MvvmHelpers.OnNavigatedFrom(_virtualView, parameters);
@@ -471,6 +472,7 @@ internal sealed class MauiBottomSheet : AndroidView
     private void BottomSheetOnLayoutChanged(object? sender, EventArgs e)
     {
         SetFrame();
+        SetPeekHeight();
     }
 
     /// <summary>

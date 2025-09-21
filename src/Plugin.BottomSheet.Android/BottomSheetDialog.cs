@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using AndroidX.CoordinatorLayout.Widget;
 using AsyncAwaitBestPractices;
 using Google.Android.Material.Shape;
@@ -375,25 +376,35 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
     {
         get
         {
-            double height = (_sheetContainer.GetChildAt(HeaderRow)?.Height ?? 0)
-                + (_sheetContainer.GetChildAt(HeaderRow)?.Height ?? 0)
-                + Convert.ToInt32(
-                    Context.ToPixels(
-                        HandleMargin
-                        + HeaderMargin));
+            double height = Convert.ToInt32(Context.ToPixels(HandleMargin + HeaderMargin));
+
+            if (TryGetView(HeaderRow, out View? headerView))
+            {
+                height += headerView.Height;
+            }
 
             return Context.FromPixels(Behavior.PeekHeight - height);
         }
 
         set
         {
-            double height = (_sheetContainer.GetChildAt(HeaderRow)?.Height ?? 0)
-                + (_sheetContainer.GetChildAt(HeaderRow)?.Height ?? 0)
-                + Convert.ToInt32(
-                    Context.ToPixels(
-                        HandleMargin
-                        + HeaderMargin
-                        + value));
+            if (value < 0)
+            {
+                return;
+            }
+
+            double height = Context.ToPixels(HandleMargin + HeaderMargin) + value;
+
+            if (TryGetView(HeaderRow, out View? headerView))
+            {
+                height += headerView.Height;
+            }
+
+            if (Window is not null
+                && height > Window.DecorView.Height)
+            {
+                height = Window.DecorView.Height;
+            }
 
             Behavior.PeekHeight = Convert.ToInt32(height);
         }
@@ -543,6 +554,23 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
 
     private void RemoveRow(int row)
     {
+        if (TryGetView(row, out View? view))
+        {
+            view.RemoveFromParent();
+            view.LayoutParameters?.Dispose();
+
+            if (view is ViewGroup viewGroup)
+            {
+                viewGroup.RemoveAllViews();
+            }
+        }
+    }
+
+    private bool TryGetView(int row, [NotNullWhen(true)] out View? view)
+    {
+        bool ret = false;
+        view = null;
+
         for (int i = 0; i < _sheetContainer.ChildCount; i++)
         {
             View? child = _sheetContainer.GetChildAt(i);
@@ -551,15 +579,14 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
                 && child.Tag is Java.Lang.Integer intTag
                 && intTag.IntValue() == row)
             {
-                child.RemoveFromParent();
-                child.LayoutParameters?.Dispose();
+                view = child;
+                ret = true;
 
-                if (child is ViewGroup viewGroup)
-                {
-                    viewGroup.RemoveAllViews();
-                }
+                break;
             }
         }
+
+        return ret;
     }
 
     private void BottomSheetDialog_ShowEvent(object? sender, EventArgs e)

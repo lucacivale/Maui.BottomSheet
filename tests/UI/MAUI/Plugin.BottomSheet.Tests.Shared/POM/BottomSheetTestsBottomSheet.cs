@@ -2,6 +2,7 @@ using System.Drawing;
 using System.Globalization;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
+using OpenQA.Selenium.Interactions;
 
 namespace Plugin.BottomSheet.Tests.Shared;
 
@@ -44,6 +45,8 @@ public class BottomSheetTestsBottomSheet : PomBase
     private IWebElement ContentElement => Wait.Until(d => d.FindElement(BottomSheetTestsAutomationIds.Content));
 
     private IWebElement HandleElement => Wait.Until(d => d.FindElement(AutomationIds.Handle));
+    
+    private IWebElement TestStatesElement => Wait.Until(d => d.FindElement(BottomSheetTestsAutomationIds.TestStates));
     
     public bool IsOpen()
     {
@@ -187,5 +190,72 @@ public class BottomSheetTestsBottomSheet : PomBase
         }
 
         await WaitShortAsync();
+    }
+
+    public async Task SetCurrentState(bool isMedium, bool isLarge)
+    {
+        if (isMedium)
+        {
+            CurrentMediumStateElement.Click();
+        }
+        
+        if (isLarge)
+        {
+            CurrentLargeStateElement.Click();
+        }
+        
+        await WaitShortAsync();
+    }
+    public void ClickBackground()
+    {
+        var location = Location();
+        
+        new Actions(App)
+            .MoveToLocation(location.X, location.Y - 100)
+            .Click()
+            .Perform();
+    }
+
+    public void DragDownToClose()
+    {
+        var location = Location();
+        var size = Size();
+        
+        int startX = location.X + (size.Width / 2);
+        int startY = location.Y + 50;
+    
+        int endX = startX;
+        int endY = startY + (size.Height / 2) + 100;
+    
+        new Actions(App)
+            .MoveToLocation(startX, startY)
+            .ClickAndHold()
+            .MoveToLocation(endX, endY)
+            .Release()
+            .Perform();
+    }
+
+    public async Task TestStates()
+    {
+        if (TestStatesElement.IsChecked() == false)
+        {
+            TestStatesElement.Click();
+            await WaitShortAsync();   
+        }
+    }
+
+    public void DragUp()
+    {
+        var location = HandleLocation();
+        
+        int startX = location.X;
+        int startY = location.Y + 100;
+        
+        new Actions(App)
+            .MoveToLocation(startX, startY)
+            .ClickAndHold()
+            .MoveToLocation(startX, startY - 400)
+            .Release()
+            .Perform();
     }
 }

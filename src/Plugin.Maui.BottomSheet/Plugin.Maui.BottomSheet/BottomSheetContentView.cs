@@ -63,6 +63,9 @@ public class BottomSheetContentView : BindableObject
             throw new BottomSheetContentNotSetException($"{nameof(Content)} must be set before creating content.");
         }
 
+        Content.BindingContext = null;
+        Content.Parent = null;
+
         Content.BindingContext = BindingContext;
         Content.Parent = Parent;
 

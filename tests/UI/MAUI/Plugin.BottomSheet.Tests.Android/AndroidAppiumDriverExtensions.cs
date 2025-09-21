@@ -13,7 +13,7 @@ public static class AndroidAppiumDriverExtensions
         if (deviceInfoObject is Dictionary<string, object> deviceInfo
             && deviceInfo.TryGetValue("displayDensity", out var density))
         {
-            px = 50 * Convert.ToDouble(density) / 160;
+            px = value * Convert.ToDouble(density) / 160;
         }
 
         return px;

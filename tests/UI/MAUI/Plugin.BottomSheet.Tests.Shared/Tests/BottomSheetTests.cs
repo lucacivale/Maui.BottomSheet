@@ -1,5 +1,3 @@
-using OpenQA.Selenium.Appium.Android;
-using OpenQA.Selenium.Appium.Interfaces;
 using OpenQA.Selenium.Interactions;
 using Plugin.BottomSheet.Tests.Android;
 using Xunit.Abstractions;
@@ -147,14 +145,10 @@ public class BottomSheetTests : BaseTest, IAsyncLifetime
     public async Task BottomSheet_ModalBottomSheet_BackgroundTouched_BottomSheetClosed()
     {
         var bottomSheet = await _bottomSheetTestsPage.OpenBottomSheetAsync();
-        var location = bottomSheet.Location();
         
         await bottomSheet.SetModalAsync();
         
-        new Actions(App)
-            .MoveToLocation(location.X, location.Y - 100)
-            .Click()
-            .Perform();
+        bottomSheet.ClickBackground();
         
         Assert.False(bottomSheet.IsOpen());
     }
@@ -164,6 +158,8 @@ public class BottomSheetTests : BaseTest, IAsyncLifetime
     public async Task BottomSheet_HandleEnabled_HandleDisplayed()
     {
         var bottomSheet = await _bottomSheetTestsPage.OpenBottomSheetAsync();
+        
+        bottomSheet.DragUp();
         
         await bottomSheet.ShowHandleAsync();
         
@@ -175,7 +171,9 @@ public class BottomSheetTests : BaseTest, IAsyncLifetime
     public async Task BottomSheet_HandleDisabled_HandleHidden()
     {
         var bottomSheet = await _bottomSheetTestsPage.OpenBottomSheetAsync();
-        
+
+        bottomSheet.DragUp();
+
         await bottomSheet.HideHandleAsync();
         
         Assert.False(bottomSheet.HandleDisplayed());
@@ -213,12 +211,7 @@ public class BottomSheetTests : BaseTest, IAsyncLifetime
         await bottomSheet.SetHalfExpandedRatio(0.8f);
         await bottomSheet.IsCancelableAsync(isCancelable);
         
-        var location = bottomSheet.Location();
-        
-        new Actions(App)
-            .MoveToLocation(location.X, location.Y - 100)
-            .Click()
-            .Perform();
+        bottomSheet.ClickBackground();
 
         Assert.NotEqual(isCancelable, bottomSheet.IsOpen());
         
@@ -237,24 +230,9 @@ public class BottomSheetTests : BaseTest, IAsyncLifetime
         var bottomSheet = await _bottomSheetTestsPage.OpenBottomSheetAsync();
         
         await bottomSheet.SetHalfExpandedRatio(0.8f);
-
-        var location = bottomSheet.Location();
-        var size = bottomSheet.Size();
-        
         await bottomSheet.IsCancelableAsync(isCancelable);
         
-        int startX = location.X + (size.Width / 2);
-        int startY = location.Y + 50;
-    
-        int endX = startX;
-        int endY = startY + (size.Height / 2) + 100;
-    
-        new Actions(App)
-            .MoveToLocation(startX, startY)
-            .ClickAndHold()
-            .MoveToLocation(endX, endY)
-            .Release()
-            .Perform();
+        bottomSheet.DragDownToClose();
 
         Assert.NotEqual(isCancelable, bottomSheet.IsOpen());
         
@@ -277,17 +255,7 @@ public class BottomSheetTests : BaseTest, IAsyncLifetime
         await bottomSheet.IsDraggableAsync(isDraggable);
         await bottomSheet.SetHalfExpandedRatio(0.5f);
 
-        var location = bottomSheet.HandleLocation();
-        
-        int startX = location.X;
-        int startY = location.Y + 100;
-        
-        new Actions(App)
-            .MoveToLocation(startX, startY)
-            .ClickAndHold()
-            .MoveToLocation(startX, startY - 400)
-            .Release()
-            .Perform();
+        bottomSheet.DragUp();
 
         Assert.True(bottomSheet.IsOpen());
         
@@ -306,21 +274,174 @@ public class BottomSheetTests : BaseTest, IAsyncLifetime
     public async Task LargeSheet_MediumAndLargeState_DisableLargeState_SheetIsMedium()
     {
         var bottomSheet = await _bottomSheetTestsPage.OpenBottomSheetAsync();
-        var location = bottomSheet.HandleLocation();
-        
-        int startY = location.Y + 100;
-        
-        new Actions(App)
-            .MoveToLocation(location.X, startY)
-            .ClickAndHold()
-            .MoveToLocation(location.X, startY - 400)
-            .Release()
-            .Perform();
+
+        await bottomSheet.TestStates();
+        await bottomSheet.SetCurrentState(false, true);
 
         var size = bottomSheet.Size();
         
         await bottomSheet.ChangeStates(true, false);
         
-        Assert.True(size.Height > bottomSheet.Size().Height);;
+        Assert.True(size.Height > bottomSheet.Size().Height);
+    }
+    
+    [Fact]
+    [Trait("Category", "BottomSheetTests.States")]
+    public async Task MediumSheet_MediumAndLargeState_DisableMediumState_SheetIsLarge()
+    {
+        var bottomSheet = await _bottomSheetTestsPage.OpenBottomSheetAsync();
+
+        await bottomSheet.TestStates();
+        
+        var size = bottomSheet.Size();
+        
+        await bottomSheet.ChangeStates(false, true);
+        
+        Assert.True(size.Height < bottomSheet.Size().Height);
+    }
+    
+    [Fact]
+    [Trait("Category", "BottomSheetTests.States")]
+    public async Task LargeSheet_MediumAndLargeState_ChangeToMediumState_SheetIsMedium()
+    {
+        var bottomSheet = await _bottomSheetTestsPage.OpenBottomSheetAsync();
+        
+        await bottomSheet.TestStates();
+        await bottomSheet.SetCurrentState(false, true);
+        
+        var size = bottomSheet.Size();
+
+        await bottomSheet.SetCurrentState(true, false);
+        
+        Assert.True(size.Height > bottomSheet.Size().Height);
+    }
+    
+    [Fact]
+    [Trait("Category", "BottomSheetTests.States")]
+    public async Task MediumSheet_MediumAndLargeState_ChangeToLargeState_SheetIsLarge()
+    {
+        var bottomSheet = await _bottomSheetTestsPage.OpenBottomSheetAsync();
+        
+        await bottomSheet.TestStates();
+
+        var size = bottomSheet.Size();
+
+        await bottomSheet.SetCurrentState(false, true);
+        
+        Assert.True(size.Height < bottomSheet.Size().Height);
+    }
+    
+    [Fact]
+    [Trait("Category", "BottomSheetTests.States")]
+    public async Task OnlyMediumState_SetCurrentLageState_SheetIsMedium()
+    {
+        var bottomSheet = await _bottomSheetTestsPage.OpenBottomSheetAsync();
+
+        await bottomSheet.TestStates();
+        await bottomSheet.ChangeStates(true, false);
+
+        var size = bottomSheet.Size();
+
+        await bottomSheet.SetCurrentState(false, true);
+        
+        Assert.Equal(size.Height, bottomSheet.Size().Height);
+    }
+    
+    [Fact]
+    [Trait("Category", "BottomSheetTests.States")]
+    public async Task OnlyLargeState_SetCurrentMediumState_SheetIsLarge()
+    {
+        var bottomSheet = await _bottomSheetTestsPage.OpenBottomSheetAsync();
+
+        await bottomSheet.TestStates();
+        await bottomSheet.ChangeStates(false, true);
+
+        var size = bottomSheet.Size();
+
+        await bottomSheet.SetCurrentState(true, false);
+        
+        Assert.Equal(size.Height, bottomSheet.Size().Height);
+    }
+    
+    [Fact]
+    [Trait("Category", "BottomSheetTests.States")]
+    public async Task MediumAndLargeState_DragUp_SheetIsLarge()
+    {
+        var bottomSheet = await _bottomSheetTestsPage.OpenBottomSheetAsync();
+
+        var size = bottomSheet.Size();
+
+        bottomSheet.DragUp();
+        
+        Assert.True(size.Height < bottomSheet.Size().Height);
+    }
+    
+    /*
+    // todo make this work
+    [Fact]
+    [Trait("Category", "BottomSheetTests.States")]
+    public async Task MediumAndLargeState_DragDown_SheetIsMedium()
+    {
+        var bottomSheet = await _bottomSheetTestsPage.OpenBottomSheetAsync();
+        
+        await bottomSheet.TestStates();
+        await bottomSheet.SetCurrentState(false, true);
+
+        var size = bottomSheet.Size();
+
+        bottomSheet.DragDown();
+        
+        Assert.True(size.Height > bottomSheet.Size().Height);
+    }
+    */
+    
+    [Fact]
+    [Trait("Category", "BottomSheetTests.States")]
+    public async Task Medium_DragUp_SheetIsMedium()
+    {
+        var bottomSheet = await _bottomSheetTestsPage.OpenBottomSheetAsync();
+
+        await bottomSheet.TestStates();
+        await bottomSheet.ChangeStates(true, false);
+
+        var size = bottomSheet.Size();
+
+        bottomSheet.DragUp();
+        
+        Assert.Equal(size.Height, bottomSheet.Size().Height);
+    }
+    
+    /*
+    // todo make this work
+    [Fact]
+    [Trait("Category", "BottomSheetTests.States")]
+    public async Task Large_DragDown_SheetIsLarge()
+    {
+        var bottomSheet = await _bottomSheetTestsPage.OpenBottomSheetAsync();
+    
+        await bottomSheet.TestStates();
+        await bottomSheet.SetCurrentState(false, true);
+        await bottomSheet.ChangeStates(false, true);
+
+        var size = bottomSheet.Size();
+
+        bottomSheet.DragDown();
+        
+        Assert.Equal(size.Height, bottomSheet.Size().Height);
+    }
+    */
+    
+    [Fact]
+    [Trait("Category", "BottomSheetTests.Peek")]
+    public async Task Static_Peek()
+    {
+        const double peekHeight = 300;
+        var peekHeightPx = App.ToPixels(peekHeight);
+        
+        var bottomSheet = await _bottomSheetTestsPage.OpenBottomSheetStaticPeekAsync();
+        
+        var size = bottomSheet.Size();
+
+        Assert.InRange(size.Height, peekHeightPx - 1, peekHeightPx + 1);
     }
 }

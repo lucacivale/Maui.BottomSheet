@@ -23,8 +23,7 @@
                 AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.BottomSheetBuiltInHeader}"
                 IsCancelable="{Binding IsCancelable}"
                 IsOpen="{Binding IsOpen}"
-                ShowHeader="{Binding ShowHeader}"
-                States="Medium">
+                ShowHeader="{Binding ShowHeader}">
                 <mauibottomsheet:BottomSheet.Header>
                     <mauibottomsheet:BottomSheetHeader
                         CloseButtonPosition="{Binding CloseButtonPosition}"
@@ -215,6 +214,7 @@
                                 Text="Is cancelable:"
                                 VerticalOptions="Center" />
                             <Switch
+                                x:Name="IsCancelable"
                                 Grid.Row="8"
                                 Grid.Column="1"
                                 AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.IsCancelable}"

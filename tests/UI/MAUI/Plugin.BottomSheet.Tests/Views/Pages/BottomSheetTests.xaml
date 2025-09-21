@@ -25,6 +25,26 @@
                 AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.SomeButton}"
                 Clicked="SomeButton_OnClicked"
                 Text="Click me" />
+            <Button
+                x:Name="OpenStaticPeekBottomSheet"
+                AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.OpenStaticPeekBottomSheet}"
+                Clicked="OpenStaticPeekBottomSheet_OnClicked"
+                Text="Open Static Peek BottomSheet" />
+            <Button
+                x:Name="OpenDynamicPeekBottomSheet"
+                AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.OpenDynamicPeekBottomSheet}"
+                Clicked="OpenDynamicPeekBottomSheet_OnClicked"
+                Text="Open Dynamic Peek BottomSheet" />
+            <Button
+                x:Name="OpenDynamicAdvancedPeekBottomSheet"
+                AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.OpenDynamicAdvancedPeekBottomSheet}"
+                Clicked="OpenDynamicAdvancedPeekBottomSheet_OnClicked"
+                Text="Open Dynamic Peek BottomSheet Advanced" />
+            <Button
+                x:Name="OpenStaticPeekWithBuiltInHeaderBottomSheet"
+                AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.OpenStaticPeekWithBuiltInHeaderBottomSheet}"
+                Clicked="OpenStaticPeekWithBuiltInHeaderBottomSheet_OnClicked"
+                Text="Open Static Peek With Built In Header BottomSheet" />
             <mauibottomsheet:BottomSheet
                 x:Name="BottomSheet"
                 Padding="{Binding Padding}"
@@ -44,10 +64,32 @@
                 <mauibottomsheet:BottomSheet.Content>
                     <mauibottomsheet:BottomSheetContent>
                         <VerticalStackLayout AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.Content}">
+                            <Grid ColumnDefinitions="Auto, *">
+                                <Label Text="Test states" VerticalOptions="Center" />
+                                <Switch
+                                    x:Name="TestStates"
+                                    Grid.Column="1"
+                                    AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.TestStates}"
+                                    VerticalOptions="Center" />
+                            </Grid>
                             <Grid
                                 ColumnDefinitions="Auto, *"
-                                RowDefinitions="40,40,40,40,40,40,40,40,50,50,50"
+                                RowDefinitions="40,40,40,40,40,40,40,40,50"
                                 RowSpacing="10">
+                                <Grid.Triggers>
+                                    <DataTrigger
+                                        Binding="{Binding IsToggled, Source={x:Reference TestStates}}"
+                                        TargetType="Grid"
+                                        Value="True">
+                                        <Setter Property="IsVisible" Value="False" />
+                                    </DataTrigger>
+                                    <DataTrigger
+                                        Binding="{Binding IsToggled, Source={x:Reference TestStates}}"
+                                        TargetType="Grid"
+                                        Value="False">
+                                        <Setter Property="IsVisible" Value="True" />
+                                    </DataTrigger>
+                                </Grid.Triggers>
                                 <Label Text="Corner radius" VerticalOptions="Center" />
                                 <Label
                                     Grid.Row="1"
@@ -166,73 +208,170 @@
                                         HorizontalOptions="Center"
                                         Text="Change background color" />
                                 </Grid>
-                                <Grid
+                            </Grid>
+                            <Grid ColumnDefinitions="*,*" RowDefinitions="25,25">
+                                <Label
                                     Grid.ColumnSpan="2"
-                                    ColumnDefinitions="*,*"
-                                    Row="9"
-                                    RowDefinitions="25,25">
-                                    <Label
-                                        Grid.ColumnSpan="2"
-                                        FontAttributes="Bold"
-                                        FontSize="20"
-                                        Text="States" />
-                                    <Label
-                                        Grid.Row="1"
-                                        Margin="35,0,0,0"
-                                        Text="Medium"
-                                        VerticalOptions="Center" />
-                                    <Label
-                                        Grid.Row="1"
-                                        Grid.Column="1"
-                                        Margin="35,0,0,0"
-                                        Text="Large"
-                                        VerticalOptions="Center" />
-                                    <CheckBox
-                                        x:Name="Medium"
-                                        Grid.Row="1"
-                                        AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.MediumState}"
-                                        CheckedChanged="Medium_OnCheckedChanged"
-                                        HorizontalOptions="Start"
-                                        IsChecked="{Binding States, Mode=OneWay, Converter={x:StaticResource BottomSheetStatesToBoolConverter}, ConverterParameter={x:Static bottomsheet:BottomSheetState.Medium}}"
-                                        VerticalOptions="Center" />
-                                    <CheckBox
-                                        x:Name="Large"
-                                        Grid.Row="1"
-                                        Grid.Column="1"
-                                        AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.LargeState}"
-                                        CheckedChanged="Large_OnCheckedChanged"
-                                        HorizontalOptions="Start"
-                                        IsChecked="{Binding States, Mode=OneWay, Converter={x:StaticResource BottomSheetStatesToBoolConverter}, ConverterParameter={x:Static bottomsheet:BottomSheetState.Large}}"
-                                        VerticalOptions="Center" />
-                                </Grid>
-                                <Grid
-                                    x:Name="CurrentState"
-                                    Grid.Row="10"
+                                    FontAttributes="Bold"
+                                    FontSize="20"
+                                    Text="States" />
+                                <Label
+                                    Grid.Row="1"
+                                    Margin="35,0,0,0"
+                                    Text="Medium"
+                                    VerticalOptions="Center" />
+                                <Label
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Margin="35,0,0,0"
+                                    Text="Large"
+                                    VerticalOptions="Center" />
+                                <CheckBox
+                                    x:Name="Medium"
+                                    Grid.Row="1"
+                                    AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.MediumState}"
+                                    CheckedChanged="Medium_OnCheckedChanged"
+                                    HorizontalOptions="Start"
+                                    IsChecked="{Binding States, Mode=OneWay, Converter={x:StaticResource BottomSheetStatesToBoolConverter}, ConverterParameter={x:Static bottomsheet:BottomSheetState.Medium}}"
+                                    VerticalOptions="Center" />
+                                <CheckBox
+                                    x:Name="Large"
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.LargeState}"
+                                    CheckedChanged="Large_OnCheckedChanged"
+                                    HorizontalOptions="Start"
+                                    IsChecked="{Binding States, Mode=OneWay, Converter={x:StaticResource BottomSheetStatesToBoolConverter}, ConverterParameter={x:Static bottomsheet:BottomSheetState.Large}}"
+                                    VerticalOptions="Center" />
+                            </Grid>
+                            <Grid
+                                x:Name="CurrentState"
+                                ColumnDefinitions="*,*"
+                                RadioButtonGroup.GroupName="CurrentState"
+                                RadioButtonGroup.SelectedValue="{Binding CurrentState}"
+                                RowDefinitions="25,25">
+                                <Label
                                     Grid.ColumnSpan="2"
-                                    ColumnDefinitions="*,*"
-                                    RadioButtonGroup.GroupName="CurrentState"
-                                    RadioButtonGroup.SelectedValue="{Binding CurrentState}"
-                                    RowDefinitions="25,25">
-                                    <Label
-                                        Grid.ColumnSpan="2"
-                                        FontAttributes="Bold"
-                                        FontSize="20"
-                                        Text="Current state"
-                                        VerticalTextAlignment="Center" />
-                                    <RadioButton
-                                        Grid.Row="1"
-                                        AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.CurrentMediumState}"
-                                        Content="{x:Static bottomsheet:BottomSheetState.Medium}"
-                                        Value="{x:Static bottomsheet:BottomSheetState.Medium}" />
-                                    <RadioButton
-                                        Grid.Row="1"
-                                        Grid.Column="1"
-                                        AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.CurrentLargeState}"
-                                        Content="{x:Static bottomsheet:BottomSheetState.Large}"
-                                        Value="{x:Static bottomsheet:BottomSheetState.Large}" />
-                                </Grid>
+                                    FontAttributes="Bold"
+                                    FontSize="20"
+                                    Text="Current state"
+                                    VerticalTextAlignment="Center" />
+                                <RadioButton
+                                    Grid.Row="1"
+                                    AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.CurrentMediumState}"
+                                    Content="{x:Static bottomsheet:BottomSheetState.Medium}"
+                                    Value="{x:Static bottomsheet:BottomSheetState.Medium}" />
+                                <RadioButton
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.CurrentLargeState}"
+                                    Content="{x:Static bottomsheet:BottomSheetState.Large}"
+                                    Value="{x:Static bottomsheet:BottomSheetState.Large}" />
                             </Grid>
                         </VerticalStackLayout>
+                    </mauibottomsheet:BottomSheetContent>
+                </mauibottomsheet:BottomSheet.Content>
+            </mauibottomsheet:BottomSheet>
+            <mauibottomsheet:BottomSheet
+                x:Name="PeekBottomSheetStaticHeight"
+                Padding="0"
+                AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.StaticPeekBottomSheet}"
+                PeekHeight="{mauibottomsheet:PeekView View={x:Reference Content}}"
+                States="Peek">
+                <mauibottomsheet:BottomSheet.Content>
+                    <mauibottomsheet:BottomSheetContent>
+                        <mauibottomsheet:BottomSheetContent.Content>
+                            <Grid RowDefinitions="300">
+                                <BoxView x:Name="Content" />
+                            </Grid>
+                        </mauibottomsheet:BottomSheetContent.Content>
+                    </mauibottomsheet:BottomSheetContent>
+                </mauibottomsheet:BottomSheet.Content>
+            </mauibottomsheet:BottomSheet>
+            <mauibottomsheet:BottomSheet
+                x:Name="PeekBottomSheetStaticHeightWithBuiltInHeader"
+                AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.StaticPeekWithBuiltInHeaderBottomSheet}"
+                PeekHeight="{mauibottomsheet:PeekView View={x:Reference Content2}}"
+                States="Peek">
+                <mauibottomsheet:BottomSheet.Header>
+                    <mauibottomsheet:BottomSheetHeader ShowCloseButton="True" TitleText="Hallo" />
+                </mauibottomsheet:BottomSheet.Header>
+                <mauibottomsheet:BottomSheet.Triggers>
+                    <DataTrigger
+                        Binding="{Binding IsToggled, Source={x:Reference ShowBuiltInHeader}}"
+                        TargetType="mauibottomsheet:BottomSheet"
+                        Value="True">
+                        <Setter Property="ShowHeader" Value="True" />
+                    </DataTrigger>
+                    <DataTrigger
+                        Binding="{Binding IsToggled, Source={x:Reference ShowBuiltInHeader}}"
+                        TargetType="mauibottomsheet:BottomSheet"
+                        Value="False">
+                        <Setter Property="ShowHeader" Value="False" />
+                    </DataTrigger>
+                </mauibottomsheet:BottomSheet.Triggers>
+                <mauibottomsheet:BottomSheet.Content>
+                    <mauibottomsheet:BottomSheetContent>
+                        <mauibottomsheet:BottomSheetContent.Content>
+                            <VerticalStackLayout x:Name="Content2">
+                                <Grid RowDefinitions="300">
+                                    <BoxView Color="LightGrey" />
+                                </Grid>
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <Label Text="Show header:" VerticalOptions="Center" />
+                                    <Switch
+                                        x:Name="ShowBuiltInHeader"
+                                        Grid.Column="1"
+                                        HorizontalOptions="Start"
+                                        VerticalOptions="Center" />
+                                </Grid>
+                            </VerticalStackLayout>
+                        </mauibottomsheet:BottomSheetContent.Content>
+                    </mauibottomsheet:BottomSheetContent>
+                </mauibottomsheet:BottomSheet.Content>
+            </mauibottomsheet:BottomSheet>
+            <mauibottomsheet:BottomSheet
+                x:Name="PeekBottomSheetDynamic"
+                AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.DynamicPeekBottomSheet}"
+                PeekHeight="{mauibottomsheet:PeekView StackLayout}"
+                States="Peek">
+                <mauibottomsheet:BottomSheet.Content>
+                    <mauibottomsheet:BottomSheetContent>
+                        <mauibottomsheet:BottomSheetContent.Content>
+                            <VerticalStackLayout x:Name="StackLayout">
+                                <Label FontSize="40" Text="{Binding Text, Source={Reference Entry}}" />
+                                <Entry x:Name="Entry" FontSize="40" />
+                            </VerticalStackLayout>
+                        </mauibottomsheet:BottomSheetContent.Content>
+                    </mauibottomsheet:BottomSheetContent>
+                </mauibottomsheet:BottomSheet.Content>
+            </mauibottomsheet:BottomSheet>
+            <mauibottomsheet:BottomSheet
+                x:Name="PeekBottomSheetDynamicAdvanced"
+                AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.DynamicAdvancedPeekBottomSheet}"
+                PeekHeight="{mauibottomsheet:PeekView View={Reference AdvancedPeek}}"
+                States="Peek">
+                <mauibottomsheet:BottomSheet.Content>
+                    <mauibottomsheet:BottomSheetContent>
+                        <mauibottomsheet:BottomSheetContent.Content>
+                            <Grid x:Name="AdvancedPeek" RowDefinitions="*,auto">
+                                <ScrollView Padding="16,24,16,0">
+                                    <VerticalStackLayout Spacing="16">
+                                        <Label FontAttributes="Bold" Text="Name Change" />
+                                        <Entry ReturnType="Done" />
+                                    </VerticalStackLayout>
+                                </ScrollView>
+                                <VerticalStackLayout Grid.Row="1" Spacing="8">
+                                    <Button Text="Save" />
+                                    <Button
+                                        BackgroundColor="Transparent"
+                                        BorderColor="{StaticResource Magenta}"
+                                        BorderWidth="1"
+                                        Text="Cancel"
+                                        TextColor="Black" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </mauibottomsheet:BottomSheetContent.Content>
                     </mauibottomsheet:BottomSheetContent>
                 </mauibottomsheet:BottomSheet.Content>
             </mauibottomsheet:BottomSheet>

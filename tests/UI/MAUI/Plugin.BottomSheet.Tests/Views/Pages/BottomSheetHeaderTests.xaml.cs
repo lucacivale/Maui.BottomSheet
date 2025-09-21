@@ -19,6 +19,7 @@ public partial class BottomSheetHeaderTests
 
         RadioButtonGroup.SetSelectedValue(HeaderLeftButtonVersion, HeaderLeftButtonVersionOne.Value);
         RadioButtonGroup.SetSelectedValue(HeaderRightButtonVersion, HeaderRightButtonVersionOne.Value);
+        IsCancelable.IsToggled = true;
     }
 
     private async void ChangeBindingContext(object? sender, EventArgs e)

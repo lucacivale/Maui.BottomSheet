@@ -62,4 +62,14 @@ public static class BottomSheetTestsAutomationIds
     public const string CurrentMediumState = "CurrentMediumState";
     public const string CurrentLargeState = "CurrentLargeState";
     public const string DesignBottomSheet = "design_bottom_sheet";
+    public const string TestStates = "TestStates";
+    
+    public const string OpenStaticPeekBottomSheet = "OpenStaticPeekBottomSheet";
+    public const string OpenStaticPeekWithBuiltInHeaderBottomSheet = "OpenStaticPeekWithBuiltInHeaderBottomSheet";
+    public const string OpenDynamicPeekBottomSheet = "OpenDynamicPeekBottomSheet";
+    public const string OpenDynamicAdvancedPeekBottomSheet = "OpenDynamicAdvancedPeekBottomSheet";
+    public const string StaticPeekBottomSheet = "StaticPeekBottomSheet";
+    public const string StaticPeekWithBuiltInHeaderBottomSheet = "StaticPeekWithBuiltInHeaderBottomSheet";
+    public const string DynamicPeekBottomSheet = "DynamicPeekBottomSheet";
+    public const string DynamicAdvancedPeekBottomSheet = "DynamicAdvancedPeekBottomSheet";
 }
