@@ -176,7 +176,7 @@ To enable EdgeToEdge by default the derived theme sets the `navigationBarColor` 
 You can create you own themes and apply them to different `BottomSheets`.
 
 To set a custom theme call the platform specific extension method before the sheet is opened.
-```
+```C#
 MyBottomSheet.On<Android>().SetTheme(Resource.Style.My_Awesome_BottomSheetDialog)
 ```
 
@@ -188,12 +188,12 @@ Otherwise, EdgeToEdge is disabled for that sheet. To disable EdgeToEdge you can 
 ### [MaxHeight](https://developer.android.com/reference/com/google/android/material/bottomsheet/BottomSheetBehavior#setMaxHeight(int)) and [MaxWidth](https://developer.android.com/reference/com/google/android/material/bottomsheet/BottomSheetBehavior#setMaxWidth(int))
 To override the MaxHeight or MaxWidth call the platform specific extension method before the sheet is opened.
 
-```
+```C#
 MyBottomSheet.On<Android>().SetMaxHeight(MaxValue);
 MyBottomSheet.On<Android>().SetMaxWidth(MaxValue);
-
+```
 or
-
+```XAML
 xmlns:androidBottomsheet="http://pluginmauibottomsheet.com/platformconfiguration/android"
 androidBottomsheet:BottomSheet.MaxWidth="300"
 ```
@@ -203,21 +203,21 @@ androidBottomsheet:BottomSheet.MaxWidth="300"
 Set the BottomSheet margin.
 The margin will only be applied on the left on right.
 
-```
+```C#
 MyBottomSheet.On<Android>().SetMargin(new Thickness(10, 0, 10, 0));
-
+```
 or
-
+```XAML
 xmlns:androidBottomsheet="http://pluginmauibottomsheet.com/platformconfiguration/android"
 androidBottomsheet:BottomSheet.Margin="10,0,10,0"
 ```
 
 ### [HalfExpandedRatio](https://developer.android.com/reference/com/google/android/material/bottomsheet/BottomSheetBehavior#setHalfExpandedRatio(float))
-```
+```C#
 MyBottomSheet.On<Android>().SetHalfExpanedRatio = 0.8f;
-
+```
 or
-
+```XAML
 xmlns:androidBottomsheet="http://pluginmauibottomsheet.com/platformconfiguration/android"
 androidBottomsheet:BottomSheet.HalfExpandedRatio="0.8"
 ```
@@ -226,7 +226,7 @@ androidBottomsheet:BottomSheet.HalfExpandedRatio="0.8"
 With `BottomSheet.BottomSheetStyle` built in components as e.g. `BottomSheetHeader.Title` or the Close button can be styled.
 You can either style each BottomSheet individually or use [styles](https://learn.microsoft.com/dotnet/maui/user-interface/styles/xaml?view=net-maui-9.0).
 
-```
+```XAML
 <bottomsheet:BottomSheet>
     <bottomsheet:BottomSheet.BottomSheetStyle>
         <bottomsheet:BottomSheetStyle>
@@ -238,7 +238,7 @@ You can either style each BottomSheet individually or use [styles](https://learn
 </bottomsheet:BottomSheet>
 ```
 
-```
+```XAML
 <Style TargetType="bottomsheet:BottomSheet">
     <Setter Property="BottomSheetStyle">
         <Setter.Value>
@@ -269,7 +269,7 @@ xmlns:bottomsheet="http://pluginmauibottomsheet.com"
 
 To open/close a `BottomSheet` simply set `IsOpen` property to true/false.
 
-```
+```XAML
 <bottomsheet:BottomSheet
     x:Name="ModalBottomSheet"
     Padding="20"
@@ -319,7 +319,7 @@ To open/close a `BottomSheet` simply set `IsOpen` property to true/false.
 </bottomsheet:BottomSheet>
 ```
 To set the PeekHeight based on a view inside the `BottomSheetContent` attach the `BottomSheetPeekBehavior` to the view.
-```
+```XAML
 <bottomsheet:BottomSheet.Content>
     <bottomsheet:BottomSheetContent>
         <bottomsheet:BottomSheetContent.ContentTemplate>
@@ -368,7 +368,7 @@ Additionally, any `BottomSheetNavigationParameters` passed during navigation wil
 | BottomSheet opened via navigation              | ❌ No                                    |
 | BottomSheet opened without navigation (IsOpen) | ✅ Yes                                   |
 
-```
+```C#
 public class UserViewModel : IConfirmNavigationAsync
 {
     public void OnNavigatedFrom(IBottomSheetNavigationParameters parameters)
@@ -394,7 +394,7 @@ For `BottomSheets` that are added directly to a layout (not navigated to), the n
 
 > **Note:** `IBottomSheetNavigationParameters` are only passed when a `BottomSheet` is shown or closed via navigation. If a `BottomSheet` is closed with a gesture (such as swipe down).
 
-```
+```C#
 public class UserViewModel : IConfirmNavigationAsync
 {
     public Task<bool> CanNavigateAsync(IBottomSheetNavigationParameters? parameters)
@@ -424,7 +424,7 @@ public class UserViewModel : IConfirmNavigation
 
 `IBottomSheetNavigationService` is be registered automatically and can be resolved. 
 
-```
+```C#
 private readonly IBottomSheetNavigationService _bottomSheetNavigationService;
 
 public MainViewModel(IBottomSheetNavigationService bottomSheetNavigationService)
@@ -435,23 +435,23 @@ public MainViewModel(IBottomSheetNavigationService bottomSheetNavigationService)
 
 Register named `BottomSheets` for navigation
 
-```
+```C#
 builder.Services.AddBottomSheet<ShowCasePage>("Showcase");
 ```
 
 Navigate to the registered `BottomSheet`
 
-```
+```C#
 _bottomSheetNavigationService.NavigateTo("Showcase");
 ```
 
 Close a top most `BottomSheet`
-```
+```C#
 _bottomSheetNavigationService.GoBack();
 ```
 
 Close all open `BottomSheets`(Last In - First Out)
-```
+```C#
 _bottomSheetNavigationService.ClearBottomSheetStack();
 ```
 
@@ -459,12 +459,12 @@ By default `ShowCasePage.BindingContext` will be assigned to `BottomSheet.Bindin
 
 Wire your `BottomSheet` to a `ViewModel` to simplify navigation.
 
-```
+```C#
 builder.Services.AddBottomSheet<SomeBottomSheet, SomeViewModel>("SomeBottomSheet");
 ```
 
 To manually set the `ViewModel` it has to be available in the container
-```
+```C#
 builder.Services.AddTransient<SomeViewModel>();
 
 _bottomSheetNavigationService.NavigateTo<SomeViewModel>("Showcase");
@@ -472,13 +472,13 @@ _bottomSheetNavigationService.NavigateTo<SomeViewModel>("Showcase");
 
 If `CopyPagePropertiesToBottomSheet` is enabled all applicable properties will be copied from the source page to the `BottomSheet` during navigation.
 
-```
+```C#
 .UseBottomSheet(config => config.CopyPagePropertiesToBottomSheet = true);
 ```
 
 Add a default `BottomSheet` navigation configuration
 
-```
+```C#
 builder.Services.AddBottomSheet<ShowCasePage>("Showcase",
     (sheet, page) =>
     {
@@ -492,7 +492,7 @@ builder.Services.AddBottomSheet<ShowCasePage>("Showcase",
     });
 ```
 To override the default configuration
-```
+```C#
 _bottomSheetNavigationService.NavigateTo("Showcase", configure: (sheet) =>
 {
     sheet.Header.TitleText = "My new title";
@@ -501,7 +501,7 @@ _bottomSheetNavigationService.NavigateTo("Showcase", configure: (sheet) =>
 
 You can pass parameters on each navigation as you are used to it from [Shell navigation](https://learn.microsoft.com/dotnet/maui/fundamentals/shell/navigation?view=net-maui-9.0#process-navigation-data-using-a-single-method).
 
-```
+```C#
 _bottomSheetNavigationService.NavigateTo("Showcase", new BottomSheetNavigationParameters()
 {
     ["SomeKey"] = "SomeValue",
