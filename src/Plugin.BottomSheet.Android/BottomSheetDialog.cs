@@ -269,13 +269,16 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
 
             if (value)
             {
+                int handleHeight = Convert.ToInt32(Context.ToPixels(5));
+                int handleMargin = Convert.ToInt32(Context.ToPixels(HandleMargin));
+
                 _bottomSheetHandle = new BottomSheetHandle(Context);
 
                 _handleLayoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent)
                 {
-                    TopMargin = Convert.ToInt32(Context.ToPixels(HandleMargin)),
+                    TopMargin = handleMargin,
                     Width = Convert.ToInt32(Context.ToPixels(30)),
-                    Height = Convert.ToInt32(Context.ToPixels(5)),
+                    Height = handleHeight,
                     Gravity = GravityFlags.CenterHorizontal | GravityFlags.Top,
                 };
                 parent.AddView(_bottomSheetHandle, _handleLayoutParams);
@@ -376,11 +379,16 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
     {
         get
         {
-            double height = Convert.ToInt32(Context.ToPixels(HandleMargin + HeaderMargin));
+            double height = 0;
+
+            if (_bottomSheetHandle is not null)
+            {
+                height += _bottomSheetHandle.Height + Convert.ToInt32(Context.ToPixels(HandleMargin));
+            }
 
             if (TryGetView(HeaderRow, out View? headerView))
             {
-                height += headerView.Height;
+                height += headerView.Height + Convert.ToInt32(Context.ToPixels(HeaderMargin));
             }
 
             return Context.FromPixels(Behavior.PeekHeight - height);
@@ -393,11 +401,16 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
                 return;
             }
 
-            double height = Context.ToPixels(HandleMargin + HeaderMargin) + value;
+            double height = value;
+
+            if (_bottomSheetHandle is not null)
+            {
+                height += _bottomSheetHandle.MeasuredHeight + Convert.ToInt32(Context.ToPixels(HandleMargin));
+            }
 
             if (TryGetView(HeaderRow, out View? headerView))
             {
-                height += headerView.Height;
+                height += headerView.MeasuredHeight + Convert.ToInt32(Context.ToPixels(HeaderMargin));
             }
 
             if (Window is not null
@@ -433,6 +446,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
 
             ((BottomSheetDialog)s!).ShowEvent -= @event;
         };
+
         ShowEvent += @event;
 
         Show();
@@ -507,7 +521,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
 
         _headerLayoutParams = new GridLayout.LayoutParams()
         {
-            TopMargin = Convert.ToInt32(Context.ToPixels(5)),
+            TopMargin = Convert.ToInt32(Context.ToPixels(HeaderMargin)),
             RowSpec = GridLayout.InvokeSpec(HeaderRow),
         };
         _headerLayoutParams.SetGravity(GravityFlags.Fill);

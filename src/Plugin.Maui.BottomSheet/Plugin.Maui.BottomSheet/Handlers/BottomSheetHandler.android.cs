@@ -19,7 +19,7 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Mau
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     internal partial Task OpenAsync()
     {
-        return PlatformView.OpenAsync();
+        return PlatformView.OpenAsync(true);
     }
 
     /// <summary>

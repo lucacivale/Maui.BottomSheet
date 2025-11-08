@@ -11,7 +11,21 @@ public class BottomSheetTestsStaticPeek : PomBase
     {
     }
     
+    private IWebElement ContentElement => Wait.Until(d => d.FindElement(BottomSheetTestsAutomationIds.Content));
+    
     private IWebElement DesignContentElement => Wait.Until(d => d.FindElement(BottomSheetTestsAutomationIds.DesignBottomSheet));
+    
+    private IWebElement HandleElement => Wait.Until(d => d.FindElement(AutomationIds.Handle));
+
+    public Size HandleSize()
+    {
+        return HandleElement.Size;   
+    }
+
+    public Size ContentSize()
+    {
+        return ContentElement.Size;
+    }
 
     public Size Size()
     {

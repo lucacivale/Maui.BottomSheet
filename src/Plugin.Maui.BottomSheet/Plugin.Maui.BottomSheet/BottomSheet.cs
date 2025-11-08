@@ -197,7 +197,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             nameof(Padding),
             typeof(MauiThickness),
             typeof(BottomSheet),
-            defaultValue: new MauiThickness(5));
+            defaultValue: new MauiThickness(10));
 
     /// <summary>
     /// Bindable property for the command executed when closing.

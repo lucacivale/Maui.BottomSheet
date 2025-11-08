@@ -14,6 +14,8 @@ public class MainPage : PomBase
     
     private IWebElement OpenBottomSheetTestsPageElement => Wait.Until(d => d.FindElement(AutomationIds.OpenBottomSheetTestsPage));
     
+    private IWebElement OpenModalPageBottomSheetTestsPageElement => Wait.Until(d => d.FindElement(AutomationIds.OpenModalPageBottomSheetTestsPage));
+    
     public async Task<BottomSheetHeaderTestsPage> OpenBottomSheetHeaderTestsPage()
     {
         OpenBottomSheetHeaderTestsPageElement.Click();
@@ -30,5 +32,14 @@ public class MainPage : PomBase
         await WaitAsync();
         
         return new BottomSheetTestsPage(App);
+    }
+    
+    public async Task<ModalPageBottomSheetTestsPage> OpenModalPageBottomSheetTestsPage()
+    {
+        OpenModalPageBottomSheetTestsPageElement.Click();
+
+        await WaitAsync();
+        
+        return new ModalPageBottomSheetTestsPage(App);
     }
 }

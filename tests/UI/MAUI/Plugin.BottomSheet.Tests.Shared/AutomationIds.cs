@@ -9,6 +9,7 @@ public static class AutomationIds
     
     public const string OpenBottomSheetHeaderTestsPage = "OpenBottomSheetHeaderTestsPage";
     public const string OpenBottomSheetTestsPage = "OpenBottomSheetTestsPage";
+    public const string OpenModalPageBottomSheetTestsPage = "OpenModalPageBottomSheetTestsPage";
 }
 
 public static class BottomSheetHeaderTestsAutomationIds
@@ -72,4 +73,9 @@ public static class BottomSheetTestsAutomationIds
     public const string StaticPeekWithBuiltInHeaderBottomSheet = "StaticPeekWithBuiltInHeaderBottomSheet";
     public const string DynamicPeekBottomSheet = "DynamicPeekBottomSheet";
     public const string DynamicAdvancedPeekBottomSheet = "DynamicAdvancedPeekBottomSheet";
+}
+
+public static class ModalPageBottomSheetTestsAutomationIds
+{
+    public const string BottomSheet = "BottomSheet";
 }

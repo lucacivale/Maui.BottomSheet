@@ -20,9 +20,12 @@ internal sealed class MauiBottomSheet : AndroidView
 {
     private readonly IMauiContext _mauiContext;
     private readonly Context _context;
+    private readonly TaskCompletionSource _isAttachedToWindowTcs;
 
     private IBottomSheet? _virtualView;
     private BottomSheetDialog? _bottomSheet;
+
+    private bool _isAttachedToWindow;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MauiBottomSheet"/> class.
@@ -34,6 +37,7 @@ internal sealed class MauiBottomSheet : AndroidView
     {
         _mauiContext = mauiContext;
         _context = context;
+        _isAttachedToWindowTcs = new TaskCompletionSource();
     }
 
     /// <summary>
@@ -138,11 +142,18 @@ internal sealed class MauiBottomSheet : AndroidView
     /// Opens the bottom sheet asynchronously.
     /// </summary>
     /// <returns>A task representing the asynchronous operation.</returns>
-    public async Task OpenAsync()
+    public async Task OpenAsync(bool _force = false)
     {
         if (_virtualView is null)
         {
             return;
+        }
+
+        if (!_isAttachedToWindow
+            && _force == false)
+        {
+            using CancellationTokenSource cts = new(TimeSpan.FromSeconds(20));
+            await _isAttachedToWindowTcs.Task.WaitAsync(cts.Token).ConfigureAwait(true);
         }
 
         _bottomSheet = new(_context, _virtualView.GetTheme());
@@ -371,6 +382,15 @@ internal sealed class MauiBottomSheet : AndroidView
         }
 
         _bottomSheet.WindowBackgroundColor = _virtualView.WindowBackgroundColor.ToPlatform();
+    }
+
+    /// <inheritdoc />
+    protected override void OnAttachedToWindow()
+    {
+        base.OnAttachedToWindow();
+
+        _isAttachedToWindow = true;
+        _isAttachedToWindowTcs.TrySetResult();
     }
 
     /// <summary>

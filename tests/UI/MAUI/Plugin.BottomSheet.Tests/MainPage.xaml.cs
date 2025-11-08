@@ -19,4 +19,9 @@ public partial class MainPage : ContentPage
     {
         Shell.Current.GoToBottomSheetTestsAsync().SafeFireAndForget();
     }
+    
+    private void GoToModalPageBottomSheetTests(object? sender, EventArgs e)
+    {
+        Shell.Current.GoToModalPageBottomSheetTests().SafeFireAndForget();
+    }
 }

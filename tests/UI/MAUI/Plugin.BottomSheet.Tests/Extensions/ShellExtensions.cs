@@ -11,4 +11,9 @@ public static class ShellExtensions
     {
         return shell.GoToAsync(Routes.BottomSheetTests);
     }
+    
+    public static Task GoToModalPageBottomSheetTests(this Shell shell)
+    {
+        return shell.GoToAsync(Routes.ModalPageBottomSheetTests);
+    }
 }

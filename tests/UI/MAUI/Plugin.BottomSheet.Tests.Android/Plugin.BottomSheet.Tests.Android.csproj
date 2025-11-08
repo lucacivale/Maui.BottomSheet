@@ -42,6 +42,9 @@
         <Compile Update="..\Plugin.BottomSheet.Tests.Shared\Tests\BottomSheetTests.cs">
           <Link>Shared\Tests\BottomSheetTests.cs</Link>
         </Compile>
+        <Compile Update="..\Plugin.BottomSheet.Tests.Shared\Tests\ModalPageBottomSheetTests.cs">
+          <Link>Shared\Tests\ModalPageBottomSheetTests.cs</Link>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>
