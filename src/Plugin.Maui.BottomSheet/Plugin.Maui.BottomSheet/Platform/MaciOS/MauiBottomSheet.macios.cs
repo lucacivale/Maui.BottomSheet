@@ -375,7 +375,7 @@ internal sealed class MauiBottomSheet : UIView
         }
         catch
         {
-            Trace.TraceError("Invoking IConfirmNavigation or IConfirmNavigationAsync failed.");
+            Trace.TraceError("Invoking IConfirmNavigation or IConfirmNavigationAsync failed: {0}", e);
         }
     }
 

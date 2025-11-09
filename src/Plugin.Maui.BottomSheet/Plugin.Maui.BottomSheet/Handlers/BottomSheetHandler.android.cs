@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Android.Views;
 using Microsoft.Maui.Platform;
 
@@ -66,11 +68,22 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Mau
     /// Disconnects the handler from the platform-specific view and releases associated resources.
     /// </summary>
     /// <param name="platformView">The platform-specific view associated with the handler.</param>
-    protected override void DisconnectHandler(MauiBottomSheet platformView)
+    [SuppressMessage("Usage", "VSTHRD100: Avoid async void methods", Justification = "Is okay here.")]
+    [SuppressMessage("Design", "CA1031: Do not catch general exception types", Justification = "Catch all exceptions to prevent crash.")]
+    protected override async void DisconnectHandler(MauiBottomSheet platformView)
     {
-        base.DisconnectHandler(platformView);
+        try
+        {
+            base.DisconnectHandler(platformView);
 
-        platformView.Cleanup();
+            await platformView.CloseAsync().ConfigureAwait(true);
+
+            platformView.Cleanup();
+        }
+        catch (Exception e)
+        {
+            Trace.TraceError("Disconnecting BottomSheetHandler failed: {0}", e);
+        }
     }
 
     /// <summary>

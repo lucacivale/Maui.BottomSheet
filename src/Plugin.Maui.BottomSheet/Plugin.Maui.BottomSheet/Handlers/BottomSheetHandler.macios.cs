@@ -71,7 +71,7 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
         }
         catch (Exception e)
         {
-            Trace.TraceError($"Error while cleaning up bottom sheet: {e}");
+            Trace.TraceError($"Error while cleaning up bottom sheet: {0}", e);
         }
     }
 

@@ -1,0 +1,158 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>$(NETVersion);$(NETVersion)-android</TargetFrameworks>
+        <TargetFrameworks Condition="!$([MSBuild]::IsOSPlatform('linux'))">$(TargetFrameworks);$(NETVersion)-ios;$(NETVersion)-maccatalyst</TargetFrameworks>
+        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);</TargetFrameworks>
+
+        <OutputType Condition="'$(TargetFramework)' != '$(NETVersion)'">Exe</OutputType>
+        <UseMaui>true</UseMaui>
+        <SingleProject>true</SingleProject>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+        
+        <DefineConstants Condition="'$(TestingMode)' == 'NonInteractiveVisual'">$(DefineConstants);MODE_NON_INTERACTIVE_VISUAL</DefineConstants>
+        <DefineConstants Condition="'$(TestingMode)' == 'XHarness'">$(DefineConstants);MODE_XHARNESS</DefineConstants>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="($(TargetFramework.Contains('-ios')) or $(TargetFramework.Contains('-maccatalyst'))) and '$(Configuration)' == 'Release'">
+        <MtouchLink>None</MtouchLink> <!-- Disable code linking entirely -->
+        <MtouchUseLlvm>True</MtouchUseLlvm> <!-- Disable LLVM compilation -->
+        <EnableSGenConc>True</EnableSGenConc> <!-- Disable concurrent garbage collection -->
+        <NoSymbolStrip>true</NoSymbolStrip>
+        <MtouchNoSymbolStrip>True</MtouchNoSymbolStrip>
+        <EmbedOnDemandResources>True</EmbedOnDemandResources>
+        <SuppressTrimAnalysisWarnings>True</SuppressTrimAnalysisWarnings> <!-- Suppress warnings -->
+        <EnableTrimAnalyzer>False</EnableTrimAnalyzer> <!-- Disable the trim analyzer -->
+        <MtouchExtraArgs>--aot=verbose</MtouchExtraArgs>
+        <MtouchExtraArgs>--aot-options=limit-llvm-stack=400MB</MtouchExtraArgs>
+        <MtouchExtraArgs>--aot=threads=1</MtouchExtraArgs>
+        <MtouchInterpreter>All</MtouchInterpreter>
+        <!--https://github.com/dotnet/maui/issues/27840-->
+        <Registrar>static</Registrar>
+    </PropertyGroup>    
+
+    <PropertyGroup>
+        <ApplicationTitle>Plugin.BottomSheet.Tests.Maui.Unit.Application</ApplicationTitle>
+        <ApplicationId>com.companyname.plugin.bottomSheet.tests.maui.unit.application</ApplicationId>
+        <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+        <ApplicationVersion>1</ApplicationVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4"/>
+        <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128"/>
+        <MauiImage Include="Resources\Images\*"/>
+        <MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185"/>
+        <MauiFont Include="Resources\Fonts\*"/>
+        <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="coverlet.collector">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+
+        <PackageReference Include="xunit" />
+        <PackageReference Include="xunit.runner.utility" />
+        <PackageReference Include="xunit.runner.visualstudio">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+
+        <PackageReference Include="DeviceRunners.UITesting.Maui" />
+        <PackageReference Include="DeviceRunners.UITesting.Xunit" />
+
+        <PackageReference Include="DeviceRunners.VisualRunners.Maui" />
+        <PackageReference Include="DeviceRunners.VisualRunners.Xunit" />
+
+        <PackageReference Include="Microsoft.Maui.Controls" />
+
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Console" />
+
+        <PackageReference Include="NSubstitute" />
+        <PackageReference Include="NSubstitute.Analyzers.CSharp">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TestingMode)' == 'XHarness'">
+        <PackageReference Include="DeviceRunners.XHarness.Xunit" />
+        <PackageReference Include="DeviceRunners.XHarness.Maui" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="Xunit"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\..\src\Plugin.BottomSheet\Plugin.BottomSheet.csproj" />
+      <ProjectReference Include="..\..\..\..\src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet.csproj" />
+      <ProjectReference Include="..\Plugin.BottomSheet.Tests.Maui.Unit\Plugin.BottomSheet.Tests.Maui.Unit.csproj" />
+    </ItemGroup>
+
+    <Target Name="RemoveVisualStudioTestRunner" BeforeTargets="_ComputeAppxPackagePayload">
+        <ItemGroup>
+            <_VisualStudioTestRunnerFiles Include="@(PackagingOutputs)" Condition="$([System.String]::Copy('%(PackagingOutputs.FullPath)').Contains('xunit.runner.visualstudio'))" />
+            <PackagingOutputs Remove="@(_VisualStudioTestRunnerFiles)" />
+        </ItemGroup>
+    </Target>
+
+    <Target Name="TestAndroid">
+        <PropertyGroup>
+            <AndroidConfig>Release</AndroidConfig>
+            <AndroidFramework>$(NETVersion)-android</AndroidFramework>
+            <AndroidRuntime>android-arm64</AndroidRuntime>
+            <AndroidApkPath>bin/Release/$(AndroidFramework)/$(AndroidRuntime)/$(ApplicationId)-Signed.apk</AndroidApkPath>
+            <AndroidPackageName>$(ApplicationId)</AndroidPackageName>
+            <AndroidInstrumentation>devicerunners.xharness.maui.XHarnessInstrumentation</AndroidInstrumentation>
+            <TestOutputDir>artifacts/test-results</TestOutputDir>
+        </PropertyGroup>
+        <RemoveDir Directories="$(ProjectDir)artifacts"/>
+        <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet publish -c $(AndroidConfig) -f $(AndroidFramework) -r $(AndroidRuntime) -p:TestingMode=XHarness" />
+        <Exec WorkingDirectory="$(ProjectDir)" Command="xharness android test --app &quot;$(AndroidApkPath)&quot; --package-name $(AndroidPackageName) --instrumentation $(AndroidInstrumentation) --output-directory &quot;$(TestOutputDir)&quot;" />
+    </Target>
+
+    <Target Name="TestiOS">
+        <PropertyGroup>
+            <iOSConfig>Release</iOSConfig>
+            <iOSFramework>$(NETVersion)-ios</iOSFramework>
+            <iOSRuntime>iossimulator-arm64</iOSRuntime>
+            <iOSAppPath>bin/Release/$(iOSFramework)/$(iOSRuntime)/$(ApplicationTitle).app</iOSAppPath>
+            <iOSTarget>ios-simulator-64</iOSTarget>
+            <iOSTimeout>00:03:00</iOSTimeout>
+            <iOSLaunchTimeout>00:06:00</iOSLaunchTimeout>
+            <TestOutputDir>$(ProjectDir)artifacts/test-results</TestOutputDir>
+        </PropertyGroup>
+        <RemoveDir Directories="$(ProjectDir)artifacts"/>
+        <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet build -c $(iOSConfig) -f $(iOSFramework) -r $(iOSRuntime) -p:TestingMode=XHarness" />
+        <Exec WorkingDirectory="$(ProjectDir)" Command="xharness apple test --target $(iOSTarget) --timeout=$(iOSTimeout) --launch-timeout=$(iOSLaunchTimeout) --app $(iOSAppPath) --output-directory $(TestOutputDir)" />
+    </Target>
+
+    <Target Name="TestMacCatalyst">
+        <PropertyGroup>
+            <MacCatalystConfig>Release</MacCatalystConfig>
+            <MacCatalystFramework>$(NETVersion)-maccatalyst</MacCatalystFramework>
+            <MacCatalystRuntime>maccatalyst-arm64</MacCatalystRuntime>
+            <MacCatalystAppPath>bin/Release/$(MacCatalystFramework)/$(MacCatalystRuntime)/$(ApplicationTitle).app</MacCatalystAppPath>
+            <MacCatalystTarget>maccatalyst</MacCatalystTarget>
+            <MacCatalystTimeout>00:05:00</MacCatalystTimeout>
+            <MacCatalystLaunchTimeout>00:05:00</MacCatalystLaunchTimeout>
+            <TestOutputDir>artifacts/test-results</TestOutputDir>
+        </PropertyGroup>
+        <RemoveDir Directories="$(ProjectDir)artifacts"/>
+        <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet build -c $(MacCatalystConfig) -f $(MacCatalystFramework) -r $(MacCatalystRuntime) -p:TestingMode=XHarness" />
+        <Exec WorkingDirectory="$(ProjectDir)" Command="xharness apple test --target $(MacCatalystTarget) --timeout=$(MacCatalystTimeout) --launch-timeout=$(MacCatalystLaunchTimeout) --app &quot;$(MacCatalystAppPath)&quot; --output-directory &quot;$(TestOutputDir)&quot;" />
+    </Target>
+
+    <Target Name="TestAll">
+        <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet msbuild -t:TestAndroid" />
+        <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet msbuild -t:TestiOS" />
+        <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet msbuild -t:TestMacCatalyst" />
+    </Target>
+</Project>

@@ -292,6 +292,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     {
         _platformConfigurationRegistry = new Lazy<PlatformConfigurationRegistry<BottomSheet>>(() => new PlatformConfigurationRegistry<BottomSheet>(this));
         Unloaded += OnUnloaded;
+        HandlerChanged += OnHandlerChanged;
     }
 
     /// <inheritdoc/>
@@ -633,5 +634,11 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     {
         Handler?.DisconnectHandler();
         Unloaded -= OnUnloaded;
+        HandlerChanged -= OnHandlerChanged;
+    }
+
+    private void OnHandlerChanged(object? sender, EventArgs e)
+    {
+        IsOpen = false;
     }
 }

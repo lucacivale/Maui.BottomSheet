@@ -84,6 +84,7 @@ internal sealed class MauiBottomSheet : AndroidView
         _bottomSheet.LayoutChanged -= BottomSheetOnLayoutChanged;
 
         _bottomSheet.Dispose();
+        _bottomSheet = null;
     }
 
     /// <summary>
@@ -446,7 +447,7 @@ internal sealed class MauiBottomSheet : AndroidView
         }
         catch
         {
-            Trace.TraceError("Invoking IConfirmNavigation or IConfirmNavigationAsync failed.");
+            Trace.TraceError("Invoking IConfirmNavigation or IConfirmNavigationAsync failed: {0}", e);
         }
     }
 

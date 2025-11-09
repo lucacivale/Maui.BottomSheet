@@ -16,6 +16,9 @@ env:
   ANDROID_RUNTIME_IDENTIFIER: android-x64
   iOS_RUNTIME_IDENTIFIER: iossimulator-arm64
   MACCATALYST_RUNTIME_IDENTIFIER: maccatalyst-arm64
+  TestMauiUnitApplicationProjectName: Plugin.BottomSheet.Tests.Maui.Unit.Application
+  TestMauiUnitApplicationApkName: com.companyname.plugin.bottomSheet.tests.maui.unit.application
+  TestMauiUnitApplicationAppName: Plugin.BottomSheet.Tests.Maui.Unit.Application
 
 jobs:
   
@@ -39,7 +42,7 @@ jobs:
       - name: Build Plugin.Maui.BottomSheet
         run: dotnet build src/Plugin.Maui.BottomSheet/Plugin.Maui.BottomSheet/Plugin.Maui.BottomSheet.csproj -c ${{ env.Configuration }}
 
-  Build-Test-Applications:
+  Build-Maui-Test-Applications:
     runs-on: macos-15
     needs: Build-Plugin_Maui_BottomSheet
     
@@ -74,25 +77,25 @@ jobs:
         run: dotnet workload install maui
         
       - name: Build/Publish ${{ matrix.platform }} Test Application
-        run: dotnet ${{ matrix.build-command }} tests/Plugin.Maui.BottomSheet.Tests.Application/Plugin.Maui.BottomSheet.Tests.Application.csproj -c ${{ env.Configuration }} -f ${{ matrix.framework }} -r ${{ matrix.runtime }} -p:TestingMode=XHarness ${{ matrix.platform == 'android' && '-p:AndroidSdkDirectory=$ANDROID_SDK_ROOT' || '' }}
+        run: dotnet ${{ matrix.build-command }} tests/Unit/$(TestMauiUnitApplicationProjectName)/$(TestMauiUnitApplicationProjectName).csproj -c ${{ env.Configuration }} -f ${{ matrix.framework }} -r ${{ matrix.runtime }} -p:TestingMode=XHarness ${{ matrix.platform == 'android' && '-p:AndroidSdkDirectory=$ANDROID_SDK_ROOT' || '' }}
 
       - name: Upload Android APK
         if: matrix.platform == 'android'
         uses: actions/upload-artifact@v4
         with:
           name: TestApp-${{ matrix.platform }}
-          path: tests/Plugin.Maui.BottomSheet.Tests.Application/bin/Release/${{ matrix.framework }}/${{ matrix.runtime }}/com.companyname.plugin.maui.bottomsheet.tests.application-Signed.apk
+          path: tests/Unit/$(TestMauiUnitApplicationProjectName)/bin/Release/${{ matrix.framework }}/${{ matrix.runtime }}/$(TestMauiUnitApplicationApkName)-Signed.apk
 
       - name: Upload iOS/MacCatalyst App
         if: matrix.platform != 'android'
         uses: actions/upload-artifact@v4
         with:
           name: TestApp-${{ matrix.platform }}
-          path: tests/Plugin.Maui.BottomSheet.Tests.Application/bin/Release/${{ matrix.framework }}
+          path: tests/Unit/($(TestMauiUnitApplicationProjectName)/bin/Release/${{ matrix.framework }}
 
-  Test-Apple-Platforms:
+  Run-Apple-Maui-Unit-Tests:
     runs-on: macos-15
-    needs: Build-Test-Applications
+    needs: Build-Maui-Test-Applications
     
     strategy:
       matrix:
@@ -131,7 +134,7 @@ jobs:
           do
             xharness apple test \
               --target ${{ matrix.target }} \
-              --app ./app/${{ matrix.runtime }}/Plugin.Maui.BottomSheet.Tests.Application.app \
+              --app ./app/${{ matrix.runtime }}/$(TestMauiUnitApplicationAppName).app \
               --output-directory artifacts/test-results \
             && code=0 && break || code=$? && sleep 15
           done
@@ -143,9 +146,9 @@ jobs:
           name: Test Results (XHarness) - ${{ matrix.platform }}
           path: ./artifacts
 
-  Test-Android-Platform:
+  Run-Android-Maui-Unit-Tests:
     runs-on: ubuntu-latest
-    needs: Build-Test-Applications
+    needs: Build-Maui-Test-Applications
 
     env:
       TEST_EMULATOR_NAME: XHarnessEmulator
@@ -208,8 +211,8 @@ jobs:
         
       - name: Test Android
         run: xharness android test
-          --app ./app/com.companyname.plugin.maui.bottomsheet.tests.application-Signed.apk
-          --package-name com.companyname.plugin.maui.bottomsheet.tests.application
+          --app ./app/$(TestMauiUnitApplicationApkName)-Signed.apk
+          --package-name $(TestMauiUnitApplicationApkName)
           --instrumentation devicerunners.xharness.maui.XHarnessInstrumentation
           --output-directory artifacts/test-results
 
