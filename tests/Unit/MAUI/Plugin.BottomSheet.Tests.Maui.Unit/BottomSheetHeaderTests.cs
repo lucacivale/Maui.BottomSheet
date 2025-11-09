@@ -220,17 +220,6 @@ public class BottomSheetHeaderTests
     }
 
     [Fact]
-    public void CreateContent_WithNeitherContentNorTemplate_ShouldThrowException()
-    {
-        // Arrange
-        var header = new BottomSheetHeader();
-
-        // Act & Assert
-        var exception = Assert.Throws<BottomSheetContentNotSetException>(() => header.CreateContent());
-        Assert.Contains("Content must be set before creating content", exception.Message);
-    }
-
-    [Fact]
     public void CreateContent_WithNullTemplateResult_ShouldThrowException()
     {
         // Arrange

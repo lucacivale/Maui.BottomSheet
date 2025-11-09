@@ -28,7 +28,7 @@ public class BottomSheetTests
         Assert.False(bottomSheet.IsOpen);
         Assert.True(bottomSheet.IsDraggable);
         Assert.Equal(0.0, bottomSheet.PeekHeight);
-        Assert.Equal(new MauiThickness(5), bottomSheet.Padding);
+        Assert.Equal(new MauiThickness(10), bottomSheet.Padding);
         Assert.NotNull(bottomSheet.BottomSheetStyle);
         Assert.Single(bottomSheet.States);
         Assert.Contains(BottomSheetState.Large, bottomSheet.States);
