@@ -1,7 +1,6 @@
-﻿using ObjCRuntime;
-using UIKit;
+﻿using UIKit;
 
-namespace Plugin.BottomSheet.Tests;
+namespace Plugin.BottomSheet.Tests.Maui.Ui.Application.Platforms.iOS;
 
 public class Program
 {

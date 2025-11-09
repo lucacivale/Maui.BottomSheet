@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using AndroidX.CoordinatorLayout.Widget;
+using AndroidX.Core.View;
 using AsyncAwaitBestPractices;
 using Google.Android.Material.Shape;
 
@@ -16,6 +17,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
     private const int HandleMargin = 5;
     private const int HeaderMargin = 5;
 
+    private readonly Context _context;
     private readonly WeakEventManager _eventManager = new();
 
     private readonly BottomSheetDialogTouchOutsideListener _touchOutsideListener;
@@ -47,6 +49,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
     public BottomSheetDialog(Context context, int theme)
         : base(context, theme)
     {
+        _context = context;
         _bottomSheetCallback = new BottomSheetCallback();
         _bottomSheetCallback.StateChanged += BottomSheetCallback_StateChanged;
         Behavior.AddBottomSheetCallback(_bottomSheetCallback);
@@ -222,7 +225,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
             return new Rect(location[0], location[1] - 144, width, height);
         }
     }
-
+    
     public bool IsModal
     {
         get => _isModal;
@@ -543,6 +546,21 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
         base.SetCancelable(flag);
 
         SetCanceledOnTouchOutside(_isCancelable);
+    }
+
+    public override void OnAttachedToWindow()
+    {
+        if (_context is AndroidX.AppCompat.App.AppCompatActivity activity
+            && activity.Window is not null
+            && Window is not null)
+        {
+            WindowInsetsControllerCompat parentInsetsController = WindowCompat.GetInsetsController(activity.Window, activity.Window.DecorView);
+            WindowInsetsControllerCompat insetsController = WindowCompat.GetInsetsController(Window, Window.DecorView);
+
+            insetsController.AppearanceLightStatusBars = parentInsetsController.AppearanceLightStatusBars;
+        }
+
+        base.OnAttachedToWindow();
     }
 
     protected override void Dispose(bool disposing)

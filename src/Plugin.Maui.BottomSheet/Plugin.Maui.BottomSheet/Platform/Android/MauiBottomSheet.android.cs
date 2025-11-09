@@ -143,7 +143,7 @@ internal sealed class MauiBottomSheet : AndroidView
     /// Opens the bottom sheet asynchronously.
     /// </summary>
     /// <returns>A task representing the asynchronous operation.</returns>
-    public async Task OpenAsync(bool _force = false)
+    public async Task OpenAsync(bool force = false)
     {
         if (_virtualView is null)
         {
@@ -151,7 +151,7 @@ internal sealed class MauiBottomSheet : AndroidView
         }
 
         if (!_isAttachedToWindow
-            && _force == false)
+            && force == false)
         {
             using CancellationTokenSource cts = new(TimeSpan.FromSeconds(20));
             await _isAttachedToWindowTcs.Task.WaitAsync(cts.Token).ConfigureAwait(true);
