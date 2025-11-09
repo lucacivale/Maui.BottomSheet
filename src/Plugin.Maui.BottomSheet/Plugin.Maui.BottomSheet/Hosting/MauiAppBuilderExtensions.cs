@@ -26,9 +26,7 @@ namespace Plugin.Maui.BottomSheet.Hosting
                 .ConfigureMauiHandlers(x =>
                 {
                     x.AddHandler<BottomSheet, Handlers.BottomSheetHandler>();
-    #if IOS || MACCATALYST
-                    x.AddHandler<Platform.MaciOS.CloseButton, Handlers.CloseButtonHandler>();
-    #endif
+                    x.AddHandler<CloseButton, Handlers.CloseButtonHandler>();
                 })
                 .Services
                     .AddSingleton<Navigation.IBottomSheetNavigationService, Navigation.BottomSheetNavigationService>()

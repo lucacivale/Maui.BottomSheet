@@ -1,11 +1,13 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using Android.Views;
+using Microsoft.Maui.Platform;
 
 namespace Plugin.Maui.BottomSheet.Handlers;
 
+using AsyncAwaitBestPractices;
 using Microsoft.Maui.Handlers;
 using Plugin.Maui.BottomSheet;
-
 using Plugin.Maui.BottomSheet.Platform.Android;
 
 /// <summary>
@@ -19,7 +21,7 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Mau
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     internal partial Task OpenAsync()
     {
-        return PlatformView.OpenAsync();
+        return PlatformView.OpenAsync(true);
     }
 
     /// <summary>
@@ -55,26 +57,32 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Mau
         _ = MauiContext ?? throw new InvalidOperationException("MauiContext is null, please check your MauiApplication.");
         _ = MauiContext.Context ?? throw new InvalidOperationException("Android Context is null, please check your MauiApplication.");
 
-        return new MauiBottomSheet(MauiContext, MauiContext.Context);
+        var bottomSheet = new MauiBottomSheet(MauiContext, MauiContext.Context);
+
+        bottomSheet.UpdateAutomationId(VirtualView);
+
+        return bottomSheet;
     }
 
     /// <summary>
     /// Disconnects the handler from the platform-specific view and releases associated resources.
     /// </summary>
     /// <param name="platformView">The platform-specific view associated with the handler.</param>
-    [SuppressMessage("Usage", "VSTHRD100: Avoid async void methods, because any exceptions not handled by the method will crash the process", Justification = "Exceptions are handled by the method.")]
+    [SuppressMessage("Usage", "VSTHRD100: Avoid async void methods", Justification = "Is okay here.")]
     [SuppressMessage("Design", "CA1031: Do not catch general exception types", Justification = "Catch all exceptions to prevent crash.")]
-    protected async override void DisconnectHandler(MauiBottomSheet platformView)
+    protected override async void DisconnectHandler(MauiBottomSheet platformView)
     {
-        base.DisconnectHandler(platformView);
-
         try
         {
-            await platformView.CleanupAsync().ConfigureAwait(true);
+            base.DisconnectHandler(platformView);
+
+            await platformView.CloseAsync().ConfigureAwait(true);
+
+            platformView.Cleanup();
         }
         catch (Exception e)
         {
-            Trace.TraceError($"Error while cleaning up bottom sheet: {e}");
+            Trace.TraceError("Disconnecting BottomSheetHandler failed: {0}", e);
         }
     }
 
@@ -142,7 +150,7 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Mau
             return;
         }
 
-        handler.PlatformView.SetIsOpen();
+        handler.PlatformView.SetIsOpenAsync().SafeFireAndForget();
     }
 
     /// <summary>
@@ -187,7 +195,7 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Mau
             return;
         }
 
-        MauiBottomSheet.SetStates();
+        handler.PlatformView.SetStates();
     }
 
     /// <summary>
@@ -348,7 +356,20 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Mau
         {
             return;
         }
+    }
 
-        handler.PlatformView.SetBottomSheetStyle();
+    private static void MapCancel(BottomSheetHandler handler, IBottomSheet bottomSheet, object? sender)
+    {
+        handler.PlatformView.Cancel();
+    }
+
+    private static void MapMargin(BottomSheetHandler handler, IBottomSheet bottomSheet, object? sender)
+    {
+        handler.PlatformView.SetMargin();
+    }
+
+    private static void MapHalfExpandedRatio(BottomSheetHandler handler, IBottomSheet bottomSheet, object? sender)
+    {
+        handler.PlatformView.SetHalfExpandedRatio();
     }
 }

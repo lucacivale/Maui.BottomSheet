@@ -26,8 +26,7 @@
     <!-- enable trimming and AOT analyzers on all platforms -->
     <IsAotCompatible>true</IsAotCompatible>
     <!-- select platforms to use with NativeAOT -->
-    <PublishAot Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">true</PublishAot>
-    <PublishAot Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">true</PublishAot>
+    <PublishAot>true</PublishAot>
     <TrimMode>full</TrimMode>
   </PropertyGroup>
 
@@ -56,6 +55,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Plugin.BottomSheet\Plugin.BottomSheet.csproj" />
     <ProjectReference Include="..\..\..\src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet.csproj" />
   </ItemGroup>
+
 </Project>

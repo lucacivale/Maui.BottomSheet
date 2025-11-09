@@ -94,7 +94,7 @@ internal sealed class BottomSheetHeader : IDisposable
         {
             _virtualHeaderView.SizeChanged -= VirtualHeaderViewOnSizeChanged;
         }
-
+/*
         if (_bottomSheetHeader.HasHeaderView())
         {
             _virtualHeaderView = _bottomSheetHeader.CreateContent();
@@ -108,6 +108,7 @@ internal sealed class BottomSheetHeader : IDisposable
             _virtualHeaderView.BindingContext = _bottomSheetHeader.BindingContext;
             _virtualHeaderView.Parent = _bottomSheetHeader.Parent;
         }
+        */
 
         ArgumentNullException.ThrowIfNull(_virtualHeaderView);
 
@@ -142,6 +143,7 @@ internal sealed class BottomSheetHeader : IDisposable
     /// <param name="title">The title text to display.</param>
     public void SetTitleText(string title)
     {
+        /*
         if (_virtualTitleView?.Text == title
             || _bottomSheetHeader.HasHeaderView())
         {
@@ -165,6 +167,7 @@ internal sealed class BottomSheetHeader : IDisposable
             _virtualHeaderGridView ??= CreateHeaderGrid();
             _virtualHeaderGridView.Add(_virtualTitleView, 1);
         }
+        */
     }
 
     /// <summary>
@@ -239,7 +242,7 @@ internal sealed class BottomSheetHeader : IDisposable
 
         if (view is CloseButton closeButton)
         {
-            closeButton.Clicked -= OnClosedButtonClicked;
+            //closeButton.Clicked -= OnClosedButtonClicked;
         }
 
         view?.DisconnectHandlers();
@@ -257,7 +260,7 @@ internal sealed class BottomSheetHeader : IDisposable
     /// <returns>A configured CloseButton instance.</returns>
     private CloseButton CreateCloseButton(LayoutOptions layoutOptions)
     {
-        var button = new CloseButton()
+        var button = new CloseButton(LayoutOptions.Center)
         {
             HorizontalOptions = layoutOptions,
             BindingContext = _style,
@@ -267,7 +270,7 @@ internal sealed class BottomSheetHeader : IDisposable
         button.SetBinding(VisualElement.WidthRequestProperty, static (BottomSheetHeaderStyle style) => style.CloseButtonWidthRequest);
         button.SetBinding(CloseButton.TintProperty, static (BottomSheetHeaderStyle style) => style.CloseButtonTintColor);
 
-        button.Clicked += OnClosedButtonClicked;
+        //button.Clicked += OnClosedButtonClicked;
 
         return button;
     }
@@ -299,6 +302,7 @@ internal sealed class BottomSheetHeader : IDisposable
         Remove(ref _virtualTopRightButton);
         Remove(ref _virtualTitleView);
 
+        /*
         if (_bottomSheetHeader.HasTopLeftButton())
         {
             _virtualTopLeftButton = _bottomSheetHeader.TopLeftButton;
@@ -327,7 +331,7 @@ internal sealed class BottomSheetHeader : IDisposable
         {
             _virtualTopRightButton = CreateCloseButton(LayoutOptions.End);
             _virtualHeaderGridView.Add(_virtualTopRightButton, 2);
-        }
+        }*/
     }
 
     /// <summary>
@@ -374,6 +378,7 @@ internal sealed class BottomSheetHeader : IDisposable
     /// <param name="e">The property changed event arguments.</param>
     private void BottomSheetHeaderOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
+        /*
         switch (e.PropertyName)
         {
             case nameof(Maui.BottomSheet.BottomSheetHeader.TitleText):
@@ -385,7 +390,7 @@ internal sealed class BottomSheetHeader : IDisposable
                 break;
             case nameof(Maui.BottomSheet.BottomSheetHeader.HeaderAppearance):
             case nameof(Maui.BottomSheet.BottomSheetHeader.ShowCloseButton):
-            case nameof(Maui.BottomSheet.BottomSheetHeader.CloseButtonPosition):
+            case nameof(Maui.BottomSheet.BottomSheetHeader.BottomSheetHeaderCloseButtonPosition):
                 if (e.PropertyName == nameof(CloseButtonPosition)
                     && _bottomSheetHeader.ShowCloseButton == false)
                 {
@@ -407,6 +412,7 @@ internal sealed class BottomSheetHeader : IDisposable
 
                 break;
         }
+        */
     }
 
     private void Dispose(bool disposing)

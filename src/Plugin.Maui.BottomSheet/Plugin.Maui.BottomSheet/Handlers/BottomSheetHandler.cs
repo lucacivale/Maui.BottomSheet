@@ -43,6 +43,13 @@ internal sealed partial class BottomSheetHandler
         [nameof(IBottomSheet.BottomSheetStyle)] = MapBottomSheetStyle,
     };
 
+    private static readonly CommandMapper<IBottomSheet, BottomSheetHandler> _bottomSheetCommandMapper = new CommandMapper<IBottomSheet, BottomSheetHandler>(ElementCommandMapper)
+    {
+        [nameof(IBottomSheet.Cancel)] = MapCancel,
+        [nameof(PlatformConfiguration.AndroidSpecific.BottomSheet.SetMargin)] = MapMargin,
+        [nameof(PlatformConfiguration.AndroidSpecific.BottomSheet.SetHalfExpandedRatio)] = MapHalfExpandedRatio,
+    };
+
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheetHandler"/> class.
     /// Handles bottom sheet behavior and maps properties between a virtual view and a native view implementation.
@@ -51,7 +58,7 @@ internal sealed partial class BottomSheetHandler
     /// <param name="commandMapper">Command mapper.</param>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "S1118:Utility classes should not have public constructors", Justification = "Must be public.")]
     public BottomSheetHandler(IPropertyMapper? mapper, CommandMapper? commandMapper)
-        : base(mapper ?? _bottomSheetMapper, commandMapper)
+        : base(mapper ?? _bottomSheetMapper, commandMapper ?? _bottomSheetCommandMapper)
     {
     }
 
@@ -62,7 +69,7 @@ internal sealed partial class BottomSheetHandler
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "S1118:Utility classes should not have public constructors", Justification = "Must be public.")]
     public BottomSheetHandler()
-        : base(_bottomSheetMapper)
+        : base(_bottomSheetMapper, _bottomSheetCommandMapper)
     {
     }
 
@@ -74,7 +81,7 @@ internal sealed partial class BottomSheetHandler
     /// <param name="context">Maui context.</param>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "S1118:Utility classes should not have public constructors", Justification = "Must be public.")]
     public BottomSheetHandler(IMauiContext context)
-        : base(_bottomSheetMapper)
+        : base(_bottomSheetMapper, _bottomSheetCommandMapper)
     {
         SetMauiContext(context);
     }

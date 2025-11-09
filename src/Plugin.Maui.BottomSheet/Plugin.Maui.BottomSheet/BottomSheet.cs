@@ -1,7 +1,9 @@
-namespace Plugin.Maui.BottomSheet;
-
+using Plugin.BottomSheet;
 using System.ComponentModel;
 using System.Windows.Input;
+using MauiThickness = Microsoft.Maui.Thickness;
+
+namespace Plugin.Maui.BottomSheet;
 
 /// <summary>
 /// Implementation of a bottom sheet control that provides supplementary content anchored to the bottom of the screen.
@@ -61,7 +63,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             {
                 BottomSheetState.Large,
             },
-            validateValue: (_, value) =>
+            validateValue: (bindable, value) =>
             {
                 var result = true;
                 var states = (List<BottomSheetState>)value;
@@ -69,6 +71,12 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
                 if (states.Count == 0)
                 {
                     result = false;
+                }
+
+                if (bindable is BottomSheet bottomSheet
+                    && states.IsStateAllowed(bottomSheet.CurrentState) == false)
+                {
+                    System.Diagnostics.Trace.TraceError("The current state is not allowed in the states collection.");
                 }
 
                 return result;
@@ -127,7 +135,8 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             nameof(ShowHeader),
             typeof(bool),
             typeof(BottomSheet),
-            defaultBindingMode: BindingMode.TwoWay);
+            defaultBindingMode: BindingMode.TwoWay,
+            propertyChanged: OnShowHeaderPropertyChanged);
 
     /// <summary>
     /// Bindable property for the open state of the bottom sheet.
@@ -186,9 +195,9 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     public static readonly BindableProperty PaddingProperty =
         BindableProperty.Create(
             nameof(Padding),
-            typeof(Thickness),
+            typeof(MauiThickness),
             typeof(BottomSheet),
-            defaultValue: new Thickness(5));
+            defaultValue: new MauiThickness(10));
 
     /// <summary>
     /// Bindable property for the command executed when closing.
@@ -270,6 +279,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             nameof(BottomSheetStyle),
             typeof(BottomSheetStyle),
             typeof(BottomSheet),
+            propertyChanged: OnBottomSheetStylePropertyChanged,
             defaultValue: new BottomSheetStyle());
 
     private readonly WeakEventManager _eventManager = new();
@@ -282,6 +292,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     {
         _platformConfigurationRegistry = new Lazy<PlatformConfigurationRegistry<BottomSheet>>(() => new PlatformConfigurationRegistry<BottomSheet>(this));
         Unloaded += OnUnloaded;
+        HandlerChanged += OnHandlerChanged;
     }
 
     /// <inheritdoc/>
@@ -378,7 +389,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     public BottomSheetContent? Content { get => (BottomSheetContent?)GetValue(ContentProperty); set => SetValue(ContentProperty, value); }
 
     /// <inheritdoc/>
-    public Thickness Padding { get => (Thickness)GetValue(PaddingProperty); set => SetValue(PaddingProperty, value); }
+    public MauiThickness Padding { get => (MauiThickness)GetValue(PaddingProperty); set => SetValue(PaddingProperty, value); }
 
     /// <inheritdoc/>
     public BottomSheetStyle BottomSheetStyle { get => (BottomSheetStyle)GetValue(BottomSheetStyleProperty); set => SetValue(BottomSheetStyleProperty, value); }
@@ -427,10 +438,23 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     /// <inheritdoc/>
     void IBottomSheet.OnClosedBottomSheet()
     {
+        Header?.Remove();
+        Content?.Remove();
+
         RaiseEvent(nameof(Closed), EventArgs.Empty);
         ExecuteCommand(ClosedCommand, ClosedCommandParameter);
     }
+
+    void IBottomSheet.Cancel()
+    {
+        Handler?.Invoke(nameof(IBottomSheet.Cancel));
+    }
 #pragma warning restore CA1033
+
+    internal void OnCancel(object? sender, EventArgs e)
+    {
+        ((IBottomSheet)this).Cancel();
+    }
 
     /// <summary>
     /// Called when the binding context changes, propagating the change to child elements.
@@ -479,7 +503,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     /// <param name="oldvalue">The old value.</param>
     /// <param name="newvalue">The new value.</param>
     private static void OnHeaderChanged(BindableObject bindable, object oldvalue, object newvalue)
-        => ((BottomSheet)bindable).OnHeaderChanged((BottomSheetHeader)newvalue);
+        => ((BottomSheet)bindable).OnHeaderChanged((BottomSheetHeader)oldvalue, (BottomSheetHeader)newvalue);
 
     /// <summary>
     /// Handles changes to the Content property.
@@ -488,7 +512,13 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     /// <param name="oldvalue">The old value.</param>
     /// <param name="newvalue">The new value.</param>
     private static void OnContentChanged(BindableObject bindable, object oldvalue, object newvalue)
-        => ((BottomSheet)bindable).OnContentChanged((BottomSheetContent)newvalue);
+        => ((BottomSheet)bindable).OnContentChanged((BottomSheetContent)oldvalue, (BottomSheetContent)newvalue);
+
+    private static void OnShowHeaderPropertyChanged(BindableObject bindable, object oldValue, object newValue)
+        => ((BottomSheet)bindable).OnShowHeaderPropertyChanged();
+
+    private static void OnBottomSheetStylePropertyChanged(BindableObject bindable, object oldValue, object newValue)
+        => ((BottomSheet)bindable).OnBottomSheetStylePropertyChanged((BottomSheetStyle)oldValue, (BottomSheetStyle)newValue);
 
     /// <summary>
     /// Raises the specified event with the given event arguments.
@@ -504,11 +534,12 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     /// Handles the internal logic when the States property changes.
     /// </summary>
     /// <param name="newvalue">The new states collection.</param>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S6608:Prefer indexing instead of \"Enumerable\" methods on types implementing \"IList\"", Justification = "Improced readability.")]
     private void OnStatesPropertyChanged(List<BottomSheetState> newvalue)
     {
         if (!newvalue.IsStateAllowed(CurrentState))
         {
-            CurrentState = newvalue[0];
+            CurrentState = newvalue.First();
         }
     }
 
@@ -516,8 +547,32 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     /// Handles the internal logic when the Header property changes.
     /// </summary>
     /// <param name="newValue">The new header value.</param>
-    private void OnHeaderChanged(BottomSheetHeader newValue)
+    private void OnHeaderChanged(BottomSheetHeader oldValue, BottomSheetHeader newValue)
     {
+        if (oldValue is not null)
+        {
+            oldValue.CloseButtonClicked -= OnCancel;
+            oldValue.Remove();
+        }
+
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (newValue is not null)
+        {
+            newValue.Parent = this;
+            newValue.BindingContext = BindingContext;
+            newValue.Style = BottomSheetStyle.HeaderStyle;
+            newValue.CloseButtonClicked += OnCancel;
+        }
+    }
+
+    /// <summary>
+    /// Handles the internal logic when the Content property changes.
+    /// </summary>
+    /// <param name="newValue">The new content value.</param>
+    private void OnContentChanged(BottomSheetContent oldValue, BottomSheetContent newValue)
+    {
+        oldValue?.Remove();
+
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (newValue is not null)
         {
@@ -526,17 +581,46 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         }
     }
 
-    /// <summary>
-    /// Handles the internal logic when the Content property changes.
-    /// </summary>
-    /// <param name="newValue">The new content value.</param>
-    private void OnContentChanged(BottomSheetContent newValue)
+    private void OnShowHeaderPropertyChanged()
     {
-        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (Header is not null)
+        {
+            if (ShowHeader == false)
+            {
+                Header.Remove();
+            }
+            else
+            {
+                Header.Parent = this;
+                Header.BindingContext = BindingContext;
+            }
+        }
+    }
+
+    private void OnBottomSheetStylePropertyChanged(BottomSheetStyle oldValue, BottomSheetStyle newValue)
+    {
+        if (oldValue is not null)
+        {
+            oldValue.PropertyChanged -= OnStylePropertyChanged;
+        }
+
         if (newValue is not null)
         {
-            newValue.Parent = this;
-            newValue.BindingContext = BindingContext;
+            if (Header is not null)
+            {
+                Header.Style = newValue.HeaderStyle;
+            }
+
+            newValue.PropertyChanged += OnStylePropertyChanged;
+        }
+    }
+
+    private void OnStylePropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (Header is not null
+            && e.PropertyName == nameof(BottomSheetStyle.HeaderStyle))
+        {
+            Header.Style = BottomSheetStyle.HeaderStyle;
         }
     }
 
@@ -550,5 +634,11 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     {
         Handler?.DisconnectHandler();
         Unloaded -= OnUnloaded;
+        HandlerChanged -= OnHandlerChanged;
+    }
+
+    private void OnHandlerChanged(object? sender, EventArgs e)
+    {
+        IsOpen = false;
     }
 }

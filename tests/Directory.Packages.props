@@ -1,5 +1,6 @@
 <Project>
   <ItemGroup>
+    <PackageVersion Include="Appium.WebDriver" Version="8.0.0" />
     <PackageVersion Include="DeviceRunners.VisualRunners.Maui" Version="0.1.0-preview.5" />
     <PackageVersion Include="DeviceRunners.VisualRunners.Xunit" Version="0.1.0-preview.5" />
     <PackageVersion Include="JetBrains.dotMemoryUnit" Version="3.2.20220510" />
@@ -15,7 +16,6 @@
     <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0-preview.4.25258.110" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="10.0.0-preview.4.25258.110" />
     <PackageVersion Include="Microsoft.Maui.Controls" Version="10.0.0-preview.4.25263.4" />
-    <PackageVersion Include="Microsoft.Maui.Controls.Compatibility" Version="10.0.0-preview.4.25263.4" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
     <PackageVersion Include="NSubstitute" Version="5.3.0" />
     <PackageVersion Include="NSubstitute.Analyzers.CSharp" Version="1.0.17" />

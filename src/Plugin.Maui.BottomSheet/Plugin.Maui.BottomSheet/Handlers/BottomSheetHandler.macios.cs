@@ -71,7 +71,7 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
         }
         catch (Exception e)
         {
-            Trace.TraceError($"Error while cleaning up bottom sheet: {e}");
+            Trace.TraceError($"Error while cleaning up bottom sheet: {0}", e);
         }
     }
 
@@ -324,5 +324,20 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
         }
 
         handler.PlatformView.SetBottomSheetStyle();
+    }
+
+    private static void MapCancel(BottomSheetHandler handler, IBottomSheet bottomSheet, object? sender)
+    {
+
+    }
+
+    private static void MapMargin(BottomSheetHandler handler, IBottomSheet bottomSheet, object? sender)
+    {
+
+    }
+
+    private static void MapHalfExpandedRatio(BottomSheetHandler handler, IBottomSheet bottomSheet, object? sender)
+    {
+
     }
 }

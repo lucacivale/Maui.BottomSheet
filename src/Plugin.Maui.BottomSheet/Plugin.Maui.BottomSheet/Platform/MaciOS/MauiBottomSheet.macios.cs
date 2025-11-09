@@ -5,6 +5,7 @@ using Plugin.Maui.BottomSheet.Navigation;
 namespace Plugin.Maui.BottomSheet.Platform.MaciOS;
 
 using AsyncAwaitBestPractices;
+using Plugin.BottomSheet;
 using UIKit;
 
 /// <summary>
@@ -249,8 +250,6 @@ internal sealed class MauiBottomSheet : UIView
         {
             return;
         }
-
-        _bottomSheet.SetPadding(_virtualView.Padding);
     }
 
     /// <summary>
@@ -376,7 +375,7 @@ internal sealed class MauiBottomSheet : UIView
         }
         catch
         {
-            Trace.TraceError("Invoking IConfirmNavigation or IConfirmNavigationAsync failed.");
+            Trace.TraceError("Invoking IConfirmNavigation or IConfirmNavigationAsync failed: {0}", e);
         }
     }
 
@@ -392,6 +391,6 @@ internal sealed class MauiBottomSheet : UIView
             return;
         }
 
-        _virtualView.Frame = e;
+        //_virtualView.Frame = e;
     }
 }

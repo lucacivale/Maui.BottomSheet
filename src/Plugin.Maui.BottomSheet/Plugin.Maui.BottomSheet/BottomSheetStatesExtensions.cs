@@ -1,3 +1,5 @@
+using Plugin.BottomSheet;
+
 namespace Plugin.Maui.BottomSheet;
 
 /// <summary>

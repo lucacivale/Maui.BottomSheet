@@ -1,6 +1,7 @@
 ﻿using Plugin.Maui.BottomSheet.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.LifecycleEvents;
+using Plugin.BottomSheet;
 using Plugin.Maui.BottomSheet.Sample.ViewModels;
 using Plugin.Maui.BottomSheet.Sample.Views;
 #if ANDROID

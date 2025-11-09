@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using CommunityToolkit.Maui;
+using Plugin.BottomSheet;
 using TaskManager.Services;
 using TaskManager.ViewModels;
 using TaskManager.Views;
@@ -50,7 +51,7 @@ public static class MauiProgram
                 {
                     HeaderAppearance = BottomSheetHeaderButtonAppearanceMode.RightButton,
                     ShowCloseButton = true,
-                    CloseButtonPosition = CloseButtonPosition.TopRight,
+                    CloseButtonPosition = BottomSheetHeaderCloseButtonPosition.TopRight,
                 };
             });
         builder.Services.AddBottomSheet<FilterBottomSheet, FilterViewModel>("Filter");

@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Plugin.BottomSheet.Tests.Maui.Ui.Application.Views.Pages.BottomSheetHeaderTests"
+    x:DataType="viewModels:BottomSheetHeaderTestsViewModel"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:bottomsheet="clr-namespace:Plugin.BottomSheet;assembly=Plugin.BottomSheet"
+    xmlns:mauibottomsheet="http://pluginmauibottomsheet.com"
+    xmlns:shared="clr-namespace:Plugin.BottomSheet.Tests.Maui.Ui.Application.Shared"
+    xmlns:viewModels="clr-namespace:Plugin.BottomSheet.Tests.Maui.Ui.Application.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    <ContentPage.Content>
+        <VerticalStackLayout Padding="30,0" Spacing="25">
+            <Button
+                AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.OpenBottomSheetBuiltInHeader}"
+                Clicked="OpenBottomSheet"
+                Text="Open BottomSheet with built in header" />
+            <Button
+                AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.OpenBottomSheetCustomHeader}"
+                Clicked="OpenBottomSheetCustomHeader"
+                Text="Open BottomSheet with custom header" />
+            <mauibottomsheet:BottomSheet
+                AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.BottomSheetBuiltInHeader}"
+                IsCancelable="{Binding IsCancelable}"
+                IsOpen="{Binding IsOpen}"
+                ShowHeader="{Binding ShowHeader}"
+                x:Name="BottomSheet">
+                <mauibottomsheet:BottomSheet.Header>
+                    <mauibottomsheet:BottomSheetHeader
+                        CloseButtonPosition="{Binding CloseButtonPosition}"
+                        HeaderAppearance="{Binding ButtonAppearanceMode}"
+                        ShowCloseButton="{Binding ShowCloseButton}"
+                        TitleText="{Binding Title}"
+                        TopLeftButton="{Binding TopLeftButton}"
+                        TopRightButton="{Binding TopRightButton}" />
+                </mauibottomsheet:BottomSheet.Header>
+                <mauibottomsheet:BottomSheet.Content>
+                    <mauibottomsheet:BottomSheetContent>
+                        <Grid
+                            ColumnDefinitions="*,*"
+                            RowDefinitions="30,30,40,80,80,55,50,50,30"
+                            RowSpacing="20">
+                            <Label Text="Show header:" VerticalOptions="Center" />
+                            <Switch
+                                AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.ShowHeader}"
+                                Grid.Column="1"
+                                HorizontalOptions="Start"
+                                IsToggled="{Binding ShowHeader}"
+                                VerticalOptions="Center" />
+                            <Label
+                                Grid.Row="1"
+                                Text="Show close button:"
+                                VerticalOptions="Center" />
+                            <Switch
+                                AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.ShowCloseButton}"
+                                Grid.Column="1"
+                                Grid.Row="1"
+                                HorizontalOptions="Start"
+                                IsToggled="{Binding ShowCloseButton}"
+                                VerticalOptions="Center" />
+                            <Entry
+                                AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.Title}"
+                                ClearButtonVisibility="WhileEditing"
+                                Grid.Row="2"
+                                Placeholder="Title"
+                                Text="{Binding Title}" />
+                            <Grid
+                                ColumnDefinitions="*,*"
+                                Grid.ColumnSpan="2"
+                                Grid.Row="3"
+                                RadioButtonGroup.GroupName="HeaderAppearanceMode"
+                                RadioButtonGroup.SelectedValue="{Binding ButtonAppearanceMode}"
+                                RowDefinitions="30,25,25">
+                                <Label
+                                    FontAttributes="Bold"
+                                    FontSize="20"
+                                    Margin="0,0,0,5"
+                                    Text="Header mode"
+                                    VerticalTextAlignment="Center" />
+                                <RadioButton
+                                    AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.BottomSheetHeaderButtonAppearanceModeNone}"
+                                    Content="{x:Static bottomsheet:BottomSheetHeaderButtonAppearanceMode.None}"
+                                    Grid.Row="1"
+                                    Value="{x:Static bottomsheet:BottomSheetHeaderButtonAppearanceMode.None}" />
+                                <RadioButton
+                                    AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.BottomSheetHeaderButtonAppearanceModeLeft}"
+                                    Content="{x:Static bottomsheet:BottomSheetHeaderButtonAppearanceMode.LeftButton}"
+                                    Grid.Column="1"
+                                    Grid.Row="1"
+                                    Value="{x:Static bottomsheet:BottomSheetHeaderButtonAppearanceMode.LeftButton}" />
+                                <RadioButton
+                                    AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.BottomSheetHeaderButtonAppearanceModeRight}"
+                                    Content="{x:Static bottomsheet:BottomSheetHeaderButtonAppearanceMode.RightButton}"
+                                    Grid.Row="2"
+                                    Value="{x:Static bottomsheet:BottomSheetHeaderButtonAppearanceMode.RightButton}" />
+                                <RadioButton
+                                    AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.BottomSheetHeaderButtonAppearanceModeLeftAndRight}"
+                                    Content="{x:Static bottomsheet:BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton}"
+                                    Grid.Column="1"
+                                    Grid.Row="2"
+                                    Value="{x:Static bottomsheet:BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton}" />
+                            </Grid>
+                            <Grid
+                                Grid.ColumnSpan="2"
+                                Grid.Row="4"
+                                RowDefinitions="30,25,25">
+                                <Label
+                                    FontAttributes="Bold"
+                                    FontSize="20"
+                                    Margin="0,0,0,5"
+                                    Text="Header button versions"
+                                    VerticalTextAlignment="Center" />
+                                <Grid
+                                    ColumnDefinitions="*,*"
+                                    Grid.Row="1"
+                                    RadioButtonGroup.GroupName="HeaderLeftButtonVersion"
+                                    RadioButtonGroup.SelectedValue="{Binding TopLeftButton}"
+                                    x:Name="HeaderLeftButtonVersion">
+                                    <RadioButton
+                                        AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.HeaderLeftButtonVersionOne}"
+                                        Content="Top Left Button One"
+                                        IsChecked="True"
+                                        x:Name="HeaderLeftButtonVersionOne">
+                                        <RadioButton.Value>
+                                            <Button
+                                                AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.TopLeftButtonOne}"
+                                                Command="{Binding TopLeftButtonOneCommand}"
+                                                Text="{Binding TopLeftButtonOneText}" />
+                                        </RadioButton.Value>
+                                    </RadioButton>
+                                    <RadioButton
+                                        AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.HeaderLeftButtonVersionTwo}"
+                                        Content="Top Left Button Two"
+                                        Grid.Column="1">
+                                        <RadioButton.Value>
+                                            <Button
+                                                AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.TopLeftButtonTwo}"
+                                                Command="{Binding TopLeftButtonTwoCommand}"
+                                                Text="{Binding TopLeftButtonTwoText}" />
+                                        </RadioButton.Value>
+                                    </RadioButton>
+                                </Grid>
+                                <Grid
+                                    ColumnDefinitions="*,*"
+                                    Grid.Row="2"
+                                    RadioButtonGroup.GroupName="HeaderRightButtonVersion"
+                                    RadioButtonGroup.SelectedValue="{Binding TopRightButton}"
+                                    x:Name="HeaderRightButtonVersion">
+                                    <RadioButton
+                                        AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.HeaderRightButtonVersionOne}"
+                                        Content="Top Right Button One"
+                                        IsChecked="True"
+                                        x:Name="HeaderRightButtonVersionOne">
+                                        <RadioButton.Value>
+                                            <Button
+                                                AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.TopRightButtonOne}"
+                                                Command="{Binding TopRightButtonOneCommand}"
+                                                Text="{Binding TopRightButtonOneText}" />
+                                        </RadioButton.Value>
+                                    </RadioButton>
+                                    <RadioButton
+                                        AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.HeaderRightButtonVersionTwo}"
+                                        Content="Top Right Button Two"
+                                        Grid.Column="1">
+                                        <RadioButton.Value>
+                                            <Button
+                                                AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.TopRightButtonTwo}"
+                                                Command="{Binding TopRightButtonTwoCommand}"
+                                                Text="{Binding TopRightButtonTwoText}" />
+                                        </RadioButton.Value>
+                                    </RadioButton>
+                                </Grid>
+                            </Grid>
+                            <Grid
+                                ColumnDefinitions="*,*"
+                                Grid.ColumnSpan="2"
+                                Grid.Row="5"
+                                RadioButtonGroup.GroupName="CloseButtonPosition"
+                                RadioButtonGroup.SelectedValue="{Binding CloseButtonPosition}"
+                                RowDefinitions="30,25">
+                                <Label
+                                    FontAttributes="Bold"
+                                    FontSize="20"
+                                    Margin="0,0,0,5"
+                                    Text="Close button position"
+                                    VerticalTextAlignment="Center" />
+                                <RadioButton
+                                    AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.CloseButtonPositionLeft}"
+                                    Content="{x:Static bottomsheet:BottomSheetHeaderCloseButtonPosition.TopLeft}"
+                                    Grid.Row="1"
+                                    Value="{x:Static bottomsheet:BottomSheetHeaderCloseButtonPosition.TopLeft}" />
+                                <RadioButton
+                                    AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.CloseButtonPositionRight}"
+                                    Content="{x:Static bottomsheet:BottomSheetHeaderCloseButtonPosition.TopRight}"
+                                    Grid.Column="1"
+                                    Grid.Row="1"
+                                    Value="{x:Static bottomsheet:BottomSheetHeaderCloseButtonPosition.TopRight}" />
+                            </Grid>
+                            <Button
+                                AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.ChangeBindingContext}"
+                                Clicked="ChangeBindingContext"
+                                Grid.ColumnSpan="2"
+                                Grid.Row="6"
+                                HorizontalOptions="Center"
+                                Text="Change BindingContext" />
+                            <Button
+                                AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.CloseBottomSheet}"
+                                Clicked="CloseBottomSheet"
+                                Grid.ColumnSpan="2"
+                                Grid.Row="7"
+                                HorizontalOptions="Center"
+                                Text="Close" />
+                            <Label
+                                Grid.Row="8"
+                                Text="Is cancelable:"
+                                VerticalOptions="Center" />
+                            <Switch
+                                AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.IsCancelable}"
+                                Grid.Column="1"
+                                Grid.Row="8"
+                                HorizontalOptions="Start"
+                                IsToggled="{Binding IsCancelable}"
+                                VerticalOptions="Center"
+                                x:Name="IsCancelable" />
+                        </Grid>
+                    </mauibottomsheet:BottomSheetContent>
+                </mauibottomsheet:BottomSheet.Content>
+            </mauibottomsheet:BottomSheet>
+            <mauibottomsheet:BottomSheet
+                AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.BottomSheetCustomHeader}"
+                IsOpen="{Binding IsOpenCustomHeader}"
+                ShowHeader="{Binding ShowHeader}"
+                x:Name="BottomSheetCustomHeader">
+                <mauibottomsheet:BottomSheet.Header>
+                    <mauibottomsheet:BottomSheetHeader>
+                        <mauibottomsheet:BottomSheetHeader.Content>
+                            <Grid AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.CustomHeader}">
+                                <Button
+                                    AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.CustomHeaderButton}"
+                                    Command="{Binding CustomHeaderButtonCommand}"
+                                    Text="{Binding CustomHeaderButtonText}" />
+                            </Grid>
+                        </mauibottomsheet:BottomSheetHeader.Content>
+                    </mauibottomsheet:BottomSheetHeader>
+                </mauibottomsheet:BottomSheet.Header>
+                <mauibottomsheet:BottomSheet.Content>
+                    <mauibottomsheet:BottomSheetContent>
+                        <Grid
+                            ColumnDefinitions="*,*"
+                            RowDefinitions="30,50"
+                            RowSpacing="20">
+                            <Label Text="Show header:" VerticalOptions="Center" />
+                            <Switch
+                                AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.ShowHeader}"
+                                Grid.Column="1"
+                                HorizontalOptions="Start"
+                                IsToggled="{Binding ShowHeader}"
+                                VerticalOptions="Center" />
+                            <Button
+                                AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.ChangeBindingContext}"
+                                Clicked="ChangeBindingContext"
+                                Grid.ColumnSpan="2"
+                                Grid.Row="1"
+                                Text="Change Binding Context" />
+                        </Grid>
+                    </mauibottomsheet:BottomSheetContent>
+                </mauibottomsheet:BottomSheet.Content>
+            </mauibottomsheet:BottomSheet>
+        </VerticalStackLayout>
+    </ContentPage.Content>
+</ContentPage>

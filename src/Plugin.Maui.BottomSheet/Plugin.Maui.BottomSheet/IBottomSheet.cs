@@ -1,11 +1,8 @@
 using System.ComponentModel;
+using System.Windows.Input;
+using Plugin.BottomSheet;
 
 namespace Plugin.Maui.BottomSheet;
-
-using System;
-using System.Windows.Input;
-using Microsoft.Maui;
-using Microsoft.Maui.Controls;
 
 /// <summary>
 /// Represents a bottom sheet interface providing supplementary content anchored to the bottom of the screen.
@@ -181,4 +178,7 @@ public interface IBottomSheet : IView, IPadding, ISafeAreaView
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public void OnClosedBottomSheet();
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void Cancel();
 }

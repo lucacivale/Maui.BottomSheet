@@ -6,6 +6,7 @@ namespace Plugin.Maui.BottomSheet.Platform.MaciOS;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Platform;
+using Plugin.BottomSheet;
 using UIKit;
 
 /// <summary>
@@ -413,7 +414,7 @@ internal sealed class BottomSheetUIViewController : UINavigationController
     /// <param name="padding">The padding thickness to apply.</param>
     public void SetPadding(Thickness padding)
     {
-        _virtualBottomSheet.Padding = padding;
+        //_virtualBottomSheet.Padding = padding;
     }
 
     /// <summary>
