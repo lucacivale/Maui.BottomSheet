@@ -77,21 +77,21 @@ jobs:
         run: dotnet workload install maui
         
       - name: Build/Publish ${{ matrix.platform }} Test Application
-        run: dotnet ${{ matrix.build-command }} tests/Unit/$(TestMauiUnitApplicationProjectName)/$(TestMauiUnitApplicationProjectName).csproj -c ${{ env.Configuration }} -f ${{ matrix.framework }} -r ${{ matrix.runtime }} -p:TestingMode=XHarness ${{ matrix.platform == 'android' && '-p:AndroidSdkDirectory=$ANDROID_SDK_ROOT' || '' }}
+        run: dotnet ${{ matrix.build-command }} tests/Unit/${{ env.TestMauiUnitApplicationProjectName }}/${{ env.TestMauiUnitApplicationProjectName }}).csproj -c ${{ env.Configuration }} -f ${{ matrix.framework }} -r ${{ matrix.runtime }} -p:TestingMode=XHarness ${{ matrix.platform == 'android' && '-p:AndroidSdkDirectory=$ANDROID_SDK_ROOT' || '' }}
 
       - name: Upload Android APK
         if: matrix.platform == 'android'
         uses: actions/upload-artifact@v4
         with:
           name: TestApp-${{ matrix.platform }}
-          path: tests/Unit/$(TestMauiUnitApplicationProjectName)/bin/Release/${{ matrix.framework }}/${{ matrix.runtime }}/$(TestMauiUnitApplicationApkName)-Signed.apk
+          path: tests/Unit/${{ env.TestMauiUnitApplicationProjectName }}/bin/Release/${{ matrix.framework }}/${{ matrix.runtime }}/${{ env.TestMauiUnitApplicationApkName }})-Signed.apk
 
       - name: Upload iOS/MacCatalyst App
         if: matrix.platform != 'android'
         uses: actions/upload-artifact@v4
         with:
           name: TestApp-${{ matrix.platform }}
-          path: tests/Unit/($(TestMauiUnitApplicationProjectName)/bin/Release/${{ matrix.framework }}
+          path: tests/Unit/${{ env.TestMauiUnitApplicationProjectName }}/bin/Release/${{ matrix.framework }}
 
   Run-Apple-Maui-Unit-Tests:
     runs-on: macos-15
@@ -134,7 +134,7 @@ jobs:
           do
             xharness apple test \
               --target ${{ matrix.target }} \
-              --app ./app/${{ matrix.runtime }}/$(TestMauiUnitApplicationAppName).app \
+              --app ./app/${{ matrix.runtime }}/${{ env.TestMauiUnitApplicationAppName }}.app \
               --output-directory artifacts/test-results \
             && code=0 && break || code=$? && sleep 15
           done
@@ -211,8 +211,8 @@ jobs:
         
       - name: Test Android
         run: xharness android test
-          --app ./app/$(TestMauiUnitApplicationApkName)-Signed.apk
-          --package-name $(TestMauiUnitApplicationApkName)
+          --app ./app/${{ env.TestMauiUnitApplicationApkName }}-Signed.apk
+          --package-name ${{ env.TestMauiUnitApplicationApkName }}
           --instrumentation devicerunners.xharness.maui.XHarnessInstrumentation
           --output-directory artifacts/test-results
 
