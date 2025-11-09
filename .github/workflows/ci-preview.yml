@@ -77,21 +77,21 @@ jobs:
         run: dotnet workload install maui
         
       - name: Build/Publish ${{ matrix.platform }} Test Application
-        run: dotnet ${{ matrix.build-command }} tests/Unit/${{ env.TestMauiUnitApplicationProjectName }}/${{ env.TestMauiUnitApplicationProjectName }}.csproj -c ${{ env.Configuration }} -f ${{ matrix.framework }} -r ${{ matrix.runtime }} -p:TestingMode=XHarness ${{ matrix.platform == 'android' && '-p:AndroidSdkDirectory=$ANDROID_SDK_ROOT' || '' }}
+        run: dotnet ${{ matrix.build-command }} tests/Unit/Maui/${{ env.TestMauiUnitApplicationProjectName }}/${{ env.TestMauiUnitApplicationProjectName }}.csproj -c ${{ env.Configuration }} -f ${{ matrix.framework }} -r ${{ matrix.runtime }} -p:TestingMode=XHarness ${{ matrix.platform == 'android' && '-p:AndroidSdkDirectory=$ANDROID_SDK_ROOT' || '' }}
 
       - name: Upload Android APK
         if: matrix.platform == 'android'
         uses: actions/upload-artifact@v4
         with:
           name: TestApp-${{ matrix.platform }}
-          path: tests/Unit/${{ env.TestMauiUnitApplicationProjectName }}/bin/Release/${{ matrix.framework }}/${{ matrix.runtime }}/${{ env.TestMauiUnitApplicationApkName }}-Signed.apk
+          path: tests/Unit/Maui/${{ env.TestMauiUnitApplicationProjectName }}/bin/Release/${{ matrix.framework }}/${{ matrix.runtime }}/${{ env.TestMauiUnitApplicationApkName }}-Signed.apk
 
       - name: Upload iOS/MacCatalyst App
         if: matrix.platform != 'android'
         uses: actions/upload-artifact@v4
         with:
           name: TestApp-${{ matrix.platform }}
-          path: tests/Unit/${{ env.TestMauiUnitApplicationProjectName }}/bin/Release/${{ matrix.framework }}
+          path: tests/Unit/Maui/${{ env.TestMauiUnitApplicationProjectName }}/bin/Release/${{ matrix.framework }}
 
   Run-Apple-Maui-Unit-Tests:
     runs-on: macos-15
