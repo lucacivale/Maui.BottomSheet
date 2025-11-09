@@ -1,5 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Plugin.BottomSheet;
+
 namespace Plugin.Maui.BottomSheet.Sample.ViewModels;
 
 public partial class CustomHeaderShowcaseViewModel : ObservableObject

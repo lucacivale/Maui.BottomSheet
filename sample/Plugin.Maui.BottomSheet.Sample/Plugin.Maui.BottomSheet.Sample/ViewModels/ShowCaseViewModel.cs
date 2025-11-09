@@ -1,6 +1,7 @@
 using AsyncAwaitBestPractices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Plugin.BottomSheet;
 using Plugin.Maui.BottomSheet.Navigation;
 
 namespace Plugin.Maui.BottomSheet.Sample.ViewModels;
@@ -40,18 +41,18 @@ public sealed partial class ShowCaseViewModel : ObservableObject, IConfirmNaviga
     private bool _isModal;
 
     [ObservableProperty]
-    private CloseButtonPosition _closeButtonPosition = CloseButtonPosition.TopRight;
+    private BottomSheetHeaderCloseButtonPosition _closeButtonPosition = BottomSheetHeaderCloseButtonPosition.TopRight;
 
     [RelayCommand]
     private void TopLeftCloseButton()
     {
-        CloseButtonPosition = CloseButtonPosition.TopLeft;
+        CloseButtonPosition = BottomSheetHeaderCloseButtonPosition.TopLeft;
     }
 
     [RelayCommand]
     private void TopRightCloseButton()
     {
-        CloseButtonPosition = CloseButtonPosition.TopRight;
+        CloseButtonPosition = BottomSheetHeaderCloseButtonPosition.TopRight;
     }
 
     [RelayCommand]
