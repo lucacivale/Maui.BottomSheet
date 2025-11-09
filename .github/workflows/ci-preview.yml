@@ -12,7 +12,7 @@ env:
   Configuration: 'Release'
   DOTNETFrameworkVersion: 'net10.0'
   DOTNET_VERSION: '10.0.100-preview.4.25258.110'
-  XCODE_VERSION: '26.0'
+  XCODE_VERSION: '16.4'
   ANDROID_RUNTIME_IDENTIFIER: android-x64
   iOS_RUNTIME_IDENTIFIER: iossimulator-arm64
   MACCATALYST_RUNTIME_IDENTIFIER: maccatalyst-arm64
