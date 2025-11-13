@@ -1,9 +1,0 @@
-<Project>
-    <PropertyGroup>
-        <LegacyNETVersion>net9.0</LegacyNETVersion>
-        <NETVersion>net10.0</NETVersion>
-        <IsPackable>false</IsPackable>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
-</Project>

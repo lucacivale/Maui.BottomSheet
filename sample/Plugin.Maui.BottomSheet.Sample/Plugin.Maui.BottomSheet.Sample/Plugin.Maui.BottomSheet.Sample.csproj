@@ -1,7 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net10.0-android;net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
-    
+      <TargetFrameworks>
+          $(NETVersion)-android;
+          $(NETVersion)-ios;
+          $(NETVersion)-maccatalyst
+      </TargetFrameworks>
     <OutputType>Exe</OutputType>
     <RootNamespace>Plugin.Maui.BottomSheet.Sample</RootNamespace>
     <UseMaui>true</UseMaui>
@@ -22,12 +25,6 @@
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
-
-    <!-- enable trimming and AOT analyzers on all platforms -->
-    <IsAotCompatible>true</IsAotCompatible>
-    <!-- select platforms to use with NativeAOT -->
-    <PublishAot>true</PublishAot>
-    <TrimMode>full</TrimMode>
   </PropertyGroup>
 
   <ItemGroup>
@@ -49,9 +46,9 @@
   </ItemGroup>
 
   <ItemGroup>
-      <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-      <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.0-preview.4.25263.4" />
-      <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.4" />
+      <PackageReference Include="CommunityToolkit.Mvvm" />
+      <PackageReference Include="Microsoft.Maui.Controls" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Debug" />
   </ItemGroup>
 
   <ItemGroup>

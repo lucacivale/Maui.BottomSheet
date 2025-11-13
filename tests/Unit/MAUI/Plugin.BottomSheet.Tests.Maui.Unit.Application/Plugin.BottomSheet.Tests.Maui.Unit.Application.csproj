@@ -62,14 +62,16 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="xunit.analyzers">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
 
         <PackageReference Include="DeviceRunners.UITesting.Maui" />
         <PackageReference Include="DeviceRunners.UITesting.Xunit" />
 
         <PackageReference Include="DeviceRunners.VisualRunners.Maui" />
         <PackageReference Include="DeviceRunners.VisualRunners.Xunit" />
-
-        <PackageReference Include="Microsoft.Maui.Controls" />
 
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" />
         <PackageReference Include="Microsoft.Extensions.Logging.Console" />
@@ -100,6 +102,16 @@
         <ItemGroup>
             <_VisualStudioTestRunnerFiles Include="@(PackagingOutputs)" Condition="$([System.String]::Copy('%(PackagingOutputs.FullPath)').Contains('xunit.runner.visualstudio'))" />
             <PackagingOutputs Remove="@(_VisualStudioTestRunnerFiles)" />
+        </ItemGroup>
+    </Target>
+
+    <Target Name="AddApplePlatformsFolder" BeforeTargets="_MauiRemovePlatformCompileItems">
+        <ItemGroup Condition=" '$(SingleProject)' == 'true' ">
+            <Compile
+                    Condition=" '$(TargetPlatformIdentifier)' == 'ios' or '$(TargetPlatformIdentifier)' == 'maccatalyst' "
+                    Include="$(PlatformsProjectFolder)Apple\**\*$(DefaultLanguageSourceExtension)">
+                <ExcludeFromCurrentConfiguration>false</ExcludeFromCurrentConfiguration>
+            </Compile>
         </ItemGroup>
     </Target>
 

@@ -6,15 +6,6 @@
             $(NETVersion)-android;
             $(NETVersion)-maccatalyst
         </TargetFrameworks>
-        <TargetFrameworks Condition="'$(IsCI)' == 'true'">
-            $(TargetFrameworks);
-            $(LegacyNETVersion)-ios;
-            $(LegacyNETVersion)-android;
-            $(LegacyNETVersion)-maccatalyst;
-            $(NETVersion)-ios;
-            $(NETVersion)-android;
-            $(NETVersion)-maccatalyst
-        </TargetFrameworks>
         <OutputType>Exe</OutputType>
         <UseMaui>true</UseMaui>
         <SingleProject>true</SingleProject>
@@ -55,17 +46,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    </ItemGroup>
-
-    <ItemGroup Condition="$(TargetFramework.StartsWith('$(LegacyNETVersion)'))">
-        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.21" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0"/>
-    </ItemGroup>
-
-    <ItemGroup Condition="$(TargetFramework.StartsWith('$(NETVersion)'))">
-        <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.0-preview.4.25263.4" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0-preview.4.25258.110"/>
+        <PackageReference Include="CommunityToolkit.Mvvm" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug"/>
+        <PackageReference Include="Microsoft.Maui.Controls"/>
     </ItemGroup>
 
     <ItemGroup>
