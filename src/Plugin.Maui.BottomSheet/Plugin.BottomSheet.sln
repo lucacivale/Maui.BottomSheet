@@ -41,6 +41,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManager", "..\..\sample
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.Maui.BottomSheet.Sample", "..\..\sample\Plugin.Maui.BottomSheet.Sample\Plugin.Maui.BottomSheet.Sample\Plugin.Maui.BottomSheet.Sample.csproj", "{5DF7FBF6-DC67-4F7E-B870-C39EBDA8D50A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.BottomSheet.IOSMacCatalyst", "..\Plugin.BottomSheet.IOSMacCatalyst\Plugin.BottomSheet.IOSMacCatalyst.csproj", "{8F438E1E-C5B9-4DD5-A6B2-3979F92933EC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{5DF7FBF6-DC67-4F7E-B870-C39EBDA8D50A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DF7FBF6-DC67-4F7E-B870-C39EBDA8D50A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5DF7FBF6-DC67-4F7E-B870-C39EBDA8D50A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F438E1E-C5B9-4DD5-A6B2-3979F92933EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F438E1E-C5B9-4DD5-A6B2-3979F92933EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F438E1E-C5B9-4DD5-A6B2-3979F92933EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F438E1E-C5B9-4DD5-A6B2-3979F92933EC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{39A61328-FEF9-45A0-AAEC-AB50554FA4F8} = {D75CD494-8DA2-47BE-ADB6-1022CC019720}

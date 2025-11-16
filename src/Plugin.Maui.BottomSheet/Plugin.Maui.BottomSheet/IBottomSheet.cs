@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Windows.Input;
 using Plugin.BottomSheet;
+using ILayout = Microsoft.Maui.ILayout;
 
 namespace Plugin.Maui.BottomSheet;
 
@@ -154,6 +155,8 @@ public interface IBottomSheet : IView, IPadding, ISafeAreaView
     /// Gets or sets the content configuration for the bottom sheet.
     /// </summary>
     BottomSheetContent? Content { get; set; }
+    
+    public View ContainerView { get; }
 
     /// <summary>
     /// Triggers the opening event for the bottom sheet.

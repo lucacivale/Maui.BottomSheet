@@ -37,6 +37,14 @@
         <PackageReference Include="AsyncAwaitBestPractices"/>
     </ItemGroup>
 
+    <ItemGroup Condition="$(TargetFramework.StartsWith('$(LegacyNETVersion)'))">
+        <PackageReference Include="Microsoft.Maui.Controls"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="$(TargetFramework.StartsWith('$(NETVersion)'))">
+        <PackageReference Include="Microsoft.Maui.Controls" />
+    </ItemGroup>
+
     <ItemGroup>
         <None Include="..\..\..\Icon.png">
             <Pack>True</Pack>
@@ -50,6 +58,10 @@
 	
     <ItemGroup Condition="$(TargetFramework.EndsWith('android'))">
       <ProjectReference Include="..\..\Plugin.BottomSheet.Android\Plugin.BottomSheet.Android.csproj" />
+    </ItemGroup>
+
+    <ItemGroup Condition="$(TargetFramework.EndsWith('ios')) or $(TargetFramework.EndsWith('maccatalyst'))">
+        <ProjectReference Include="..\..\Plugin.BottomSheet.IOSMacCatalyst\Plugin.BottomSheet.IOSMacCatalyst.csproj" />
     </ItemGroup>
 	
     <ItemGroup>

@@ -31,7 +31,8 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
     /// <returns>A task that represents the asynchronous close operation.</returns>
     internal partial Task CloseAsync()
     {
-        return PlatformView.CloseAsync();
+        //return PlatformView.CloseAsync();
+        return Task.CompletedTask;
     }
 
     /// <summary>
@@ -65,14 +66,14 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
     {
         base.DisconnectHandler(platformView);
 
-        try
+        /*try
         {
             await platformView.CleanupAsync().ConfigureAwait(true);
         }
         catch (Exception e)
         {
             Trace.TraceError($"Error while cleaning up bottom sheet: {0}", e);
-        }
+        }*/
     }
 
     /// <summary>
@@ -82,12 +83,14 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
     /// <param name="bottomSheet">The bottom sheet interface.</param>
     private static void MapIsCancelable(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
+        /*
         if (handler.PlatformView.IsOpen == false)
         {
             return;
         }
 
         handler.PlatformView.SetIsCancelable();
+        */
     }
 
     /// <summary>
@@ -97,12 +100,14 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
     /// <param name="bottomSheet">The bottom sheet interface.</param>
     private static void MapHasHandle(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
+        /*
         if (handler.PlatformView.IsOpen == false)
         {
             return;
         }
 
         handler.PlatformView.SetHasHandle();
+        */
     }
 
     /// <summary>
@@ -112,12 +117,14 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
     /// <param name="bottomSheet">The bottom sheet interface.</param>
     private static void MapShowHeader(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
+        /*
         if (handler.PlatformView.IsOpen == false)
         {
             return;
         }
 
         handler.PlatformView.SetShowHeader();
+        */
     }
 
     /// <summary>
@@ -127,7 +134,8 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
     /// <param name="bottomSheet">The bottom sheet interface.</param>
     private static void MapIsOpen(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
-        if (handler.IsConnecting && bottomSheet.IsOpen == false)
+        if (handler.IsConnecting
+            && bottomSheet.IsOpen)
         {
             return;
         }
@@ -142,12 +150,14 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
     /// <param name="bottomSheet">The bottom sheet interface.</param>
     private static void MapIsDraggable(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
+        /*
         if (handler.PlatformView.IsOpen == false)
         {
             return;
         }
 
         handler.PlatformView.SetIsDraggable();
+        */
     }
 
     /// <summary>
@@ -157,12 +167,14 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
     /// <param name="bottomSheet">The bottom sheet interface.</param>
     private static void MapHeader(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
+        /*
         if (handler.PlatformView.IsOpen == false)
         {
             return;
         }
 
         handler.PlatformView.SetHeader();
+        */
     }
 
     /// <summary>
@@ -172,12 +184,14 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
     /// <param name="bottomSheet">The bottom sheet interface.</param>
     private static void MapStates(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
+        /*
         if (handler.PlatformView.IsOpen == false)
         {
             return;
         }
 
         handler.PlatformView.SetStates();
+        */
     }
 
     /// <summary>
@@ -187,12 +201,14 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
     /// <param name="bottomSheet">The bottom sheet interface.</param>
     private static void MapCurrentState(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
+        /*
         if (handler.PlatformView.IsOpen == false)
         {
             return;
         }
 
         handler.PlatformView.SetCurrentState();
+        */
     }
 
     /// <summary>
@@ -202,8 +218,10 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
     /// <param name="bottomSheet">The bottom sheet interface.</param>
     private static void MapPeekHeight(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
+        /*
         // Always set peek height!
         handler.PlatformView.SetPeekHeight();
+        */
     }
 
     /// <summary>
@@ -213,12 +231,14 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
     /// <param name="bottomSheet">The bottom sheet interface.</param>
     private static void MapContent(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
+        /*
         if (handler.PlatformView.IsOpen == false)
         {
             return;
         }
 
         handler.PlatformView.SetContent();
+        */
     }
 
     /// <summary>
@@ -228,12 +248,14 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
     /// <param name="bottomSheet">The bottom sheet interface.</param>
     private static void MapPadding(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
+        /*
         if (handler.PlatformView.IsOpen == false)
         {
             return;
         }
 
         handler.PlatformView.SetPadding();
+        */
     }
 
     /// <summary>
@@ -243,12 +265,14 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
     /// <param name="bottomSheet">The bottom sheet interface.</param>
     private static void MapBackgroundColor(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
+        /*
         if (handler.PlatformView.IsOpen == false)
         {
             return;
         }
 
         handler.PlatformView.SetBottomSheetBackgroundColor();
+        */
     }
 
     /// <summary>
@@ -258,12 +282,14 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
     /// <param name="bottomSheet">The bottom sheet interface.</param>
     private static void MapIgnoreSafeArea(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
+        /*
         if (handler.PlatformView.IsOpen == false)
         {
             return;
         }
 
         handler.PlatformView.SetIgnoreSafeArea();
+        */
     }
 
     /// <summary>
@@ -273,12 +299,14 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
     /// <param name="bottomSheet">The bottom sheet interface.</param>
     private static void MapCornerRadius(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
+        /*
         if (handler.PlatformView.IsOpen == false)
         {
             return;
         }
 
         handler.PlatformView.SetCornerRadius();
+        */
     }
 
     /// <summary>
@@ -288,12 +316,14 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
     /// <param name="bottomSheet">The bottom sheet interface.</param>
     private static void MapWindowBackgroundColor(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
+        /*
         if (handler.PlatformView.IsOpen == false)
         {
             return;
         }
 
         handler.PlatformView.SetWindowBackgroundColor();
+        */
     }
 
     /// <summary>
@@ -303,12 +333,14 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
     /// <param name="bottomSheet">The bottom sheet interface.</param>
     private static void MapIsModal(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
+        /*
         if (handler.PlatformView.IsOpen == false)
         {
             return;
         }
 
         handler.PlatformView.SetIsModal();
+        */
     }
 
     /// <summary>
@@ -318,12 +350,14 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
     /// <param name="bottomSheet">The bottom sheet interface.</param>
     private static void MapBottomSheetStyle(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
+        /*
         if (handler.PlatformView.IsOpen == false)
         {
             return;
         }
 
         handler.PlatformView.SetBottomSheetStyle();
+        */
     }
 
     private static void MapCancel(BottomSheetHandler handler, IBottomSheet bottomSheet, object? sender)

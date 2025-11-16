@@ -248,7 +248,7 @@
                                 ColumnDefinitions="*,*"
                                 RadioButtonGroup.GroupName="CurrentState"
                                 RadioButtonGroup.SelectedValue="{Binding CurrentState}"
-                                RowDefinitions="25,25"
+                                RowDefinitions="30,30"
                                 x:Name="CurrentState">
                                 <Label
                                     FontAttributes="Bold"

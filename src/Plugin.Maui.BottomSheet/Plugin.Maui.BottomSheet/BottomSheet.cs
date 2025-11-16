@@ -1,6 +1,7 @@
 using Plugin.BottomSheet;
 using System.ComponentModel;
 using System.Windows.Input;
+using ILayout = Microsoft.Maui.ILayout;
 using MauiThickness = Microsoft.Maui.Thickness;
 
 namespace Plugin.Maui.BottomSheet;
@@ -282,6 +283,9 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             propertyChanged: OnBottomSheetStylePropertyChanged,
             defaultValue: new BottomSheetStyle());
 
+    private const int ContentRow = 1;
+
+    private readonly Grid _bottomSheetLayout;
     private readonly WeakEventManager _eventManager = new();
     private readonly Lazy<PlatformConfigurationRegistry<BottomSheet>> _platformConfigurationRegistry;
 
@@ -290,6 +294,11 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     /// </summary>
     public BottomSheet()
     {
+        _bottomSheetLayout = new Grid
+        {
+            RowDefinitions = new RowDefinitionCollection(new RowDefinition(GridLength.Auto), new RowDefinition(GridLength.Star)),
+        };
+
         _platformConfigurationRegistry = new Lazy<PlatformConfigurationRegistry<BottomSheet>>(() => new PlatformConfigurationRegistry<BottomSheet>(this));
         Unloaded += OnUnloaded;
         HandlerChanged += OnHandlerChanged;
@@ -402,6 +411,8 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         set => SetValue(StatesProperty, value);
     }
 
+    public View ContainerView => _bottomSheetLayout;
+
     /// <summary>
     /// Gets the platform-specific configuration for this bottom sheet.
     /// </summary>
@@ -449,6 +460,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     {
         Handler?.Invoke(nameof(IBottomSheet.Cancel));
     }
+
 #pragma warning restore CA1033
 
     internal void OnCancel(object? sender, EventArgs e)
@@ -552,6 +564,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         if (oldValue is not null)
         {
             oldValue.CloseButtonClicked -= OnCancel;
+
             oldValue.Remove();
         }
 
@@ -571,13 +584,16 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     /// <param name="newValue">The new content value.</param>
     private void OnContentChanged(BottomSheetContent oldValue, BottomSheetContent newValue)
     {
+        _bottomSheetLayout.Remove(oldValue?.Content);
         oldValue?.Remove();
 
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (newValue is not null)
         {
-            newValue.Parent = this;
-            newValue.BindingContext = BindingContext;
+            newValue.Parent = _bottomSheetLayout;
+            newValue.BindingContext = _bottomSheetLayout.BindingContext;
+
+            _bottomSheetLayout.Add(newValue.CreateContent(), 0, ContentRow);
         }
     }
 

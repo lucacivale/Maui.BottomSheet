@@ -91,19 +91,7 @@ public sealed class PeekViewExtension : IMarkupExtension<double>
     {
         if (_bottomSheet?.TryGetTarget(out var bottomSheet) == true)
         {
-            if (view is ICrossPlatformLayout crossPlatformLayout)
-            {
-                bottomSheet.PeekHeight = crossPlatformLayout.CrossPlatformMeasure(view.Window?.Width ?? double.PositiveInfinity, view.Window?.Height ?? double.NegativeInfinity).Height;
-            }
-            else
-            {
-                bottomSheet.PeekHeight = view.Height;
-
-                if (bottomSheet.PeekHeight <= 0)
-                {
-                    bottomSheet.PeekHeight = view.Measure(view.Window?.Width ?? double.PositiveInfinity, view.Window?.Height ?? double.NegativeInfinity).Height;
-                }
-            }
+            bottomSheet.PeekHeight = view.Measure().Height;
         }
     }
 }

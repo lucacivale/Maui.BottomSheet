@@ -13,7 +13,7 @@
         <PackageVersion Include="Xamarin.Google.Android.Material" Version="1.12.0.2" />
 
         <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.12.19" />
-        <PackageVersion Include="SonarAnalyzer.CSharp" Version="9.32.0.97167" />
+        <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.15.0.120848" />
         <PackageVersion Include="xunit.analyzers" Version="1.23.0" />
         <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
         <PackageVersion Include="NSubstitute.Analyzers.CSharp" Version="1.0.17" />

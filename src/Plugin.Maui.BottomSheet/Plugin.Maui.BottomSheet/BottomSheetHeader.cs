@@ -89,7 +89,7 @@ public sealed class BottomSheetHeader : BottomSheetContentView, IBottomSheetHead
 
     private Grid? _builtInHeaderLayout;
 
-    public event EventHandler? CloseButtonClicked
+    public event EventHandler CloseButtonClicked
     {
         add => _weakEventManager.AddEventHandler(value);
         remove => _weakEventManager.RemoveEventHandler(value);
@@ -154,7 +154,7 @@ public sealed class BottomSheetHeader : BottomSheetContentView, IBottomSheetHead
         get => (BottomSheetHeaderButtonAppearanceMode)GetValue(HeaderAppearanceProperty);
         set => SetValue(HeaderAppearanceProperty, value);
     }
-
+    
     object? IBottomSheetHeader.TopLeftButton => TopLeftButton;
 
     object? IBottomSheetHeader.TopRightButton => TopRightButton;
@@ -182,6 +182,7 @@ public sealed class BottomSheetHeader : BottomSheetContentView, IBottomSheetHead
                     new ColumnDefinition(GridLength.Star)),
                 ColumnSpacing = 5,
                 AutomationId = AutomationIds.Header,
+                BackgroundColor = Colors.Green,
             };
 
             if (this.HasTopLeftButton())
@@ -435,7 +436,7 @@ public sealed class BottomSheetHeader : BottomSheetContentView, IBottomSheetHead
         {
             SetCloseButtonStyle();
         }
-
+        
         return true;
     }
 

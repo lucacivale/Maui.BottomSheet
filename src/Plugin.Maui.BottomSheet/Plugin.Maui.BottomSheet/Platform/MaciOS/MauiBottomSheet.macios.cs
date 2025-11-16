@@ -1,5 +1,7 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using CoreGraphics;
+using Microsoft.Maui.Platform;
 using Plugin.Maui.BottomSheet.Navigation;
 
 namespace Plugin.Maui.BottomSheet.Platform.MaciOS;
@@ -13,6 +15,92 @@ using UIKit;
 /// </summary>
 internal sealed class MauiBottomSheet : UIView
 {
+    private readonly IMauiContext _mauiContext;
+    private readonly Plugin.BottomSheet.IOSMacCatalyst.BottomSheet _bottomSheet;
+
+    private IBottomSheet? _virtualView;
+
+    public MauiBottomSheet(IMauiContext mauiContext)
+    {
+        _mauiContext = mauiContext;
+        _bottomSheet = new Plugin.BottomSheet.IOSMacCatalyst.BottomSheet();
+    }
+
+    public void SetView(IBottomSheet virtualView)
+    {
+        _virtualView = virtualView;
+    }
+
+    /// <summary>
+    /// Sets the open state of the bottom sheet based on the virtual view configuration.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    public async Task SetIsOpenAsync()
+    {
+        if (_virtualView?.IsOpen == true)
+        {
+            await OpenAsync().ConfigureAwait(false);
+        }
+    }
+
+    public async Task OpenAsync()
+    {
+        //SetShowHeader();
+        SetContent();
+
+        //SetPadding();
+
+        await _bottomSheet.OpenAsync().ConfigureAwait(true);
+    }
+
+    /// <summary>
+    /// Sets the header for the bottom sheet.
+    /// </summary>
+    public void SetHeader()
+    {
+        SetShowHeader();
+    }
+
+    /// <summary>
+    /// Sets whether the header should be shown.
+    /// </summary>
+    public void SetShowHeader()
+    {
+        if (_virtualView?.ShowHeader == false)
+        {
+            _bottomSheet.RemoveHeader();
+        }
+        else
+        {
+            if (_virtualView?.Header is not null)
+            {
+                _bottomSheet.SetHeaderView(_virtualView.Header.CreateContent().ToPlatform(_mauiContext));
+            }
+        }
+    }
+
+    public void SetHeaderHeight(double height)
+    {
+        _bottomSheet.SetHeaderHeight(height);
+    }
+
+    public void SetContent()
+    {
+        if (_virtualView?.ContainerView is not null)
+        {
+            _bottomSheet.SetContentView(_virtualView.ContainerView.ToPlatform(_mauiContext));
+        }
+    }
+
+    /// <summary>
+    /// Sets the padding for the bottom sheet content.
+    /// </summary>
+    public void SetPadding()
+    {
+        _bottomSheet.Padding = _virtualView?.Padding.ToThickness() ?? new Thickness(0);
+    }
+
+    /*
     private readonly IMauiContext _mauiContext;
     private readonly BottomSheet _bottomSheet;
     private readonly SemaphoreSlim _semaphore = new(1, 1);
@@ -393,4 +481,5 @@ internal sealed class MauiBottomSheet : UIView
 
         //_virtualView.Frame = e;
     }
+    */
 }
