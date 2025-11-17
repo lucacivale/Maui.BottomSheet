@@ -62,7 +62,7 @@ internal static class ViewExtensions
         Size size = Size.Zero;
 
         size = view.Measure(view.Window?.Width ?? double.PositiveInfinity, view.Window?.Height ?? double.NegativeInfinity);
-        
+
         if (view is ICrossPlatformLayout crossPlatformLayout)
         {
             size = crossPlatformLayout.CrossPlatformMeasure(view.Window?.Width ?? double.PositiveInfinity, view.Window?.Height ?? double.NegativeInfinity);

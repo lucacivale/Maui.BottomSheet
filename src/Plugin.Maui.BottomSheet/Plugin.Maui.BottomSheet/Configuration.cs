@@ -9,9 +9,4 @@ public sealed class Configuration
     /// Gets or sets a value indicating whether page properties should be automatically copied to the bottom sheet when creating from a page.
     /// </summary>
     public bool CopyPagePropertiesToBottomSheet { get; set; }
-
-    /// <summary>
-    /// Gets the feature flags configuration for the plugin.
-    /// </summary>
-    public FeatureFlags FeatureFlags { get; } = new();
 }

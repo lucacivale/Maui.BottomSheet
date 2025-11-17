@@ -25,22 +25,15 @@ internal sealed partial class BottomSheetHandler
     private static readonly IPropertyMapper<IBottomSheet, BottomSheetHandler> _bottomSheetMapper = new PropertyMapper<IBottomSheet, BottomSheetHandler>(ElementMapper)
     {
         [nameof(IBottomSheet.IsCancelable)] = MapIsCancelable,
-        [nameof(IBottomSheet.HasHandle)] = MapHasHandle,
-        [nameof(IBottomSheet.ShowHeader)] = MapShowHeader,
         [nameof(IBottomSheet.IsOpen)] = MapIsOpen,
         [nameof(IBottomSheet.IsDraggable)] = MapIsDraggable,
-        [nameof(IBottomSheet.Header)] = MapHeader,
         [nameof(IBottomSheet.States)] = MapStates,
         [nameof(IBottomSheet.CurrentState)] = MapCurrentState,
         [nameof(IBottomSheet.PeekHeight)] = MapPeekHeight,
-        [nameof(IBottomSheet.Content)] = MapContent,
-        [nameof(IBottomSheet.Padding)] = MapPadding,
         [nameof(IBottomSheet.BackgroundColor)] = MapBackgroundColor,
-        [nameof(IBottomSheet.IgnoreSafeArea)] = MapIgnoreSafeArea,
         [nameof(IBottomSheet.CornerRadius)] = MapCornerRadius,
         [nameof(IBottomSheet.WindowBackgroundColor)] = MapWindowBackgroundColor,
         [nameof(IBottomSheet.IsModal)] = MapIsModal,
-        [nameof(IBottomSheet.BottomSheetStyle)] = MapBottomSheetStyle,
     };
 
     private static readonly CommandMapper<IBottomSheet, BottomSheetHandler> _bottomSheetCommandMapper = new CommandMapper<IBottomSheet, BottomSheetHandler>(ElementCommandMapper)

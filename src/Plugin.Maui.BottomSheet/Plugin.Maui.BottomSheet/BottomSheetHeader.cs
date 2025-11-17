@@ -182,7 +182,6 @@ public sealed class BottomSheetHeader : BottomSheetContentView, IBottomSheetHead
                     new ColumnDefinition(GridLength.Star)),
                 ColumnSpacing = 5,
                 AutomationId = AutomationIds.Header,
-                BackgroundColor = Colors.Green,
             };
 
             if (this.HasTopLeftButton())

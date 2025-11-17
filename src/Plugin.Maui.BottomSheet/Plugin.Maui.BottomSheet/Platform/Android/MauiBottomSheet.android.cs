@@ -96,50 +96,6 @@ internal sealed class MauiBottomSheet : AndroidView
     }
 
     /// <summary>
-    /// Sets whether the bottom sheet should show a drag handle.
-    /// </summary>
-    public void SetHasHandle()
-    {
-        if (_bottomSheet is null)
-        {
-            return;
-        }
-
-        _bottomSheet.HasHandle = _virtualView?.HasHandle ?? false;
-    }
-
-    /// <summary>
-    /// Sets the header for the bottom sheet.
-    /// </summary>
-    public void SetHeader()
-    {
-        SetShowHeader();
-    }
-
-    /// <summary>
-    /// Sets whether the header should be shown.
-    /// </summary>
-    public void SetShowHeader()
-    {
-        if (_bottomSheet is null)
-        {
-            return;
-        }
-
-        if (_virtualView?.ShowHeader == false)
-        {
-            _bottomSheet.RemoveHeader();
-        }
-        else
-        {
-            if (_virtualView?.Header is not null)
-            {
-                _bottomSheet.SetHeaderView(_virtualView.Header.CreateContent().ToPlatform(_mauiContext));
-            }
-        }
-    }
-
-    /// <summary>
     /// Opens the bottom sheet asynchronously.
     /// </summary>
     /// <returns>A task representing the asynchronous operation.</returns>
@@ -167,8 +123,8 @@ internal sealed class MauiBottomSheet : AndroidView
         SetIsCancelable();
         SetIsDraggable();
         SetCurrentState();
-        SetShowHeader();
-        SetContent();
+
+        _bottomSheet.SetContentView(_virtualView.ContainerView.ToPlatform(_mauiContext));
 
         SetHalfExpandedRatio();
         SetMargin();
@@ -183,10 +139,8 @@ internal sealed class MauiBottomSheet : AndroidView
 
         SetWindowBackgroundColor();
         SetBottomSheetBackgroundColor();
-        SetHasHandle();
         SetPeekHeight();
         SetIsModal();
-        SetPadding();
         SetCornerRadius();
         SetFrame();
 
@@ -308,16 +262,6 @@ internal sealed class MauiBottomSheet : AndroidView
     }
 
     /// <summary>
-    /// Sets the content of the bottom sheet.
-    /// </summary>
-    public void SetContent()
-    {
-        AndroidView view = _virtualView?.Content?.CreateContent().ToPlatform(_mauiContext) ?? new AndroidView(Context);
-
-        _bottomSheet?.SetContentView(view);
-    }
-
-    /// <summary>
     /// Sets whether the bottom sheet is modal.
     /// </summary>
     public void SetIsModal()
@@ -328,20 +272,6 @@ internal sealed class MauiBottomSheet : AndroidView
         }
 
         _bottomSheet.IsModal = _virtualView?.IsModal ?? true;
-    }
-
-    /// <summary>
-    /// Sets the padding of the bottom sheet.
-    /// </summary>
-    public void SetPadding()
-    {
-        if (_virtualView is null
-            || _bottomSheet is null)
-        {
-            return;
-        }
-
-        _bottomSheet.Padding = new(_virtualView.Padding.Left, _virtualView.Padding.Top, _virtualView.Padding.Right, _virtualView.Padding.Bottom);
     }
 
     /// <summary>
@@ -493,7 +423,6 @@ internal sealed class MauiBottomSheet : AndroidView
     private void BottomSheetOnLayoutChanged(object? sender, EventArgs e)
     {
         SetFrame();
-        SetPeekHeight();
     }
 
     /// <summary>

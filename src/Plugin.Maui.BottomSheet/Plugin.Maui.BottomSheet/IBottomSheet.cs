@@ -155,8 +155,8 @@ public interface IBottomSheet : IView, IPadding, ISafeAreaView
     /// Gets or sets the content configuration for the bottom sheet.
     /// </summary>
     BottomSheetContent? Content { get; set; }
-    
-    public View ContainerView { get; }
+
+    public Grid ContainerView { get; }
 
     /// <summary>
     /// Triggers the opening event for the bottom sheet.

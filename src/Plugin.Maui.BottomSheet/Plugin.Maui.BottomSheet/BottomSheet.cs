@@ -1,7 +1,7 @@
+using Microsoft.Maui.Controls.Shapes;
 using Plugin.BottomSheet;
 using System.ComponentModel;
 using System.Windows.Input;
-using ILayout = Microsoft.Maui.ILayout;
 using MauiThickness = Microsoft.Maui.Thickness;
 
 namespace Plugin.Maui.BottomSheet;
@@ -126,7 +126,8 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             typeof(bool),
             typeof(BottomSheet),
             defaultValue: true,
-            defaultBindingMode: BindingMode.TwoWay);
+            defaultBindingMode: BindingMode.TwoWay,
+            propertyChanged: OnHasHandlePropertyChanged);
 
     /// <summary>
     /// Bindable property for the header visibility.
@@ -198,7 +199,8 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             nameof(Padding),
             typeof(MauiThickness),
             typeof(BottomSheet),
-            defaultValue: new MauiThickness(10));
+            defaultValue: new MauiThickness(10),
+            propertyChanged: OnPaddingPropertyChanged);
 
     /// <summary>
     /// Bindable property for the command executed when closing.
@@ -283,7 +285,9 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             propertyChanged: OnBottomSheetStylePropertyChanged,
             defaultValue: new BottomSheetStyle());
 
-    private const int ContentRow = 1;
+    internal const int HandleRow = 0;
+    internal const int HeaderRow = 1;
+    internal const int ContentRow = 2;
 
     private readonly Grid _bottomSheetLayout;
     private readonly WeakEventManager _eventManager = new();
@@ -294,14 +298,18 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     /// </summary>
     public BottomSheet()
     {
-        _bottomSheetLayout = new Grid
-        {
-            RowDefinitions = new RowDefinitionCollection(new RowDefinition(GridLength.Auto), new RowDefinition(GridLength.Star)),
-        };
-
         _platformConfigurationRegistry = new Lazy<PlatformConfigurationRegistry<BottomSheet>>(() => new PlatformConfigurationRegistry<BottomSheet>(this));
         Unloaded += OnUnloaded;
         HandlerChanged += OnHandlerChanged;
+
+        _bottomSheetLayout = new Grid
+        {
+            RowDefinitions = new RowDefinitionCollection(
+                new RowDefinition(GridLength.Auto),
+                new RowDefinition(GridLength.Auto),
+                new RowDefinition(GridLength.Star)),
+        };
+        InitialSetup();
     }
 
     /// <inheritdoc/>
@@ -411,7 +419,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         set => SetValue(StatesProperty, value);
     }
 
-    public View ContainerView => _bottomSheetLayout;
+    public Grid ContainerView => _bottomSheetLayout;
 
     /// <summary>
     /// Gets the platform-specific configuration for this bottom sheet.
@@ -428,6 +436,10 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     /// <inheritdoc/>
     void IBottomSheet.OnOpeningBottomSheet()
     {
+        _bottomSheetLayout.Parent = this;
+        _bottomSheetLayout.BindingContext = BindingContext;
+        _bottomSheetLayout.ChildRemoved += ContainerChildRemoved;
+
         RaiseEvent(nameof(Opening), EventArgs.Empty);
         ExecuteCommand(OpeningCommand, OpeningCommandParameter);
     }
@@ -452,6 +464,11 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         Header?.Remove();
         Content?.Remove();
 
+        _bottomSheetLayout.Parent = null;
+        _bottomSheetLayout.BindingContext = null;
+        _bottomSheetLayout.ChildRemoved -= ContainerChildRemoved;
+        _bottomSheetLayout.DisconnectHandlers();
+
         RaiseEvent(nameof(Closed), EventArgs.Empty);
         ExecuteCommand(ClosedCommand, ClosedCommandParameter);
     }
@@ -460,7 +477,6 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     {
         Handler?.Invoke(nameof(IBottomSheet.Cancel));
     }
-
 #pragma warning restore CA1033
 
     internal void OnCancel(object? sender, EventArgs e)
@@ -475,14 +491,16 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     {
         base.OnBindingContextChanged();
 
+        _bottomSheetLayout.BindingContext = BindingContext;
+
         if (Header is not null)
         {
-            Header.BindingContext = BindingContext;
+            Header.BindingContext = _bottomSheetLayout.BindingContext;
         }
 
         if (Content is not null)
         {
-            Content.BindingContext = BindingContext;
+            Content.BindingContext = _bottomSheetLayout.BindingContext;
         }
     }
 
@@ -532,6 +550,26 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     private static void OnBottomSheetStylePropertyChanged(BindableObject bindable, object oldValue, object newValue)
         => ((BottomSheet)bindable).OnBottomSheetStylePropertyChanged((BottomSheetStyle)oldValue, (BottomSheetStyle)newValue);
 
+    private static void OnHasHandlePropertyChanged(BindableObject bindable, object oldValue, object newValue)
+        => ((BottomSheet)bindable).OnHasHandlePropertyChanged();
+
+    private static void OnPaddingPropertyChanged(BindableObject bindable, object oldValue, object newValue)
+        => ((BottomSheet)bindable).OnPaddingPropertyChanged();
+
+    private void OnPaddingPropertyChanged()
+    {
+        _bottomSheetLayout.Padding = Padding;
+
+        if (_bottomSheetLayout.Children.FirstOrDefault(child => _bottomSheetLayout.GetRow(child) == HandleRow) is View handle)
+        {
+            handle.Margin = new(
+                handle.Margin.Left,
+                handle.Margin.Top - Padding.Top,
+                handle.Margin.Right,
+                handle.Margin.Bottom);
+        }
+    }
+
     /// <summary>
     /// Raises the specified event with the given event arguments.
     /// </summary>
@@ -563,18 +601,21 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     {
         if (oldValue is not null)
         {
-            oldValue.CloseButtonClicked -= OnCancel;
+            _bottomSheetLayout.Remove(_bottomSheetLayout.Children.FirstOrDefault(child => _bottomSheetLayout.GetRow(child) == HeaderRow));
 
+            oldValue.CloseButtonClicked -= OnCancel;
             oldValue.Remove();
         }
 
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (newValue is not null)
         {
-            newValue.Parent = this;
+            newValue.Parent = _bottomSheetLayout;
             newValue.BindingContext = BindingContext;
             newValue.Style = BottomSheetStyle.HeaderStyle;
             newValue.CloseButtonClicked += OnCancel;
+
+            OnShowHeaderPropertyChanged();
         }
     }
 
@@ -584,7 +625,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     /// <param name="newValue">The new content value.</param>
     private void OnContentChanged(BottomSheetContent oldValue, BottomSheetContent newValue)
     {
-        _bottomSheetLayout.Remove(oldValue?.Content);
+        _bottomSheetLayout.Remove(_bottomSheetLayout.Children.FirstOrDefault(child => _bottomSheetLayout.GetRow(child) == ContentRow));
         oldValue?.Remove();
 
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
@@ -593,7 +634,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             newValue.Parent = _bottomSheetLayout;
             newValue.BindingContext = _bottomSheetLayout.BindingContext;
 
-            _bottomSheetLayout.Add(newValue.CreateContent(), 0, ContentRow);
+            AddContent(newValue);
         }
     }
 
@@ -603,12 +644,15 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         {
             if (ShowHeader == false)
             {
+                _bottomSheetLayout.Remove(_bottomSheetLayout.Children.FirstOrDefault(child => _bottomSheetLayout.GetRow(child) == HeaderRow));
                 Header.Remove();
             }
             else
             {
-                Header.Parent = this;
+                Header.Parent = _bottomSheetLayout;
                 Header.BindingContext = BindingContext;
+
+                AddHeader(Header);
             }
         }
     }
@@ -656,5 +700,83 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     private void OnHandlerChanged(object? sender, EventArgs e)
     {
         IsOpen = false;
+    }
+
+    private void OnHasHandlePropertyChanged()
+    {
+        if (HasHandle == false)
+        {
+            _bottomSheetLayout.Remove(_bottomSheetLayout.Children.FirstOrDefault(child => _bottomSheetLayout.GetRow(child) == HandleRow));
+        }
+        else
+        {
+            AddHandle();
+        }
+    }
+
+    private void InitialSetup()
+    {
+        _bottomSheetLayout.Padding = Padding;
+
+        if (HasHandle)
+        {
+            AddHandle();
+        }
+
+        if (Header is not null
+            && ShowHeader)
+        {
+            Header.Parent = _bottomSheetLayout;
+            Header.BindingContext = BindingContext;
+
+            AddHeader(Header);
+        }
+
+        if (Content is not null)
+        {
+            Content.Parent = _bottomSheetLayout;
+            Content.BindingContext = _bottomSheetLayout.BindingContext;
+
+            AddContent(Content);
+        }
+    }
+
+    private void AddHandle()
+    {
+        _bottomSheetLayout.Add(CreateHandle(), 0, HandleRow);
+    }
+
+    private void AddHeader(BottomSheetHeader header)
+    {
+        _bottomSheetLayout.Add(header.CreateContent(), 0, HeaderRow);
+    }
+
+    private void AddContent(BottomSheetContent content)
+    {
+        _bottomSheetLayout.Add(content.CreateContent(), 0, ContentRow);
+    }
+
+    private Border CreateHandle()
+    {
+        return new()
+        {
+            Margin = new(0, 10 - Padding.Top, 0, 0),
+            WidthRequest = 35,
+            HeightRequest = 10,
+            Content = new BoxView()
+            {
+                WidthRequest = 35,
+                Color = Colors.Gray,
+            },
+            StrokeShape = new RoundRectangle()
+            {
+                CornerRadius = new(20),
+            },
+        };
+    }
+
+    private void ContainerChildRemoved(object? sender, ElementEventArgs e)
+    {
+        InvalidateMeasure();
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Plugin.BottomSheet.Android;
+﻿using System.Diagnostics;
+
+namespace Plugin.BottomSheet.Android;
 
 internal sealed class AnimationListener : Java.Lang.Object, Animator.IAnimatorListener, ValueAnimator.IAnimatorUpdateListener
 {
@@ -35,15 +37,22 @@ internal sealed class AnimationListener : Java.Lang.Object, Animator.IAnimatorLi
 
     public void OnAnimationUpdate(ValueAnimator animation)
     {
-        if (_animationEnded == false
-            && animation.AnimatedValue is not null
-            && _weakDrawable.TryGetTarget(out ColorDrawable? drawable))
+        try
         {
-            drawable.Color = Color.Argb(
-                Color.GetAlphaComponent((int)animation.AnimatedValue),
-                Color.GetRedComponent((int)animation.AnimatedValue),
-                Color.GetGreenComponent((int)animation.AnimatedValue),
-                Color.GetBlueComponent((int)animation.AnimatedValue));
+            if (_animationEnded == false
+                && animation.AnimatedValue is not null
+                && _weakDrawable.TryGetTarget(out ColorDrawable? drawable))
+            {
+                drawable.Color = Color.Argb(
+                    Color.GetAlphaComponent((int)animation.AnimatedValue),
+                    Color.GetRedComponent((int)animation.AnimatedValue),
+                    Color.GetGreenComponent((int)animation.AnimatedValue),
+                    Color.GetBlueComponent((int)animation.AnimatedValue));
+            }
+        }
+        catch (ObjectDisposedException ex)
+        {
+            Trace.TraceError("Window background animation failed: {0}", ex);
         }
     }
 }

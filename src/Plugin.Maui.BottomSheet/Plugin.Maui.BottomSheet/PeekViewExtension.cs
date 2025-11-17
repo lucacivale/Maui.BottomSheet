@@ -42,26 +42,28 @@ public sealed class PeekViewExtension : IMarkupExtension<double>
             if (string.IsNullOrWhiteSpace(Name) == false
                 && bottomSheet.Content?.Content is not null)
             {
-                View view = bottomSheet.Content.Content.FindByName<View>(Name);
-                view.Loaded += OnLoaded;
-
-                _view = new(view);
+                _view = new(bottomSheet.Content.Content.FindByName<View>(Name));
             }
         }
         else
         {
-            View.Loaded += OnLoaded;
-
             _view = new(View);
         }
+
+        bottomSheet.ContainerView.Loaded += OnLoaded;
     }
 
     private void SheetOnClosing(object? sender, EventArgs e)
     {
-        if (_view?.TryGetTarget(out var view) == true)
+        if (_bottomSheet?.TryGetTarget(out var view) == true)
         {
-            view.Loaded -= OnLoaded;
-            view.MeasureInvalidated -= ContentOnMeasureInvalidated;
+            view.ContainerView.Loaded -= OnLoaded;
+            view.ContainerView.MeasureInvalidated -= ContentOnMeasureInvalidated;
+        }
+
+        if (_bottomSheet?.TryGetTarget(out BottomSheet? bottomSheet) == true)
+        {
+            bottomSheet.MeasureInvalidated -= ContentOnMeasureInvalidated;
         }
     }
 
@@ -72,26 +74,43 @@ public sealed class PeekViewExtension : IMarkupExtension<double>
             return;
         }
 
-        SetPeekHeight(view);
+        SetPeekHeight();
 
         view.MeasureInvalidated += ContentOnMeasureInvalidated;
+
+        if (_bottomSheet?.TryGetTarget(out BottomSheet? bottomSheet) == true)
+        {
+            bottomSheet.MeasureInvalidated += ContentOnMeasureInvalidated;
+        }
     }
 
     private void ContentOnMeasureInvalidated(object? sender, EventArgs e)
     {
-        if (sender is not View view)
-        {
-            return;
-        }
-
-        SetPeekHeight(view);
+        SetPeekHeight();
     }
 
-    private void SetPeekHeight(View view)
+    private void SetPeekHeight()
     {
-        if (_bottomSheet?.TryGetTarget(out var bottomSheet) == true)
+        if (_bottomSheet?.TryGetTarget(out BottomSheet? bottomSheet) == true)
         {
-            bottomSheet.PeekHeight = view.Measure().Height;
+            double peekHeight = 0;
+
+            if (_view?.TryGetTarget(out View? view) == true)
+            {
+                peekHeight += view.Measure().Height;
+            }
+
+            if (bottomSheet.ContainerView.TryGetView(BottomSheet.HandleRow, out View? handle))
+            {
+                peekHeight += handle.Measure().Height;
+            }
+
+            if (bottomSheet.ContainerView.TryGetView(BottomSheet.HeaderRow, out View? header))
+            {
+                peekHeight += header.Measure().Height;
+            }
+
+            bottomSheet.PeekHeight = peekHeight;
         }
     }
 }

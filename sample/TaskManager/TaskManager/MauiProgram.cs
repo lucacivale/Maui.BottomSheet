@@ -22,7 +22,6 @@ public static class MauiProgram
             {
 
                 config.CopyPagePropertiesToBottomSheet = true;
-                config.FeatureFlags.ContentFillsAvailableSpace = true;
             })
             .UseMauiCommunityToolkit()
             .ConfigureFonts(fonts =>

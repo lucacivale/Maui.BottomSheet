@@ -102,37 +102,6 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Mau
     }
 
     /// <summary>
-    /// Maps the <c>HasHandle</c> property of the bottom sheet to the platform-specific implementation.
-    /// </summary>
-    /// <param name="handler">The <see cref="BottomSheetHandler"/> instance responsible for managing the bottom sheet.</param>
-    /// <param name="bottomSheet">The <see cref="IBottomSheet"/> interface instance representing the bottom sheet.</param>
-    private static void MapHasHandle(BottomSheetHandler handler, IBottomSheet bottomSheet)
-    {
-        if (handler.PlatformView.IsOpen == false)
-        {
-            return;
-        }
-
-        handler.PlatformView.SetHasHandle();
-    }
-
-    /// <summary>
-    /// Maps the 'ShowHeader' property from the <see cref="IBottomSheet"/> to the platform-specific implementation.
-    /// Ensures the header display setting on the bottom sheet is updated only if the bottom sheet is currently open.
-    /// </summary>
-    /// <param name="handler">The <see cref="BottomSheetHandler"/> instance responsible for managing the bottom sheet.</param>
-    /// <param name="bottomSheet">The <see cref="IBottomSheet"/> instance representing the bottom sheet on the shared abstraction side.</param>
-    private static void MapShowHeader(BottomSheetHandler handler, IBottomSheet bottomSheet)
-    {
-        if (handler.PlatformView.IsOpen == false)
-        {
-            return;
-        }
-
-        handler.PlatformView.SetShowHeader();
-    }
-
-    /// <summary>
     /// Maps the IsOpen property of the BottomSheet to the platform-specific implementation,
     /// ensuring that the bottom sheet's state corresponds to the desired behavior.
     /// </summary>
@@ -166,21 +135,6 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Mau
         }
 
         handler.PlatformView.SetIsDraggable();
-    }
-
-    /// <summary>
-    /// Maps the <c>Header</c> property of the <see cref="IBottomSheet"/> to the platform-specific implementation.
-    /// </summary>
-    /// <param name="handler">The handler responsible for coordinating between the cross-platform control and the platform-specific control.</param>
-    /// <param name="bottomSheet">The cross-platform <see cref="IBottomSheet"/> control instance.</param>
-    private static void MapHeader(BottomSheetHandler handler, IBottomSheet bottomSheet)
-    {
-        if (handler.PlatformView.IsOpen == false)
-        {
-            return;
-        }
-
-        handler.PlatformView.SetHeader();
     }
 
     /// <summary>
@@ -227,42 +181,6 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Mau
     }
 
     /// <summary>
-    /// Maps the content of the bottom sheet to the platform-specific implementation.
-    /// This method is invoked during property changes to assign the content for the bottom sheet when it is open.
-    /// </summary>
-    /// <param name="handler">
-    /// The instance of <see cref="BottomSheetHandler"/> representing the handler for the bottom sheet.
-    /// </param>
-    /// <param name="bottomSheet">
-    /// The <see cref="IBottomSheet"/> instance containing the details of the bottom sheet.
-    /// </param>
-    private static void MapContent(BottomSheetHandler handler, IBottomSheet bottomSheet)
-    {
-        if (handler.PlatformView.IsOpen == false)
-        {
-            return;
-        }
-
-        handler.PlatformView.SetContent();
-    }
-
-    /// <summary>
-    /// Maps the padding properties from the <see cref="IBottomSheet"/> to the platform-specific <see cref="MauiBottomSheet"/> view.
-    /// Ensures that padding is updated only if the bottom sheet is currently open.
-    /// </summary>
-    /// <param name="handler">The <see cref="BottomSheetHandler"/> instance handling the mapping and lifecycle of the bottom sheet.</param>
-    /// <param name="bottomSheet">The <see cref="IBottomSheet"/> instance containing the padding configuration to be applied.</param>
-    private static void MapPadding(BottomSheetHandler handler, IBottomSheet bottomSheet)
-    {
-        if (handler.PlatformView.IsOpen == false)
-        {
-            return;
-        }
-
-        handler.PlatformView.SetPadding();
-    }
-
-    /// <summary>
     /// Maps the background color property of the bottom sheet.
     /// </summary>
     /// <param name="handler">The handler for the bottom sheet.</param>
@@ -275,16 +193,6 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Mau
         }
 
         handler.PlatformView.SetBottomSheetBackgroundColor();
-    }
-
-    /// <summary>
-    /// Maps the IgnoreSafeArea property of the bottom sheet to its platform-specific implementation.
-    /// </summary>
-    /// <param name="handler">The handler for the bottom sheet, responsible for bridging the shared and platform-specific components.</param>
-    /// <param name="bottomSheet">The bottom sheet object whose IgnoreSafeArea property is being mapped.</param>
-    private static void MapIgnoreSafeArea(BottomSheetHandler handler, IBottomSheet bottomSheet)
-    {
-        // Method intentionally left empty.
     }
 
     /// <summary>
@@ -337,25 +245,6 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Mau
         }
 
         handler.PlatformView.SetIsModal();
-    }
-
-    /// <summary>
-    /// Maps the bottom sheet style from the provided <see cref="IBottomSheet"/>
-    /// to the platform-specific <see cref="MauiBottomSheet"/> implementation.
-    /// This method ensures the styling updates are applied only when the bottom sheet is open.
-    /// </summary>
-    /// <param name="handler">
-    /// The handler instance that bridges the shared .NET bottom sheet logic with the platform-specific implementation.
-    /// </param>
-    /// <param name="bottomSheet">
-    /// The <see cref="IBottomSheet"/> instance containing the bottom sheet style properties to be mapped.
-    /// </param>
-    private static void MapBottomSheetStyle(BottomSheetHandler handler, IBottomSheet bottomSheet)
-    {
-        if (handler.PlatformView.IsOpen == false)
-        {
-            return;
-        }
     }
 
     private static void MapCancel(BottomSheetHandler handler, IBottomSheet bottomSheet, object? sender)
