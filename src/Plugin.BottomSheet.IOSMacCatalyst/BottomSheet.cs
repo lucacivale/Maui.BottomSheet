@@ -9,98 +9,17 @@ namespace Plugin.BottomSheet.IOSMacCatalyst;
 /// </summary>
 internal sealed class BottomSheet : UIViewController
 {
-    private const int HeaderTag = 1;
-    private const int ContentTag = 2;
-
-    private const int HeaderViewIndex = 0;
-    private const int ContentViewIndex = 1;
-
-    private readonly UIStackView _container;
-
-    private Thickness _padding = new(0);
-
-    private NSLayoutConstraint? _topAnchor;
-    private NSLayoutConstraint? _leadingAnchor;
-    private NSLayoutConstraint? _trailingAnchor;
-    private NSLayoutConstraint? _bottomAnchor;
-
-    public BottomSheet()
-    {
-        _container = new UIStackView()
-        {
-            TranslatesAutoresizingMaskIntoConstraints = false,
-            Axis = UILayoutConstraintAxis.Vertical,
-        };
-    }
-
-    public Thickness Padding
-    {
-        get => _padding;
-        set
-        {
-            _padding = value;
-            SetContainerPadding(_padding);
-        }
-    }
-
-    public override void ViewDidLoad()
-    {
-        base.ViewDidLoad();
-
-        if (View is not null)
-        {
-            //View.AddSubview(_container);
-        }
-    }
-
-    public void SetHeaderView(UIView view)
-    {
-        /*
-        var header = new BottomSheetHeaderView();
-        header.BackgroundColor = UIColor.Orange;
-
-        AddView(header, HeaderTag, HeaderViewIndex);
-
-        view.TranslatesAutoresizingMaskIntoConstraints = false;
-        header.AddSubview(view);
-
-        NSLayoutConstraint.ActivateConstraints(
-        [
-            view.TopAnchor.ConstraintEqualTo(header.TopAnchor),
-            view.LeadingAnchor.ConstraintEqualTo(header.LeadingAnchor),
-            view.TrailingAnchor.ConstraintEqualTo(header.TrailingAnchor),
-            view.BottomAnchor.ConstraintEqualTo(header.BottomAnchor),
-        ]);*/
-
-        AddView(view, HeaderTag, HeaderViewIndex);
-
-        view.HeightConstraint(0);
-    }
-
-    public void SetHeaderHeight(double height)
-    {
-        if (TryGetView(HeaderTag, out UIView? header))
-        {
-            header.HeightConstraint(height);
-        }
-    }
-
     public void SetContentView(UIView view)
     {
         view.TranslatesAutoresizingMaskIntoConstraints = false;
-        View.AddSubview(view);
-        //AddView(view, ContentTag, ContentViewIndex);
-    }
 
-    public void RemoveHeader()
-    {
-        RemoveView(HeaderTag);
+        View?.AddSubview(view);
     }
 
     public async Task OpenAsync()
     {
         if (View is not null
-            && View.Subviews.FirstOrDefault() is UIView container)
+            && View.Subviews.FirstOrDefault() is { } container)
         {
             NSLayoutConstraint.ActivateConstraints(
             [
@@ -117,73 +36,6 @@ internal sealed class BottomSheet : UIViewController
         }
     }
 
-    private NSLayoutConstraint[] InitContainerConstraints(UIView view)
-    {
-        _topAnchor = _container.TopAnchor.ConstraintEqualTo(view.SafeAreaLayoutGuide.TopAnchor, new nfloat(_padding.Top));
-        _leadingAnchor = _container.LeadingAnchor.ConstraintEqualTo(view.SafeAreaLayoutGuide.LeadingAnchor, new nfloat(_padding.Left));
-        _trailingAnchor = _container.TrailingAnchor.ConstraintEqualTo(view.SafeAreaLayoutGuide.TrailingAnchor, new nfloat(-_padding.Right));
-        _bottomAnchor = _container.BottomAnchor.ConstraintEqualTo(view.SafeAreaLayoutGuide.BottomAnchor, new nfloat(-_padding.Bottom));
-
-        return [_topAnchor, _leadingAnchor, _trailingAnchor, _bottomAnchor];
-    }
-
-    private void SetContainerPadding(Thickness padding)
-    {
-        if (_topAnchor is not null)
-        {
-            _topAnchor.Constant = new nfloat(padding.Top);
-        }
-
-        if (_leadingAnchor is not null)
-        {
-            _leadingAnchor.Constant = new nfloat(padding.Top);
-        }
-
-        if (_trailingAnchor is not null)
-        {
-            _trailingAnchor.Constant = new nfloat(-padding.Right);
-        }
-
-        if (_bottomAnchor is not null)
-        {
-            _bottomAnchor.Constant = new nfloat(-padding.Bottom);
-        }
-    }
-
-    private void AddView(UIView view, int tag, uint row)
-    {
-        RemoveView(tag);
-
-        view.TranslatesAutoresizingMaskIntoConstraints = false;
-        view.Tag = tag;
-
-        if (_container.ArrangedSubviews.Length == 0)
-        {
-            _container.AddArrangedSubview(view);
-        }
-        else
-        {
-            _container.InsertArrangedSubview(view, row);
-        }
-    }
-
-    private void RemoveView(int tag)
-    {
-        if (TryGetView(tag, out UIView? view))
-        {
-            _container.RemoveArrangedSubview(view);
-
-            view.RemoveFromSuperview();
-            view.Dispose();
-        }
-    }
-
-    private bool TryGetView(int tag, [NotNullWhen(true)] out UIView? view)
-    {
-        view = _container.ViewWithTag(tag);
-
-        return view is not null;
-    }
     /*
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheet"/> class.
