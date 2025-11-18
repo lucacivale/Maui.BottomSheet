@@ -765,17 +765,18 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         return new()
         {
             Margin = new(0, 10 - Padding.Top, 0, 0),
-            WidthRequest = 35,
-            HeightRequest = 10,
+            WidthRequest = 40,
+            HeightRequest = 7.5,
             Content = new BoxView()
             {
-                WidthRequest = 35,
+                WidthRequest = 40,
                 Color = Colors.Gray,
             },
             StrokeShape = new RoundRectangle()
             {
                 CornerRadius = new(20),
             },
+            Stroke = Colors.Gray,
         };
     }
 
