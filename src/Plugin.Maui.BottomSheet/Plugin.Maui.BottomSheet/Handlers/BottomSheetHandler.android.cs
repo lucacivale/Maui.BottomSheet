@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using Android.Views;
 using Microsoft.Maui.Platform;
 
 namespace Plugin.Maui.BottomSheet.Handlers;

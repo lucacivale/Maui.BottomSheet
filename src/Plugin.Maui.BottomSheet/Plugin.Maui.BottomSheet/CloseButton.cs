@@ -1,6 +1,3 @@
-using System.ComponentModel;
-using Microsoft.Maui.Handlers;
-
 namespace Plugin.Maui.BottomSheet;
 
 internal sealed class CloseButton : View

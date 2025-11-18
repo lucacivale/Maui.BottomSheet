@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using System.Windows.Input;
 using Plugin.BottomSheet;
-using ILayout = Microsoft.Maui.ILayout;
 
 namespace Plugin.Maui.BottomSheet;
 

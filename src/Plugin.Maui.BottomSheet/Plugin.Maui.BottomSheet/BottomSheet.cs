@@ -432,9 +432,9 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         return _platformConfigurationRegistry.Value.On<T>();
     }
 
-#pragma warning disable CA1033
     /// <inheritdoc/>
-    void IBottomSheet.OnOpeningBottomSheet()
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void OnOpeningBottomSheet()
     {
         _bottomSheetLayout.Parent = this;
         _bottomSheetLayout.BindingContext = BindingContext;
@@ -445,21 +445,24 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     }
 
     /// <inheritdoc/>
-    void IBottomSheet.OnOpenedBottomSheet()
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void OnOpenedBottomSheet()
     {
         RaiseEvent(nameof(Opened), EventArgs.Empty);
         ExecuteCommand(OpenedCommand, OpenedCommandParameter);
     }
 
     /// <inheritdoc/>
-    void IBottomSheet.OnClosingBottomSheet()
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void OnClosingBottomSheet()
     {
         RaiseEvent(nameof(Closing), EventArgs.Empty);
         ExecuteCommand(ClosingCommand, ClosingCommandParameter);
     }
 
     /// <inheritdoc/>
-    void IBottomSheet.OnClosedBottomSheet()
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void OnClosedBottomSheet()
     {
         Header?.Remove();
         Content?.Remove();
@@ -473,15 +476,10 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         ExecuteCommand(ClosedCommand, ClosedCommandParameter);
     }
 
-    void IBottomSheet.Cancel()
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void Cancel()
     {
-        Handler?.Invoke(nameof(IBottomSheet.Cancel));
-    }
-#pragma warning restore CA1033
-
-    internal void OnCancel(object? sender, EventArgs e)
-    {
-        ((IBottomSheet)this).Cancel();
+        Handler?.Invoke(nameof(Cancel));
     }
 
     /// <summary>
@@ -599,11 +597,17 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     /// <param name="newValue">The new header value.</param>
     private void OnHeaderChanged(BottomSheetHeader oldValue, BottomSheetHeader newValue)
     {
+        EventHandler @event = null!;
+        @event = (s, e) =>
+        {
+            Cancel();
+        };
+
         if (oldValue is not null)
         {
             _bottomSheetLayout.Remove(_bottomSheetLayout.Children.FirstOrDefault(child => _bottomSheetLayout.GetRow(child) == HeaderRow));
 
-            oldValue.CloseButtonClicked -= OnCancel;
+            oldValue.CloseButtonClicked -= @event;
             oldValue.Remove();
         }
 
@@ -613,7 +617,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             newValue.Parent = _bottomSheetLayout;
             newValue.BindingContext = BindingContext;
             newValue.Style = BottomSheetStyle.HeaderStyle;
-            newValue.CloseButtonClicked += OnCancel;
+            newValue.CloseButtonClicked += @event;
 
             OnShowHeaderPropertyChanged();
         }

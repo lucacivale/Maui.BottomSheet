@@ -1,4 +1,3 @@
-using Android.Views;
 using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
 using ACloseButton = Plugin.BottomSheet.Android.CloseButton;

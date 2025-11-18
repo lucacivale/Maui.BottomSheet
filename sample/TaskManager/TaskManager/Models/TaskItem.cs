@@ -1,5 +1,3 @@
-using System.ComponentModel;
-
 namespace TaskManager.Models;
 
 public class TaskItem

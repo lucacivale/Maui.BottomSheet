@@ -1,7 +1,7 @@
 namespace Plugin.Maui.BottomSheet.Handlers;
 
 using Microsoft.Maui.Handlers;
-
+using Microsoft.Maui.Platform;
 using UIKit;
 
 /// <summary>
@@ -10,17 +10,6 @@ using UIKit;
 /// </summary>
 internal partial class CloseButtonHandler : ViewHandler<CloseButton, UIButton>
 {
-    /// <summary>
-    /// Creates and returns the native <see cref="UIButton"/> for the close button.
-    /// </summary>
-    /// <returns>
-    /// A new instance of <see cref="UIButton"/> configured as a close button.
-    /// </returns>
-    protected override UIButton CreatePlatformView()
-    {
-        return new UIButton(UIButtonType.Close);
-    }
-
     /// <summary>
     /// Maps the <see cref="CloseButton.TintColor"/> property to the underlying native button.
     /// Configures the background color, foreground color, and appearance of the platform button.
@@ -31,7 +20,7 @@ internal partial class CloseButtonHandler : ViewHandler<CloseButton, UIButton>
     {
         var config = UIButtonConfiguration.FilledButtonConfiguration;
         config.Background.CornerRadius = 100;
-        //config.Background.BackgroundColor = virtualView.TintColor.ToPlatform();
+        config.Background.BackgroundColor = virtualView.TintColor.ToPlatform();
         config.BaseForegroundColor = UIColor.FromRGB(132, 132, 136);
 
         handler.PlatformView.Configuration = config;
@@ -43,5 +32,16 @@ internal partial class CloseButtonHandler : ViewHandler<CloseButton, UIButton>
 
     public static void MapWidthRequest(CloseButtonHandler handler, CloseButton closeButton)
     {
+    }
+
+    /// <summary>
+    /// Creates and returns the native <see cref="UIButton"/> for the close button.
+    /// </summary>
+    /// <returns>
+    /// A new instance of <see cref="UIButton"/> configured as a close button.
+    /// </returns>
+    protected override UIButton CreatePlatformView()
+    {
+        return new UIButton(UIButtonType.Close);
     }
 }

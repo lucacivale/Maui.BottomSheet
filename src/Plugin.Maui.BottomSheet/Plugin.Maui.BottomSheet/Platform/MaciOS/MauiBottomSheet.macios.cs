@@ -1,14 +1,13 @@
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using CoreGraphics;
-using Microsoft.Maui.Platform;
-using Plugin.Maui.BottomSheet.Navigation;
-
 namespace Plugin.Maui.BottomSheet.Platform.MaciOS;
 
 using AsyncAwaitBestPractices;
+using Microsoft.Maui;
 using Plugin.BottomSheet;
 using UIKit;
+using Microsoft.Maui.Platform;
+using Plugin.Maui.BottomSheet.Navigation;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 /// <summary>
 /// MAUI implementation of bottom sheet for macOS and iOS platforms.
@@ -16,95 +15,9 @@ using UIKit;
 internal sealed class MauiBottomSheet : UIView
 {
     private readonly IMauiContext _mauiContext;
-    private readonly Plugin.BottomSheet.IOSMacCatalyst.BottomSheet _bottomSheet;
-
-    private IBottomSheet? _virtualView;
-
-    public MauiBottomSheet(IMauiContext mauiContext)
-    {
-        _mauiContext = mauiContext;
-        _bottomSheet = new Plugin.BottomSheet.IOSMacCatalyst.BottomSheet();
-    }
-
-    public void SetView(IBottomSheet virtualView)
-    {
-        _virtualView = virtualView;
-    }
-
-    /// <summary>
-    /// Sets the open state of the bottom sheet based on the virtual view configuration.
-    /// </summary>
-    /// <returns>A task representing the asynchronous operation.</returns>
-    public async Task SetIsOpenAsync()
-    {
-        if (_virtualView?.IsOpen == true)
-        {
-            await OpenAsync().ConfigureAwait(false);
-        }
-    }
-
-    public async Task OpenAsync()
-    {
-        //SetShowHeader();
-        SetContent();
-
-        //SetPadding();
-
-        await _bottomSheet.OpenAsync().ConfigureAwait(true);
-    }
-
-    /// <summary>
-    /// Sets the header for the bottom sheet.
-    /// </summary>
-    public void SetHeader()
-    {
-        SetShowHeader();
-    }
-
-    /// <summary>
-    /// Sets whether the header should be shown.
-    /// </summary>
-    public void SetShowHeader()
-    {
-        if (_virtualView?.ShowHeader == false)
-        {
-            _bottomSheet.RemoveHeader();
-        }
-        else
-        {
-            if (_virtualView?.Header is not null)
-            {
-                _bottomSheet.SetHeaderView(_virtualView.Header.CreateContent().ToPlatform(_mauiContext));
-            }
-        }
-    }
-
-    public void SetHeaderHeight(double height)
-    {
-        _bottomSheet.SetHeaderHeight(height);
-    }
-
-    public void SetContent()
-    {
-        if (_virtualView?.ContainerView is not null)
-        {
-            _bottomSheet.SetContentView(_virtualView.ContainerView.ToPlatform(_mauiContext));
-        }
-    }
-
-    /// <summary>
-    /// Sets the padding for the bottom sheet content.
-    /// </summary>
-    public void SetPadding()
-    {
-        _bottomSheet.Padding = _virtualView?.Padding.ToThickness() ?? new Thickness(0);
-    }
-
-    /*
-    private readonly IMauiContext _mauiContext;
-    private readonly BottomSheet _bottomSheet;
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
+    private Plugin.BottomSheet.IOSMacCatalyst.BottomSheet? _bottomSheet;
     private IBottomSheet? _virtualView;
 
     /// <summary>
@@ -114,16 +27,12 @@ internal sealed class MauiBottomSheet : UIView
     public MauiBottomSheet(IMauiContext mauiContext)
     {
         _mauiContext = mauiContext;
-        _bottomSheet = new BottomSheet(_mauiContext);
-        _bottomSheet.StateChanged += BottomSheetOnStateChanged;
-        _bottomSheet.ConfirmDismiss += BottomSheetOnConfirmDismiss;
-        _bottomSheet.FrameChanged += BottomSheetOnFrameChanged;
     }
 
     /// <summary>
     /// Gets a value indicating whether the bottom sheet is currently open.
     /// </summary>
-    public bool IsOpen => _bottomSheet.IsOpen;
+    public bool IsOpen => _bottomSheet?.IsOpen == true;
 
     /// <summary>
     /// Called when the view is moved to a window, handles auto-opening if needed.
@@ -133,7 +42,7 @@ internal sealed class MauiBottomSheet : UIView
         base.MovedToWindow();
 
         if (_virtualView?.IsOpen == true
-            && _bottomSheet.IsOpen == false)
+            && _bottomSheet?.IsOpen == false)
         {
             SetIsOpenAsync().SafeFireAndForget(continueOnCapturedContext: false);
         }
@@ -151,10 +60,9 @@ internal sealed class MauiBottomSheet : UIView
     /// <summary>
     /// Cleans up resources used by the bottom sheet.
     /// </summary>
-    /// <returns>A task representing the asynchronous operation.</returns>
-    public async Task CleanupAsync()
+    public void Cleanup()
     {
-        await _bottomSheet.DisposeAsync().ConfigureAwait(true);
+        _bottomSheet?.Dispose();
     }
 
     /// <summary>
@@ -162,58 +70,48 @@ internal sealed class MauiBottomSheet : UIView
     /// </summary>
     public void SetIsCancelable()
     {
-        _bottomSheet.SetIsCancelable(_virtualView?.IsCancelable == true);
-    }
-
-    /// <summary>
-    /// Sets whether the bottom sheet should display a drag handle.
-    /// </summary>
-    public void SetHasHandle()
-    {
-        _bottomSheet.SetHasHandle(_virtualView?.HasHandle == true);
-    }
-
-    /// <summary>
-    /// Sets the header configuration for the bottom sheet.
-    /// </summary>
-    public void SetHeader()
-    {
-        if (_virtualView?.Header is null)
+        if (_bottomSheet is null)
         {
             return;
         }
 
-        _bottomSheet.SetHeader(_virtualView.Header, _virtualView.BottomSheetStyle.HeaderStyle);
-    }
-
-    /// <summary>
-    /// Shows or hides the header based on the virtual view configuration.
-    /// </summary>
-    public void SetShowHeader()
-    {
-        if (_virtualView?.ShowHeader == true)
-        {
-            _bottomSheet.ShowHeader();
-        }
-        else
-        {
-            _bottomSheet.HideHeader();
-        }
+        _bottomSheet.ModalInPresentation = _virtualView?.IsCancelable != true;
     }
 
     /// <summary>
     /// Opens the bottom sheet asynchronously.
     /// </summary>
     /// <returns>A task representing the asynchronous operation.</returns>
-    public async Task OpenAsync()
+    public async Task OpenAsync(bool force = false)
     {
         if (_virtualView is null)
         {
             return;
         }
 
+        _bottomSheet = new Plugin.BottomSheet.IOSMacCatalyst.BottomSheet();
+        _bottomSheet.StateChanged += BottomSheetOnStateChanged;
+        _bottomSheet.Canceled += BottomSheetOnCanceled;
+        _bottomSheet.FrameChanged += BottomSheetOnFrameChanged;
+
+        SetStates();
+        SetIsCancelable();
+        SetIsDraggable();
+        SetCurrentState();
+
+        _bottomSheet.SetContentView(_virtualView.ContainerView.ToPlatform(_mauiContext));
+
         _virtualView.OnOpeningBottomSheet();
-        await _bottomSheet.OpenAsync(_virtualView).ConfigureAwait(true);
+
+        await _bottomSheet.OpenAsync().ConfigureAwait(true);
+
+        SetWindowBackgroundColor();
+        SetBottomSheetBackgroundColor();
+        SetPeekHeight();
+        SetIsModal();
+        SetCornerRadius();
+        SetFrame();
+
         _virtualView.OnOpenedBottomSheet();
     }
 
@@ -223,41 +121,57 @@ internal sealed class MauiBottomSheet : UIView
     /// <returns>A task representing the asynchronous operation.</returns>
     public async Task CloseAsync()
     {
-        if (_virtualView?.IsOpen == true)
+        if (_bottomSheet is null
+            || _virtualView is null)
         {
-            _virtualView.OnClosingBottomSheet();
-            await _bottomSheet.CloseAsync().ConfigureAwait(true);
-            _virtualView.OnClosedBottomSheet();
+            return;
         }
+
+        _virtualView.OnClosingBottomSheet();
+
+        _bottomSheet.StateChanged -= BottomSheetOnStateChanged;
+        _bottomSheet.Canceled -= BottomSheetOnCanceled;
+        _bottomSheet.FrameChanged -= BottomSheetOnFrameChanged;
+
+        await _bottomSheet.CloseAsync().ConfigureAwait(true);
+
+        SetFrame(true);
+        _virtualView.OnClosedBottomSheet();
+
+        _bottomSheet.Dispose();
+        _bottomSheet = null;
     }
 
     /// <summary>
     /// Sets the open state of the bottom sheet based on the virtual view configuration.
     /// </summary>
     /// <returns>A task representing the asynchronous operation.</returns>
+    /// <summary>
+    /// Sets the open state of the bottom sheet.
+    /// </summary>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public async Task SetIsOpenAsync()
     {
         if (_virtualView?.IsOpen == true)
         {
-            await _semaphore.WaitAsync().ConfigureAwait(true);
-
-            if (IsOpen)
+            if (_bottomSheet?.IsOpen == false
+                || _bottomSheet is null)
             {
-                return;
+                await OpenAsync().ConfigureAwait(true);
             }
-
-            _virtualView.OnOpeningBottomSheet();
-            await _bottomSheet.OpenAsync(_virtualView).ConfigureAwait(true);
-            _virtualView.OnOpenedBottomSheet();
-
-            _semaphore.Release();
         }
         else
         {
-            _virtualView?.OnClosingBottomSheet();
-            await _bottomSheet.CloseAsync().ConfigureAwait(true);
-            _virtualView?.OnClosedBottomSheet();
+            if (_bottomSheet?.IsOpen == true)
+            {
+                Cancel();
+            }
         }
+    }
+
+    public void Cancel()
+    {
+        _bottomSheet?.Cancel();
     }
 
     /// <summary>
@@ -265,7 +179,12 @@ internal sealed class MauiBottomSheet : UIView
     /// </summary>
     public void SetIsDraggable()
     {
-        _bottomSheet.SetIsDraggable(_virtualView?.IsDraggable == true);
+        if (_bottomSheet is null)
+        {
+            return;
+        }
+
+        _bottomSheet.Draggable = _virtualView?.IsDraggable == true;
     }
 
     /// <summary>
@@ -273,13 +192,14 @@ internal sealed class MauiBottomSheet : UIView
     /// </summary>
     public void SetStates()
     {
-        if (_virtualView is null)
+        if (_virtualView is null
+            || _bottomSheet is null)
         {
             return;
         }
 
-        _bottomSheet.SetStates(_virtualView.States);
-        _bottomSheet.SetState(_virtualView.CurrentState);
+        _bottomSheet.States = _virtualView.States;
+        _bottomSheet.State = _virtualView.CurrentState;
     }
 
     /// <summary>
@@ -287,12 +207,13 @@ internal sealed class MauiBottomSheet : UIView
     /// </summary>
     public void SetCurrentState()
     {
-        if (_virtualView is null)
+        if (_virtualView is null
+            || _bottomSheet is null)
         {
             return;
         }
 
-        _bottomSheet.SetState(_virtualView.CurrentState);
+        _bottomSheet.State = _virtualView.CurrentState;
     }
 
     /// <summary>
@@ -300,25 +221,13 @@ internal sealed class MauiBottomSheet : UIView
     /// </summary>
     public void SetPeekHeight()
     {
-        if (_virtualView is null)
+        if (_virtualView is null
+            || _bottomSheet is null)
         {
             return;
         }
 
-        _bottomSheet.SetPeekHeight(_virtualView.PeekHeight);
-    }
-
-    /// <summary>
-    /// Sets the content for the bottom sheet.
-    /// </summary>
-    public void SetContent()
-    {
-        if (_virtualView?.Content is null)
-        {
-            return;
-        }
-
-        _bottomSheet.SetContent(_virtualView.Content);
+        _bottomSheet.PeekHeight = _virtualView.PeekHeight;
     }
 
     /// <summary>
@@ -326,18 +235,12 @@ internal sealed class MauiBottomSheet : UIView
     /// </summary>
     public void SetIsModal()
     {
-        _bottomSheet.SetIsModal(_virtualView?.IsModal == true);
-    }
-
-    /// <summary>
-    /// Sets the padding for the bottom sheet content.
-    /// </summary>
-    public void SetPadding()
-    {
-        if (_virtualView?.Padding is null)
+        if (_bottomSheet is null)
         {
             return;
         }
+
+        _bottomSheet.IsModal = _virtualView?.IsModal == true;
     }
 
     /// <summary>
@@ -345,20 +248,12 @@ internal sealed class MauiBottomSheet : UIView
     /// </summary>
     public void SetBottomSheetBackgroundColor()
     {
-        if (_virtualView?.BackgroundColor is null)
+        if (_bottomSheet is null)
         {
             return;
         }
 
-        _bottomSheet.SetBackgroundColor(_virtualView.BackgroundColor);
-    }
-
-    /// <summary>
-    /// Sets whether the bottom sheet should ignore safe area constraints.
-    /// </summary>
-    public void SetIgnoreSafeArea()
-    {
-        _bottomSheet.SetIgnoreSafeArea(_virtualView?.IgnoreSafeArea == true);
+        _bottomSheet.BackgroundColor = _virtualView?.BackgroundColor?.ToPlatform();
     }
 
     /// <summary>
@@ -366,7 +261,11 @@ internal sealed class MauiBottomSheet : UIView
     /// </summary>
     public void SetCornerRadius()
     {
-        _bottomSheet.SetCornerRadius(_virtualView?.CornerRadius ?? 0);
+        if (_bottomSheet?.SheetPresentationController is not null
+            && _virtualView is not null)
+        {
+            _bottomSheet.SheetPresentationController.PreferredCornerRadius = _virtualView.CornerRadius;
+        }
     }
 
     /// <summary>
@@ -374,18 +273,12 @@ internal sealed class MauiBottomSheet : UIView
     /// </summary>
     public void SetWindowBackgroundColor()
     {
-        _bottomSheet.SetWindowBackgroundColor(_virtualView?.WindowBackgroundColor ?? Colors.Transparent);
-    }
-
-    /// <summary>
-    /// Sets the bottom sheet style configuration.
-    /// </summary>
-    public void SetBottomSheetStyle()
-    {
-        if (_virtualView?.BottomSheetStyle is not null)
+        if (_bottomSheet is null)
         {
-            _bottomSheet.SetHeaderStyle(_virtualView.BottomSheetStyle.HeaderStyle);
+            return;
         }
+
+        _bottomSheet.WindowBackgroundColor = _virtualView?.WindowBackgroundColor?.ToPlatform();
     }
 
     /// <summary>
@@ -399,7 +292,7 @@ internal sealed class MauiBottomSheet : UIView
             return;
         }
 
-        _bottomSheet.Dispose();
+        _bottomSheet?.Dispose();
         _semaphore.Dispose();
 
         base.Dispose(disposing);
@@ -412,20 +305,14 @@ internal sealed class MauiBottomSheet : UIView
     /// <param name="e">The state change event arguments.</param>
     private void BottomSheetOnStateChanged(object? sender, BottomSheetStateChangedEventArgs e)
     {
-        if (_virtualView is null)
+        if (_virtualView is null
+            || _bottomSheet is null)
         {
             return;
         }
 
-        var state = e.State;
-
-        if (!_virtualView.States.IsStateAllowed(state))
-        {
-            state = _virtualView.CurrentState;
-        }
-
-        _virtualView.CurrentState = state;
-        _bottomSheet.SetState(_virtualView.CurrentState);
+        _bottomSheet.State = e.State;
+        SetFrame();
     }
 
     /// <summary>
@@ -435,30 +322,48 @@ internal sealed class MauiBottomSheet : UIView
     /// <param name="e">The event arguments.</param>
     [SuppressMessage("Usage", "VSTHRD100: Avoid async void methods", Justification = "Is okay here.")]
     [SuppressMessage("Design", "CA1031: Do not catch general exception types", Justification = "Catch all exceptions to prevent crash.")]
-    private async void BottomSheetOnConfirmDismiss(object? sender, EventArgs e)
+    private async void BottomSheetOnCanceled(object? sender, EventArgs e)
     {
         try
         {
-            if (_virtualView is null)
+            if (_virtualView is null
+                || _bottomSheet is null)
             {
                 return;
             }
 
-            var parameters = BottomSheetNavigationParameters.Empty();
+            BottomSheetNavigationParameters parameters = BottomSheetNavigationParameters.Empty();
 
+            bool closed = true;
             if (_mauiContext.Services.GetRequiredService<IBottomSheetNavigationService>().NavigationStack().Contains(_virtualView))
             {
-                await _mauiContext.Services.GetRequiredService<IBottomSheetNavigationService>().GoBackAsync(parameters).ConfigureAwait(true);
+                INavigationResult result = await _mauiContext.Services.GetRequiredService<IBottomSheetNavigationService>().GoBackAsync(parameters).ConfigureAwait(true);
+
+                closed = !(result.Success == false
+                    || result.Cancelled);
             }
             else
             {
-                if (_virtualView.IsOpen
+                if (_virtualView.IsCancelable
                     && await MvvmHelpers.ConfirmNavigationAsync(_virtualView, parameters).ConfigureAwait(true))
                 {
+                    await CloseAsync().ConfigureAwait(true);
                     MvvmHelpers.OnNavigatedFrom(_virtualView, parameters);
                     MvvmHelpers.OnNavigatedTo(_virtualView.GetPageParent(), parameters);
-                    _virtualView.IsOpen = false;
                 }
+                else
+                {
+                    closed = false;
+                }
+            }
+
+            if (closed == false)
+            {
+                _bottomSheet.State = _virtualView.CurrentState;
+            }
+            else
+            {
+                _virtualView.IsOpen = false;
             }
         }
         catch
@@ -479,7 +384,25 @@ internal sealed class MauiBottomSheet : UIView
             return;
         }
 
-        //_virtualView.Frame = e;
+        SetFrame();
     }
-    */
+
+    /// <summary>
+    /// Updates the virtual view's frame based on the bottom sheet's current state.
+    /// </summary>
+    /// <param name="isClosed">Whether the bottom sheet is closed.</param>
+    private void SetFrame(bool isClosed = false)
+    {
+        if (_virtualView is null
+            || _bottomSheet is null)
+        {
+            return;
+        }
+
+        _virtualView.Frame = isClosed ? Microsoft.Maui.Graphics.Rect.Zero : new Microsoft.Maui.Graphics.Rect(
+            _bottomSheet.Frame.X,
+            _bottomSheet.Frame.Y,
+            _bottomSheet.Frame.Width,
+            _bottomSheet.Frame.Height);
+    }
 }

@@ -1,5 +1,3 @@
-using Android.App;
-using Android.Views.Animations;
 using AndroidX.CoordinatorLayout.Widget;
 using AndroidX.Core.View;
 using AsyncAwaitBestPractices;

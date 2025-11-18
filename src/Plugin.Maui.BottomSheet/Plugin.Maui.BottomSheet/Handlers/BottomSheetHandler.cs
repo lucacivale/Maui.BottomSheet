@@ -39,8 +39,10 @@ internal sealed partial class BottomSheetHandler
     private static readonly CommandMapper<IBottomSheet, BottomSheetHandler> _bottomSheetCommandMapper = new CommandMapper<IBottomSheet, BottomSheetHandler>(ElementCommandMapper)
     {
         [nameof(IBottomSheet.Cancel)] = MapCancel,
+        #if ANDROID
         [nameof(PlatformConfiguration.AndroidSpecific.BottomSheet.SetMargin)] = MapMargin,
         [nameof(PlatformConfiguration.AndroidSpecific.BottomSheet.SetHalfExpandedRatio)] = MapHalfExpandedRatio,
+        #endif
     };
 
     /// <summary>

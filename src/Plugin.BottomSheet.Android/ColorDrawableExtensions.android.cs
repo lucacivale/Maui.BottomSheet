@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace Plugin.BottomSheet.Android;
 
 /// <summary>

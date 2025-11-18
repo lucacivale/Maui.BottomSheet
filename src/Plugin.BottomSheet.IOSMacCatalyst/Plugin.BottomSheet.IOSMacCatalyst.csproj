@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>
             $(NETVersion)-ios;
@@ -9,9 +9,9 @@
 
         <SupportedOSPlatformVersion>15.0</SupportedOSPlatformVersion>
     </PropertyGroup>
-
+	
     <ItemGroup>
-        <PackageReference Include="AsyncAwaitBestPractices"/>
+        <PackageReference Include="AsyncAwaitBestPractices" />
     </ItemGroup>
     
     <ItemGroup>

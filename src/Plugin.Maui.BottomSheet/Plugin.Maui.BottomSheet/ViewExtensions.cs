@@ -1,5 +1,3 @@
-using Microsoft.Maui.Layouts;
-
 namespace Plugin.Maui.BottomSheet;
 
 /// <summary>
