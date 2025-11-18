@@ -18,7 +18,7 @@ public sealed class PeekViewExtension : IMarkupExtension<double>
 
         if (_bottomSheet.TryGetTarget(out var sheet))
         {
-            sheet.Opened += SheetOnOpened;
+            sheet.Opening += SheetOnOpened;
             sheet.Closing += SheetOnClosing;
         }
 
@@ -64,6 +64,8 @@ public sealed class PeekViewExtension : IMarkupExtension<double>
         if (_bottomSheet?.TryGetTarget(out BottomSheet? bottomSheet) == true)
         {
             bottomSheet.MeasureInvalidated -= ContentOnMeasureInvalidated;
+            bottomSheet.Opening -= SheetOnOpened;
+            bottomSheet.Closing -= SheetOnClosing;
         }
     }
 

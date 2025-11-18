@@ -18,12 +18,15 @@ internal partial class CloseButtonHandler : ViewHandler<CloseButton, UIButton>
     /// <param name="virtualView">The virtual close button view providing property values.</param>
     public static void MapTintColor(CloseButtonHandler handler, CloseButton virtualView)
     {
-        var config = UIButtonConfiguration.FilledButtonConfiguration;
-        config.Background.CornerRadius = 100;
-        config.Background.BackgroundColor = virtualView.TintColor.ToPlatform();
-        config.BaseForegroundColor = UIColor.FromRGB(132, 132, 136);
+        if (virtualView.TintColor is not null)
+        {
+            var config = UIButtonConfiguration.FilledButtonConfiguration;
+            config.Background.CornerRadius = 100;
+            config.Background.BackgroundColor = virtualView.TintColor?.ToPlatform();
+            config.BaseForegroundColor = UIColor.FromRGB(132, 132, 136);
 
-        handler.PlatformView.Configuration = config;
+            handler.PlatformView.Configuration = config;
+        }
     }
 
     public static void MapHeightRequest(CloseButtonHandler handler, CloseButton closeButton)
@@ -42,6 +45,29 @@ internal partial class CloseButtonHandler : ViewHandler<CloseButton, UIButton>
     /// </returns>
     protected override UIButton CreatePlatformView()
     {
-        return new UIButton(UIButtonType.Close);
+        var closeButton = new UIButton(UIButtonType.Close);
+
+        closeButton.UpdateAutomationId(VirtualView);
+        return closeButton;
+    }
+
+    protected override void ConnectHandler(UIButton platformView)
+    {
+        base.ConnectHandler(platformView);
+
+        platformView.TouchUpInside += CloseButtonClicked;
+    }
+
+    protected override void DisconnectHandler(UIButton platformView)
+    {
+        base.DisconnectHandler(platformView);
+
+        platformView.RemoveFromSuperview();
+        platformView.TouchUpInside -= CloseButtonClicked;
+    }
+
+    private void CloseButtonClicked(object? sender, EventArgs e)
+    {
+        VirtualView.RaiseClicked();
     }
 }
