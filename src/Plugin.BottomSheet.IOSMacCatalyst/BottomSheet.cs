@@ -1,7 +1,7 @@
 using AsyncAwaitBestPractices;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Plugin.BottomSheet.IOSMacCatalyst;
+namespace Plugin.BottomSheet.iOSMacCatalyst;
 
 /// <summary>
 /// Container for bottom sheet functionality including handle, header and content on macOS and iOS platforms.

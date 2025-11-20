@@ -17,7 +17,7 @@ internal sealed class MauiBottomSheet : UIView
     private readonly IMauiContext _mauiContext;
     private readonly TaskCompletionSource _isAttachedToWindowTcs;
 
-    private Plugin.BottomSheet.IOSMacCatalyst.BottomSheet? _bottomSheet;
+    private Plugin.BottomSheet.iOSMacCatalyst.BottomSheet? _bottomSheet;
     private IBottomSheet? _virtualView;
 
     private bool _isAttachedToWindow;
@@ -96,7 +96,7 @@ internal sealed class MauiBottomSheet : UIView
             await _isAttachedToWindowTcs.Task.WaitAsync(cts.Token).ConfigureAwait(true);
         }
 
-        _bottomSheet = new Plugin.BottomSheet.IOSMacCatalyst.BottomSheet();
+        _bottomSheet = new Plugin.BottomSheet.iOSMacCatalyst.BottomSheet();
         _bottomSheet.StateChanged += BottomSheetOnStateChanged;
         _bottomSheet.Canceled += BottomSheetOnCanceled;
         _bottomSheet.FrameChanged += BottomSheetOnFrameChanged;

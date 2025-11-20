@@ -629,7 +629,8 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         }
 
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-        if (newValue is not null)
+        if (newValue is not null
+            && IsOpen == true)
         {
             newValue.Parent = _bottomSheetLayout;
             newValue.BindingContext = BindingContext;
@@ -650,7 +651,8 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         oldValue?.Remove();
 
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-        if (newValue is not null)
+        if (newValue is not null
+            && IsOpen)
         {
             newValue.Parent = _bottomSheetLayout;
             newValue.BindingContext = _bottomSheetLayout.BindingContext;
@@ -668,7 +670,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
                 _bottomSheetLayout.Remove(_bottomSheetLayout.Children.FirstOrDefault(child => _bottomSheetLayout.GetRow(child) == HeaderRow));
                 Header.Remove();
             }
-            else
+            else if (IsOpen == true)
             {
                 Header.Parent = _bottomSheetLayout;
                 Header.BindingContext = BindingContext;

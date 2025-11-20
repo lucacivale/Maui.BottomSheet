@@ -173,11 +173,6 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Pla
     /// <param name="bottomSheet">The bottom sheet whose properties are being mapped.</param>
     private static void MapPeekHeight(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
-        if (handler.PlatformView.IsOpen == false)
-        {
-            return;
-        }
-
         handler.PlatformView.SetPeekHeight();
     }
 

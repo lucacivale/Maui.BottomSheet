@@ -41,7 +41,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManager", "..\..\sample
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.Maui.BottomSheet.Sample", "..\..\sample\Plugin.Maui.BottomSheet.Sample\Plugin.Maui.BottomSheet.Sample\Plugin.Maui.BottomSheet.Sample.csproj", "{5DF7FBF6-DC67-4F7E-B870-C39EBDA8D50A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.BottomSheet.IOSMacCatalyst", "..\Plugin.BottomSheet.IOSMacCatalyst\Plugin.BottomSheet.IOSMacCatalyst.csproj", "{8F438E1E-C5B9-4DD5-A6B2-3979F92933EC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.BottomSheet.iOSMacCatalyst", "..\Plugin.BottomSheet.iOSMacCatalyst\Plugin.BottomSheet.iOSMacCatalyst.csproj", "{8F438E1E-C5B9-4DD5-A6B2-3979F92933EC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

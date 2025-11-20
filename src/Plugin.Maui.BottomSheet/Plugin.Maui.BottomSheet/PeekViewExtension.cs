@@ -24,6 +24,12 @@ public sealed class PeekViewExtension : IMarkupExtension<double>
         return 0;
     }
 
+    object IMarkupExtension.ProvideValue(IServiceProvider serviceProvider)
+    {
+        return ProvideValue(serviceProvider);
+    }
+
+
     private void SheetOnLoaded(object? sender, EventArgs e)
     {
         if (_bottomSheet?.TryGetTarget(out BottomSheet? sheet) == true)
@@ -46,13 +52,10 @@ public sealed class PeekViewExtension : IMarkupExtension<double>
     {
         if (_bottomSheet?.TryGetTarget(out BottomSheet? sheet) == true)
         {
+            Init();
+
             sheet.LayoutChanged += SheetOnLayoutChanged;
         }
-    }
-
-    object IMarkupExtension.ProvideValue(IServiceProvider serviceProvider)
-    {
-        return ProvideValue(serviceProvider);
     }
 
     private void SheetOnClosing(object? sender, EventArgs e)
@@ -63,7 +66,7 @@ public sealed class PeekViewExtension : IMarkupExtension<double>
         }
     }
 
-    private void SheetOnLayoutChanged(object? sender, EventArgs e)
+    private void Init()
     {
         if (_view is null)
         {
@@ -81,7 +84,10 @@ public sealed class PeekViewExtension : IMarkupExtension<double>
                 _view = new(View);
             }
         }
+    }
 
+    private void SheetOnLayoutChanged(object? sender, EventArgs e)
+    {
         SetPeekHeight();
     }
 

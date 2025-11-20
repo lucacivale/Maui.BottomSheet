@@ -81,6 +81,8 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+
+        <PackageReference Include="Microsoft.Maui.Controls"/>
     </ItemGroup>
 
     <ItemGroup Condition="'$(TestingMode)' == 'XHarness'">

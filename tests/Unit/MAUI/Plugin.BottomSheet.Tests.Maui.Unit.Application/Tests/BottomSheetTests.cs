@@ -19,7 +19,11 @@ public class BottomSheetTests : BaseTest<Mocks.EmptyContentPage, Plugin.Maui.Bot
     {
         // Assert
         Assert.True(View.IsModal);
+        #if ANDROID
         Assert.Equal(20.0f, View.CornerRadius);
+        #else
+        Assert.Equal(50.0f, View.CornerRadius);
+        #endif
         Assert.Equal(Color.FromArgb("#80000000"), View.WindowBackgroundColor);
         Assert.False(View.IgnoreSafeArea);
         Assert.True(View.IsCancelable);
@@ -169,7 +173,6 @@ public class BottomSheetTests : BaseTest<Mocks.EmptyContentPage, Plugin.Maui.Bot
 
         // Assert
         Assert.Equal(header, View.Header);
-        Assert.Equal(View, header.Parent);
     }
 
     [UIFact]
@@ -183,7 +186,6 @@ public class BottomSheetTests : BaseTest<Mocks.EmptyContentPage, Plugin.Maui.Bot
 
         // Assert
         Assert.Equal(content, View.Content);
-        Assert.Equal(View, content.Parent);
     }
 
     [UIFact]

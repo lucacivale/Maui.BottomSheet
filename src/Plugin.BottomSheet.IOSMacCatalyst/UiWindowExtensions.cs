@@ -1,4 +1,4 @@
-namespace Plugin.BottomSheet.IOSMacCatalyst;
+namespace Plugin.BottomSheet.iOSMacCatalyst;
 
 internal static class UiWindowExtensions
 {

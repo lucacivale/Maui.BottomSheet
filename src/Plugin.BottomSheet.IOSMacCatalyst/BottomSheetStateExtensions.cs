@@ -1,4 +1,4 @@
-namespace Plugin.BottomSheet.IOSMacCatalyst;
+namespace Plugin.BottomSheet.iOSMacCatalyst;
 
 /// <summary>
 /// Extension methods for converting between BottomSheetState enum and Android platform constants.
