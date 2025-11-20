@@ -6,7 +6,7 @@ namespace Plugin.BottomSheet.IOSMacCatalyst;
 /// <summary>
 /// Container for bottom sheet functionality including handle, header and content on macOS and iOS platforms.
 /// </summary>
-internal sealed class BottomSheet : UIViewController, IUISheetPresentationControllerDelegate
+internal sealed class BottomSheet : UINavigationController
 {
     private const string PeekDetentId = "Plugin.Maui.BottomSheet.PeekDetentId";
 
@@ -19,11 +19,18 @@ internal sealed class BottomSheet : UIViewController, IUISheetPresentationContro
     private readonly BottomSheetDelegate _bottomSheetDelegate = new();
 
     private double _peekHeight;
-    private UIColor? _windowBackgroundColor;
     private bool _isModal;
+
+    private UIColor? _windowBackgroundColor;
+    private UIColor? _backgroundColor;
+
+    private BottomSheetContainerViewController? _containerViewController;
 
     public BottomSheet()
     {
+        SetToolbarHidden(true, false);
+        SetNavigationBarHidden(true, false);
+
         _bottomSheetDelegate.StateChanged += BottomSheetDelegateOnStateChanged;
         _bottomSheetDelegate.ConfirmDismiss += BottomSheetDelegateOnConfirmDismiss;
 
@@ -68,6 +75,15 @@ internal sealed class BottomSheet : UIViewController, IUISheetPresentationContro
         remove => _eventManager.RemoveEventHandler(value);
     }
 
+    /// <summary>
+    /// Occurs when the bottom sheet frame changes.
+    /// </summary>
+    public event EventHandler LayoutChanged
+    {
+        add => _eventManager.AddEventHandler(value);
+        remove => _eventManager.RemoveEventHandler(value);
+    }
+
     public double PeekHeight
     {
         get => _peekHeight;
@@ -101,13 +117,11 @@ internal sealed class BottomSheet : UIViewController, IUISheetPresentationContro
 
     public UIColor? BackgroundColor
     {
-        get => View?.BackgroundColor;
+        get => _backgroundColor;
         set
         {
-            if (View is not null)
-            {
-                View.BackgroundColor = value;
-            }
+            _backgroundColor = value;
+            ApplyBackgroundColor();
         }
     }
 
@@ -236,12 +250,30 @@ internal sealed class BottomSheet : UIViewController, IUISheetPresentationContro
         }
     }
 
-    /// <summary>
-    /// Called when the view layout is complete, handles frame change notifications.
-    /// </summary>
+    public override void ViewWillAppear(bool animated)
+    {
+        base.ViewWillAppear(animated);
+
+        ApplyBackgroundColor();
+        ApplyWindowBackgroundColor();
+    }
+
+    public override void ViewWillDisappear(bool animated)
+    {
+        base.ViewWillDisappear(animated);
+
+        WindowBackgroundColor = UIColor.Clear;
+        ApplyWindowBackgroundColor();
+    }
+
     public override void ViewDidLayoutSubviews()
     {
         base.ViewDidLayoutSubviews();
+
+        _eventManager.RaiseEvent(
+            this,
+            EventArgs.Empty,
+            nameof(LayoutChanged));
 
         _eventManager.RaiseEvent(
             this,
@@ -255,20 +287,9 @@ internal sealed class BottomSheet : UIViewController, IUISheetPresentationContro
 
     public void SetContentView(UIView view)
     {
-        view.TranslatesAutoresizingMaskIntoConstraints = false;
+        _containerViewController = new BottomSheetContainerViewController(view);
 
-        if (View is not null)
-        {
-            View.AddSubview(view);
-
-            NSLayoutConstraint.ActivateConstraints(
-            [
-                view.TopAnchor.ConstraintEqualTo(View.SafeAreaLayoutGuide.TopAnchor),
-                view.LeadingAnchor.ConstraintEqualTo(View.SafeAreaLayoutGuide.LeadingAnchor),
-                view.TrailingAnchor.ConstraintEqualTo(View.SafeAreaLayoutGuide.TrailingAnchor),
-                view.BottomAnchor.ConstraintEqualTo(View.SafeAreaLayoutGuide.BottomAnchor),
-            ]);
-        }
+        SetViewControllers([_containerViewController], false);
     }
 
     /// <summary>
@@ -276,16 +297,16 @@ internal sealed class BottomSheet : UIViewController, IUISheetPresentationContro
     /// </summary>
     /// <param name="bottomSheet">The virtual view containing bottom sheet configuration.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    public async Task OpenAsync()
+    public async Task OpenAsync(UIWindow? window)
     {
         InitSheetPresentationController();
 
-        if (WindowUtils.GetTopViewController() is UIViewController parent)
+        if (window?.CurrentViewController() is UIViewController parent)
         {
             await parent.PresentViewControllerAsync(this, true).ConfigureAwait(true);
         }
 
-        IsOpen = ReferenceEquals(WindowUtils.GetTopViewController(), this);
+        IsOpen = ReferenceEquals(View?.Window?.CurrentViewController(), this);
     }
 
     /// <summary>
@@ -295,6 +316,13 @@ internal sealed class BottomSheet : UIViewController, IUISheetPresentationContro
     public async Task CloseAsync()
     {
         await DismissViewControllerAsync(true).ConfigureAwait(true);
+
+        if (ViewControllers?.First(x => x is BottomSheetContainerViewController) is BottomSheetContainerViewController
+            container)
+        {
+            container.RemoveFromParentViewController();
+            container.Dispose();
+        }
 
         IsOpen = false;
     }
@@ -323,6 +351,11 @@ internal sealed class BottomSheet : UIViewController, IUISheetPresentationContro
         _bottomSheetDelegate.StateChanged -= BottomSheetDelegateOnStateChanged;
         _bottomSheetDelegate.ConfirmDismiss -= BottomSheetDelegateOnConfirmDismiss;
         _bottomSheetDelegate.Dispose();
+
+        if (IsOpen)
+        {
+            _containerViewController?.Dispose();
+        }
     }
 
     private void InitSheetPresentationController()
@@ -349,6 +382,14 @@ internal sealed class BottomSheet : UIViewController, IUISheetPresentationContro
         }
     }
 
+    private void ApplyBackgroundColor()
+    {
+        if (View is not null)
+        {
+            View.BackgroundColor = BackgroundColor;
+        }
+    }
+
     /// <summary>
     /// Calculates the peek height based on container context and constraints.
     /// </summary>
@@ -357,17 +398,25 @@ internal sealed class BottomSheet : UIViewController, IUISheetPresentationContro
     [SuppressMessage("Major Bug", "S1244:Floating point numbers should not be tested for equality", Justification = "False positive")]
     private nfloat PeekHeightValue(IUISheetPresentationControllerDetentResolutionContext arg)
     {
+        nfloat peekHeight = new(_peekHeight);
+
+        if (View?.Window is not null
+            && peekHeight > 0)
+        {
+            peekHeight += View.Window.SafeAreaInsets.Bottom;
+        }
+
         if (OperatingSystem.IsMacCatalyst()
             || (OperatingSystem.IsIOS()
                 && OperatingSystem.IsIOSVersionAtLeast(16)))
         {
 #pragma warning disable CA1416
-            return _peekHeight <= arg.MaximumDetentValue ? new nfloat(_peekHeight) : arg.MaximumDetentValue;
+            return peekHeight <= arg.MaximumDetentValue ? new nfloat(peekHeight) : arg.MaximumDetentValue;
 #pragma warning restore CA1416
         }
         else
         {
-            return new nfloat(_peekHeight);
+            return new nfloat(peekHeight);
         }
     }
 

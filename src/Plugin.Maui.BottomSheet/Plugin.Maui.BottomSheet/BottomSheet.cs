@@ -29,7 +29,11 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             nameof(CornerRadius),
             typeof(float),
             typeof(BottomSheet),
+            #if ANDROID
             defaultValue: 20.0f);
+            #else
+            defaultValue: 50.0f);
+            #endif
 
     /// <summary>
     /// Bindable property for the window background color behind the bottom sheet.
@@ -308,8 +312,8 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
                 new RowDefinition(GridLength.Auto),
                 new RowDefinition(GridLength.Auto),
                 new RowDefinition(GridLength.Star)),
+            Padding = Padding,
         };
-        InitialSetup();
     }
 
     /// <inheritdoc/>
@@ -335,6 +339,13 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
 
     /// <inheritdoc/>
     public event EventHandler Opened
+    {
+        add => _eventManager.AddEventHandler(value);
+        remove => _eventManager.RemoveEventHandler(value);
+    }
+
+    /// <inheritdoc/>
+    public event EventHandler LayoutChanged
     {
         add => _eventManager.AddEventHandler(value);
         remove => _eventManager.RemoveEventHandler(value);
@@ -438,7 +449,8 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     {
         _bottomSheetLayout.Parent = this;
         _bottomSheetLayout.BindingContext = BindingContext;
-        _bottomSheetLayout.ChildRemoved += ContainerChildRemoved;
+
+        CreateLayout();
 
         RaiseEvent(nameof(Opening), EventArgs.Empty);
         ExecuteCommand(OpeningCommand, OpeningCommandParameter);
@@ -469,11 +481,16 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
 
         _bottomSheetLayout.Parent = null;
         _bottomSheetLayout.BindingContext = null;
-        _bottomSheetLayout.ChildRemoved -= ContainerChildRemoved;
         _bottomSheetLayout.DisconnectHandlers();
 
         RaiseEvent(nameof(Closed), EventArgs.Empty);
         ExecuteCommand(ClosedCommand, ClosedCommandParameter);
+    }
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void OnLayoutChanged()
+    {
+        RaiseEvent(nameof(LayoutChanged), EventArgs.Empty);
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
@@ -710,7 +727,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     {
         if (HasHandle == false)
         {
-            _bottomSheetLayout.Remove(_bottomSheetLayout.Children.FirstOrDefault(child => _bottomSheetLayout.GetRow(child) == HandleRow));
+            RemoveHandle();
         }
         else
         {
@@ -718,10 +735,8 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         }
     }
 
-    private void InitialSetup()
+    private void CreateLayout()
     {
-        _bottomSheetLayout.Padding = Padding;
-
         if (HasHandle)
         {
             AddHandle();
@@ -760,6 +775,11 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         _bottomSheetLayout.Add(content.CreateContent(), 0, ContentRow);
     }
 
+    private void RemoveHandle()
+    {
+        _bottomSheetLayout.Remove(_bottomSheetLayout.Children.FirstOrDefault(child => _bottomSheetLayout.GetRow(child) == HandleRow));
+    }
+
     private Border CreateHandle()
     {
         return new()
@@ -778,10 +798,5 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             },
             Stroke = Colors.Gray,
         };
-    }
-
-    private void ContainerChildRemoved(object? sender, ElementEventArgs e)
-    {
-        InvalidateMeasure();
     }
 }

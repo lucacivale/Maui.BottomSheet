@@ -217,6 +217,7 @@ public sealed class BottomSheetHeader : BottomSheetContentView, IBottomSheetHead
 
         if (_builtInHeaderLayout is not null)
         {
+            _builtInHeaderLayout.Parent = null;
             _builtInHeaderLayout.BindingContext = null;
             _builtInHeaderLayout.DisconnectHandlers();
             _builtInHeaderLayout = null;

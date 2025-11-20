@@ -9,7 +9,7 @@ public partial class BottomSheetTestsViewModel : ObservableObject
     private bool _isOpen;
     
     [ObservableProperty]
-    private float _cornerRadius = 20;
+    private float _cornerRadius = 50;
     
     [ObservableProperty]
     private float _margin;

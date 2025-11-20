@@ -1,13 +1,13 @@
 namespace Plugin.Maui.BottomSheet.Platform.MaciOS;
 
-using AsyncAwaitBestPractices;
-using Microsoft.Maui;
-using Plugin.BottomSheet;
-using UIKit;
-using Microsoft.Maui.Platform;
-using Plugin.Maui.BottomSheet.Navigation;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using AsyncAwaitBestPractices;
+using Microsoft.Maui;
+using Microsoft.Maui.Platform;
+using Plugin.Maui.BottomSheet.Navigation;
+using Plugin.BottomSheet;
+using UIKit;
 
 /// <summary>
 /// MAUI implementation of bottom sheet for macOS and iOS platforms.
@@ -15,10 +15,12 @@ using System.Diagnostics.CodeAnalysis;
 internal sealed class MauiBottomSheet : UIView
 {
     private readonly IMauiContext _mauiContext;
-    private readonly SemaphoreSlim _semaphore = new(1, 1);
+    private readonly TaskCompletionSource _isAttachedToWindowTcs;
 
     private Plugin.BottomSheet.IOSMacCatalyst.BottomSheet? _bottomSheet;
     private IBottomSheet? _virtualView;
+
+    private bool _isAttachedToWindow;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MauiBottomSheet"/> class.
@@ -27,6 +29,7 @@ internal sealed class MauiBottomSheet : UIView
     public MauiBottomSheet(IMauiContext mauiContext)
     {
         _mauiContext = mauiContext;
+        _isAttachedToWindowTcs = new TaskCompletionSource();
     }
 
     /// <summary>
@@ -41,11 +44,8 @@ internal sealed class MauiBottomSheet : UIView
     {
         base.MovedToWindow();
 
-        if (_virtualView?.IsOpen == true
-            && _bottomSheet?.IsOpen == false)
-        {
-            SetIsOpenAsync().SafeFireAndForget(continueOnCapturedContext: false);
-        }
+        _isAttachedToWindow = true;
+        _isAttachedToWindowTcs.TrySetResult();
     }
 
     /// <summary>
@@ -89,27 +89,36 @@ internal sealed class MauiBottomSheet : UIView
             return;
         }
 
+        if (!_isAttachedToWindow
+            && force == false)
+        {
+            using CancellationTokenSource cts = new(TimeSpan.FromSeconds(20));
+            await _isAttachedToWindowTcs.Task.WaitAsync(cts.Token).ConfigureAwait(true);
+        }
+
         _bottomSheet = new Plugin.BottomSheet.IOSMacCatalyst.BottomSheet();
         _bottomSheet.StateChanged += BottomSheetOnStateChanged;
         _bottomSheet.Canceled += BottomSheetOnCanceled;
         _bottomSheet.FrameChanged += BottomSheetOnFrameChanged;
+        _bottomSheet.LayoutChanged += BottomSheetOnLayoutChanged;
 
         SetStates();
         SetIsCancelable();
         SetIsDraggable();
         SetCurrentState();
 
+        SetWindowBackgroundColor();
+        SetBottomSheetBackgroundColor();
+        SetIsModal();
+        SetCornerRadius();
+
         _bottomSheet.SetContentView(_virtualView.ContainerView.ToPlatform(_mauiContext));
 
         _virtualView.OnOpeningBottomSheet();
 
-        await _bottomSheet.OpenAsync().ConfigureAwait(true);
+        await _bottomSheet.OpenAsync(Window).ConfigureAwait(true);
 
-        SetWindowBackgroundColor();
-        SetBottomSheetBackgroundColor();
         SetPeekHeight();
-        SetIsModal();
-        SetCornerRadius();
         SetFrame();
 
         _virtualView.OnOpenedBottomSheet();
@@ -132,6 +141,7 @@ internal sealed class MauiBottomSheet : UIView
         _bottomSheet.StateChanged -= BottomSheetOnStateChanged;
         _bottomSheet.Canceled -= BottomSheetOnCanceled;
         _bottomSheet.FrameChanged -= BottomSheetOnFrameChanged;
+        _bottomSheet.LayoutChanged -= BottomSheetOnLayoutChanged;
 
         await _bottomSheet.CloseAsync().ConfigureAwait(true);
 
@@ -293,7 +303,6 @@ internal sealed class MauiBottomSheet : UIView
         }
 
         _bottomSheet?.Dispose();
-        _semaphore.Dispose();
 
         base.Dispose(disposing);
     }
@@ -366,9 +375,9 @@ internal sealed class MauiBottomSheet : UIView
                 _virtualView.IsOpen = false;
             }
         }
-        catch
+        catch (Exception ex)
         {
-            Trace.TraceError("Invoking IConfirmNavigation or IConfirmNavigationAsync failed: {0}", e);
+            Trace.TraceError("Invoking IConfirmNavigation or IConfirmNavigationAsync failed: {0}", ex);
         }
     }
 
@@ -385,6 +394,16 @@ internal sealed class MauiBottomSheet : UIView
         }
 
         SetFrame();
+    }
+
+    private void BottomSheetOnLayoutChanged(object? sender, EventArgs e)
+    {
+        if (_virtualView is null)
+        {
+            return;
+        }
+
+        _virtualView.OnLayoutChanged();
     }
 
     /// <summary>

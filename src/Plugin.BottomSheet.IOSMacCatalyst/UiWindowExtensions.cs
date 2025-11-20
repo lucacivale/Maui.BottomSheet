@@ -1,20 +1,13 @@
 namespace Plugin.BottomSheet.IOSMacCatalyst;
 
-/// <summary>
-/// Window utilities.
-/// </summary>
-internal static class WindowUtils
+internal static class UiWindowExtensions
 {
     /// <summary>
     /// Find top most <see cref="UIViewController"/>.
     /// </summary>
     /// <returns>Top most <see cref="UIViewController"/>.</returns>
-    internal static UIViewController? GetTopViewController()
+    internal static UIViewController? CurrentViewController(this UIWindow? window)
     {
-        NSSet<UIScene> scenes = UIApplication.SharedApplication.ConnectedScenes;
-        UIWindowScene? windowScene = scenes.ToArray().OfType<UIWindowScene>().FirstOrDefault(scene =>
-            scene.Session.Role == UIWindowSceneSessionRole.Application);
-        UIWindow? window = windowScene?.Windows.FirstOrDefault();
         UIViewController? topViewController = window?.RootViewController;
 
         if (topViewController is not null

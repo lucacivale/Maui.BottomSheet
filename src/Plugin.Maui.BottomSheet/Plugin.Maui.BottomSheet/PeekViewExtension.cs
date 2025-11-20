@@ -1,6 +1,7 @@
 namespace Plugin.Maui.BottomSheet;
 
 [ContentProperty(nameof(Name))]
+[RequireService([typeof(IProvideValueTarget)])]
 public sealed class PeekViewExtension : IMarkupExtension<double>
 {
     private WeakReference<BottomSheet>? _bottomSheet;
@@ -14,15 +15,39 @@ public sealed class PeekViewExtension : IMarkupExtension<double>
     {
         IProvideValueTarget provideValueTarget = serviceProvider.GetRequiredService<IProvideValueTarget>();
 
-        _bottomSheet = new((BottomSheet)provideValueTarget.TargetObject);
+        BottomSheet sheet = (BottomSheet)provideValueTarget.TargetObject;
+        sheet.Loaded += SheetOnLoaded;
+        sheet.Unloaded += SheetOnUnloaded;
 
-        if (_bottomSheet.TryGetTarget(out var sheet))
-        {
-            sheet.Opening += SheetOnOpened;
-            sheet.Closing += SheetOnClosing;
-        }
+        _bottomSheet = new(sheet);
 
         return 0;
+    }
+
+    private void SheetOnLoaded(object? sender, EventArgs e)
+    {
+        if (_bottomSheet?.TryGetTarget(out BottomSheet? sheet) == true)
+        {
+            sheet.Opening += SheetOnOpening;
+            sheet.Closing += SheetOnClosing;
+        }
+    }
+
+    private void SheetOnUnloaded(object? sender, EventArgs e)
+    {
+        if (_bottomSheet?.TryGetTarget(out BottomSheet? sheet) == true)
+        {
+            sheet.Opening -= SheetOnOpening;
+            sheet.Closing -= SheetOnClosing;
+        }
+    }
+
+    private void SheetOnOpening(object? sender, EventArgs e)
+    {
+        if (_bottomSheet?.TryGetTarget(out BottomSheet? sheet) == true)
+        {
+            sheet.LayoutChanged += SheetOnLayoutChanged;
+        }
     }
 
     object IMarkupExtension.ProvideValue(IServiceProvider serviceProvider)
@@ -30,64 +55,33 @@ public sealed class PeekViewExtension : IMarkupExtension<double>
         return ProvideValue(serviceProvider);
     }
 
-    private void SheetOnOpened(object? sender, EventArgs e)
-    {
-        if (sender is not BottomSheet bottomSheet)
-        {
-            return;
-        }
-
-        if (View is null)
-        {
-            if (string.IsNullOrWhiteSpace(Name) == false
-                && bottomSheet.Content?.Content is not null)
-            {
-                _view = new(bottomSheet.Content.Content.FindByName<View>(Name));
-            }
-        }
-        else
-        {
-            _view = new(View);
-        }
-
-        bottomSheet.ContainerView.Loaded += OnLoaded;
-    }
-
     private void SheetOnClosing(object? sender, EventArgs e)
     {
-        if (_bottomSheet?.TryGetTarget(out var view) == true)
+        if (_bottomSheet?.TryGetTarget(out BottomSheet? sheet) == true)
         {
-            view.ContainerView.Loaded -= OnLoaded;
-            view.ContainerView.MeasureInvalidated -= ContentOnMeasureInvalidated;
-        }
-
-        if (_bottomSheet?.TryGetTarget(out BottomSheet? bottomSheet) == true)
-        {
-            bottomSheet.MeasureInvalidated -= ContentOnMeasureInvalidated;
-            bottomSheet.Opening -= SheetOnOpened;
-            bottomSheet.Closing -= SheetOnClosing;
+            sheet.LayoutChanged -= SheetOnLayoutChanged;
         }
     }
 
-    private void OnLoaded(object? sender, EventArgs e)
+    private void SheetOnLayoutChanged(object? sender, EventArgs e)
     {
-        if (sender is not View view)
+        if (_view is null)
         {
-            return;
+            if (View is null)
+            {
+                if (string.IsNullOrWhiteSpace(Name) == false
+                    && _bottomSheet?.TryGetTarget(out BottomSheet? bottomSheet) == true
+                    && bottomSheet.Content?.Content is not null)
+                {
+                    _view = new(bottomSheet.Content.Content.FindByName<View>(Name));
+                }
+            }
+            else
+            {
+                _view = new(View);
+            }
         }
 
-        SetPeekHeight();
-
-        view.MeasureInvalidated += ContentOnMeasureInvalidated;
-
-        if (_bottomSheet?.TryGetTarget(out BottomSheet? bottomSheet) == true)
-        {
-            bottomSheet.MeasureInvalidated += ContentOnMeasureInvalidated;
-        }
-    }
-
-    private void ContentOnMeasureInvalidated(object? sender, EventArgs e)
-    {
         SetPeekHeight();
     }
 

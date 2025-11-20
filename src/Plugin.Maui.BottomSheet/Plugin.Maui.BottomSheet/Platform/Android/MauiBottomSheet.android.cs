@@ -375,9 +375,9 @@ internal sealed class MauiBottomSheet : AndroidView
                 _virtualView.IsOpen = false;
             }
         }
-        catch
+        catch (Exception ex)
         {
-            Trace.TraceError("Invoking IConfirmNavigation or IConfirmNavigationAsync failed: {0}", e);
+            Trace.TraceError("Invoking IConfirmNavigation or IConfirmNavigationAsync failed: {0}", ex);
         }
     }
 

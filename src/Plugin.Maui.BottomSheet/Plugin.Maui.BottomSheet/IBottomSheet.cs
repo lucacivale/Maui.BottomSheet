@@ -30,6 +30,11 @@ public interface IBottomSheet : IView, IPadding, ISafeAreaView
     event EventHandler Opened;
 
     /// <summary>
+    /// Occurs when the bottom sheet has been opened.
+    /// </summary>
+    event EventHandler LayoutChanged;
+
+    /// <summary>
     /// Gets or sets the parent element of the bottom sheet.
     /// </summary>
     new Element Parent { get; set; }
@@ -155,32 +160,38 @@ public interface IBottomSheet : IView, IPadding, ISafeAreaView
     /// </summary>
     BottomSheetContent? Content { get; set; }
 
-    public Grid ContainerView { get; }
+    Grid ContainerView { get; }
 
     /// <summary>
     /// Triggers the opening event for the bottom sheet.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public void OnOpeningBottomSheet();
+    void OnOpeningBottomSheet();
 
     /// <summary>
     /// Triggers the opened event for the bottom sheet.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public void OnOpenedBottomSheet();
+    void OnOpenedBottomSheet();
 
     /// <summary>
     /// Triggers the closing event for the bottom sheet.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public void OnClosingBottomSheet();
+    void OnClosingBottomSheet();
 
     /// <summary>
     /// Triggers the closed event for the bottom sheet.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public void OnClosedBottomSheet();
+    void OnClosedBottomSheet();
+
+    /// <summary>
+    /// Triggers the closed event for the bottom sheet.
+    /// </summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    void OnLayoutChanged();
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public void Cancel();
+    void Cancel();
 }
