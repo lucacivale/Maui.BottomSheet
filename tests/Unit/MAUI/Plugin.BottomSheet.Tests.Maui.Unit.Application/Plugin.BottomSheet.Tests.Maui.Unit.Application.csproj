@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>$(NETVersion);$(NETVersion)-android</TargetFrameworks>
         <TargetFrameworks Condition="!$([MSBuild]::IsOSPlatform('linux'))">$(TargetFrameworks);$(NETVersion)-ios;$(NETVersion)-maccatalyst</TargetFrameworks>
@@ -42,12 +42,12 @@
     </ItemGroup>
     
     <ItemGroup>
-        <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4"/>
-        <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128"/>
-        <MauiImage Include="Resources\Images\*"/>
-        <MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185"/>
-        <MauiFont Include="Resources\Fonts\*"/>
-        <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)"/>
+        <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
+        <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
+        <MauiImage Include="Resources\Images\*" />
+        <MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
+        <MauiFont Include="Resources\Fonts\*" />
+        <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
     </ItemGroup>
 
     <ItemGroup>
@@ -82,7 +82,7 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
 
-        <PackageReference Include="Microsoft.Maui.Controls"/>
+        <PackageReference Include="Microsoft.Maui.Controls" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TestingMode)' == 'XHarness'">
@@ -91,7 +91,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Using Include="Xunit"/>
+        <Using Include="Xunit" />
     </ItemGroup>
 
     <ItemGroup>
@@ -107,16 +107,6 @@
         </ItemGroup>
     </Target>
 
-    <Target Name="AddApplePlatformsFolder" BeforeTargets="_MauiRemovePlatformCompileItems">
-        <ItemGroup Condition=" '$(SingleProject)' == 'true' ">
-            <Compile
-                    Condition=" '$(TargetPlatformIdentifier)' == 'ios' or '$(TargetPlatformIdentifier)' == 'maccatalyst' "
-                    Include="$(PlatformsProjectFolder)Apple\**\*$(DefaultLanguageSourceExtension)">
-                <ExcludeFromCurrentConfiguration>false</ExcludeFromCurrentConfiguration>
-            </Compile>
-        </ItemGroup>
-    </Target>
-
     <Target Name="TestAndroid">
         <PropertyGroup>
             <AndroidConfig>Release</AndroidConfig>
@@ -127,7 +117,7 @@
             <AndroidInstrumentation>devicerunners.xharness.maui.XHarnessInstrumentation</AndroidInstrumentation>
             <TestOutputDir>artifacts/test-results</TestOutputDir>
         </PropertyGroup>
-        <RemoveDir Directories="$(ProjectDir)artifacts"/>
+        <RemoveDir Directories="$(ProjectDir)artifacts" />
         <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet publish -c $(AndroidConfig) -f $(AndroidFramework) -r $(AndroidRuntime) -p:TestingMode=XHarness" />
         <Exec WorkingDirectory="$(ProjectDir)" Command="xharness android test --app &quot;$(AndroidApkPath)&quot; --package-name $(AndroidPackageName) --instrumentation $(AndroidInstrumentation) --output-directory &quot;$(TestOutputDir)&quot;" />
     </Target>
@@ -143,7 +133,7 @@
             <iOSLaunchTimeout>00:06:00</iOSLaunchTimeout>
             <TestOutputDir>$(ProjectDir)artifacts/test-results</TestOutputDir>
         </PropertyGroup>
-        <RemoveDir Directories="$(ProjectDir)artifacts"/>
+        <RemoveDir Directories="$(ProjectDir)artifacts" />
         <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet build -c $(iOSConfig) -f $(iOSFramework) -r $(iOSRuntime) -p:TestingMode=XHarness" />
         <Exec WorkingDirectory="$(ProjectDir)" Command="xharness apple test --target $(iOSTarget) --timeout=$(iOSTimeout) --launch-timeout=$(iOSLaunchTimeout) --app $(iOSAppPath) --output-directory $(TestOutputDir)" />
     </Target>
@@ -159,7 +149,7 @@
             <MacCatalystLaunchTimeout>00:05:00</MacCatalystLaunchTimeout>
             <TestOutputDir>artifacts/test-results</TestOutputDir>
         </PropertyGroup>
-        <RemoveDir Directories="$(ProjectDir)artifacts"/>
+        <RemoveDir Directories="$(ProjectDir)artifacts" />
         <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet build -c $(MacCatalystConfig) -f $(MacCatalystFramework) -r $(MacCatalystRuntime) -p:TestingMode=XHarness" />
         <Exec WorkingDirectory="$(ProjectDir)" Command="xharness apple test --target $(MacCatalystTarget) --timeout=$(MacCatalystTimeout) --launch-timeout=$(MacCatalystLaunchTimeout) --app &quot;$(MacCatalystAppPath)&quot; --output-directory &quot;$(TestOutputDir)&quot;" />
     </Target>

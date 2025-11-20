@@ -29,7 +29,6 @@ public sealed class PeekViewExtension : IMarkupExtension<double>
         return ProvideValue(serviceProvider);
     }
 
-
     private void SheetOnLoaded(object? sender, EventArgs e)
     {
         if (_bottomSheet?.TryGetTarget(out BottomSheet? sheet) == true)

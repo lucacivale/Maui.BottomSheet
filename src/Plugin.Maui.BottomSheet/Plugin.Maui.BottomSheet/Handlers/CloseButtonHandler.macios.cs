@@ -20,7 +20,7 @@ internal partial class CloseButtonHandler : ViewHandler<CloseButton, UIButton>
     {
         if (virtualView.TintColor is not null)
         {
-            var config = UIButtonConfiguration.FilledButtonConfiguration;
+            UIButtonConfiguration config = UIButtonConfiguration.FilledButtonConfiguration;
             config.Background.CornerRadius = 100;
             config.Background.BackgroundColor = virtualView.TintColor?.ToPlatform();
             config.BaseForegroundColor = UIColor.FromRGB(132, 132, 136);
@@ -31,10 +31,12 @@ internal partial class CloseButtonHandler : ViewHandler<CloseButton, UIButton>
 
     public static void MapHeightRequest(CloseButtonHandler handler, CloseButton closeButton)
     {
+        // Method intentionally left empty.
     }
 
     public static void MapWidthRequest(CloseButtonHandler handler, CloseButton closeButton)
     {
+        // Method intentionally left empty.
     }
 
     /// <summary>
@@ -45,7 +47,7 @@ internal partial class CloseButtonHandler : ViewHandler<CloseButton, UIButton>
     /// </returns>
     protected override UIButton CreatePlatformView()
     {
-        var closeButton = new UIButton(UIButtonType.Close);
+        UIButton closeButton = new(UIButtonType.Close);
 
         closeButton.UpdateAutomationId(VirtualView);
         return closeButton;

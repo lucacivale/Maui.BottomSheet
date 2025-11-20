@@ -11,7 +11,9 @@
 		<RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
 		<RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
 		<RunAnalyzers>true</RunAnalyzers>
-        
+		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+
 		<Owners>Luca Civale </Owners>
 		<Authors>Luca Civale</Authors>
 		<Company>Luca Civale</Company>

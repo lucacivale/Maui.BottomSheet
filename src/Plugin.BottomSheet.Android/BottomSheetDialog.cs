@@ -334,9 +334,9 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
             {
                 height = Window.DecorView.Height;
 
-                if (ViewCompat.GetRootWindowInsets(Window.DecorView) is WindowInsetsCompat insets)
+                if (ViewCompat.GetRootWindowInsets(Window.DecorView) is WindowInsetsCompat insets
+                    && insets.GetInsets(WindowInsetsCompat.Type.SystemBars()) is AndroidX.Core.Graphics.Insets systemBarInsets)
                 {
-                    AndroidX.Core.Graphics.Insets systemBarInsets = insets.GetInsets(WindowInsetsCompat.Type.SystemBars());
                     height -= systemBarInsets.Top;
                 }
             }
@@ -436,11 +436,10 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
     {
         if (_context is AndroidX.AppCompat.App.AppCompatActivity activity
             && activity.Window is not null
-            && Window is not null)
+            && Window is not null
+            && WindowCompat.GetInsetsController(activity.Window, activity.Window.DecorView) is WindowInsetsControllerCompat parentInsetsController
+            && WindowCompat.GetInsetsController(Window, Window.DecorView) is WindowInsetsControllerCompat insetsController)
         {
-            WindowInsetsControllerCompat parentInsetsController = WindowCompat.GetInsetsController(activity.Window, activity.Window.DecorView);
-            WindowInsetsControllerCompat insetsController = WindowCompat.GetInsetsController(Window, Window.DecorView);
-
             insetsController.AppearanceLightStatusBars = parentInsetsController.AppearanceLightStatusBars;
         }
 
@@ -502,6 +501,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
         _eventManager.RaiseEvent(this, EventArgs.Empty, nameof(LayoutChanged));
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S6608:Prefer indexing instead of \"Enumerable\" methods on types implementing \"IList\"", Justification = "Improve readability and no performance impact")]
     private void BottomSheetCallback_StateChanged(object? sender, BottomSheetStateChangedEventArgs e)
     {
         if (States.IsStateAllowed(e.State) == false)

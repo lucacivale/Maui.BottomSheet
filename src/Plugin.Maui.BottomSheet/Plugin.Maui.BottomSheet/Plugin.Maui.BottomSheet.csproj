@@ -27,6 +27,7 @@
         <PackageIcon>Icon.png</PackageIcon>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageId>Plugin.Maui.BottomSheet</PackageId>
+		<NoWarn>9270</NoWarn>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)'=='Release'">

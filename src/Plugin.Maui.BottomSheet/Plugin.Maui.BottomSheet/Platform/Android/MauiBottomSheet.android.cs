@@ -96,9 +96,22 @@ internal sealed class MauiBottomSheet : AndroidView
     }
 
     /// <summary>
-    /// Opens the bottom sheet asynchronously.
+    /// Asynchronously opens a bottom sheet, setting it up with various properties and event handlers.
+    /// If the bottom sheet is not yet attached to the window, it will wait for the attachment unless the <paramref name="force"/> parameter is set to true.
     /// </summary>
-    /// <returns>A task representing the asynchronous operation.</returns>
+    /// <param name="force">
+    /// A boolean value indicating whether to force the opening of the bottom sheet, bypassing the check for attachment to the window.
+    /// If set to <c>false</c>, the method will wait for the bottom sheet to be attached to the window (up to 20 seconds).
+    /// If set to <c>true</c>, the method will proceed without waiting for attachment.
+    /// The default value is <c>false</c>.
+    /// </param>
+    /// <remarks>
+    /// The method performs a series of setup operations, including:
+    /// - Setting up event handlers for cancellation, state changes, back presses, and layout changes.
+    /// - Configuring the bottom sheet's content, appearance, and behavior (e.g., dragability, cancelability, background color).
+    /// - Displaying the bottom sheet asynchronously and notifying the virtual view of the opening and opened states.
+    /// </remarks>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public async Task OpenAsync(bool force = false)
     {
         if (_virtualView is null)

@@ -47,26 +47,6 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, obj
     }
 
     /// <summary>
-    /// Maps the HasHandle property to the platform-specific bottom sheet implementation.
-    /// </summary>
-    /// <param name="handler">The bottom sheet handler instance.</param>
-    /// <param name="bottomSheet">The bottom sheet instance.</param>
-    private static void MapHasHandle(BottomSheetHandler handler, IBottomSheet bottomSheet)
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// Maps the ShowHeader property to the platform-specific bottom sheet implementation.
-    /// </summary>
-    /// <param name="handler">The bottom sheet handler instance.</param>
-    /// <param name="bottomSheet">The bottom sheet instance.</param>
-    private static void MapShowHeader(BottomSheetHandler handler, IBottomSheet bottomSheet)
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// Maps the IsOpen property to the platform-specific bottom sheet implementation.
     /// </summary>
     /// <param name="handler">The bottom sheet handler instance.</param>
@@ -82,16 +62,6 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, obj
     /// <param name="handler">The bottom sheet handler instance.</param>
     /// <param name="bottomSheet">The bottom sheet instance.</param>
     private static void MapIsDraggable(BottomSheetHandler handler, IBottomSheet bottomSheet)
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// Maps the Header property to the platform-specific bottom sheet implementation.
-    /// </summary>
-    /// <param name="handler">The bottom sheet handler instance.</param>
-    /// <param name="bottomSheet">The bottom sheet instance.</param>
-    private static void MapHeader(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
         throw new NotImplementedException();
     }
@@ -127,41 +97,11 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, obj
     }
 
     /// <summary>
-    /// Maps the Content property to the platform-specific bottom sheet implementation.
-    /// </summary>
-    /// <param name="handler">The bottom sheet handler instance.</param>
-    /// <param name="bottomSheet">The bottom sheet instance.</param>
-    private static void MapContent(BottomSheetHandler handler, IBottomSheet bottomSheet)
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// Maps the Padding property to the platform-specific bottom sheet implementation.
-    /// </summary>
-    /// <param name="handler">The bottom sheet handler instance.</param>
-    /// <param name="bottomSheet">The bottom sheet instance.</param>
-    private static void MapPadding(BottomSheetHandler handler, IBottomSheet bottomSheet)
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// Maps the BackgroundColor property to the platform-specific bottom sheet implementation.
     /// </summary>
     /// <param name="handler">The bottom sheet handler instance.</param>
     /// <param name="bottomSheet">The bottom sheet instance.</param>
     private static void MapBackgroundColor(BottomSheetHandler handler, IBottomSheet bottomSheet)
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// Maps the IgnoreSafeArea property to the platform-specific bottom sheet implementation.
-    /// </summary>
-    /// <param name="handler">The bottom sheet handler instance.</param>
-    /// <param name="bottomSheet">The bottom sheet instance.</param>
-    private static void MapIgnoreSafeArea(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
         throw new NotImplementedException();
     }
@@ -196,27 +136,7 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, obj
         throw new NotImplementedException();
     }
 
-    /// <summary>
-    /// Maps the BottomSheetStyle property to the platform-specific bottom sheet implementation.
-    /// </summary>
-    /// <param name="handler">The bottom sheet handler instance.</param>
-    /// <param name="bottomSheet">The bottom sheet instance.</param>
-    private static void MapBottomSheetStyle(BottomSheetHandler handler, IBottomSheet bottomSheet)
-    {
-        throw new NotImplementedException();
-    }
-
     private static void MapCancel(BottomSheetHandler handler, IBottomSheet bottomSheet, object? sender)
-    {
-        throw new NotImplementedException();
-    }
-
-    private static void MapMargin(BottomSheetHandler handler, IBottomSheet bottomSheet, object? sender)
-    {
-        throw new NotImplementedException();
-    }
-
-    private static void MapHalfExpandedRatio(BottomSheetHandler handler, IBottomSheet bottomSheet, object? sender)
     {
         throw new NotImplementedException();
     }

@@ -33,7 +33,6 @@ public sealed class BottomSheetHeader : BottomSheetContentView, IBottomSheetHead
     /// <summary>
     /// Bindable property for the top right button.
     /// </summary>
-
     // ReSharper disable once MemberCanBePrivate.Global
     public static readonly BindableProperty TopRightButtonProperty =
         BindableProperty.Create(
@@ -154,7 +153,7 @@ public sealed class BottomSheetHeader : BottomSheetContentView, IBottomSheetHead
         get => (BottomSheetHeaderButtonAppearanceMode)GetValue(HeaderAppearanceProperty);
         set => SetValue(HeaderAppearanceProperty, value);
     }
-    
+
     object? IBottomSheetHeader.TopLeftButton => TopLeftButton;
 
     object? IBottomSheetHeader.TopRightButton => TopRightButton;
@@ -436,7 +435,7 @@ public sealed class BottomSheetHeader : BottomSheetContentView, IBottomSheetHead
         {
             SetCloseButtonStyle();
         }
-        
+
         return true;
     }
 
