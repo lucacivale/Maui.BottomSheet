@@ -66,7 +66,7 @@ public abstract class BaseTest<TPage, TView> : IAsyncLifetime
     
     private async Task LoadContent(View content)
     {
-        var tcs = new TaskCompletionSource();
+        TaskCompletionSource tcs = new TaskCompletionSource();
 
         content.Loaded += OnLoaded;
 
@@ -86,7 +86,7 @@ public abstract class BaseTest<TPage, TView> : IAsyncLifetime
         if (element.IsLoaded)
             return;
 
-        var tcs = new TaskCompletionSource();
+        TaskCompletionSource tcs = new TaskCompletionSource();
 
         element.Loaded += OnLoaded;
 

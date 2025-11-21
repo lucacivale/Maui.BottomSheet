@@ -1,37 +1,38 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <bottomsheet:BottomSheet
+    Padding="10,20,10,20"
+    PeekHeight="{bottomsheet:PeekView View={Reference PeekContent}}"
+    ShowHeader="True"
+    States="Peek,Medium,Large"
     x:Class="TaskManager.BottomSheets.FilterBottomSheet"
+    x:DataType="vm:FilterViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:bottomsheet="http://pluginmauibottomsheet.com"
     xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:models="clr-namespace:TaskManager.Models"
     xmlns:vm="clr-namespace:TaskManager.ViewModels"
-    Padding="10,20,10,20"
-    x:DataType="vm:FilterViewModel"
-    ShowHeader="True"
-    States="Peek,Medium,Large">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
     <bottomsheet:BottomSheet.Header>
         <bottomsheet:BottomSheetHeader HeaderAppearance="LeftAndRightButton" TitleText="Filter tasks">
             <bottomsheet:BottomSheetHeader.TopLeftButton>
                 <Button
-                    Grid.Row="0"
                     BackgroundColor="#4CAF50"
                     Command="{Binding ApplyFilterCommand}"
                     CornerRadius="20"
                     FontAttributes="Bold"
+                    Grid.Row="0"
                     Text="Apply"
                     TextColor="White" />
             </bottomsheet:BottomSheetHeader.TopLeftButton>
             <bottomsheet:BottomSheetHeader.TopRightButton>
                 <Button
-                    Grid.Column="2"
                     BackgroundColor="{AppThemeBinding Light=#E0E0E0,
                                                       Dark=#424242}"
                     Command="{Binding ClearFilterCommand}"
                     CornerRadius="20"
                     FontAttributes="Bold"
+                    Grid.Column="2"
                     Text="Clear"
                     TextColor="{AppThemeBinding Light=#212121,
                                                 Dark=#E0E0E0}" />
@@ -42,13 +43,10 @@
         <bottomsheet:BottomSheetContent>
             <ScrollView Margin="0,10,0,0">
                 <StackLayout Spacing="16">
-                    <ContentView>
-                        <ContentView.Behaviors>
-                            <bottomsheet:BottomSheetPeekBehavior />
-                        </ContentView.Behaviors>
+                    <ContentView x:Name="PeekContent">
                         <VerticalStackLayout Spacing="16">
 
-                            <Border Padding="16" BackgroundColor="{AppThemeBinding Light=White, Dark=#2D2D2D}">
+                            <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#2D2D2D}" Padding="16">
                                 <StackLayout>
                                     <Label
                                         FontAttributes="Bold"
@@ -58,13 +56,13 @@
                                                                     Dark=#90CAF9}" />
                                     <SearchBar
                                         Margin="0,8,0,0"
-                                        ios:SearchBar.SearchBarStyle="Minimal"
                                         Placeholder="Search in title and description"
-                                        Text="{Binding SearchText}" />
+                                        Text="{Binding SearchText}"
+                                        ios:SearchBar.SearchBarStyle="Minimal" />
                                 </StackLayout>
                             </Border>
 
-                            <Border Padding="16" BackgroundColor="{AppThemeBinding Light=White, Dark=#2D2D2D}">
+                            <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#2D2D2D}" Padding="16">
                                 <StackLayout>
                                     <Label
                                         FontAttributes="Bold"
@@ -73,10 +71,10 @@
                                         TextColor="{AppThemeBinding Light=#1976D2,
                                                                     Dark=#90CAF9}" />
                                     <Picker
-                                        Title="Select Status"
-                                        Margin="0,8,0,0"
                                         FontSize="16"
-                                        SelectedItem="{Binding SelectedStatus}">
+                                        Margin="0,8,0,0"
+                                        SelectedItem="{Binding SelectedStatus}"
+                                        Title="Select Status">
                                         <Picker.ItemsSource>
                                             <x:Array Type="{x:Type models:TaskStatus}">
                                                 <models:TaskStatus>Todo</models:TaskStatus>
@@ -91,7 +89,7 @@
                         </VerticalStackLayout>
                     </ContentView>
 
-                    <Border Padding="16" BackgroundColor="{AppThemeBinding Light=White, Dark=#2D2D2D}">
+                    <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#2D2D2D}" Padding="16">
                         <StackLayout>
                             <Label
                                 FontAttributes="Bold"
@@ -100,10 +98,10 @@
                                 TextColor="{AppThemeBinding Light=#1976D2,
                                                             Dark=#90CAF9}" />
                             <Picker
-                                Title="Select Priority"
-                                Margin="0,8,0,0"
                                 FontSize="16"
-                                SelectedItem="{Binding SelectedPriority}">
+                                Margin="0,8,0,0"
+                                SelectedItem="{Binding SelectedPriority}"
+                                Title="Select Priority">
                                 <Picker.ItemsSource>
                                     <x:Array Type="{x:Type models:TaskPriority}">
                                         <models:TaskPriority>Low</models:TaskPriority>
@@ -115,7 +113,7 @@
                         </StackLayout>
                     </Border>
 
-                    <Border Padding="16" BackgroundColor="{AppThemeBinding Light=White, Dark=#2D2D2D}">
+                    <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#2D2D2D}" Padding="16">
                         <StackLayout>
                             <Label
                                 FontAttributes="Bold"
@@ -124,15 +122,15 @@
                                 TextColor="{AppThemeBinding Light=#1976D2,
                                                             Dark=#90CAF9}" />
                             <Picker
-                                Title="Select Category"
-                                Margin="0,8,0,0"
                                 FontSize="16"
                                 ItemsSource="{Binding Categories}"
-                                SelectedItem="{Binding SelectedCategory}" />
+                                Margin="0,8,0,0"
+                                SelectedItem="{Binding SelectedCategory}"
+                                Title="Select Category" />
                         </StackLayout>
                     </Border>
 
-                    <Border Padding="16" BackgroundColor="{AppThemeBinding Light=White, Dark=#2D2D2D}">
+                    <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#2D2D2D}" Padding="16">
                         <StackLayout>
                             <Label
                                 FontAttributes="Bold"
@@ -154,28 +152,28 @@
                                 </Grid.ColumnDefinitions>
 
                                 <Label
-                                    Grid.Row="0"
-                                    Grid.Column="0"
                                     FontSize="14"
+                                    Grid.Column="0"
+                                    Grid.Row="0"
                                     Text="From:"
                                     VerticalOptions="Center" />
                                 <DatePicker
-                                    Grid.Row="0"
-                                    Grid.Column="2"
                                     Date="{Binding DueDateFrom}"
-                                    FontSize="14" />
+                                    FontSize="14"
+                                    Grid.Column="2"
+                                    Grid.Row="0" />
 
                                 <Label
-                                    Grid.Row="2"
-                                    Grid.Column="0"
                                     FontSize="14"
+                                    Grid.Column="0"
+                                    Grid.Row="2"
                                     Text="To:"
                                     VerticalOptions="Center" />
                                 <DatePicker
-                                    Grid.Row="2"
-                                    Grid.Column="2"
                                     Date="{Binding DueDateTo}"
-                                    FontSize="14" />
+                                    FontSize="14"
+                                    Grid.Column="2"
+                                    Grid.Row="2" />
                             </Grid>
                         </StackLayout>
                     </Border>

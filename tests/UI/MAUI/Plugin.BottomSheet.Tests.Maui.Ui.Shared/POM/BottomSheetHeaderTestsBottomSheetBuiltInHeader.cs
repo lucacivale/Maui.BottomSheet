@@ -1,3 +1,4 @@
+using System.Drawing;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
 using Plugin.BottomSheet.Tests.Maui.Ui.Application.Shared;
@@ -115,11 +116,11 @@ public class BottomSheetHeaderTestsBottomSheetBuiltInHeader : PomBase
             return false;
         }
     
-        var closeButtonLocation = HeaderCloseButtonElement.Location;
-        var headerLocation = HeaderElement.Location;
-        var headerSize = HeaderElement.Size;
+        Point closeButtonLocation = HeaderCloseButtonElement.Location;
+        Point headerLocation = HeaderElement.Location;
+        Size headerSize = HeaderElement.Size;
     
-        var headerMiddleX = headerLocation.X + (headerSize.Width / 3);
+        int headerMiddleX = headerLocation.X + (headerSize.Width / 3);
         return closeButtonLocation.X < headerMiddleX;
     }
     
@@ -130,11 +131,11 @@ public class BottomSheetHeaderTestsBottomSheetBuiltInHeader : PomBase
             return false;
         }
     
-        var closeButtonLocation = HeaderCloseButtonElement.Location;
-        var headerLocation = HeaderElement.Location;
-        var headerSize = HeaderElement.Size;
+        Point closeButtonLocation = HeaderCloseButtonElement.Location;
+        Point headerLocation = HeaderElement.Location;
+        Size headerSize = HeaderElement.Size;
     
-        var headerMiddleX = headerLocation.X + (headerSize.Width / 3);
+        int headerMiddleX = headerLocation.X + (headerSize.Width / 3);
         return closeButtonLocation.X > headerMiddleX;
     }
     
@@ -145,8 +146,8 @@ public class BottomSheetHeaderTestsBottomSheetBuiltInHeader : PomBase
 
     public bool TitleDisplayed(string title)
     {
-        return App.TryFindElement(AutomationIds.HeaderTitleElementId, out var titleElement)
-            && titleElement.Text.Equals(title);
+        return App.TryFindElement(AutomationIds.HeaderTitleElementId, out AppiumElement? titleElement)
+               && titleElement.Text.Equals(title);
     }
     
     public async Task ClickNoneMode()

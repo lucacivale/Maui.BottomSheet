@@ -7,7 +7,7 @@ public sealed partial class AppiumSetup
     {
         const string testApplicationProjectDirectoryName = "Plugin.BottomSheet.Tests.Maui.Ui.Application";
 
-        var mauiDirectory = Directory.GetParent(Directory.GetParent(Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory())!.FullName)!.FullName)!.FullName);
+        DirectoryInfo? mauiDirectory = Directory.GetParent(Directory.GetParent(Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory())!.FullName)!.FullName)!.FullName);
         
         string testApplicationProjectPath = Path.Combine(mauiDirectory!.FullName, testApplicationProjectDirectoryName);
         

@@ -1,14 +1,14 @@
 namespace Plugin.Maui.BottomSheet.Navigation;
 
 /// <summary>
-/// Provides notifications for navigation events to view models.
+/// Defines an interface for handling navigation lifecycle events.
 /// </summary>
 public interface INavigationAware
 {
     /// <summary>
     /// Called when navigating away from this view model.
     /// </summary>
-    /// <param name="parameters">The navigation parameters.</param>
+    /// <param name="parameters">The navigation parameters used during the operation.</param>
     void OnNavigatedFrom(IBottomSheetNavigationParameters parameters);
 
     /// <summary>

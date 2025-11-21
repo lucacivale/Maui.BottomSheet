@@ -4,9 +4,10 @@ namespace Plugin.BottomSheet.Tests.Maui.Ui.Shared;
 using OpenQA.Selenium.Appium;
 using Xunit.Abstractions;
 
-public abstract class BaseTest : IClassFixture<AppiumSetupFixture>
+[Collection("UICollection")]
+public abstract class BaseTest
 {
-    protected const int DefaultDelayInMs = 500;
+    private const int DefaultDelayInMs = 750;
     
     private readonly AppiumDriver _app;
     private readonly ITestOutputHelper _testOutputHelper;
@@ -35,13 +36,13 @@ public abstract class BaseTest : IClassFixture<AppiumSetupFixture>
 
     protected IReadOnlyList<string> PrintAllElementIds()
     {
-        var elements = App.FindAllElements();
+        IList<AppiumElement> elements = App.FindAllElements();
 
         return elements
             .Select(x => {
-                var resourceId = x.GetAttribute("resource-id");
-                var contentDesc = x.GetAttribute("content-desc");
-                var className = x.GetAttribute("class");
+                string? resourceId = x.GetAttribute("resource-id");
+                string? contentDesc = x.GetAttribute("content-desc");
+                string? className = x.GetAttribute("class");
                
                 // Return the first non-null identifier
                 return $"{resourceId ?? string.Empty} -- {contentDesc ?? string.Empty} -- {className ?? string.Empty}";

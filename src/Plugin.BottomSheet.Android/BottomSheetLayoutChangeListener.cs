@@ -3,14 +3,15 @@ using AsyncAwaitBestPractices;
 namespace Plugin.BottomSheet.Android;
 
 /// <summary>
-/// Monitors layout changes for bottom sheet views and content.
+/// An event listener designed to monitor and respond to layout changes
+/// that occur in views associated with bottom sheets in Android.
 /// </summary>
 internal sealed class BottomSheetLayoutChangeListener : Java.Lang.Object, View.IOnLayoutChangeListener
 {
     private readonly WeakEventManager _eventManager = new();
 
     /// <summary>
-    /// Occurs when the monitored view's layout changes.
+    /// Raised when the layout of a monitored bottom sheet view changes.
     /// </summary>
     public event EventHandler? LayoutChange
     {
@@ -22,14 +23,14 @@ internal sealed class BottomSheetLayoutChangeListener : Java.Lang.Object, View.I
     /// Called when the layout of the monitored view changes.
     /// </summary>
     /// <param name="v">The view whose layout changed.</param>
-    /// <param name="left">The new left position.</param>
-    /// <param name="top">The new top position.</param>
-    /// <param name="right">The new right position.</param>
-    /// <param name="bottom">The new bottom position.</param>
-    /// <param name="oldLeft">The previous left position.</param>
-    /// <param name="oldTop">The previous top position.</param>
-    /// <param name="oldRight">The previous right position.</param>
-    /// <param name="oldBottom">The previous bottom position.</param>
+    /// <param name="left">The new left position of the view.</param>
+    /// <param name="top">The new top position of the view.</param>
+    /// <param name="right">The new right position of the view.</param>
+    /// <param name="bottom">The new bottom position of the view.</param>
+    /// <param name="oldLeft">The previous left position of the view.</param>
+    /// <param name="oldTop">The previous top position of the view.</param>
+    /// <param name="oldRight">The previous right position of the view.</param>
+    /// <param name="oldBottom">The previous bottom position of the view.</param>
     public void OnLayoutChange(
         View? v,
         int left,

@@ -7,12 +7,12 @@ using MauiThickness = Microsoft.Maui.Thickness;
 namespace Plugin.Maui.BottomSheet;
 
 /// <summary>
-/// Implementation of a bottom sheet control that provides supplementary content anchored to the bottom of the screen.
+/// A UI component that provides a collapsible and expandable container, typically used to display additional content at the bottom of the screen.
 /// </summary>
 public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet>
 {
     /// <summary>
-    /// Bindable property for the modal presentation mode.
+    /// Represents a bindable property that determines whether the bottom sheet is displayed in modal mode.
     /// </summary>
     public static readonly BindableProperty IsModalProperty =
         BindableProperty.Create(
@@ -22,7 +22,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             defaultValue: true);
 
     /// <summary>
-    /// Bindable property for the corner radius of the bottom sheet.
+    /// Bindable property that specifies the corner radius of an element.
     /// </summary>
     public static readonly BindableProperty CornerRadiusProperty =
         BindableProperty.Create(
@@ -36,7 +36,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             #endif
 
     /// <summary>
-    /// Bindable property for the window background color behind the bottom sheet.
+    /// Bindable property for the background color of a window.
     /// </summary>
     public static readonly BindableProperty WindowBackgroundColorProperty =
         BindableProperty.Create(
@@ -46,16 +46,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             defaultValueCreator: _ => Color.FromArgb("#80000000"));
 
     /// <summary>
-    /// Bindable property for the safe area ignore setting.
-    /// </summary>
-    public static readonly BindableProperty IgnoreSafeAreaProperty =
-        BindableProperty.Create(
-            nameof(IgnoreSafeArea),
-            typeof(bool),
-            typeof(BottomSheet));
-
-    /// <summary>
-    /// Bindable property for the collection of available bottom sheet states.
+    /// Bindable property that represents the states of an object or control.
     /// </summary>
     public static readonly BindableProperty StatesProperty =
         BindableProperty.Create(
@@ -70,8 +61,8 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             },
             validateValue: (bindable, value) =>
             {
-                var result = true;
-                var states = (List<BottomSheetState>)value;
+                bool result = true;
+                List<BottomSheetState>? states = (List<BottomSheetState>)value;
 
                 if (states.Count == 0)
                 {
@@ -88,7 +79,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             });
 
     /// <summary>
-    /// Bindable property for the current state of the bottom sheet.
+    /// Bindable property that represents the current state of the object.
     /// </summary>
     public static readonly BindableProperty CurrentStateProperty =
         BindableProperty.Create(
@@ -98,20 +89,20 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             defaultBindingMode: BindingMode.TwoWay,
             defaultValueCreator: bindable =>
             {
-                var bottomSheet = (BottomSheet)bindable;
+                BottomSheet? bottomSheet = (BottomSheet)bindable;
 
                 return bottomSheet.States.Order().First();
             },
             validateValue: (bindable, value) =>
             {
-                var bottomSheet = (BottomSheet)bindable;
-                var state = (BottomSheetState)value;
+                BottomSheet? bottomSheet = (BottomSheet)bindable;
+                BottomSheetState state = (BottomSheetState)value;
 
                 return bottomSheet.States.IsStateAllowed(state);
             });
 
     /// <summary>
-    /// Bindable property for the cancelable setting.
+    /// Bindable property indicating whether the user can cancel a bottom sheet.
     /// </summary>
     public static readonly BindableProperty IsCancelableProperty =
         BindableProperty.Create(
@@ -122,7 +113,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             defaultBindingMode: BindingMode.TwoWay);
 
     /// <summary>
-    /// Bindable property for the drag handle visibility.
+    /// Bindable property indicating the presence of a handle component.
     /// </summary>
     public static readonly BindableProperty HasHandleProperty =
         BindableProperty.Create(
@@ -134,7 +125,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             propertyChanged: OnHasHandlePropertyChanged);
 
     /// <summary>
-    /// Bindable property for the header visibility.
+    /// Bindable property that indicates whether the header is displayed.
     /// </summary>
     public static readonly BindableProperty ShowHeaderProperty =
         BindableProperty.Create(
@@ -145,7 +136,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             propertyChanged: OnShowHeaderPropertyChanged);
 
     /// <summary>
-    /// Bindable property for the open state of the bottom sheet.
+    /// Bindable property that indicates whether the element is open or closed.
     /// </summary>
     public static readonly BindableProperty IsOpenProperty =
         BindableProperty.Create(
@@ -155,7 +146,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             defaultBindingMode: BindingMode.TwoWay);
 
     /// <summary>
-    /// Bindable property for the draggable setting.
+    /// Bindable property that indicates whether the user can drag the element.
     /// </summary>
     public static readonly BindableProperty IsDraggableProperty =
         BindableProperty.Create(
@@ -166,7 +157,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             defaultBindingMode: BindingMode.TwoWay);
 
     /// <summary>
-    /// Bindable property for the peek height when in peek state.
+    /// Bindable property for defining the peek height of a component.
     /// </summary>
     public static readonly BindableProperty PeekHeightProperty =
         BindableProperty.Create(
@@ -176,7 +167,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             defaultValue: 0.00);
 
     /// <summary>
-    /// Bindable property for the header configuration.
+    /// Bindable property for defining the header content.
     /// </summary>
     public static readonly BindableProperty HeaderProperty =
         BindableProperty.Create(
@@ -186,7 +177,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             propertyChanged: OnHeaderChanged);
 
     /// <summary>
-    /// Bindable property for the content configuration.
+    /// Bindable property that represents the content of a UI element or container.
     /// </summary>
     public static readonly BindableProperty ContentProperty =
         BindableProperty.Create(
@@ -196,7 +187,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             propertyChanged: OnContentChanged);
 
     /// <summary>
-    /// Bindable property for the padding around the content.
+    /// Bindable property that specifies the padding values for an element.
     /// </summary>
     public static readonly BindableProperty PaddingProperty =
         BindableProperty.Create(
@@ -207,7 +198,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             propertyChanged: OnPaddingPropertyChanged);
 
     /// <summary>
-    /// Bindable property for the command executed when closing.
+    /// Bindable property for the command to execute during the closing operation.
     /// </summary>
     public static readonly BindableProperty ClosingCommandProperty =
         BindableProperty.Create(
@@ -216,7 +207,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             typeof(BottomSheet));
 
     /// <summary>
-    /// Bindable property for the closing command parameter.
+    /// Bindable property for the parameter passed to the closing command.
     /// </summary>
     public static readonly BindableProperty ClosingCommandParameterProperty =
         BindableProperty.Create(
@@ -225,7 +216,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             typeof(BottomSheet));
 
     /// <summary>
-    /// Bindable property for the command executed when closed.
+    /// Bindable property that represents the command to be executed when a close action is triggered.
     /// </summary>
     public static readonly BindableProperty ClosedCommandProperty =
         BindableProperty.Create(
@@ -234,7 +225,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             typeof(BottomSheet));
 
     /// <summary>
-    /// Bindable property for the closed command parameter.
+    /// Bindable property for the parameter passed to the command executed when the closed event is triggered.
     /// </summary>
     public static readonly BindableProperty ClosedCommandParameterProperty =
         BindableProperty.Create(
@@ -243,7 +234,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             typeof(BottomSheet));
 
     /// <summary>
-    /// Bindable property for the command executed when opening.
+    /// Bindable property for the command executed during the opening action.
     /// </summary>
     public static readonly BindableProperty OpeningCommandProperty =
         BindableProperty.Create(
@@ -252,7 +243,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             typeof(BottomSheet));
 
     /// <summary>
-    /// Bindable property for the opening command parameter.
+    /// Bindable property for the parameter passed to the command executed when opening occurs.
     /// </summary>
     public static readonly BindableProperty OpeningCommandParameterProperty =
         BindableProperty.Create(
@@ -261,7 +252,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             typeof(BottomSheet));
 
     /// <summary>
-    /// Bindable property for the command executed when opened.
+    /// Bindable property that represents the command to execute when an item is opened.
     /// </summary>
     public static readonly BindableProperty OpenedCommandProperty =
         BindableProperty.Create(
@@ -270,7 +261,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             typeof(BottomSheet));
 
     /// <summary>
-    /// Bindable property for the opened command parameter.
+    /// Bindable property for the parameter passed to the command when an item is opened.
     /// </summary>
     public static readonly BindableProperty OpenedCommandParameterProperty =
         BindableProperty.Create(
@@ -279,7 +270,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             typeof(BottomSheet));
 
     /// <summary>
-    /// Bindable property for the bottom sheet style configuration.
+    /// Bindable property for customizing the style of the bottom sheet.
     /// </summary>
     public static readonly BindableProperty BottomSheetStyleProperty =
         BindableProperty.Create(
@@ -289,24 +280,40 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             propertyChanged: OnBottomSheetStylePropertyChanged,
             defaultValue: new BottomSheetStyle());
 
+    /// <summary>
+    /// Gets the constant row index used to position the handle element in the BottomSheet layout.
+    /// </summary>
     internal const int HandleRow = 0;
+
+    /// <summary>
+    /// Gets the row identifier used to position and manage the header within the container view of the BottomSheet.
+    /// </summary>
     internal const int HeaderRow = 1;
+
+    /// <summary>
+    /// Gets the row index within the layout grid where the bottom sheet's main content is displayed.
+    /// </summary>
     internal const int ContentRow = 2;
 
-    private readonly Grid _bottomSheetLayout;
     private readonly WeakEventManager _eventManager = new();
+
     private readonly Lazy<PlatformConfigurationRegistry<BottomSheet>> _platformConfigurationRegistry;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheet"/> class.
+    /// Represents a component providing bottom sheet functionality in the user interface.
     /// </summary>
+    /// <remarks>
+    /// Typically used to display additional content or options in a sliding panel
+    /// from the bottom of the screen.
+    /// </remarks>
     public BottomSheet()
     {
         _platformConfigurationRegistry = new Lazy<PlatformConfigurationRegistry<BottomSheet>>(() => new PlatformConfigurationRegistry<BottomSheet>(this));
         Unloaded += OnUnloaded;
         HandlerChanged += OnHandlerChanged;
 
-        _bottomSheetLayout = new Grid
+        ContainerView = new Grid
         {
             RowDefinitions = new RowDefinitionCollection(
                 new RowDefinition(GridLength.Auto),
@@ -316,35 +323,46 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         };
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Indicates whether the object or process is in the closing state.
+    /// </summary>
     public event EventHandler Closing
     {
         add => _eventManager.AddEventHandler(value);
         remove => _eventManager.RemoveEventHandler(value);
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Indicates whether the current state or context is closed.
+    /// </summary>
     public event EventHandler Closed
     {
         add => _eventManager.AddEventHandler(value);
         remove => _eventManager.RemoveEventHandler(value);
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Represents the current state or status of opening, which could signify
+    /// availability, accessibility, or a defined condition within a process or system.
+    /// </summary>
     public event EventHandler Opening
     {
         add => _eventManager.AddEventHandler(value);
         remove => _eventManager.RemoveEventHandler(value);
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Represents the state indicating whether an item, such as a file or window, is currently open.
+    /// </summary>
     public event EventHandler Opened
     {
         add => _eventManager.AddEventHandler(value);
         remove => _eventManager.RemoveEventHandler(value);
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets or sets event that is triggered when the layout of an element has been updated or modified.
+    /// </summary>
     public event EventHandler LayoutChanged
     {
         add => _eventManager.AddEventHandler(value);
@@ -352,77 +370,207 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the bottom sheet ignores safe area constraints.
+    /// Gets or sets a value indicating whether the user can cancel a bottom sheet.
     /// </summary>
-    public bool IgnoreSafeArea { get => (bool)GetValue(IgnoreSafeAreaProperty); set => SetValue(IgnoreSafeAreaProperty, value); }
+    public bool IsCancelable
+    {
+        get => (bool)GetValue(IsCancelableProperty);
+        set => SetValue(IsCancelableProperty, value);
+    }
 
-    /// <inheritdoc/>
-    public bool IsCancelable { get => (bool)GetValue(IsCancelableProperty); set => SetValue(IsCancelableProperty, value); }
+    /// <summary>
+    /// Gets or sets a value indicating whether the object has a handle associated with it.
+    /// </summary>
+    public bool HasHandle
+    {
+        get => (bool)GetValue(HasHandleProperty);
+        set => SetValue(HasHandleProperty, value);
+    }
 
-    /// <inheritdoc/>
-    public bool HasHandle { get => (bool)GetValue(HasHandleProperty); set => SetValue(HasHandleProperty, value); }
+    /// <summary>
+    /// Gets or sets a value indicating whether the header is displayed.
+    /// </summary>
+    public bool ShowHeader
+    {
+        get => (bool)GetValue(ShowHeaderProperty);
+        set => SetValue(ShowHeaderProperty, value);
+    }
 
-    /// <inheritdoc/>
-    public bool ShowHeader { get => (bool)GetValue(ShowHeaderProperty); set => SetValue(ShowHeaderProperty, value); }
+    /// <summary>
+    /// Gets or sets a value indicating whether the associated element is open.
+    /// </summary>
+    public bool IsOpen
+    {
+        get => (bool)GetValue(IsOpenProperty);
+        set => SetValue(IsOpenProperty, value);
+    }
 
-    /// <inheritdoc/>
-    public bool IsOpen { get => (bool)GetValue(IsOpenProperty); set => SetValue(IsOpenProperty, value); }
+    /// <summary>
+    /// Gets or sets a value indicating whether the current presentation is modal.
+    /// </summary>
+    public bool IsModal
+    {
+        get => (bool)GetValue(IsModalProperty);
+        set => SetValue(IsModalProperty, value);
+    }
 
-    /// <inheritdoc/>
-    public bool IsModal { get => (bool)GetValue(IsModalProperty); set => SetValue(IsModalProperty, value); }
+    /// <summary>
+    /// Gets or sets a value indicating whether the user can drag the element.
+    /// </summary>
+    public bool IsDraggable
+    {
+        get => (bool)GetValue(IsDraggableProperty);
+        set => SetValue(IsDraggableProperty, value);
+    }
 
-    /// <inheritdoc/>
-    public bool IsDraggable { get => (bool)GetValue(IsDraggableProperty); set => SetValue(IsDraggableProperty, value); }
+    /// <summary>
+    /// Gets or sets the radius of the corners for a visual element.
+    /// </summary>
+    public float CornerRadius
+    {
+        get => (float)GetValue(CornerRadiusProperty);
+        set => SetValue(CornerRadiusProperty, value);
+    }
 
-    /// <inheritdoc/>
-    public float CornerRadius { get => (float)GetValue(CornerRadiusProperty); set => SetValue(CornerRadiusProperty, value); }
+    /// <summary>
+    /// Gets or sets the background color of the window.
+    /// </summary>
+    public Color WindowBackgroundColor
+    {
+        get => (Color)GetValue(WindowBackgroundColorProperty);
+        set => SetValue(WindowBackgroundColorProperty, value);
+    }
 
-    /// <inheritdoc/>
-    public Color WindowBackgroundColor { get => (Color)GetValue(WindowBackgroundColorProperty); set => SetValue(WindowBackgroundColorProperty, value); }
+    /// <summary>
+    /// Gets or sets the height of the bottom sheet when it is in its peek state.
+    /// </summary>
+    public double PeekHeight
+    {
+        get => (double)GetValue(PeekHeightProperty);
+        set => SetValue(PeekHeightProperty, value);
+    }
 
-    /// <inheritdoc/>
-    public double PeekHeight { get => (double)GetValue(PeekHeightProperty); set => SetValue(PeekHeightProperty, value); }
+    /// <summary>
+    /// Gets or sets the header text or content of a control.
+    /// </summary>
+    public BottomSheetHeader? Header
+    {
+        get => (BottomSheetHeader?)GetValue(HeaderProperty);
+        set => SetValue(HeaderProperty, value);
+    }
 
-    /// <inheritdoc/>
-    public BottomSheetHeader? Header { get => (BottomSheetHeader?)GetValue(HeaderProperty); set => SetValue(HeaderProperty, value); }
+    /// <summary>
+    /// Gets or sets the current state of the object or component.
+    /// </summary>
+    public BottomSheetState CurrentState
+    {
+        get => (BottomSheetState)GetValue(CurrentStateProperty);
+        set => SetValue(CurrentStateProperty, value);
+    }
 
-    /// <inheritdoc/>
-    public BottomSheetState CurrentState { get => (BottomSheetState)GetValue(CurrentStateProperty); set => SetValue(CurrentStateProperty, value); }
+    /// <summary>
+    /// Gets or sets the command executed when a close action is performed.
+    /// </summary>
+    public ICommand? ClosingCommand
+    {
+        get => (ICommand?)GetValue(ClosingCommandProperty);
+        set => SetValue(ClosingCommandProperty, value);
+    }
 
-    /// <inheritdoc/>
-    public ICommand? ClosingCommand { get => (ICommand?)GetValue(ClosingCommandProperty); set => SetValue(ClosingCommandProperty, value); }
+    /// <summary>
+    /// Gets or sets a parameter to the command executed when closing.
+    /// </summary>
+    public object? ClosingCommandParameter
+    {
+        get => (object?)GetValue(ClosingCommandParameterProperty);
+        set => SetValue(ClosingCommandParameterProperty, value);
+    }
 
-    /// <inheritdoc/>
-    public object? ClosingCommandParameter { get => (object?)GetValue(ClosingCommandParameterProperty); set => SetValue(ClosingCommandParameterProperty, value); }
+    /// <summary>
+    /// Gets or sets the command to be executed when the associated view is closed.
+    /// </summary>
+    public ICommand? ClosedCommand
+    {
+        get => (ICommand?)GetValue(ClosedCommandProperty);
+        set => SetValue(ClosedCommandProperty, value);
+    }
 
-    /// <inheritdoc/>
-    public ICommand? ClosedCommand { get => (ICommand?)GetValue(ClosedCommandProperty); set => SetValue(ClosedCommandProperty, value); }
+    /// <summary>
+    /// Gets or sets the command parameter associated with the closed action.
+    /// </summary>
+    public object? ClosedCommandParameter
+    {
+        get => (object?)GetValue(ClosedCommandParameterProperty);
+        set => SetValue(ClosedCommandParameterProperty, value);
+    }
 
-    /// <inheritdoc/>
-    public object? ClosedCommandParameter { get => (object?)GetValue(ClosedCommandParameterProperty); set => SetValue(ClosedCommandParameterProperty, value); }
+    /// <summary>
+    /// Gets or sets the command to execute when opening occurs.
+    /// </summary>
+    public ICommand? OpeningCommand
+    {
+        get => (ICommand?)GetValue(OpeningCommandProperty);
+        set => SetValue(OpeningCommandProperty, value);
+    }
 
-    /// <inheritdoc/>
-    public ICommand? OpeningCommand { get => (ICommand?)GetValue(OpeningCommandProperty); set => SetValue(OpeningCommandProperty, value); }
+    /// <summary>
+    /// Gets or sets the parameter to be passed to the command executed when opening occurs.
+    /// </summary>
+    public object? OpeningCommandParameter
+    {
+        get => (object?)GetValue(OpeningCommandParameterProperty);
+        set => SetValue(OpeningCommandParameterProperty, value);
+    }
 
-    /// <inheritdoc/>
-    public object? OpeningCommandParameter { get => (object?)GetValue(OpeningCommandParameterProperty); set => SetValue(OpeningCommandParameterProperty, value); }
+    /// <summary>
+    /// Gets or sets the command that is executed when the associated object is opened.
+    /// </summary>
+    public ICommand? OpenedCommand
+    {
+        get => (ICommand?)GetValue(OpenedCommandProperty);
+        set => SetValue(OpenedCommandProperty, value);
+    }
 
-    /// <inheritdoc/>
-    public ICommand? OpenedCommand { get => (ICommand?)GetValue(OpenedCommandProperty); set => SetValue(OpenedCommandProperty, value); }
+    /// <summary>
+    /// Gets or sets a parameter to pass to the command when the associated item is opened.
+    /// </summary>
+    public object? OpenedCommandParameter
+    {
+        get => (object?)GetValue(OpenedCommandParameterProperty);
+        set => SetValue(OpenedCommandParameterProperty, value);
+    }
 
-    /// <inheritdoc/>
-    public object? OpenedCommandParameter { get => (object?)GetValue(OpenedCommandParameterProperty); set => SetValue(OpenedCommandParameterProperty, value); }
+    /// <summary>
+    /// Gets or sets the content of the control.
+    /// </summary>
+    public BottomSheetContent? Content
+    {
+        get => (BottomSheetContent?)GetValue(ContentProperty);
+        set => SetValue(ContentProperty, value);
+    }
 
-    /// <inheritdoc/>
-    public BottomSheetContent? Content { get => (BottomSheetContent?)GetValue(ContentProperty); set => SetValue(ContentProperty, value); }
+    /// <summary>
+    /// Gets or sets the padding values applied to the content of the BottomSheet.
+    /// </summary>
+    public MauiThickness Padding
+    {
+        get => (MauiThickness)GetValue(PaddingProperty);
+        set => SetValue(PaddingProperty, value);
+    }
 
-    /// <inheritdoc/>
-    public MauiThickness Padding { get => (MauiThickness)GetValue(PaddingProperty); set => SetValue(PaddingProperty, value); }
+    /// <summary>
+    /// Gets or sets the style of the bottom sheet,
+    /// allowing customization of its appearance and behavior.
+    /// </summary>
+    public BottomSheetStyle BottomSheetStyle
+    {
+        get => (BottomSheetStyle)GetValue(BottomSheetStyleProperty);
+        set => SetValue(BottomSheetStyleProperty, value);
+    }
 
-    /// <inheritdoc/>
-    public BottomSheetStyle BottomSheetStyle { get => (BottomSheetStyle)GetValue(BottomSheetStyleProperty); set => SetValue(BottomSheetStyleProperty, value); }
-
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets or sets the collection of states that define the behavior of the bottom sheet.
+    /// </summary>
     [TypeConverter(typeof(StringToBottomSheetStateTypeConverter))]
     public ICollection<BottomSheetState> States
     {
@@ -430,25 +578,30 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         set => SetValue(StatesProperty, value);
     }
 
-    public Grid ContainerView => _bottomSheetLayout;
+    /// <summary>
+    /// Gets the container view element.
+    /// </summary>
+    public Grid ContainerView { get; }
 
     /// <summary>
-    /// Gets the platform-specific configuration for this bottom sheet.
+    /// Activates the current instance and sets its state to "On".
     /// </summary>
-    /// <typeparam name="T">The platform type.</typeparam>
-    /// <returns>The platform element configuration.</returns>
+    /// <typeparam name="T">The tyepe.</typeparam>
+    /// <returns>A boolean value indicating whether the operation was successful.</returns>
     public IPlatformElementConfiguration<T, BottomSheet> On<T>()
         where T : IConfigPlatform
     {
         return _platformConfigurationRegistry.Value.On<T>();
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Represents the method or event triggered when a bottom sheet is about to be opened.
+    /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public void OnOpeningBottomSheet()
     {
-        _bottomSheetLayout.Parent = this;
-        _bottomSheetLayout.BindingContext = BindingContext;
+        ContainerView.Parent = this;
+        ContainerView.BindingContext = BindingContext;
 
         CreateLayout();
 
@@ -456,7 +609,9 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         ExecuteCommand(OpeningCommand, OpeningCommandParameter);
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Represents the event handler or callback triggered when a bottom sheet is opened.
+    /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public void OnOpenedBottomSheet()
     {
@@ -464,7 +619,10 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         ExecuteCommand(OpenedCommand, OpenedCommandParameter);
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Performs necessary operations when the bottom sheet is in the process of closing.
+    /// This method can be used to handle cleanup, state saving, or related actions before the bottom sheet is fully closed.
+    /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public void OnClosingBottomSheet()
     {
@@ -472,27 +630,45 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         ExecuteCommand(ClosingCommand, ClosingCommandParameter);
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Triggers when the bottom sheet is closed, allowing handling of related events or cleanup tasks.
+    /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public void OnClosedBottomSheet()
     {
-        Header?.Remove();
-        Content?.Remove();
+        RemoveHandle();
 
-        _bottomSheetLayout.Parent = null;
-        _bottomSheetLayout.BindingContext = null;
-        _bottomSheetLayout.DisconnectHandlers();
+        if (Header is not null)
+        {
+            RemoveHeader(Header);
+        }
+
+        if (Content is not null)
+        {
+            RemoveContent(Content);
+        }
+
+        ContainerView.Parent = null;
+        ContainerView.BindingContext = null;
+        ContainerView.DisconnectHandlers();
 
         RaiseEvent(nameof(Closed), EventArgs.Empty);
         ExecuteCommand(ClosedCommand, ClosedCommandParameter);
     }
 
+    /// <summary>
+    /// Handles layout changes and performs the necessary updates or adjustments
+    /// in response to the modification of the layout dimensions or properties.
+    /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public void OnLayoutChanged()
     {
         RaiseEvent(nameof(LayoutChanged), EventArgs.Empty);
     }
 
+    /// <summary>
+    /// Cancels the current bottom sheet.
+    /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public void Cancel()
     {
@@ -500,22 +676,23 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     }
 
     /// <summary>
-    /// Called when the binding context changes, propagating the change to child elements.
+    /// Called when the binding context of the element changes.
+    /// Override this method to perform actions when the binding context is updated.
     /// </summary>
     protected override void OnBindingContextChanged()
     {
         base.OnBindingContextChanged();
 
-        _bottomSheetLayout.BindingContext = BindingContext;
+        ContainerView.BindingContext = BindingContext;
 
         if (Header is not null)
         {
-            Header.BindingContext = _bottomSheetLayout.BindingContext;
+            Header.BindingContext = ContainerView.BindingContext;
         }
 
         if (Content is not null)
         {
-            Content.BindingContext = _bottomSheetLayout.BindingContext;
+            Content.BindingContext = ContainerView.BindingContext;
         }
     }
 
@@ -535,47 +712,82 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     /// <summary>
     /// Handles changes to the States property.
     /// </summary>
-    /// <param name="bindable">The bindable object.</param>
-    /// <param name="oldvalue">The old value.</param>
-    /// <param name="newvalue">The new value.</param>
-    private static void OnStatesPropertyChanged(BindableObject bindable, object oldvalue, object newvalue)
-        => ((BottomSheet)bindable).OnStatesPropertyChanged((List<BottomSheetState>)newvalue);
+    /// <param name="bindable">The object to which the property is bound.</param>
+    /// <param name="oldValue">The previous value of the property.</param>
+    /// <param name="newValue">The new value of the property.</param>
+    private static void OnStatesPropertyChanged(BindableObject bindable, object oldValue, object newValue)
+        => ((BottomSheet)bindable).OnStatesPropertyChanged((List<BottomSheetState>)newValue);
 
     /// <summary>
-    /// Handles changes to the Header property.
+    /// Handles changes to the <see cref="BottomSheet.HeaderProperty"/>.
     /// </summary>
-    /// <param name="bindable">The bindable object.</param>
-    /// <param name="oldvalue">The old value.</param>
-    /// <param name="newvalue">The new value.</param>
-    private static void OnHeaderChanged(BindableObject bindable, object oldvalue, object newvalue)
-        => ((BottomSheet)bindable).OnHeaderChanged((BottomSheetHeader)oldvalue, (BottomSheetHeader)newvalue);
+    /// <param name="bindable">The bindable object on which the property change occurred.</param>
+    /// <param name="oldValue">The previous value of the Header property.</param>
+    /// <param name="newValue">The new value of the Header property.</param>
+    private static void OnHeaderChanged(BindableObject bindable, object oldValue, object newValue)
+        => ((BottomSheet)bindable).OnHeaderChanged((BottomSheetHeader)oldValue, (BottomSheetHeader)newValue);
 
     /// <summary>
-    /// Handles changes to the Content property.
+    /// Responds to changes in the Content property of the <see cref="BottomSheet"/>.
     /// </summary>
-    /// <param name="bindable">The bindable object.</param>
-    /// <param name="oldvalue">The old value.</param>
-    /// <param name="newvalue">The new value.</param>
-    private static void OnContentChanged(BindableObject bindable, object oldvalue, object newvalue)
-        => ((BottomSheet)bindable).OnContentChanged((BottomSheetContent)oldvalue, (BottomSheetContent)newvalue);
+    /// <param name="bindable">The bindable object whose property has changed.</param>
+    /// <param name="oldValue">The previous value of the Content property.</param>
+    /// <param name="newValue">The new value of the Content property.</param>
+    private static void OnContentChanged(BindableObject bindable, object oldValue, object newValue)
+        => ((BottomSheet)bindable).OnContentChanged((BottomSheetContent)oldValue, (BottomSheetContent)newValue);
 
+    /// <summary>
+    /// Handles changes to the <see cref="ShowHeaderProperty"/> bindable property.
+    /// </summary>
+    /// <param name="bindable">
+    /// The <see cref="BindableObject"/> instance on which the property change occurred.
+    /// </param>
+    /// <param name="oldValue">
+    /// The old value of the property before the change.
+    /// </param>
+    /// <param name="newValue">
+    /// The new value of the property after the change.
+    /// </param>
     private static void OnShowHeaderPropertyChanged(BindableObject bindable, object oldValue, object newValue)
         => ((BottomSheet)bindable).OnShowHeaderPropertyChanged();
 
+    /// <summary>
+    /// Handles changes to the <see cref="BottomSheetStyleProperty"/>.
+    /// </summary>
+    /// <param name="bindable">The instance of <see cref="BindableObject"/> where the property change occurred.</param>
+    /// <param name="oldValue">The old value of the <see cref="BottomSheetStyle"/> property before the change.</param>
+    /// <param name="newValue">The new value of the <see cref="BottomSheetStyle"/> property after the change.</param>
     private static void OnBottomSheetStylePropertyChanged(BindableObject bindable, object oldValue, object newValue)
         => ((BottomSheet)bindable).OnBottomSheetStylePropertyChanged((BottomSheetStyle)oldValue, (BottomSheetStyle)newValue);
 
+    /// <summary>
+    /// Handles the property changed event for the <see cref="HasHandleProperty"/> BindableProperty.
+    /// </summary>
+    /// <param name="bindable">The object that the property belongs to.</param>
+    /// <param name="oldValue">The previous value of the property.</param>
+    /// <param name="newValue">The new value of the property.</param>
     private static void OnHasHandlePropertyChanged(BindableObject bindable, object oldValue, object newValue)
         => ((BottomSheet)bindable).OnHasHandlePropertyChanged();
 
+    /// <summary>
+    /// Handles changes to the <see cref="PaddingProperty"/> bindable property.
+    /// This method is invoked when the <see cref="Padding"/> value is modified.
+    /// </summary>
+    /// <param name="bindable">The object on which the property was changed.</param>
+    /// <param name="oldValue">The previous value of the property.</param>
+    /// <param name="newValue">The new value of the property.</param>
     private static void OnPaddingPropertyChanged(BindableObject bindable, object oldValue, object newValue)
         => ((BottomSheet)bindable).OnPaddingPropertyChanged();
 
+    /// <summary>
+    /// Handles the change in the padding property of the <see cref="BottomSheet"/>
+    /// and updates the layout padding and the handle margin accordingly.
+    /// </summary>
     private void OnPaddingPropertyChanged()
     {
-        _bottomSheetLayout.Padding = Padding;
+        ContainerView.Padding = Padding;
 
-        if (_bottomSheetLayout.Children.FirstOrDefault(child => _bottomSheetLayout.GetRow(child) == HandleRow) is View handle)
+        if (ContainerView.Children.FirstOrDefault(child => ContainerView.GetRow(child) == HandleRow) is View handle)
         {
             handle.Margin = new(
                 handle.Margin.Left,
@@ -586,101 +798,102 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     }
 
     /// <summary>
-    /// Raises the specified event with the given event arguments.
+    /// Triggers the specified event and notifies all registered event handlers.
     /// </summary>
-    /// <param name="eventName">The name of the event to raise.</param>
-    /// <param name="eventArgs">The event arguments.</param>
+    /// <param name="eventName">The name of the event to be raised.</param>
+    /// <param name="eventArgs">The arguments associated with the event being raised.</param>
     private void RaiseEvent(string eventName, EventArgs eventArgs)
     {
         _eventManager.HandleEvent(this, eventArgs, eventName);
     }
 
     /// <summary>
-    /// Handles the internal logic when the States property changes.
+    /// Handles the logic to update the state of the <see cref="BottomSheet"/> when the associated states collection changes.
     /// </summary>
-    /// <param name="newvalue">The new states collection.</param>
+    /// <param name="newValue">The updated collection of allowed <see cref="BottomSheetState"/> values.</param>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S6608:Prefer indexing instead of \"Enumerable\" methods on types implementing \"IList\"", Justification = "Improced readability.")]
-    private void OnStatesPropertyChanged(List<BottomSheetState> newvalue)
+    private void OnStatesPropertyChanged(List<BottomSheetState> newValue)
     {
-        if (!newvalue.IsStateAllowed(CurrentState))
+        if (!newValue.IsStateAllowed(CurrentState))
         {
-            CurrentState = newvalue.First();
+            CurrentState = newValue.First();
         }
     }
 
     /// <summary>
-    /// Handles the internal logic when the Header property changes.
+    /// Called when the Header property of the <see cref="BottomSheet"/> changes.
     /// </summary>
-    /// <param name="newValue">The new header value.</param>
-    private void OnHeaderChanged(BottomSheetHeader oldValue, BottomSheetHeader newValue)
+    /// <param name="oldValue">The previous value of the Header property.</param>
+    /// <param name="newValue">The new value of the Header property.</param>
+    private void OnHeaderChanged(BottomSheetHeader? oldValue, BottomSheetHeader? newValue)
     {
-        EventHandler @event = null!;
-        @event = (s, e) =>
-        {
-            Cancel();
-        };
-
         if (oldValue is not null)
         {
-            _bottomSheetLayout.Remove(_bottomSheetLayout.Children.FirstOrDefault(child => _bottomSheetLayout.GetRow(child) == HeaderRow));
-
-            oldValue.CloseButtonClicked -= @event;
-            oldValue.Remove();
+            RemoveHeader(oldValue);
         }
 
-        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (newValue is not null
-            && IsOpen == true)
+            && IsOpen)
         {
-            newValue.Parent = _bottomSheetLayout;
-            newValue.BindingContext = BindingContext;
-            newValue.Style = BottomSheetStyle.HeaderStyle;
-            newValue.CloseButtonClicked += @event;
-
             OnShowHeaderPropertyChanged();
         }
     }
 
     /// <summary>
-    /// Handles the internal logic when the Content property changes.
+    /// Handles the internal logic when the content of the bottom sheet changes.
     /// </summary>
-    /// <param name="newValue">The new content value.</param>
-    private void OnContentChanged(BottomSheetContent oldValue, BottomSheetContent newValue)
+    /// <param name="oldValue">The previous content of the bottom sheet.</param>
+    /// <param name="newValue">The new content of the bottom sheet.</param>
+    private void OnContentChanged(BottomSheetContent? oldValue, BottomSheetContent? newValue)
     {
-        _bottomSheetLayout.Remove(_bottomSheetLayout.Children.FirstOrDefault(child => _bottomSheetLayout.GetRow(child) == ContentRow));
-        oldValue?.Remove();
+        if (oldValue is not null)
+        {
+            RemoveContent(oldValue);
+        }
 
-        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (newValue is not null
             && IsOpen)
         {
-            newValue.Parent = _bottomSheetLayout;
-            newValue.BindingContext = _bottomSheetLayout.BindingContext;
-
             AddContent(newValue);
         }
     }
 
+    /// <summary>
+    /// Handles changes to the ShowHeader property and updates the visibility and state of the Header in the BottomSheet.
+    /// </summary>
+    /// <param name="bindable">
+    /// The source of the binding, which is the BottomSheet instance.
+    /// </param>
+    /// <param name="oldValue">
+    /// The previous value of the ShowHeader property.
+    /// </param>
+    /// <param name="newValue">
+    /// The new value of the ShowHeader property.
+    /// </param>
     private void OnShowHeaderPropertyChanged()
     {
         if (Header is not null)
         {
             if (ShowHeader == false)
             {
-                _bottomSheetLayout.Remove(_bottomSheetLayout.Children.FirstOrDefault(child => _bottomSheetLayout.GetRow(child) == HeaderRow));
-                Header.Remove();
+                RemoveHeader(Header);
             }
-            else if (IsOpen == true)
+            else if (IsOpen)
             {
-                Header.Parent = _bottomSheetLayout;
-                Header.BindingContext = BindingContext;
-
                 AddHeader(Header);
             }
         }
     }
 
-    private void OnBottomSheetStylePropertyChanged(BottomSheetStyle oldValue, BottomSheetStyle newValue)
+    /// <summary>
+    /// Handles changes to the BottomSheet's style property.
+    /// Unsubscribes from the <see cref="BottomSheetStyle"/> property change events of the old value,
+    /// and subscribes to the new style's property change events.
+    /// Applies the new style to the Header if defined.
+    /// </summary>
+    /// <param name="oldValue">The previous style of type <see cref="BottomSheetStyle"/>.</param>
+    /// <param name="newValue">The new style of type <see cref="BottomSheetStyle"/>.</param>
+    private void OnBottomSheetStylePropertyChanged(BottomSheetStyle? oldValue, BottomSheetStyle? newValue)
     {
         if (oldValue is not null)
         {
@@ -698,6 +911,16 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         }
     }
 
+    /// <summary>
+    /// Handles property change events for the style-related properties of the <see cref="BottomSheetStyle"/> class.
+    /// </summary>
+    /// <param name="sender">
+    /// The source of the property changed event.
+    /// </param>
+    /// <param name="e">
+    /// An instance of <see cref="PropertyChangedEventArgs"/> that contains the event data,
+    /// including the name of the property that changed.
+    /// </param>
     private void OnStylePropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (Header is not null
@@ -708,11 +931,10 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     }
 
     /// <summary>
-    /// Disconnect handler manually.
-    /// Investigate why maui isn't calling disconnect handler.
+    /// Disconnects the handler manually to address scenarios where MAUI does not call the disconnect handler.
     /// </summary>
-    /// <param name="sender">Sender.</param>
-    /// <param name="e">Args.</param>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The event data.</param>
     private void OnUnloaded(object? sender, EventArgs e)
     {
         Handler?.DisconnectHandler();
@@ -720,11 +942,20 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         HandlerChanged -= OnHandlerChanged;
     }
 
+    /// <summary>
+    /// Called when the handler for the associated element changes.
+    /// </summary>
+    /// <param name="sender">The source of the event, typically the associated element.</param>
+    /// <param name="e">An event data object that provides details about the change.</param>
     private void OnHandlerChanged(object? sender, EventArgs e)
     {
         IsOpen = false;
     }
 
+    /// <summary>
+    /// Handles the change in the <see cref="BottomSheet.HasHandle"/> property
+    /// and updates the BottomSheet's handle UI accordingly.
+    /// </summary>
     private void OnHasHandlePropertyChanged()
     {
         if (HasHandle == false)
@@ -737,55 +968,123 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         }
     }
 
+    /// <summary>
+    /// Creates and arranges the layout elements for the bottom sheet, including the handle, header,
+    /// and content, based on their respective configurations.
+    /// </summary>
     private void CreateLayout()
     {
+        bool isInModalPage = this.GetPageParent() is Page page
+            && Navigation.ModalStack.Contains(page);
+
         if (HasHandle)
         {
+            if (isInModalPage)
+            {
+                RemoveHandle();
+            }
+
             AddHandle();
         }
 
         if (Header is not null
             && ShowHeader)
         {
-            Header.Parent = _bottomSheetLayout;
-            Header.BindingContext = BindingContext;
+            if (isInModalPage)
+            {
+                RemoveHeader(Header);
+            }
 
             AddHeader(Header);
         }
 
         if (Content is not null)
         {
-            Content.Parent = _bottomSheetLayout;
-            Content.BindingContext = _bottomSheetLayout.BindingContext;
+            if (isInModalPage)
+            {
+                RemoveContent(Content);
+            }
 
             AddContent(Content);
         }
     }
 
+    /// <summary>
+    /// Adds a handle element to the bottom sheet layout at the specified row.
+    /// </summary>
     private void AddHandle()
     {
-        _bottomSheetLayout.Add(CreateHandle(), 0, HandleRow);
+        // ReSharper disable once RedundantArgumentDefaultValue
+        ContainerView.Add(CreateHandle(), 0, HandleRow);
     }
 
+    /// <summary>
+    /// Adds the specified <see cref="BottomSheetHeader"/> content to the bottom sheet layout at the header row position.
+    /// </summary>
+    /// <param name="header">The <see cref="BottomSheetHeader"/> instance to be added to the layout.</param>
     private void AddHeader(BottomSheetHeader header)
     {
-        _bottomSheetLayout.Add(header.CreateContent(), 0, HeaderRow);
+        header.Parent = ContainerView;
+        header.BindingContext = BindingContext;
+        header.Style = BottomSheetStyle.HeaderStyle;
+        header.CloseButtonClicked += BottomSheetHeaderOnCloseButtonClicked;
+
+        ContainerView.Add(header.CreateContent(), 0, HeaderRow);
     }
 
+    /// <summary>
+    /// Adds content to the current context.
+    /// </summary>
+    /// <param name="content">The content to be added.</param>
     private void AddContent(BottomSheetContent content)
     {
-        _bottomSheetLayout.Add(content.CreateContent(), 0, ContentRow);
+        content.Parent = ContainerView;
+        content.BindingContext = ContainerView.BindingContext;
+
+        ContainerView.Add(content.CreateContent(), 0, ContentRow);
     }
 
+    /// <summary>
+    /// Removes the handle view from the BottomSheet layout, if it exists.
+    /// This method checks for a child element in the layout that corresponds to the handle row
+    /// and removes it from the layout.
+    /// </summary>
     private void RemoveHandle()
     {
-        _bottomSheetLayout.Remove(_bottomSheetLayout.Children.FirstOrDefault(child => _bottomSheetLayout.GetRow(child) == HandleRow));
+        ContainerView.Remove(ContainerView.Children.FirstOrDefault(child => ContainerView.GetRow(child) == HandleRow));
     }
 
+    /// <summary>
+    /// Removes the header from the bottom sheet container and cleans up related resources.
+    /// </summary>
+    /// <param name="header">The instance of <see cref="BottomSheetHeader"/> to be removed.</param>
+    /// <remarks>
+    /// This method detaches the header from the container, unsubscribes from the close button click event,
+    /// and performs cleanup by invoking the remove logic specific to the header.
+    /// </remarks>
+    private void RemoveHeader(BottomSheetHeader header)
+    {
+        ContainerView.Remove(ContainerView.Children.FirstOrDefault(child => ContainerView.GetRow(child) == HeaderRow));
+        header.CloseButtonClicked -= BottomSheetHeaderOnCloseButtonClicked;
+        header.Remove();
+    }
+
+    private void RemoveContent(BottomSheetContent content)
+    {
+        ContainerView.Remove(ContainerView.Children.FirstOrDefault(child => ContainerView.GetRow(child) == ContentRow));
+        content.Remove();
+    }
+
+    /// <summary>
+    /// Creates and returns a new handle for the bottom sheet.
+    /// The handle is designed as a draggable UI element to allow user interaction for opening or closing the sheet.
+    /// </summary>
+    /// <returns>A <see cref="Border"/> element configured as the handle, including margin, dimensions, and styling characteristics.</returns>
     private Border CreateHandle()
     {
         return new()
         {
+            AutomationId = AutomationIds.Handle,
             Margin = new(0, 10 - Padding.Top, 0, 10),
             WidthRequest = 40,
             HeightRequest = 7.5,
@@ -800,5 +1099,16 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             },
             Stroke = Colors.Gray,
         };
+    }
+
+    /// <summary>
+    /// Handles the <see cref="BottomSheetHeader.CloseButtonClicked"/> event
+    /// for the bottom sheet header to close or dismiss the bottom sheet.
+    /// </summary>
+    /// <param name="sender">The source of the event, typically the <see cref="BottomSheetHeader"/> instance.</param>
+    /// <param name="e">The event data associated with the button click event.</param>
+    private void BottomSheetHeaderOnCloseButtonClicked(object? sender, EventArgs e)
+    {
+        Cancel();
     }
 }

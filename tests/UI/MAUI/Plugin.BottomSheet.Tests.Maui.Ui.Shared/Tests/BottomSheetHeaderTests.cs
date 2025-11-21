@@ -45,7 +45,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests")]
     public async Task OpenBottomSheet()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
 
         Assert.True(bottomSheet.IsOpen());
     }
@@ -55,7 +55,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     public async Task OpenBottomSheet_ChangeBindingContext_BindingContextChanged()
     {
         string title = "Title";
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
 
         await bottomSheet.ShowHeaderAsync();
         bottomSheet.EnterTitle(title);
@@ -70,7 +70,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests")]
     public async Task OpenBottomSheet_CloseButtonClicked_BottomSheetClosed()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
 
         await bottomSheet.ClickCloseButtonAsync();
         
@@ -81,7 +81,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.Header")]
     public async Task UnconfiguredBuiltInHeader_ShowHeader_HeaderNotVisible()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
 
         await bottomSheet.ShowHeaderAsync();
 
@@ -92,7 +92,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.Header")]
     public async Task HeaderWithTitle_ShowHeader_HeaderVisible()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
 
         bottomSheet.EnterTitle("Title");
         
@@ -105,7 +105,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.Header")]
     public async Task HeaderWithAnyMode_ShowHeader_HeaderVisible()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
 
         await bottomSheet.ClickNoneMode();
         await bottomSheet.ShowHeaderAsync();
@@ -126,7 +126,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.Header")]
     public async Task VisibleHeader_NoneMode_HeaderHidden()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
 
         await bottomSheet.ClickLeftMode();
         await bottomSheet.ShowHeaderAsync();
@@ -140,7 +140,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.Header")]
     public async Task VisibleHeader_HideHeader_HeaderHidden()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
 
         bottomSheet.EnterTitle("Title");
         
@@ -156,7 +156,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     public async Task VisibleHeader_TitleEntered_HeaderTitleVisible()
     {
         string title = "Title";
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
 
         await bottomSheet.ShowHeaderAsync();
         
@@ -172,7 +172,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     public async Task VisibleHeader_TitleCleared_HeaderTitleHidden(string clearTitle)
     {
         string title = "Title";
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
 
         await bottomSheet.ShowHeaderAsync();
         
@@ -188,7 +188,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.Title")]
     public async Task VisibleInHeader_TitleEmpty_HeaderTitleHidden(string title)
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
 
         await bottomSheet.ShowHeaderAsync();
 
@@ -201,7 +201,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.CloseButton")]
     public async Task VisibleHeader_CloseButtonDisabled_CloseButtonNotVisible()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
         
         await bottomSheet.ShowHeaderAsync();
         
@@ -212,7 +212,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.CloseButton")]
     public async Task VisibleHeader_CloseButtonEnabled_CloseButtonVisible()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
         
         await bottomSheet.ShowHeaderAsync();
         await bottomSheet.ShowCloseButtonAsync();
@@ -224,7 +224,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.CloseButton")]
     public async Task VisibleCloseButton_DisableCloseButton_CloseButtonHidden()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
         
         await bottomSheet.ShowHeaderAsync();
         await bottomSheet.ShowCloseButtonAsync();
@@ -238,7 +238,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.CloseButton")]
     public async Task CloseButton_Clicked_BottomSheetClosed()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
         
         await bottomSheet.ShowHeaderAsync();
         await bottomSheet.ShowCloseButtonAsync();
@@ -252,7 +252,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.CloseButton")]
     public async Task CloseButton_PositonLeft_CloseButtonLeft()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
         
         await bottomSheet.ShowHeaderAsync();
         await bottomSheet.ShowCloseButtonAsync();
@@ -265,7 +265,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.CloseButton")]
     public async Task CloseButton_PositonLeft_CloseButtonRight()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
         
         await bottomSheet.ShowHeaderAsync();
         await bottomSheet.ShowCloseButtonAsync();
@@ -278,16 +278,17 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.CloseButton")]
     public async Task NonCancelableSheet_CloseButtonClicked_BottomSheetClosed()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
 
+        await bottomSheet.NonCancelableAsync();
         await bottomSheet.ShowHeaderAsync();
         await bottomSheet.ShowCloseButtonAsync();
-        await bottomSheet.NonCancelableAsync();
 
         await bottomSheet.ClickHeaderCloseButtonAsync();
 
         Assert.True(bottomSheet.IsOpen());
 
+        await bottomSheet.HideHeaderAsync();
         await bottomSheet.IsCancelableAsync();
     }
     
@@ -295,7 +296,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.CloseButton")]
     public async Task CancelableSheet_CloseButtonClicked_BottomSheetClosed()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
 
         await bottomSheet.IsCancelableAsync();
         await bottomSheet.ShowHeaderAsync();
@@ -310,7 +311,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.AppearanceMode")]
     public async Task HeaderHidden_AnyMode_DoesNotAddButton()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
         
         await bottomSheet.ClickNoneMode();
         Assert.False(bottomSheet.IsTopLeftOrTopRightDisplayed());
@@ -329,7 +330,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.AppearanceMode")]
     public async Task HeaderDisplayed_NoneMode_DoesNotAddButton()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
         
         await bottomSheet.ShowHeaderAsync();
         
@@ -341,7 +342,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.AppearanceMode")]
     public async Task HeaderDisplayed_LeftMode_ShowsOnlyLeftButton()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
 
         await bottomSheet.ShowHeaderAsync();
         
@@ -358,7 +359,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.AppearanceMode")]
     public async Task HeaderDisplayed_RightMode_ShowsOnlyRightButton()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
 
         await bottomSheet.ShowHeaderAsync();
         
@@ -374,7 +375,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.AppearanceMode")]
     public async Task HeaderDisplayed_LeftAndRightMode_ShowsLeftAndRightButton()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
 
         await bottomSheet.ShowHeaderAsync();
         
@@ -392,7 +393,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.AppearanceMode")]
     public async Task HeaderDisplayedWithLeftMode_ShowCloseButton_DisplaysCloseButtonAndHidesLeftButton()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
 
         await bottomSheet.ShowHeaderAsync();
         await bottomSheet.ClickLeftMode();
@@ -408,7 +409,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.AppearanceMode")]
     public async Task HeaderDisplayedWithRightMode_ShowCloseButton_DisplaysCloseButtonAndHidesRightButton()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
 
         await bottomSheet.ShowHeaderAsync();
         await bottomSheet.ClickRightMode();
@@ -424,7 +425,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.AppearanceMode")]
     public async Task HeaderWithLeftModeAndLeftVersionOne_SetLeftVersionTwo_DisplaysVersionTwoAndHidesVersionOne()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
 
         await bottomSheet.ShowHeaderAsync();
         await bottomSheet.ClickLeftMode();
@@ -439,7 +440,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.AppearanceMode")]
     public async Task HeaderWithRightModeAndLeftVersionOne_SetRightVersionTwo_DisplaysVersionTwoAndHidesVersionOne()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
 
         await bottomSheet.ShowHeaderAsync();
         await bottomSheet.ClickRightMode();
@@ -454,7 +455,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.AppearanceMode")]
     public async Task HeaderWithLeftAndRight_ShowCloseButton_ChangePosition_DisplaysCloseButtonAndButton()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
+        BottomSheetHeaderTestsBottomSheetBuiltInHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetAsync();
 
         await bottomSheet.ShowHeaderAsync();
         await bottomSheet.ClickLeftAndRightMode();
@@ -479,7 +480,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.CustomHeader")]
     public async Task OpenBottomSheetCustomHeader()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetCustomHeaderAsync();
+        BottomSheetHeaderTestsBottomSheetCustomHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetCustomHeaderAsync();
 
         Assert.True(bottomSheet.IsOpen());
     }
@@ -488,7 +489,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.CustomHeader")]
     public async Task OpenBottomSheetCustomHeader_HeaderDisabled_HeaderHidden()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetCustomHeaderAsync();
+        BottomSheetHeaderTestsBottomSheetCustomHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetCustomHeaderAsync();
         await bottomSheet.HideHeaderAsync();
 
         Assert.False(bottomSheet.HeaderDisplayed());
@@ -498,7 +499,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.CustomHeader")]
     public async Task OpenBottomSheetCustomHeader_HeaderEnabled_HeaderDisplayed()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetCustomHeaderAsync();
+        BottomSheetHeaderTestsBottomSheetCustomHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetCustomHeaderAsync();
         await bottomSheet.ShowHeaderAsync();
 
         Assert.True(bottomSheet.HeaderDisplayed());
@@ -508,7 +509,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.CustomHeader")]
     public async Task OpenBottomSheetCustomHeader_ButtonClickable()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetCustomHeaderAsync();
+        BottomSheetHeaderTestsBottomSheetCustomHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetCustomHeaderAsync();
         await bottomSheet.ShowHeaderAsync();
 
         bottomSheet.ClickButton();
@@ -519,7 +520,7 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
     [Trait("Category", "BottomSheetHeaderTests.CustomHeader")]
     public async Task OpenBottomSheetCustomHeader_ChangeBindingContext_HeaderContextChanged()
     {
-        var bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetCustomHeaderAsync();
+        BottomSheetHeaderTestsBottomSheetCustomHeader bottomSheet = await _bottomSheetHeaderTestsPage.OpenBottomSheetCustomHeaderAsync();
         await bottomSheet.ShowHeaderAsync();
 
         await bottomSheet.ChangeBindingContextAsync();

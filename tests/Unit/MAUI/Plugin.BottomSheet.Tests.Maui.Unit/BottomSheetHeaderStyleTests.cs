@@ -8,7 +8,7 @@ public class BottomSheetHeaderStyleTests
     public void Constructor_ShouldCreateInstance()
     {
         // Act
-        var style = new BottomSheetHeaderStyle();
+        BottomSheetHeaderStyle style = new BottomSheetHeaderStyle();
         
         // Assert
         Assert.NotNull(style);
@@ -19,12 +19,12 @@ public class BottomSheetHeaderStyleTests
     public void TitleTextColor_ShouldGetAndSetCorrectly()
     {
         // Arrange
-        var style = new BottomSheetHeaderStyle();
-        var expectedColor = Colors.Red;
+        BottomSheetHeaderStyle style = new BottomSheetHeaderStyle();
+        Color? expectedColor = Colors.Red;
         
         // Act
         style.TitleTextColor = expectedColor;
-        var actualColor = style.TitleTextColor;
+        Color? actualColor = style.TitleTextColor;
         
         // Assert
         Assert.Equal(expectedColor, actualColor);
@@ -34,12 +34,12 @@ public class BottomSheetHeaderStyleTests
     public void TitleTextFontSize_ShouldGetAndSetCorrectly()
     {
         // Arrange
-        var style = new BottomSheetHeaderStyle();
-        var expectedSize = 18.5;
+        BottomSheetHeaderStyle style = new BottomSheetHeaderStyle();
+        double expectedSize = 18.5;
         
         // Act
         style.TitleTextFontSize = expectedSize;
-        var actualSize = style.TitleTextFontSize;
+        double actualSize = style.TitleTextFontSize;
         
         // Assert
         Assert.Equal(expectedSize, actualSize);
@@ -49,12 +49,12 @@ public class BottomSheetHeaderStyleTests
     public void TitleTextFontAttributes_ShouldGetAndSetCorrectly()
     {
         // Arrange
-        var style = new BottomSheetHeaderStyle();
-        var expectedAttributes = FontAttributes.Bold | FontAttributes.Italic;
+        BottomSheetHeaderStyle style = new BottomSheetHeaderStyle();
+        FontAttributes expectedAttributes = FontAttributes.Bold | FontAttributes.Italic;
         
         // Act
         style.TitleTextFontAttributes = expectedAttributes;
-        var actualAttributes = style.TitleTextFontAttributes;
+        FontAttributes actualAttributes = style.TitleTextFontAttributes;
         
         // Assert
         Assert.Equal(expectedAttributes, actualAttributes);
@@ -64,12 +64,12 @@ public class BottomSheetHeaderStyleTests
     public void TitleTextFontFamily_ShouldGetAndSetCorrectly()
     {
         // Arrange
-        var style = new BottomSheetHeaderStyle();
-        var expectedFontFamily = "Arial";
+        BottomSheetHeaderStyle style = new BottomSheetHeaderStyle();
+        string expectedFontFamily = "Arial";
         
         // Act
         style.TitleTextFontFamily = expectedFontFamily;
-        var actualFontFamily = style.TitleTextFontFamily;
+        string actualFontFamily = style.TitleTextFontFamily;
         
         // Assert
         Assert.Equal(expectedFontFamily, actualFontFamily);
@@ -79,7 +79,7 @@ public class BottomSheetHeaderStyleTests
     public void TitleTextFontAutoScalingEnabled_ShouldGetAndSetCorrectly()
     {
         // Arrange
-        var style = new BottomSheetHeaderStyle();
+        BottomSheetHeaderStyle style = new BottomSheetHeaderStyle();
         
         // Act & Assert - Test true
         style.TitleTextFontAutoScalingEnabled = true;
@@ -94,7 +94,7 @@ public class BottomSheetHeaderStyleTests
     public void CloseButtonHeightRequest_ShouldHaveDefaultValue()
     {
         // Arrange & Act
-        var style = new BottomSheetHeaderStyle();
+        BottomSheetHeaderStyle style = new BottomSheetHeaderStyle();
         
         // Assert
         Assert.Equal(40.0, style.CloseButtonHeightRequest);
@@ -104,12 +104,12 @@ public class BottomSheetHeaderStyleTests
     public void CloseButtonHeightRequest_ShouldGetAndSetCorrectly()
     {
         // Arrange
-        var style = new BottomSheetHeaderStyle();
-        var expectedHeight = 50.0;
+        BottomSheetHeaderStyle style = new BottomSheetHeaderStyle();
+        double expectedHeight = 50.0;
         
         // Act
         style.CloseButtonHeightRequest = expectedHeight;
-        var actualHeight = style.CloseButtonHeightRequest;
+        double actualHeight = style.CloseButtonHeightRequest;
         
         // Assert
         Assert.Equal(expectedHeight, actualHeight);
@@ -119,7 +119,7 @@ public class BottomSheetHeaderStyleTests
     public void CloseButtonWidthRequest_ShouldHaveDefaultValue()
     {
         // Arrange & Act
-        var style = new BottomSheetHeaderStyle();
+        BottomSheetHeaderStyle style = new BottomSheetHeaderStyle();
         
         // Assert
         Assert.Equal(40.0, style.CloseButtonWidthRequest);
@@ -129,12 +129,12 @@ public class BottomSheetHeaderStyleTests
     public void CloseButtonWidthRequest_ShouldGetAndSetCorrectly()
     {
         // Arrange
-        var style = new BottomSheetHeaderStyle();
-        var expectedWidth = 60.0;
+        BottomSheetHeaderStyle style = new BottomSheetHeaderStyle();
+        double expectedWidth = 60.0;
         
         // Act
         style.CloseButtonWidthRequest = expectedWidth;
-        var actualWidth = style.CloseButtonWidthRequest;
+        double actualWidth = style.CloseButtonWidthRequest;
         
         // Assert
         Assert.Equal(expectedWidth, actualWidth);
@@ -144,7 +144,7 @@ public class BottomSheetHeaderStyleTests
     public void CloseButtonTintColor_ShouldHaveDefaultValue()
     {
         // Arrange & Act
-        var style = new BottomSheetHeaderStyle();
+        BottomSheetHeaderStyle style = new BottomSheetHeaderStyle();
         
         // Assert
         Assert.NotNull(style.CloseButtonTintColor);
@@ -155,12 +155,12 @@ public class BottomSheetHeaderStyleTests
     public void CloseButtonTintColor_ShouldGetAndSetCorrectly()
     {
         // Arrange
-        var style = new BottomSheetHeaderStyle();
-        var expectedColor = Colors.Blue;
+        BottomSheetHeaderStyle style = new BottomSheetHeaderStyle();
+        Color? expectedColor = Colors.Blue;
         
         // Act
         style.CloseButtonTintColor = expectedColor;
-        var actualColor = style.CloseButtonTintColor;
+        Color? actualColor = style.CloseButtonTintColor;
         
         // Assert
         Assert.Equal(expectedColor, actualColor);
@@ -216,7 +216,7 @@ public class BottomSheetHeaderStyleTests
     public void CloseButtonDimensions_ShouldAcceptValidDoubleValues(double value)
     {
         // Arrange
-        var style = new BottomSheetHeaderStyle();
+        BottomSheetHeaderStyle style = new BottomSheetHeaderStyle();
         
         // Act & Assert
         style.CloseButtonHeightRequest = value;
@@ -230,7 +230,7 @@ public class BottomSheetHeaderStyleTests
     public void TitleTextFontFamily_ShouldAcceptNullValue()
     {
         // Arrange
-        var style = new BottomSheetHeaderStyle();
+        BottomSheetHeaderStyle style = new BottomSheetHeaderStyle();
         
         // Act
         style.TitleTextFontFamily = null!;
@@ -247,7 +247,7 @@ public class BottomSheetHeaderStyleTests
     public void TitleTextFontAttributes_ShouldAcceptValidFontAttributes(FontAttributes attributes)
     {
         // Arrange
-        var style = new BottomSheetHeaderStyle();
+        BottomSheetHeaderStyle style = new BottomSheetHeaderStyle();
         
         // Act
         style.TitleTextFontAttributes = attributes;

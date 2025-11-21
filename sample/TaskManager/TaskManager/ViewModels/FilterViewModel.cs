@@ -47,10 +47,10 @@ public partial class FilterViewModel : ObservableObject, INavigationAware
     {
         try
         {
-            var categoryList = await _taskService.GetCategoriesAsync();
+            List<string> categoryList = await _taskService.GetCategoriesAsync();
             Categories.Clear();
             Categories.Add("All Categories");
-            foreach (var cat in categoryList)
+            foreach (string cat in categoryList)
             {
                 Categories.Add(cat);
             }
@@ -87,7 +87,7 @@ public partial class FilterViewModel : ObservableObject, INavigationAware
     {
         if (_filterChanged)
         {
-            var filter = new TaskFilter
+            TaskFilter filter = new TaskFilter
             {
                 SearchText = SearchText.Trim(),
                 Status = SelectedStatus,
@@ -105,7 +105,7 @@ public partial class FilterViewModel : ObservableObject, INavigationAware
     {
         await LoadCategoriesAsync();
 
-        if (parameters.TryGetValue("Filter", out var filter)
+        if (parameters.TryGetValue("Filter", out object? filter)
             && filter is TaskFilter currentFilter)
         {
             SearchText = currentFilter.SearchText;

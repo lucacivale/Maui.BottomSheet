@@ -210,7 +210,7 @@ public class BottomSheetTestsBottomSheet : PomBase
     }
     public void ClickBackground()
     {
-        var location = Location();
+        Point location = Location();
         
         new Actions(App)
             .MoveToLocation(location.X, location.Y - 100)
@@ -220,8 +220,8 @@ public class BottomSheetTestsBottomSheet : PomBase
 
     public void DragDownToClose()
     {
-        var location = Location();
-        var size = Size();
+        Point location = Location();
+        Size size = Size();
         
         int startX = location.X + (size.Width / 2);
         int startY = location.Y + 50;
@@ -248,7 +248,7 @@ public class BottomSheetTestsBottomSheet : PomBase
 
     public void DragUp()
     {
-        var location = HandleLocation();
+        Point location = HandleLocation();
         
         int startX = location.X;
         int startY = location.Y + 100;

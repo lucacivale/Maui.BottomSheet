@@ -5,14 +5,6 @@
 
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-        
-		<EnableNETAnalyzers>true</EnableNETAnalyzers>
-		<AnalysisMode>All</AnalysisMode>
-		<RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
-		<RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
-		<RunAnalyzers>true</RunAnalyzers>
-		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 
 		<Owners>Luca Civale </Owners>
 		<Authors>Luca Civale</Authors>
@@ -32,8 +24,18 @@
         <IsAotCompatible>true</IsAotCompatible>
         -->
 	</PropertyGroup>
+    
+    <PropertyGroup Condition="$(MSBuildProjectName.Contains('Test')) == false and $(MSBuildProjectDirectory.Contains('sample')) == false">
+        <EnableNETAnalyzers>true</EnableNETAnalyzers>
+        <AnalysisMode>All</AnalysisMode>
+        <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+        <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
+        <RunAnalyzers>true</RunAnalyzers>
+        <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
 
-	<ItemGroup>
+	<ItemGroup Condition="$(MSBuildProjectName.Contains('Test')) == false and $(MSBuildProjectDirectory.Contains('sample')) == false">
 		<PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

@@ -1,14 +1,14 @@
 namespace Plugin.Maui.BottomSheet.Navigation;
 
 /// <summary>
-/// Allows view models to control whether navigation away from them should proceed.
+/// Defines a contract for view models to determine if navigation away from them is permitted.
 /// </summary>
 public interface IConfirmNavigation
 {
     /// <summary>
-    /// Determines if navigation away from this view model is allowed.
+    /// Determines if navigation away from the current view model is allowed.
     /// </summary>
-    /// <param name="parameters">The navigation parameters.</param>
-    /// <returns>True if navigation can proceed; otherwise, false.</returns>
+    /// <param name="parameters">The navigation parameters used for determining navigation conditions.</param>
+    /// <returns>True if navigation is permitted; otherwise, false.</returns>
     bool CanNavigate(IBottomSheetNavigationParameters parameters);
 }

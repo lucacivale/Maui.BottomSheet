@@ -1,12 +1,12 @@
 namespace Plugin.BottomSheet;
 
 /// <summary>
-/// Specifies which buttons should be displayed in the bottom sheet header.
+/// Defines the available appearance modes for buttons in the bottom sheet header.
 /// </summary>
 public enum BottomSheetHeaderButtonAppearanceMode
 {
     /// <summary>
-    /// No buttons are displayed in the header.
+    /// Indicates that no buttons will appear in the bottom sheet header.
     /// </summary>
     None,
 
@@ -16,12 +16,12 @@ public enum BottomSheetHeaderButtonAppearanceMode
     LeftAndRightButton,
 
     /// <summary>
-    /// Only the left button is displayed in the header.
+    /// Displays only the left button in the bottom sheet header.
     /// </summary>
     LeftButton,
 
     /// <summary>
-    /// Only the right button is displayed in the header.
+    /// Indicates that only the right button is displayed in the bottom sheet header.
     /// </summary>
     RightButton,
 }

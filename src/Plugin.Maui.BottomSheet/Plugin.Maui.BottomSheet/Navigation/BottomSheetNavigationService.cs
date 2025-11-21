@@ -4,46 +4,70 @@ using System.Diagnostics.CodeAnalysis;
 namespace Plugin.Maui.BottomSheet.Navigation;
 
 /// <summary>
-/// Provides navigation services for BottomSheet controls, handling navigation stack management and view model integration.
+/// Manages navigation operations for BottomSheet components, facilitating transitions and state management within the navigation stack.
 /// </summary>
 /// <inheritdoc />
 public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
 {
-    /// <summary>
-    /// Maintains the stack of currently opened bottom sheets.
-    /// </summary>
     private readonly BottomSheetStack _bottomSheetStack = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheetNavigationService"/> class.
+    /// Provides functionality for navigating using a bottom sheet design pattern.
     /// </summary>
-    /// <param name="serviceProvider">The service provider used for dependency injection and view model resolution.</param>
+    /// <param name="serviceProvider">The service provider used to resolve dependencies and manage view models during navigation.</param>
     public BottomSheetNavigationService(IServiceProvider serviceProvider)
     {
         ServiceProvider = serviceProvider;
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets an instance of the service provider used to resolve dependencies
+    /// within the BottomSheet navigation service.
+    /// </summary>
     public IServiceProvider ServiceProvider { get; }
 
     /// <summary>
-    /// Gets the mapping between BottomSheet names and their corresponding ViewModel types.
+    /// Gets a dictionary that maps bottom sheet names to their associated view model types.
+    /// This mapping is used to resolve and associate view models with bottom sheets at runtime,
+    /// facilitating dynamic bottom sheet navigation and dependency injection.
     /// </summary>
     internal static Dictionary<string, Type> BottomSheetToViewModelMapping { get; } = [];
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Navigates to a specified bottom sheet, optionally initializing it with a view model, navigation parameters, and configuration.
+    /// </summary>
+    /// <param name="bottomSheet">The bottom sheet instance to navigate to.</param>
+    /// <param name="viewModel">The view model to associate with the bottom sheet. Optional.</param>
+    /// <param name="parameters">The navigation parameters to pass to the bottom sheet. Optional.</param>
+    /// <param name="configure">An optional action to further configure the bottom sheet before navigation.</param>
+    /// <returns>A task representing the asynchronous navigation operation that results in an <see cref="INavigationResult"/>.</returns>
     public Task<INavigationResult> NavigateToAsync(IBottomSheet bottomSheet, object? viewModel = null, IBottomSheetNavigationParameters? parameters = null, Action<IBottomSheet>? configure = null)
     {
         return DispatchAsync(() => DoNavigateAsync(bottomSheet, viewModel, parameters, configure));
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Navigates back to the previous view in the bottom sheet navigation stack asynchronously.
+    /// </summary>
+    /// <param name="parameters">
+    /// Optional parameters that may be used during the navigation process. Can be null if no parameters are required.
+    /// </param>
+    /// <returns>
+    /// A task that represents the asynchronous navigation operation. The task result contains an <see cref="INavigationResult"/> indicating the outcome of the navigation.
+    /// </returns>
     public Task<INavigationResult> GoBackAsync(IBottomSheetNavigationParameters? parameters = null)
     {
         return DispatchAsync(() => DoGoBackAsync(parameters));
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Clears the bottom sheet navigation stack by sequentially removing all bottom sheets
+    /// and navigating backward until the stack is empty.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous operation.
+    /// The task result contains a collection of <see cref="INavigationResult"/> indicating
+    /// the results of each backward navigation operation.</returns>
     public Task<IEnumerable<INavigationResult>> ClearBottomSheetStackAsync()
     {
         return DispatchAsync<IEnumerable<INavigationResult>>(async () =>
@@ -59,21 +83,26 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
         });
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets the current stack of navigation for the bottom sheets.
+    /// </summary>
+    /// <returns>
+    /// A read-only collection of bottom sheets representing the navigation stack.
+    /// </returns>
     public IReadOnlyCollection<IBottomSheet> NavigationStack() => _bottomSheetStack;
 
     /// <summary>
-    /// Prepares a bottom sheet for navigation by setting up its handler, parent, and event handlers.
+    /// Prepares a bottom sheet for navigation by setting its handler, parent, and event listeners, and optionally configuring it.
     /// </summary>
-    /// <param name="bottomSheet">The bottom sheet to prepare.</param>
-    /// <param name="viewModel">Optional view model to set as the binding context.</param>
-    /// <param name="configure">Optional action to further configure the bottom sheet.</param>
-    /// <exception cref="InvalidOperationException">Thrown when required MAUI components are not available.</exception>
+    /// <param name="bottomSheet">The bottom sheet to be prepared for navigation.</param>
+    /// <param name="viewModel">An optional view model to set as the binding context of the bottom sheet.</param>
+    /// <param name="configure">An optional action to perform additional configuration on the bottom sheet.</param>
+    /// <exception cref="InvalidOperationException">Thrown if the necessary MAUI components cannot be resolved.</exception>
     [SuppressMessage("Usage", "CA1826:Use property instead of Linq Enumerable method", Justification = "Improved readability.")]
     private void PrepareBottomSheetForNavigation(IBottomSheet bottomSheet, object? viewModel = null, Action<IBottomSheet>? configure = null)
     {
-        var page = Application.Current?.Windows.LastOrDefault()?.Page ?? throw new InvalidOperationException("Application.Current?.Windows.LastOrDefault()?.Page cannot be null.");
-        var mauiContext = page.Handler?.MauiContext ?? throw new InvalidOperationException("Page.Handler?.MauiContext cannot be null.");
+        Page page = Application.Current?.Windows.LastOrDefault()?.Page ?? throw new InvalidOperationException("Application.Current?.Windows.LastOrDefault()?.Page cannot be null.");
+        IMauiContext mauiContext = page.Handler?.MauiContext ?? throw new InvalidOperationException("Page.Handler?.MauiContext cannot be null.");
 
         bottomSheet.Handler = new Handlers.BottomSheetHandler(mauiContext);
         bottomSheet.Parent = page;
@@ -88,13 +117,13 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
     }
 
     /// <summary>
-    /// Performs the actual navigation to a new bottom sheet.
+    /// Performs the actual navigation to a specified bottom sheet, handling optional view models, parameters, and configurations.
     /// </summary>
-    /// <param name="bottomSheet">The bottom sheet to navigate to.</param>
-    /// <param name="viewModel">Optional view model for the bottom sheet.</param>
-    /// <param name="parameters">Optional navigation parameters.</param>
-    /// <param name="configure">Optional configuration action.</param>
-    /// <returns>A navigation result indicating success or failure.</returns>
+    /// <param name="bottomSheet">The bottom sheet instance to navigate to.</param>
+    /// <param name="viewModel">An optional view model to bind to the bottom sheet.</param>
+    /// <param name="parameters">An optional set of navigation parameters provided during navigation.</param>
+    /// <param name="configure">An optional action to configure the bottom sheet before display.</param>
+    /// <returns>A task that represents the asynchronous navigation operation, providing a navigation result indicating success or failure.</returns>
     [SuppressMessage("Design", "CA1031: Do not catch general exception types", Justification = "Catch all exceptions.")]
     private async Task<INavigationResult> DoNavigateAsync(IBottomSheet bottomSheet, object? viewModel = null, IBottomSheetNavigationParameters? parameters = null, Action<IBottomSheet>? configure = null)
     {
@@ -145,7 +174,7 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
     /// Performs the actual navigation back operation, closing the current bottom sheet.
     /// </summary>
     /// <param name="parameters">Optional navigation parameters.</param>
-    /// <returns>A navigation result indicating success or failure.</returns>
+    /// <returns>A task that represents the asynchronous operation. The task result contains a navigation result indicating success or failure.</returns>
     [SuppressMessage("Design", "CA1031: Do not catch general exception types", Justification = "Catch all exceptions.")]
     private async Task<INavigationResult> DoGoBackAsync(IBottomSheetNavigationParameters? parameters = null)
     {
@@ -175,7 +204,7 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
                 }
 
                 _bottomSheetStack.Current.Handler?.DisconnectHandler();
-                var bottomSheet = _bottomSheetStack.Remove();
+                IBottomSheet bottomSheet = _bottomSheetStack.Remove();
 
                 MvvmHelpers.OnNavigatedFrom(bottomSheet, parameters);
 
@@ -199,10 +228,10 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
     }
 
     /// <summary>
-    /// Handles the bottom sheet's close event by initiating a navigation back operation.
+    /// Handles the bottom sheet's close event and triggers the navigation back operation.
     /// </summary>
-    /// <param name="sender">The event sender.</param>
-    /// <param name="e">The event arguments.</param>
+    /// <param name="sender">The source of the close event.</param>
+    /// <param name="e">The event data associated with the close event.</param>
     [SuppressMessage("Design", "CA1031: Do not catch general exception types", Justification = "Catch all exceptions to prevent crash.")]
     [SuppressMessage("Usage", "VSTHRD100: Avoid async void methods, because any exceptions not handled by the method will crash the process", Justification = "Event.")]
     private async void OnClose(object? sender, EventArgs e)
@@ -218,10 +247,10 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
     }
 
     /// <summary>
-    /// Gets the dispatcher for the current UI context.
+    /// Retrieves the dispatcher associated with the current UI context.
     /// </summary>
-    /// <returns>The current dispatcher.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when no valid dispatcher is found.</exception>
+    /// <returns>The dispatcher for the current context.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when a valid dispatcher cannot be determined.</exception>
     [SuppressMessage("Usage", "CA1826:Use property instead of Linq Enumerable method", Justification = "Validated.")]
     private IDispatcher GetDispatcher()
     {
@@ -233,11 +262,11 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
     }
 
     /// <summary>
-    /// Dispatches an asynchronous operation to the UI thread.
+    /// Dispatches an asynchronous operation to the UI thread and returns a value upon completion.
     /// </summary>
-    /// <typeparam name="TReturn">The type of value returned by the operation.</typeparam>
-    /// <param name="action">The action to dispatch.</param>
-    /// <returns>A task representing the dispatched operation.</returns>
+    /// <typeparam name="TReturn">The type of the value returned by the operation.</typeparam>
+    /// <param name="action">The asynchronous operation to dispatch.</param>
+    /// <returns>A task representing the asynchronous operation, with a result of type <typeparamref name="TReturn"/>.</returns>
     private Task<TReturn> DispatchAsync<TReturn>(Func<Task<TReturn>> action)
     {
         return GetDispatcher().DispatchAsync(action);

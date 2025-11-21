@@ -10,10 +10,10 @@ public static class WebDriverExtensions
     {
         double px = -1;
 
-        var deviceInfoObject = app.ExecuteScript("mobile: deviceInfo");
+        object? deviceInfoObject = app.ExecuteScript("mobile: deviceInfo");
         
         if (deviceInfoObject is Dictionary<string, object> deviceInfo
-            && deviceInfo.TryGetValue("displayDensity", out var density))
+            && deviceInfo.TryGetValue("displayDensity", out object? density))
         {
             px = value * Convert.ToDouble(density) / 160;
         }

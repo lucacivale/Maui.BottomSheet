@@ -8,8 +8,10 @@ public sealed class AndroidFact : FactAttribute
         Skip = null;
         
         if (AppiumSetup.Platform != "Android")
+#pragma warning disable CS0162 // Unreachable code detected
         {
             Skip = "Test can only run on Android.";
         }
+#pragma warning restore CS0162 // Unreachable code detected
     }
 }

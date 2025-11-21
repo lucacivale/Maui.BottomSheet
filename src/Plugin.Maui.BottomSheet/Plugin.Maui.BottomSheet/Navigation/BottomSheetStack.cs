@@ -1,18 +1,21 @@
 namespace Plugin.Maui.BottomSheet.Navigation;
 
 /// <summary>
-/// Manages a collection of bottom sheets using stack-based navigation.
+/// Maintains a stack of bottom sheets to facilitate stack-based navigation for UI interactions.
 /// </summary>
-/// <inheritdoc />
+/// <remarks>
+/// This class extends the <see cref="Stack{T}"/> to manage bottom sheets, where each bottom sheet is
+/// represented by an implementation of the <see cref="IBottomSheet"/> interface.
+/// </remarks>
 internal sealed class BottomSheetStack : Stack<IBottomSheet>
 {
     /// <summary>
-    /// Gets the topmost bottom sheet in the stack.
+    /// Gets the bottom sheet at the top of the stack without removing it.
     /// </summary>
     public IBottomSheet Current => Peek();
 
     /// <summary>
-    /// Gets a value indicating whether the stack contains no bottom sheets.
+    /// Gets a value indicating whether the bottom sheet stack is empty.
     /// </summary>
     public bool IsEmpty => Count == 0;
 
@@ -26,7 +29,7 @@ internal sealed class BottomSheetStack : Stack<IBottomSheet>
     }
 
     /// <summary>
-    /// Pops and returns the topmost bottom sheet from the stack.
+    /// Removes and returns the topmost bottom sheet from the stack.
     /// </summary>
     /// <returns>The removed bottom sheet.</returns>
     public IBottomSheet Remove()

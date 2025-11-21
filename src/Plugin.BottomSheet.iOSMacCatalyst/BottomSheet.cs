@@ -4,18 +4,16 @@ using System.Diagnostics.CodeAnalysis;
 namespace Plugin.BottomSheet.iOSMacCatalyst;
 
 /// <summary>
-/// Container for bottom sheet functionality including handle, header and content on macOS and iOS platforms.
+/// Represents a UI component that provides bottom sheet functionality, typically used to display additional contextual content or user actions on supported platforms.
 /// </summary>
 internal sealed class BottomSheet : UINavigationController
 {
     private const string PeekDetentId = "Plugin.Maui.BottomSheet.PeekDetentId";
 
     private readonly WeakEventManager _eventManager = new();
-
     private readonly UISheetPresentationControllerDetent _peekDetent;
     private readonly UISheetPresentationControllerDetent _mediumDetent = UISheetPresentationControllerDetent.CreateMediumDetent();
     private readonly UISheetPresentationControllerDetent _largeDetent = UISheetPresentationControllerDetent.CreateLargeDetent();
-
     private readonly BottomSheetDelegate _bottomSheetDelegate = new();
 
     private double _peekHeight;
@@ -26,6 +24,10 @@ internal sealed class BottomSheet : UINavigationController
 
     private BottomSheetContainerViewController? _containerViewController;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BottomSheet"/> class.
+    /// Represents a bottom sheet component that provides a configurable and interactive user interface element.
+    /// </summary>
     public BottomSheet()
     {
         SetToolbarHidden(true, false);
@@ -49,7 +51,7 @@ internal sealed class BottomSheet : UINavigationController
     }
 
     /// <summary>
-    /// Occurs when the bottom sheet state changes.
+    /// Triggered when the state of the object undergoes a change.
     /// </summary>
     public event EventHandler<BottomSheetStateChangedEventArgs> StateChanged
     {
@@ -58,7 +60,7 @@ internal sealed class BottomSheet : UINavigationController
     }
 
     /// <summary>
-    /// Occurs when the bottom sheet is canceled.
+    /// Indicates whether an operation or process has been canceled.
     /// </summary>
     public event EventHandler Canceled
     {
@@ -67,7 +69,7 @@ internal sealed class BottomSheet : UINavigationController
     }
 
     /// <summary>
-    /// Occurs when the bottom sheet frame changes.
+    /// Triggered when the frame content is updated or modified.
     /// </summary>
     public event EventHandler<Rect> FrameChanged
     {
@@ -76,7 +78,7 @@ internal sealed class BottomSheet : UINavigationController
     }
 
     /// <summary>
-    /// Occurs when the bottom sheet frame changes.
+    /// Triggered when the layout of the user interface is modified.
     /// </summary>
     public event EventHandler LayoutChanged
     {
@@ -84,6 +86,9 @@ internal sealed class BottomSheet : UINavigationController
         remove => _eventManager.RemoveEventHandler(value);
     }
 
+    /// <summary>
+    /// Gets or sets the height at which the bottom sheet is partially expanded.
+    /// </summary>
     public double PeekHeight
     {
         get => _peekHeight;
@@ -105,6 +110,9 @@ internal sealed class BottomSheet : UINavigationController
         }
     }
 
+    /// <summary>
+    /// Gets or sets the background color of the window.
+    /// </summary>
     public UIColor? WindowBackgroundColor
     {
         get => _windowBackgroundColor;
@@ -115,6 +123,9 @@ internal sealed class BottomSheet : UINavigationController
         }
     }
 
+    /// <summary>
+    /// Gets or sets the background color of the component.
+    /// </summary>
     public UIColor? BackgroundColor
     {
         get => _backgroundColor;
@@ -126,7 +137,7 @@ internal sealed class BottomSheet : UINavigationController
     }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the bottom sheet is draggable.
+    /// Gets or sets a value indicating whether the bottom sheet can be dragged.
     /// </summary>
     public bool Draggable
     {
@@ -144,7 +155,7 @@ internal sealed class BottomSheet : UINavigationController
     }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the bottom sheet is modal.
+    /// Gets or sets a value indicating whether the component is displayed as a modal dialog.
     /// </summary>
     [SuppressMessage("Minor Code Smell", "S6608:Prefer indexing instead of \"Enumerable\" methods on types implementing \"IList\"", Justification = "Improves readability and has no performance impact.")]
     public bool IsModal
@@ -164,58 +175,44 @@ internal sealed class BottomSheet : UINavigationController
         }
     }
 
+    /// <summary>
+    /// Gets or sets the current state of the bottom sheet.
+    /// </summary>
     public BottomSheetState State
     {
         get => SheetPresentationController?.SelectedDetentIdentifier.ToBottomSheetState() ?? BottomSheetState.Peek;
         set
         {
-            if (SheetPresentationController is not null)
+            SheetPresentationController?.AnimateChanges(() =>
             {
-                SheetPresentationController.AnimateChanges(() =>
-                {
-                    SheetPresentationController.SelectedDetentIdentifier = value.ToPlatformState();
-                });
-            }
+                SheetPresentationController.SelectedDetentIdentifier = value.ToPlatformState();
+            });
         }
     }
 
     /// <summary>
-    /// Gets or sets the available detents for the bottom sheet.
+    /// Gets or sets the collection of states associated with the application, process, or workflow.
     /// </summary>
     public ICollection<BottomSheetState> States
     {
         get
         {
-            if (SheetPresentationController is null)
-            {
-                return [];
-            }
-
-            return SheetPresentationController.Detents.ToBottomSheetStates();
+            return SheetPresentationController is null ? [] : SheetPresentationController.Detents.ToBottomSheetStates();
         }
 
         set
         {
-            if (SheetPresentationController is null)
-            {
-                return;
-            }
-
-            SheetPresentationController.AnimateChanges(() =>
+            SheetPresentationController?.AnimateChanges(() =>
             {
                 UISheetPresentationControllerDetent[] detents = value
                     .Select(x =>
                     {
-                        UISheetPresentationControllerDetent detent = _largeDetent;
-
-                        if (x == BottomSheetState.Peek)
+                        UISheetPresentationControllerDetent detent = x switch
                         {
-                            detent = _peekDetent;
-                        }
-                        else if (x == BottomSheetState.Medium)
-                        {
-                            detent = _mediumDetent;
-                        }
+                            BottomSheetState.Peek => _peekDetent,
+                            BottomSheetState.Medium => _mediumDetent,
+                            _ => _largeDetent,
+                        };
 
                         return detent;
                     })
@@ -227,12 +224,12 @@ internal sealed class BottomSheet : UINavigationController
     }
 
     /// <summary>
-    /// Gets a value indicating whether the bottom sheet is currently being presented.
+    /// Gets a value indicating whether the bottom sheet is currently displayed.
     /// </summary>
     public bool IsOpen { get; private set; }
 
     /// <summary>
-    /// Gets the frame rectangle of the bottom sheet in pixels.
+    /// Gets the visible rectangular region or boundary within which UI elements are displayed or interact.
     /// </summary>
     public Rect Frame
     {
@@ -250,6 +247,10 @@ internal sealed class BottomSheet : UINavigationController
         }
     }
 
+    /// <summary>
+    /// Invoked when the view is about to appear on the screen.
+    /// </summary>
+    /// <param name="animated">A boolean value indicating whether the appearance of the view should be animated.</param>
     public override void ViewWillAppear(bool animated)
     {
         base.ViewWillAppear(animated);
@@ -258,6 +259,10 @@ internal sealed class BottomSheet : UINavigationController
         ApplyWindowBackgroundColor();
     }
 
+    /// <summary>
+    /// Called to notify that the view is about to disappear from the screen.
+    /// </summary>
+    /// <param name="animated">Indicates whether the disappearance of the view is being animated.</param>
     public override void ViewWillDisappear(bool animated)
     {
         base.ViewWillDisappear(animated);
@@ -266,6 +271,9 @@ internal sealed class BottomSheet : UINavigationController
         ApplyWindowBackgroundColor();
     }
 
+    /// <summary>
+    /// Notifies the view controller that its view has just laid out its subviews.
+    /// </summary>
     public override void ViewDidLayoutSubviews()
     {
         base.ViewDidLayoutSubviews();
@@ -285,6 +293,10 @@ internal sealed class BottomSheet : UINavigationController
             nameof(FrameChanged));
     }
 
+    /// <summary>
+    /// Sets the content view for the activity to the specified layout resource.
+    /// </summary>
+    /// <param name="view">The view to be used as the content of the bottom sheet.</param>
     public void SetContentView(UIView view)
     {
         _containerViewController = new BottomSheetContainerViewController(view);
@@ -293,10 +305,10 @@ internal sealed class BottomSheet : UINavigationController
     }
 
     /// <summary>
-    /// Opens the bottom sheet with the specified configuration.
+    /// Asynchronously opens the bottom sheet on the specified window.
     /// </summary>
-    /// <param name="bottomSheet">The virtual view containing bottom sheet configuration.</param>
-    /// <returns>A task representing the asynchronous operation.</returns>
+    /// <param name="window">The window to which the bottom sheet is attached.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
     public async Task OpenAsync(UIWindow? window)
     {
         InitSheetPresentationController();
@@ -328,13 +340,17 @@ internal sealed class BottomSheet : UINavigationController
     }
 
     /// <summary>
-    /// Cancels the bottom sheet dialog.
+    /// Cancels the bottom sheet.
     /// </summary>
     public void Cancel()
     {
         _eventManager.RaiseEvent(this, EventArgs.Empty, nameof(Canceled));
     }
 
+    /// <summary>
+    /// Releases the resources used by the current instance of the class.
+    /// </summary>
+    /// <param name="disposing">Indicates whether the method call comes from a Dispose method (its value is true) or from a finalizer (its value is false).</param>
     protected override void Dispose(bool disposing)
     {
         base.Dispose(disposing);
@@ -358,6 +374,10 @@ internal sealed class BottomSheet : UINavigationController
         }
     }
 
+    /// <summary>
+    /// Initializes the sheet presentation controller by setting its delegate and
+    /// configuring preferred edge attachment behavior for compact height.
+    /// </summary>
     private void InitSheetPresentationController()
     {
         if (SheetPresentationController is null)
@@ -373,6 +393,9 @@ internal sealed class BottomSheet : UINavigationController
         SheetPresentationController.PrefersEdgeAttachedInCompactHeight = true;
     }
 
+    /// <summary>
+    /// Applies the specified color as the background color for the application window.
+    /// </summary>
     private void ApplyWindowBackgroundColor()
     {
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
@@ -382,6 +405,9 @@ internal sealed class BottomSheet : UINavigationController
         }
     }
 
+    /// <summary>
+    /// Applies the specified background color to the bottom sheet view.
+    /// </summary>
     private void ApplyBackgroundColor()
     {
         if (View is not null)
@@ -391,9 +417,9 @@ internal sealed class BottomSheet : UINavigationController
     }
 
     /// <summary>
-    /// Calculates the peek height based on container context and constraints.
+    /// Calculates the peek height based on the given detent resolution context and the view's constraints.
     /// </summary>
-    /// <param name="arg">The detent resolution context.</param>
+    /// <param name="arg">The context providing detent resolution constraints.</param>
     /// <returns>The calculated peek height as a native float.</returns>
     [SuppressMessage("Major Bug", "S1244:Floating point numbers should not be tested for equality", Justification = "False positive")]
     private nfloat PeekHeightValue(IUISheetPresentationControllerDetentResolutionContext arg)
@@ -421,10 +447,10 @@ internal sealed class BottomSheet : UINavigationController
     }
 
     /// <summary>
-    /// Handles state change events from the delegate and forwards them.
+    /// Called when the state of the bottom sheet changes.
     /// </summary>
-    /// <param name="sender">The event sender.</param>
-    /// <param name="e">The state change event arguments.</param>
+    /// <param name="sender">The object that raised the event.</param>
+    /// <param name="e">The event arguments.</param>
     private void BottomSheetDelegateOnStateChanged(object? sender, BottomSheetStateChangedEventArgs e)
     {
         _eventManager.RaiseEvent(
@@ -434,9 +460,9 @@ internal sealed class BottomSheet : UINavigationController
     }
 
     /// <summary>
-    /// Handles confirm dismiss events from the delegate and forwards them.
+    /// Handles the confirmation logic when a bottom sheet is about to be dismissed.
     /// </summary>
-    /// <param name="sender">The event sender.</param>
+    /// <param name="sender">The object that raised the event.</param>
     /// <param name="e">The event arguments.</param>
     private void BottomSheetDelegateOnConfirmDismiss(object? sender, EventArgs e)
     {

@@ -21,7 +21,7 @@ public static class MauiProgram
 		Console.WriteLine(" - XHarness test runner");
 #endif
 
-        var builder = MauiApp.CreateBuilder();
+        MauiAppBuilder builder = MauiApp.CreateBuilder();
         builder
             .ConfigureUITesting()
 #if MODE_XHARNESS

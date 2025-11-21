@@ -21,7 +21,7 @@ public sealed partial class AppiumSetup : IDisposable
         _appiumService = new AppiumServiceHelper();
         _appiumService.StartAppiumLocalServer();
 
-        var options = new AppiumOptions
+        AppiumOptions options = new AppiumOptions
         {
             AutomationName = "XCUITest",
             PlatformName = Platform,

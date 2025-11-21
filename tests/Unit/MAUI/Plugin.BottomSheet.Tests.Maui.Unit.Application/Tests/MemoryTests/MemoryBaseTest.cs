@@ -64,7 +64,9 @@ public abstract class MemoryBaseTest<TPage, TView> : IAsyncLifetime
             Assert.False(bottomSheet.IsOpen, $"{typeof(TView).Name} still open after page is popped.");
         }
         
+        // ReSharper disable once RedundantAssignment
         view = null;
+        // ReSharper disable once RedundantAssignment
         bottomSheet = null!;
 
         await ForceGc();
@@ -125,7 +127,7 @@ public abstract class MemoryBaseTest<TPage, TView> : IAsyncLifetime
         if (element.IsLoaded)
             return;
 
-        var tcs = new TaskCompletionSource();
+        TaskCompletionSource tcs = new TaskCompletionSource();
 
         element.Loaded += OnLoaded;
 

@@ -4,14 +4,17 @@ using Google.Android.Material.BottomSheet;
 namespace Plugin.BottomSheet.Android;
 
 /// <summary>
-/// Handles bottom sheet behavior state change callbacks.
+/// Callback class used to receive updates when the state of a bottom sheet changes or slides.
 /// </summary>
+/// <remarks>
+/// This class listens for state changes and slide updates on a bottom sheet and provides corresponding event notifications.
+/// </remarks>
 internal sealed class BottomSheetCallback : BottomSheetBehavior.BottomSheetCallback
 {
     private readonly WeakEventManager _eventManager = new();
 
     /// <summary>
-    /// Occurs when the bottom sheet state changes.
+    /// Event triggered when the state of the bottom sheet changes.
     /// </summary>
     public event EventHandler<BottomSheetStateChangedEventArgs> StateChanged
     {
@@ -23,7 +26,7 @@ internal sealed class BottomSheetCallback : BottomSheetBehavior.BottomSheetCallb
     /// Called when the bottom sheet slides.
     /// </summary>
     /// <param name="bottomSheet">The bottom sheet view.</param>
-    /// <param name="newState">The new slide state.</param>
+    /// <param name="newState">The amount the bottom sheet has been dragged, represented as a float.</param>
     public override void OnSlide(View bottomSheet, float newState)
     {
     }

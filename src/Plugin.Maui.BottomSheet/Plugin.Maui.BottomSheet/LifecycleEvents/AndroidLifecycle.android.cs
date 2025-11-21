@@ -1,12 +1,13 @@
 namespace Plugin.Maui.BottomSheet.LifecycleEvents
 {
     /// <summary>
-    /// Provides constant values for Android lifecycle event names used by the bottom sheet component.
+    /// Represents a static class containing constant values for Android lifecycle event names
+    /// utilized by the bottom sheet functionality in the Plugin.Maui library.
     /// </summary>
     internal static class AndroidLifecycle
     {
         /// <summary>
-        /// The event name used for handling back press events within the bottom sheet.
+        /// Represents the name of the lifecycle event triggered when a back press is handled in the bottom sheet.
         /// </summary>
         public const string BottomSheetBackPressedEventName = "BottomSheetBackPressed";
     }

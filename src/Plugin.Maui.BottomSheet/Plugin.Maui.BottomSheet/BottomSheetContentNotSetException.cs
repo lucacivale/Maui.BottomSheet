@@ -3,12 +3,13 @@ using System.Diagnostics.CodeAnalysis;
 namespace Plugin.Maui.BottomSheet;
 
 /// <summary>
-/// Exception thrown when bottom sheet content is not properly configured.
+/// Exception that is thrown when the content for the bottom sheet has not been set properly.
 /// </summary>
 public class BottomSheetContentNotSetException : NullReferenceException
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="BottomSheetContentNotSetException"/> class with a specified error message.
+    /// Initializes a new instance of the <see cref="BottomSheetContentNotSetException"/> class.
+    /// Exception thrown when bottom sheet content is not properly configured.
     /// </summary>
     /// <param name="message">The message that describes the error.</param>
     public BottomSheetContentNotSetException(string message)
@@ -18,6 +19,7 @@ public class BottomSheetContentNotSetException : NullReferenceException
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheetContentNotSetException"/> class.
+    /// Exception thrown when bottom sheet content is not properly configured.
     /// </summary>
     [ExcludeFromCodeCoverage]
     public BottomSheetContentNotSetException()
@@ -25,7 +27,8 @@ public class BottomSheetContentNotSetException : NullReferenceException
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="BottomSheetContentNotSetException"/> class with a specified error message and inner exception.
+    /// Initializes a new instance of the <see cref="BottomSheetContentNotSetException"/> class.
+    /// Exception thrown when bottom sheet content is not properly configured.
     /// </summary>
     /// <param name="message">The message that describes the error.</param>
     /// <param name="innerException">The exception that is the cause of the current exception.</param>

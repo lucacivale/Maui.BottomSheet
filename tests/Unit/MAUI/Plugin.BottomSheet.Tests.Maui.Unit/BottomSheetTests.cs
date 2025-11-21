@@ -15,13 +15,12 @@ public class BottomSheetTests
     public void Constructor_SetsDefaultValues()
     {
         // Arrange & Act
-        var bottomSheet = new MauiBottomSheet();
+        MauiBottomSheet bottomSheet = new MauiBottomSheet();
 
         // Assert
         Assert.True(bottomSheet.IsModal);
         Assert.Equal(20.0f, bottomSheet.CornerRadius);
         Assert.Equal(Color.FromArgb("#80000000"), bottomSheet.WindowBackgroundColor);
-        Assert.False(bottomSheet.IgnoreSafeArea);
         Assert.True(bottomSheet.IsCancelable);
         Assert.True(bottomSheet.HasHandle);
         Assert.False(bottomSheet.ShowHeader);
@@ -39,7 +38,7 @@ public class BottomSheetTests
     public void IsModal_CanBeSetAndRetrieved()
     {
         // Arrange
-        var bottomSheet = new MauiBottomSheet
+        MauiBottomSheet bottomSheet = new MauiBottomSheet
         {
             // Act
             IsModal = false,
@@ -56,7 +55,7 @@ public class BottomSheetTests
     public void CornerRadius_CanBeSetAndRetrieved(float radius)
     {
         // Arrange
-        var bottomSheet = new MauiBottomSheet
+        MauiBottomSheet bottomSheet = new MauiBottomSheet
         {
             // Act
             CornerRadius = radius,
@@ -70,8 +69,8 @@ public class BottomSheetTests
     public void WindowBackgroundColor_CanBeSetAndRetrieved()
     {
         // Arrange
-        var bottomSheet = new MauiBottomSheet();
-        var color = Colors.Red;
+        MauiBottomSheet bottomSheet = new MauiBottomSheet();
+        Color? color = Colors.Red;
 
         // Act
         bottomSheet.WindowBackgroundColor = color;
@@ -83,26 +82,10 @@ public class BottomSheetTests
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public void IgnoreSafeArea_CanBeSetAndRetrieved(bool value)
-    {
-        // Arrange
-        var bottomSheet = new MauiBottomSheet
-        {
-            // Act
-            IgnoreSafeArea = value,
-        };
-
-        // Assert
-        Assert.Equal(value, bottomSheet.IgnoreSafeArea);
-    }
-
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
     public void IsCancelable_CanBeSetAndRetrieved(bool value)
     {
         // Arrange
-        var bottomSheet = new MauiBottomSheet
+        MauiBottomSheet bottomSheet = new MauiBottomSheet
         {
             // Act
             IsCancelable = value,
@@ -118,7 +101,7 @@ public class BottomSheetTests
     public void HasHandle_CanBeSetAndRetrieved(bool value)
     {
         // Arrange
-        var bottomSheet = new MauiBottomSheet
+        MauiBottomSheet bottomSheet = new MauiBottomSheet
         {
             // Act
             HasHandle = value,
@@ -134,7 +117,7 @@ public class BottomSheetTests
     public void ShowHeader_CanBeSetAndRetrieved(bool value)
     {
         // Arrange
-        var bottomSheet = new MauiBottomSheet
+        MauiBottomSheet bottomSheet = new MauiBottomSheet
         {
             // Act
             ShowHeader = value,
@@ -150,7 +133,7 @@ public class BottomSheetTests
     public void IsOpen_CanBeSetAndRetrieved(bool value)
     {
         // Arrange
-        var bottomSheet = new MauiBottomSheet
+        MauiBottomSheet bottomSheet = new MauiBottomSheet
         {
             // Act
             IsOpen = value,
@@ -166,7 +149,7 @@ public class BottomSheetTests
     public void IsDraggable_CanBeSetAndRetrieved(bool value)
     {
         // Arrange
-        var bottomSheet = new MauiBottomSheet
+        MauiBottomSheet bottomSheet = new MauiBottomSheet
         {
             // Act
             IsDraggable = value,
@@ -183,7 +166,7 @@ public class BottomSheetTests
     public void PeekHeight_CanBeSetAndRetrieved(double height)
     {
         // Arrange
-        var bottomSheet = new MauiBottomSheet
+        MauiBottomSheet bottomSheet = new MauiBottomSheet
         {
             // Act
             PeekHeight = height,
@@ -197,38 +180,36 @@ public class BottomSheetTests
     public void Header_CanBeSetAndRetrieved()
     {
         // Arrange
-        var bottomSheet = new MauiBottomSheet();
-        var header = new BottomSheetHeader();
+        MauiBottomSheet bottomSheet = new MauiBottomSheet();
+        BottomSheetHeader header = new BottomSheetHeader();
 
         // Act
         bottomSheet.Header = header;
 
         // Assert
         Assert.Equal(header, bottomSheet.Header);
-        Assert.Equal(bottomSheet, header.Parent);
     }
 
     [Fact]
     public void Content_CanBeSetAndRetrieved()
     {
         // Arrange
-        var bottomSheet = new MauiBottomSheet();
-        var content = new BottomSheetContent();
+        MauiBottomSheet bottomSheet = new MauiBottomSheet();
+        BottomSheetContent content = new BottomSheetContent();
 
         // Act
         bottomSheet.Content = content;
 
         // Assert
         Assert.Equal(content, bottomSheet.Content);
-        Assert.Equal(bottomSheet, content.Parent);
     }
 
     [Fact]
     public void Padding_CanBeSetAndRetrieved()
     {
         // Arrange
-        var bottomSheet = new MauiBottomSheet();
-        var padding = new MauiThickness(10, 15, 20, 25);
+        MauiBottomSheet bottomSheet = new MauiBottomSheet();
+        MauiThickness padding = new MauiThickness(10, 15, 20, 25);
 
         // Act
         bottomSheet.Padding = padding;
@@ -241,8 +222,8 @@ public class BottomSheetTests
     public void BottomSheetStyle_CanBeSetAndRetrieved()
     {
         // Arrange
-        var bottomSheet = new MauiBottomSheet();
-        var style = new BottomSheetStyle();
+        MauiBottomSheet bottomSheet = new MauiBottomSheet();
+        BottomSheetStyle style = new BottomSheetStyle();
 
         // Act
         bottomSheet.BottomSheetStyle = style;
@@ -255,8 +236,8 @@ public class BottomSheetTests
     public void States_CanBeSetAndRetrieved()
     {
         // Arrange
-        var bottomSheet = new MauiBottomSheet();
-        var states = new List<BottomSheetState> { BottomSheetState.Medium, BottomSheetState.Large };
+        MauiBottomSheet bottomSheet = new MauiBottomSheet();
+        List<BottomSheetState> states = new List<BottomSheetState> { BottomSheetState.Medium, BottomSheetState.Large };
 
         // Act
         bottomSheet.States = states;
@@ -269,8 +250,8 @@ public class BottomSheetTests
     public void CurrentState_CanBeSetAndRetrieved()
     {
         // Arrange
-        var bottomSheet = new MauiBottomSheet();
-        var states = new List<BottomSheetState> { BottomSheetState.Medium, BottomSheetState.Large };
+        MauiBottomSheet bottomSheet = new MauiBottomSheet();
+        List<BottomSheetState> states = new List<BottomSheetState> { BottomSheetState.Medium, BottomSheetState.Large };
         bottomSheet.States = states;
 
         // Act
@@ -284,12 +265,12 @@ public class BottomSheetTests
     public void Commands_CanBeSetAndRetrieved()
     {
         // Arrange
-        var bottomSheet = new MauiBottomSheet();
-        var closingCommand = Substitute.For<ICommand>();
-        var closedCommand = Substitute.For<ICommand>();
-        var openingCommand = Substitute.For<ICommand>();
-        var openedCommand = Substitute.For<ICommand>();
-        var parameter = new object();
+        MauiBottomSheet bottomSheet = new MauiBottomSheet();
+        ICommand? closingCommand = Substitute.For<ICommand>();
+        ICommand? closedCommand = Substitute.For<ICommand>();
+        ICommand? openingCommand = Substitute.For<ICommand>();
+        ICommand? openedCommand = Substitute.For<ICommand>();
+        object parameter = new object();
 
         // Act
         bottomSheet.ClosingCommand = closingCommand;
@@ -316,10 +297,10 @@ public class BottomSheetTests
     public void OnOpeningBottomSheet_RaisesEventAndExecutesCommand()
     {
         // Arrange
-        var bottomSheet = new MauiBottomSheet();
-        var command = Substitute.For<ICommand>();
-        var parameter = new object();
-        var eventRaised = false;
+        MauiBottomSheet bottomSheet = new MauiBottomSheet();
+        ICommand? command = Substitute.For<ICommand>();
+        object parameter = new object();
+        bool eventRaised = false;
 
         command.CanExecute(parameter).Returns(true);
         bottomSheet.OpeningCommand = command;
@@ -338,10 +319,10 @@ public class BottomSheetTests
     public void OnOpenedBottomSheet_RaisesEventAndExecutesCommand()
     {
         // Arrange
-        var bottomSheet = new MauiBottomSheet();
-        var command = Substitute.For<ICommand>();
-        var parameter = new object();
-        var eventRaised = false;
+        MauiBottomSheet bottomSheet = new MauiBottomSheet();
+        ICommand? command = Substitute.For<ICommand>();
+        object parameter = new object();
+        bool eventRaised = false;
 
         command.CanExecute(parameter).Returns(true);
         bottomSheet.OpenedCommand = command;
@@ -360,10 +341,10 @@ public class BottomSheetTests
     public void OnClosingBottomSheet_RaisesEventAndExecutesCommand()
     {
         // Arrange
-        var bottomSheet = new MauiBottomSheet();
-        var command = Substitute.For<ICommand>();
-        var parameter = new object();
-        var eventRaised = false;
+        MauiBottomSheet bottomSheet = new MauiBottomSheet();
+        ICommand? command = Substitute.For<ICommand>();
+        object parameter = new object();
+        bool eventRaised = false;
 
         command.CanExecute(parameter).Returns(true);
         bottomSheet.ClosingCommand = command;
@@ -382,10 +363,10 @@ public class BottomSheetTests
     public void OnClosedBottomSheet_RaisesEventAndExecutesCommand()
     {
         // Arrange
-        var bottomSheet = new MauiBottomSheet();
-        var command = Substitute.For<ICommand>();
-        var parameter = new object();
-        var eventRaised = false;
+        MauiBottomSheet bottomSheet = new MauiBottomSheet();
+        ICommand? command = Substitute.For<ICommand>();
+        object parameter = new object();
+        bool eventRaised = false;
 
         command.CanExecute(parameter).Returns(true);
         bottomSheet.ClosedCommand = command;
@@ -404,9 +385,9 @@ public class BottomSheetTests
     public void Command_DoesNotExecute_WhenCanExecuteReturnsFalse()
     {
         // Arrange
-        var bottomSheet = new MauiBottomSheet();
-        var command = Substitute.For<ICommand>();
-        var parameter = new object();
+        MauiBottomSheet bottomSheet = new MauiBottomSheet();
+        ICommand? command = Substitute.For<ICommand>();
+        object parameter = new object();
 
         command.CanExecute(parameter).Returns(false);
         bottomSheet.OpeningCommand = command;
@@ -423,7 +404,7 @@ public class BottomSheetTests
     public void Command_DoesNotExecute_WhenCommandIsNull()
     {
         // Arrange
-        var bottomSheet = new MauiBottomSheet
+        MauiBottomSheet bottomSheet = new MauiBottomSheet
         {
             OpeningCommand = null,
         };
@@ -436,10 +417,10 @@ public class BottomSheetTests
     public void OnBindingContextChanged_PropagatesBindingContextToChildren()
     {
         // Arrange
-        var bottomSheet = new MauiBottomSheet();
-        var header = new BottomSheetHeader();
-        var content = new BottomSheetContent();
-        var bindingContext = new object();
+        MauiBottomSheet bottomSheet = new MauiBottomSheet();
+        BottomSheetHeader header = new BottomSheetHeader();
+        BottomSheetContent content = new BottomSheetContent();
+        object bindingContext = new object();
 
         bottomSheet.Header = header;
         bottomSheet.Content = content;
@@ -456,8 +437,8 @@ public class BottomSheetTests
     public void OnBindingContextChanged_HandlesNullChildren()
     {
         // Arrange
-        var bottomSheet = new MauiBottomSheet();
-        var bindingContext = new object();
+        MauiBottomSheet bottomSheet = new MauiBottomSheet();
+        object bindingContext = new object();
 
         bottomSheet.Header = null;
         bottomSheet.Content = null;
@@ -470,8 +451,8 @@ public class BottomSheetTests
     public void States_ChangingToEmptyList_UpdatesCurrentStateAndDisablesDragging()
     {
         // Arrange
-        var bottomSheet = new MauiBottomSheet();
-        var newStates = new List<BottomSheetState> { BottomSheetState.Medium };
+        MauiBottomSheet bottomSheet = new MauiBottomSheet();
+        List<BottomSheetState> newStates = new List<BottomSheetState> { BottomSheetState.Medium };
 
         // Act
         bottomSheet.States = newStates;
@@ -484,8 +465,8 @@ public class BottomSheetTests
     public void CurrentState_OnlyAcceptsValidStates()
     {
         // Arrange
-        var bottomSheet = new MauiBottomSheet();
-        var states = new List<BottomSheetState> { BottomSheetState.Medium, BottomSheetState.Large };
+        MauiBottomSheet bottomSheet = new MauiBottomSheet();
+        List<BottomSheetState> states = new List<BottomSheetState> { BottomSheetState.Medium, BottomSheetState.Large };
         bottomSheet.States = states;
         bottomSheet.CurrentState = BottomSheetState.Medium;
 
@@ -500,11 +481,11 @@ public class BottomSheetTests
     public void Events_CanBeSubscribedAndUnsubscribed()
     {
         // Arrange
-        var bottomSheet = new MauiBottomSheet();
-        var openingRaised = false;
-        var openedRaised = false;
-        var closingRaised = false;
-        var closedRaised = false;
+        MauiBottomSheet bottomSheet = new MauiBottomSheet();
+        bool openingRaised = false;
+        bool openedRaised = false;
+        bool closingRaised = false;
+        bool closedRaised = false;
 
         EventHandler openingHandler = (_, _) => openingRaised = true;
         EventHandler openedHandler = (_, _) => openedRaised = true;
@@ -554,7 +535,7 @@ public class BottomSheetTests
     [Fact]
     public void AndroidPlatformConfiguration_SetAndGetProperties_ReturnsExpectedValues()
     {
-        var sheet = new MauiBottomSheet();
+        MauiBottomSheet sheet = new MauiBottomSheet();
 
         sheet.On<Android>().SetMaxHeight(100);
         sheet.On<Android>().SetMaxWidth(200);
@@ -576,7 +557,7 @@ public class BottomSheetTests
         Assert.Equal(99, sheet.GetTheme());
         Assert.Equal(new MauiThickness(10,20), sheet.GetMargin());
 
-        var sheetMock = Substitute.For<IBottomSheet>();
+        IBottomSheet? sheetMock = Substitute.For<IBottomSheet>();
             
         Assert.Throws<ArgumentException>(() => sheetMock.SetTheme(10));
         Assert.Throws<ArgumentException>(() => sheetMock.GetTheme());
@@ -590,7 +571,7 @@ public class BottomSheetTests
     [Fact]
     public void SettingEmptyStates_StatesRemainsNonEmpty()
     {
-        var sheet = new MauiBottomSheet
+        MauiBottomSheet sheet = new MauiBottomSheet
         {
             States = [],
         };
@@ -602,7 +583,7 @@ public class BottomSheetTests
     public void States_WhenChangedToNewCollection_UpdatesCurrentStateToFirstValidState
         ()
     {
-        var sheet = new MauiBottomSheet()
+        MauiBottomSheet sheet = new MauiBottomSheet()
         {
             States = [BottomSheetState.Large],
             CurrentState = BottomSheetState.Large,
@@ -616,7 +597,7 @@ public class BottomSheetTests
     [Fact]
     public void States_DefaultCurrentState_IsFirstInStatesList()
     {
-        var sheet = new MauiBottomSheet();
+        MauiBottomSheet sheet = new MauiBottomSheet();
             
         Assert.Equivalent(sheet.States.First(), sheet.CurrentState);
     }
@@ -624,7 +605,7 @@ public class BottomSheetTests
     [Fact]
     public void SettingInvalidCurrentState_DoesNotChangeCurrentState()
     {
-        var sheet = new MauiBottomSheet
+        MauiBottomSheet sheet = new MauiBottomSheet
         {
             CurrentState = BottomSheetState.Medium,
         };

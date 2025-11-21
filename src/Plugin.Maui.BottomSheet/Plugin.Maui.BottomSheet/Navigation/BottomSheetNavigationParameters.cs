@@ -1,7 +1,7 @@
 namespace Plugin.Maui.BottomSheet.Navigation;
 
 /// <summary>
-/// Represents the parameters used for BottomSheet navigation operations.
+/// Represents the parameters used for passing data during BottomSheet navigation.
 /// </summary>
 public class BottomSheetNavigationParameters : Dictionary<string, object>, IBottomSheetNavigationParameters
 {

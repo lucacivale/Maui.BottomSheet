@@ -247,8 +247,6 @@
                                 </Grid>
                                 <Grid
                                     ColumnDefinitions="*,*"
-                                    RadioButtonGroup.GroupName="CurrentState"
-                                    RadioButtonGroup.SelectedValue="{Binding CurrentState}"
                                     RowDefinitions="30,30"
                                     x:Name="CurrentState">
                                     <Label
@@ -257,17 +255,26 @@
                                         Grid.ColumnSpan="2"
                                         Text="Current state"
                                         VerticalTextAlignment="Center" />
-                                    <RadioButton
-                                        AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.CurrentMediumState}"
-                                        Content="{x:Static bottomsheet:BottomSheetState.Medium}"
+                                    <Label
                                         Grid.Row="1"
-                                        Value="{x:Static bottomsheet:BottomSheetState.Medium}" />
-                                    <RadioButton
-                                        AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.CurrentLargeState}"
-                                        Content="{x:Static bottomsheet:BottomSheetState.Large}"
+                                        Text="Medium"
+                                        VerticalTextAlignment="Center" />
+                                    <CheckBox
+                                        AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.CurrentMediumState}"
+                                        CheckedChanged="MediumCheckBox_OnCheckedChanged"
+                                        Grid.Row="1"
+                                        x:Name="MediumCheckBox" />
+                                    <Label
                                         Grid.Column="1"
                                         Grid.Row="1"
-                                        Value="{x:Static bottomsheet:BottomSheetState.Large}" />
+                                        Text="Large"
+                                        VerticalTextAlignment="Center" />
+                                    <CheckBox
+                                        AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.CurrentLargeState}"
+                                        CheckedChanged="LargeCheckBox_OnCheckedChanged"
+                                        Grid.Column="1"
+                                        Grid.Row="1"
+                                        x:Name="LargeCheckBox" />
                                 </Grid>
                             </VerticalStackLayout>
                         </ScrollView>
@@ -276,14 +283,14 @@
             </mauibottomsheet:BottomSheet>
             <mauibottomsheet:BottomSheet
                 AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.StaticPeekBottomSheet}"
-                PeekHeight="{mauibottomsheet:PeekView View={x:Reference Content}}"
+                PeekHeight="{mauibottomsheet:PeekView View={x:Reference ContentBox}}"
                 States="Peek"
                 x:Name="PeekBottomSheetStaticHeight">
                 <mauibottomsheet:BottomSheet.Content>
                     <mauibottomsheet:BottomSheetContent>
                         <mauibottomsheet:BottomSheetContent.Content>
                             <Grid AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.Content}" RowDefinitions="300">
-                                <BoxView Color="Orange" x:Name="Content" />
+                                <BoxView Color="Orange" x:Name="ContentBox" />
                             </Grid>
                         </mauibottomsheet:BottomSheetContent.Content>
                     </mauibottomsheet:BottomSheetContent>

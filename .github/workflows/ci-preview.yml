@@ -19,6 +19,7 @@ env:
   TestMauiUnitApplicationProjectName: Plugin.BottomSheet.Tests.Maui.Unit.Application
   TestMauiUnitApplicationApkName: com.companyname.plugin.bottomSheet.tests.maui.unit.application
   TestMauiUnitApplicationAppName: Plugin.BottomSheet.Tests.Maui.Unit.Application
+  xHarnessVersion: 11.0.0-prerelease*
 
 jobs:
   
@@ -126,7 +127,7 @@ jobs:
         run: dotnet tool install Microsoft.DotNet.XHarness.CLI
           --global
           --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
-          --version "10.0.0-prerelease*"
+          --version "${{ env.xHarnessVersion }}"
 
       - name: Test ${{ matrix.platform }}
         run: |
@@ -207,7 +208,7 @@ jobs:
         run: dotnet tool install Microsoft.DotNet.XHarness.CLI
           --global
           --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
-          --version "10.0.0-prerelease*"
+          --version "${{ env.xHarnessVersion }}"
         
       - name: Test Android
         run: xharness android test

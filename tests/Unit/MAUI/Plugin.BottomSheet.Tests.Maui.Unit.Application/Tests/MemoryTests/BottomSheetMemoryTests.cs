@@ -17,7 +17,7 @@ public sealed class BottomSheetMemoryTests : MemoryBaseTest<EmptyContentPage, Em
     [UIFact]
     public async Task BottomSheet_DoesNotLeak_WhenOpenedAndClosed()
     {
-        if (TryGetTarget(out var bottomSheet))
+        if (TryGetTarget(out EmptyBottomSheet? bottomSheet))
         {
             bottomSheet.IsOpen = true;
 
@@ -32,7 +32,7 @@ public sealed class BottomSheetMemoryTests : MemoryBaseTest<EmptyContentPage, Em
     [UIFact]
     public async Task BottomSheet_DoesNotLeak_WhenOpenedAndPageIsPopped()
     {
-        if (TryGetTarget(out var bottomSheet))
+        if (TryGetTarget(out EmptyBottomSheet? bottomSheet))
         {
             bottomSheet.IsOpen = true;
 
@@ -43,7 +43,7 @@ public sealed class BottomSheetMemoryTests : MemoryBaseTest<EmptyContentPage, Em
     [UIFact]
     public async Task BottomSheet_DoesNotLeak_WithEventsAndCommands()
     {
-        if (TryGetTarget(out var bottomSheet))
+        if (TryGetTarget(out EmptyBottomSheet? bottomSheet))
         {
             ICommand command = Substitute.For<ICommand>();
             
@@ -70,29 +70,13 @@ public sealed class BottomSheetMemoryTests : MemoryBaseTest<EmptyContentPage, Em
             await Task.Delay(1000);
         }
     }
-    
-    [UITheory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public async Task BottomSheet_DoesNotLeak_WhenIgnoreSafeAreaIsToggled(bool ignoreSafeArea)
-    {
-        if (TryGetTarget(out var bottomSheet))
-        {
-            bottomSheet.IgnoreSafeArea = ignoreSafeArea;
-            bottomSheet.IsOpen = true;
-            await Task.Delay(1000);
-            
-            bottomSheet.IsOpen = false;
-            await Task.Delay(1000);
-        }
-    }
 
     [UITheory]
     [InlineData(true)]
     [InlineData(false)]
     public async Task BottomSheet_DoesNotLeak_WhenIsCancelableIsToggled(bool isCancelable)
     {
-        if (TryGetTarget(out var bottomSheet))
+        if (TryGetTarget(out EmptyBottomSheet? bottomSheet))
         {
             bottomSheet.IsCancelable = isCancelable;
             bottomSheet.IsOpen = true;
@@ -108,7 +92,7 @@ public sealed class BottomSheetMemoryTests : MemoryBaseTest<EmptyContentPage, Em
     [InlineData(false)]
     public async Task BottomSheet_DoesNotLeak_WhenHasHandleIsSet(bool hasHandle)
     {
-        if (TryGetTarget(out var bottomSheet))
+        if (TryGetTarget(out EmptyBottomSheet? bottomSheet))
         {
             bottomSheet.HasHandle = hasHandle;
             bottomSheet.IsOpen = true;
@@ -124,7 +108,7 @@ public sealed class BottomSheetMemoryTests : MemoryBaseTest<EmptyContentPage, Em
     [InlineData(false)]
     public async Task BottomSheet_DoesNotLeak_WhenShowHeaderIsToggled(bool showHeader)
     {
-        if (TryGetTarget(out var bottomSheet))
+        if (TryGetTarget(out EmptyBottomSheet? bottomSheet))
         {
             bottomSheet.ShowHeader = showHeader;
             bottomSheet.IsOpen = true;
@@ -140,7 +124,7 @@ public sealed class BottomSheetMemoryTests : MemoryBaseTest<EmptyContentPage, Em
     [InlineData(false)]
     public async Task BottomSheet_DoesNotLeak_WhenIsModalIsToggled(bool isModal)
     {
-        if (TryGetTarget(out var bottomSheet))
+        if (TryGetTarget(out EmptyBottomSheet? bottomSheet))
         {
             bottomSheet.IsModal = isModal;
             bottomSheet.IsOpen = true;
@@ -156,7 +140,7 @@ public sealed class BottomSheetMemoryTests : MemoryBaseTest<EmptyContentPage, Em
     [InlineData(false)]
     public async Task BottomSheet_DoesNotLeak_WhenIsDraggableIsToggled(bool isDraggable)
     {
-        if (TryGetTarget(out var bottomSheet))
+        if (TryGetTarget(out EmptyBottomSheet? bottomSheet))
         {
             bottomSheet.IsDraggable = isDraggable;
             bottomSheet.IsOpen = true;
@@ -170,7 +154,7 @@ public sealed class BottomSheetMemoryTests : MemoryBaseTest<EmptyContentPage, Em
     [UIFact]
     public async Task BottomSheet_DoesNotLeak_WhenCornerRadiusIsChanged()
     {
-        if (TryGetTarget(out var bottomSheet))
+        if (TryGetTarget(out EmptyBottomSheet? bottomSheet))
         {
             bottomSheet.CornerRadius = 20f;
             bottomSheet.IsOpen = true;
@@ -184,7 +168,7 @@ public sealed class BottomSheetMemoryTests : MemoryBaseTest<EmptyContentPage, Em
     [UIFact]
     public async Task BottomSheet_DoesNotLeak_WhenWindowBackgroundColorIsChanged()
     {
-        if (TryGetTarget(out var bottomSheet))
+        if (TryGetTarget(out EmptyBottomSheet? bottomSheet))
         {
             bottomSheet.WindowBackgroundColor = Colors.Red;
             bottomSheet.IsOpen = true;
@@ -198,7 +182,7 @@ public sealed class BottomSheetMemoryTests : MemoryBaseTest<EmptyContentPage, Em
     [UIFact]
     public async Task BottomSheet_DoesNotLeak_WhenPeekHeightIsChanged()
     {
-        if (TryGetTarget(out var bottomSheet))
+        if (TryGetTarget(out EmptyBottomSheet? bottomSheet))
         {
             bottomSheet.PeekHeight = 200;
             bottomSheet.IsOpen = true;
@@ -212,7 +196,7 @@ public sealed class BottomSheetMemoryTests : MemoryBaseTest<EmptyContentPage, Em
     [UIFact]
     public async Task BottomSheet_DoesNotLeak_WhenPaddingIsChanged()
     {
-        if (TryGetTarget(out var bottomSheet))
+        if (TryGetTarget(out EmptyBottomSheet? bottomSheet))
         {
             bottomSheet.Padding = new MauiThickness(20, 20);
             bottomSheet.IsOpen = true;
@@ -226,7 +210,7 @@ public sealed class BottomSheetMemoryTests : MemoryBaseTest<EmptyContentPage, Em
     [UIFact]
     public async Task BottomSheet_DoesNotLeak_WhenBottomSheetStyleIsSet()
     {
-        if (TryGetTarget(out var bottomSheet))
+        if (TryGetTarget(out EmptyBottomSheet? bottomSheet))
         {
             bottomSheet.BottomSheetStyle = new BottomSheetStyle();
             bottomSheet.IsOpen = true;
@@ -242,7 +226,7 @@ public sealed class BottomSheetMemoryTests : MemoryBaseTest<EmptyContentPage, Em
     [InlineData(false)]
     public async Task BottomSheet_DoesNotLeak_WhenHeaderIsSet(bool showHeader)
     {
-        if (TryGetTarget(out var bottomSheet))
+        if (TryGetTarget(out EmptyBottomSheet? bottomSheet))
         {
             bottomSheet.ShowHeader = showHeader;
             bottomSheet.Header = new BottomSheetHeader();
@@ -257,7 +241,7 @@ public sealed class BottomSheetMemoryTests : MemoryBaseTest<EmptyContentPage, Em
     [UIFact]
     public async Task BottomSheet_DoesNotLeak_WhenContentIsSet()
     {
-        if (TryGetTarget(out var bottomSheet))
+        if (TryGetTarget(out EmptyBottomSheet? bottomSheet))
         {
             bottomSheet.Content = new BottomSheetContent()
             {
@@ -274,7 +258,7 @@ public sealed class BottomSheetMemoryTests : MemoryBaseTest<EmptyContentPage, Em
     [UIFact]
     public async Task BottomSheet_DoesNotLeak_WhenStatesAreSet()
     {
-        if (TryGetTarget(out var bottomSheet))
+        if (TryGetTarget(out EmptyBottomSheet? bottomSheet))
         {
             bottomSheet.States = new List<BottomSheetState> { BottomSheetState.Medium, BottomSheetState.Large };
             bottomSheet.IsOpen = true;
@@ -288,7 +272,7 @@ public sealed class BottomSheetMemoryTests : MemoryBaseTest<EmptyContentPage, Em
     [UIFact]
     public async Task BottomSheet_DoesNotLeak_WhenCurrentStateIsChanged()
     {
-        if (TryGetTarget(out var bottomSheet))
+        if (TryGetTarget(out EmptyBottomSheet? bottomSheet))
         {
             bottomSheet.CurrentState = BottomSheetState.Medium;
             bottomSheet.IsOpen = true;

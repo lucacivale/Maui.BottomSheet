@@ -107,6 +107,16 @@
         </ItemGroup>
     </Target>
 
+    <Target Name="AddApplePlatformsFolder" BeforeTargets="_MauiRemovePlatformCompileItems">
+        <ItemGroup Condition=" '$(SingleProject)' == 'true' ">
+            <Compile
+                    Condition=" '$(TargetPlatformIdentifier)' == 'ios' or '$(TargetPlatformIdentifier)' == 'maccatalyst' "
+                    Include="$(PlatformsProjectFolder)Apple\**\*$(DefaultLanguageSourceExtension)">
+                <ExcludeFromCurrentConfiguration>false</ExcludeFromCurrentConfiguration>
+            </Compile>
+        </ItemGroup>
+    </Target>
+
     <Target Name="TestAndroid">
         <PropertyGroup>
             <AndroidConfig>Release</AndroidConfig>
@@ -135,7 +145,7 @@
         </PropertyGroup>
         <RemoveDir Directories="$(ProjectDir)artifacts" />
         <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet build -c $(iOSConfig) -f $(iOSFramework) -r $(iOSRuntime) -p:TestingMode=XHarness" />
-        <Exec WorkingDirectory="$(ProjectDir)" Command="xharness apple test --target $(iOSTarget) --timeout=$(iOSTimeout) --launch-timeout=$(iOSLaunchTimeout) --app $(iOSAppPath) --output-directory $(TestOutputDir)" />
+        <Exec WorkingDirectory="$(ProjectDir)" Command="xharness apple test --target $(iOSTarget) --app $(iOSAppPath) --output-directory $(TestOutputDir)" />
     </Target>
 
     <Target Name="TestMacCatalyst">

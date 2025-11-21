@@ -35,7 +35,7 @@ public sealed partial class AppiumSetup : IDisposable
         _appiumService = new AppiumServiceHelper();
         _appiumService.StartAppiumLocalServer();
 
-        var options = new AppiumOptions
+        AppiumOptions options = new()
         {
             AutomationName = "UIAutomator2",
             PlatformName = Platform,
@@ -64,12 +64,12 @@ public sealed partial class AppiumSetup : IDisposable
         const string avdSdkId = "system-images;android-30;google_apis_playstore;arm64-v8a";
         #endif
 
-        var sdkPackages = new[]
+        string[] sdkPackages = new[]
         {
             "platforms;android-30"
         };
 
-        var sdk = new AndroidSdkManager();
+        AndroidSdkManager sdk = new();
         sdk.Acquire();
         sdk.SdkManager.Install(sdkPackages);
         sdk.SdkManager.Install(avdSdkId);

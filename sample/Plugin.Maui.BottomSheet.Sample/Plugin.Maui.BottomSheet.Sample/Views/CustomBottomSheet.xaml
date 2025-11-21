@@ -1,23 +1,37 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<bottomsheet:BottomSheet  xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:vm="clr-namespace:Plugin.Maui.BottomSheet.Sample.ViewModels"
-             xmlns:bottomsheet="http://pluginmauibottomsheet.com"
-             x:Class="Plugin.Maui.BottomSheet.Sample.Views.CustomBottomSheet"
-             x:DataType="vm:CustomBottomSheetViewModel"
-             States="Peek"
-             Opened="BottomSheet_Opened">
+<bottomsheet:BottomSheet
+    Opened="BottomSheet_Opened"
+    PeekHeight="{bottomsheet:PeekView View={Reference PeekContent}}"
+    States="Peek"
+    x:Class="Plugin.Maui.BottomSheet.Sample.Views.CustomBottomSheet"
+    x:DataType="vm:CustomBottomSheetViewModel"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:bottomsheet="http://pluginmauibottomsheet.com"
+    xmlns:vm="clr-namespace:Plugin.Maui.BottomSheet.Sample.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
     <bottomsheet:BottomSheet.Content>
         <bottomsheet:BottomSheetContent>
-            <ScrollView Padding="16,24,16,0">
-                <ScrollView.Behaviors>
-                    <bottomsheet:BottomSheetPeekBehavior />
-                </ScrollView.Behaviors>
+            <ScrollView Padding="16,24,16,0" x:Name="PeekContent">
                 <VerticalStackLayout Spacing="16">
-                    <Label Text="Name Change" FontAttributes="Bold" />
-                    <Entry x:Name="NameNewusername" AutomationId="CustomBottomSheetNewusernameEntry" Text="{Binding Newusername, Mode=TwoWay}" ReturnType="Done" ReturnCommand="{Binding SaveCommand}" />
-                    <Button Text="Save" AutomationId="CustomBottomSheetSaveButton" Command="{Binding SaveCommand}" />
-                    <Button Text="Cancel" AutomationId="CustomBottomSheetCancelButton" Command="{Binding GoBackCommand}" TextColor="Black" BackgroundColor="Transparent" BorderColor="{StaticResource Magenta}" BorderWidth="1" />
+                    <Label FontAttributes="Bold" Text="Name Change" />
+                    <Entry
+                        AutomationId="CustomBottomSheetNewusernameEntry"
+                        ReturnCommand="{Binding SaveCommand}"
+                        ReturnType="Done"
+                        Text="{Binding Newusername, Mode=TwoWay}"
+                        x:Name="NameNewusername" />
+                    <Button
+                        AutomationId="CustomBottomSheetSaveButton"
+                        Command="{Binding SaveCommand}"
+                        Text="Save" />
+                    <Button
+                        AutomationId="CustomBottomSheetCancelButton"
+                        BackgroundColor="Transparent"
+                        BorderColor="{StaticResource Magenta}"
+                        BorderWidth="1"
+                        Command="{Binding GoBackCommand}"
+                        Text="Cancel"
+                        TextColor="Black" />
                 </VerticalStackLayout>
             </ScrollView>
         </bottomsheet:BottomSheetContent>

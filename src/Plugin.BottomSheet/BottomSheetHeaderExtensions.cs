@@ -1,7 +1,7 @@
 namespace Plugin.BottomSheet;
 
 /// <summary>
-/// Extension methods for working with bottom sheet headers.
+/// Provides extension methods for interacting with and evaluating the configuration of bottom sheet headers.
 /// </summary>
 internal static class BottomSheetHeaderExtensions
 {
@@ -13,10 +13,10 @@ internal static class BottomSheetHeaderExtensions
     public static bool HasTopLeftButton(this IBottomSheetHeader? bottomSheetHeader)
     {
         return bottomSheetHeader is not null
-            && bottomSheetHeader.HeaderAppearance is BottomSheetHeaderButtonAppearanceMode.LeftButton
-                or BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton
-            && bottomSheetHeader.TopLeftButton is not null
-            && bottomSheetHeader.HasTopLeftCloseButton() == false;
+               && bottomSheetHeader.HeaderAppearance is BottomSheetHeaderButtonAppearanceMode.LeftButton
+                   or BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton
+               && bottomSheetHeader.TopLeftButton is not null
+               && bottomSheetHeader.HasTopLeftCloseButton() == false;
     }
 
     /// <summary>
@@ -27,8 +27,8 @@ internal static class BottomSheetHeaderExtensions
     public static bool HasTopLeftCloseButton(this IBottomSheetHeader? bottomSheetHeader)
     {
         return bottomSheetHeader is not null
-            && bottomSheetHeader.ShowCloseButton
-            && bottomSheetHeader.CloseButtonPosition == BottomSheetHeaderCloseButtonPosition.TopLeft;
+               && bottomSheetHeader.ShowCloseButton
+               && bottomSheetHeader.CloseButtonPosition == BottomSheetHeaderCloseButtonPosition.TopLeft;
     }
 
     /// <summary>
@@ -39,10 +39,10 @@ internal static class BottomSheetHeaderExtensions
     public static bool HasTopRightButton(this IBottomSheetHeader? bottomSheetHeader)
     {
         return bottomSheetHeader is not null
-            && bottomSheetHeader.HeaderAppearance is BottomSheetHeaderButtonAppearanceMode.RightButton
-               or BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton
-            && bottomSheetHeader.TopRightButton is not null
-            && bottomSheetHeader.HasTopRightCloseButton() == false;
+               && bottomSheetHeader.HeaderAppearance is BottomSheetHeaderButtonAppearanceMode.RightButton
+                   or BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton
+               && bottomSheetHeader.TopRightButton is not null
+               && bottomSheetHeader.HasTopRightCloseButton() == false;
     }
 
     /// <summary>
@@ -53,8 +53,8 @@ internal static class BottomSheetHeaderExtensions
     public static bool HasTopRightCloseButton(this IBottomSheetHeader? bottomSheetHeader)
     {
         return bottomSheetHeader is not null
-            && bottomSheetHeader.ShowCloseButton
-            && bottomSheetHeader.CloseButtonPosition == BottomSheetHeaderCloseButtonPosition.TopRight;
+               && bottomSheetHeader.ShowCloseButton
+               && bottomSheetHeader.CloseButtonPosition == BottomSheetHeaderCloseButtonPosition.TopRight;
     }
 
     /// <summary>
@@ -65,7 +65,7 @@ internal static class BottomSheetHeaderExtensions
     public static bool HasTitle(this IBottomSheetHeader? bottomSheetHeader)
     {
         return bottomSheetHeader is not null
-            && !string.IsNullOrWhiteSpace(bottomSheetHeader.TitleText);
+               && !string.IsNullOrWhiteSpace(bottomSheetHeader.TitleText);
     }
 
     /// <summary>
@@ -76,7 +76,7 @@ internal static class BottomSheetHeaderExtensions
     public static bool HasHeaderView(this IBottomSheetHeader? bottomSheetHeader)
     {
         return bottomSheetHeader is not null
-            && (bottomSheetHeader.ContentTemplate is not null
-                || bottomSheetHeader.Content is not null);
+               && (bottomSheetHeader.ContentTemplate is not null
+                   || bottomSheetHeader.Content is not null);
     }
 }
