@@ -6,7 +6,7 @@ using OpenQA.Selenium.Appium.Windows;
 // ReSharper disable once CheckNamespace
 namespace Plugin.BottomSheet.Tests.Maui.Ui.Shared;
 
-public static class AppiumDriverExtensions
+public static partial class AppiumDriverExtensions
 {
     public static AppiumElement FindElement(this AppiumDriver app, string id)
     {
@@ -59,4 +59,6 @@ public static class AppiumDriverExtensions
         
         return ret;
     }
+
+    public static partial void CloseKeyboard(this AppiumDriver app);
 }

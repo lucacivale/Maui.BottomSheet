@@ -79,4 +79,5 @@ public static class BottomSheetTestsAutomationIds
 public static class ModalPageBottomSheetTestsAutomationIds
 {
     public const string BottomSheet = "BottomSheet";
+    public const string CloseModalPage = "CloseModalPage";
 }

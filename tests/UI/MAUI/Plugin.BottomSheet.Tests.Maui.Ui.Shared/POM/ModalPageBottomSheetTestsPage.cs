@@ -13,6 +13,11 @@ public class ModalPageBottomSheetTestsPage : PomBase
     
     public bool IsBottomSheetOpen()
     {
-        return Wait.Until(d => d.FindElement(BottomSheetTestsAutomationIds.DesignBottomSheet)).Displayed;
+        return Wait.Until(d => d.FindElement(ModalPageBottomSheetTestsAutomationIds.BottomSheet)).Displayed;
+    }
+    
+    public void Close()
+    {
+        Wait.Until(d => d.FindElement(ModalPageBottomSheetTestsAutomationIds.CloseModalPage)).Click();
     }
 }

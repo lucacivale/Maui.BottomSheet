@@ -8,6 +8,7 @@ namespace Plugin.BottomSheet.iOSMacCatalyst;
 /// </summary>
 internal sealed class BottomSheet : UINavigationController
 {
+    private const string AccessibilityIdentifier = "Plugin.BottomSheet.iOSMacCatalyst.BottomSheet";
     private const string PeekDetentId = "Plugin.Maui.BottomSheet.PeekDetentId";
 
     private readonly WeakEventManager _eventManager = new();
@@ -244,6 +245,20 @@ internal sealed class BottomSheet : UINavigationController
             frame.Y -= PresentationController.PresentedView.LayoutMargins.Top;
 
             return new Rect(frame.X, frame.Y, frame.Width, frame.Height);
+        }
+    }
+
+    /// <summary>
+    /// Called after the controller's view is loaded into memory.
+    /// Configures the view by setting its accessibility identifier for better UI automation support.
+    /// </summary>
+    public override void ViewDidLoad()
+    {
+        base.ViewDidLoad();
+
+        if (View is not null)
+        {
+            View.AccessibilityIdentifier = AccessibilityIdentifier;
         }
     }
 

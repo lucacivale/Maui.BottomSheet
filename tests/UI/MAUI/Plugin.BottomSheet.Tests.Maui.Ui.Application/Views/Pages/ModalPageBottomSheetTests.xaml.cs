@@ -6,4 +6,9 @@ public partial class ModalPageBottomSheetTestsPage : ContentPage
     {
         InitializeComponent();
     }
+
+    private async void Button_OnClicked(object? sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("..");
+    }
 }

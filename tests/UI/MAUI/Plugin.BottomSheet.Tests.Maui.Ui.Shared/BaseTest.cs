@@ -5,7 +5,7 @@ using OpenQA.Selenium.Appium;
 using Xunit.Abstractions;
 
 [Collection("UICollection")]
-public abstract class BaseTest
+public abstract partial class BaseTest
 {
     private const int DefaultDelayInMs = 750;
     
@@ -34,19 +34,7 @@ public abstract class BaseTest
         await WaitAsync();
     }
 
-    protected IReadOnlyList<string> PrintAllElementIds()
-    {
-        IList<AppiumElement> elements = App.FindAllElements();
+    protected partial Task CloseOpenSheet();
 
-        return elements
-            .Select(x => {
-                string? resourceId = x.GetAttribute("resource-id");
-                string? contentDesc = x.GetAttribute("content-desc");
-                string? className = x.GetAttribute("class");
-               
-                // Return the first non-null identifier
-                return $"{resourceId ?? string.Empty} -- {contentDesc ?? string.Empty} -- {className ?? string.Empty}";
-            })
-            .ToList();
-    }
+    protected partial IReadOnlyList<string> PrintAllElementIds();
 }

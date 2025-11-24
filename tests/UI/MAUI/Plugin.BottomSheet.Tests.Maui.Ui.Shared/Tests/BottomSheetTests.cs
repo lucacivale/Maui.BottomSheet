@@ -29,7 +29,7 @@ public class BottomSheetTests : BaseTest, IAsyncLifetime
     {
         if (App.TryFindElementByAutomationId(BottomSheetTestsAutomationIds.BottomSheet, out _))
         {
-            await GoBackAsync();
+            await CloseOpenSheet();
         }
         
         await GoBackAsync();

@@ -133,15 +133,7 @@ internal sealed class MauiBottomSheet : AndroidView
         SetIsDraggable();
         SetCurrentState();
 
-        try
-        {
         _bottomSheet.SetContentView(_virtualView.ContainerView.ToPlatform(_mauiContext));
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
 
         SetHalfExpandedRatio();
         SetMargin();

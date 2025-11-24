@@ -115,7 +115,10 @@ internal sealed class MauiBottomSheet : UIView
         SetIsModal();
         SetCornerRadius();
 
-        _bottomSheet.SetContentView(_virtualView.ContainerView.ToPlatform(_mauiContext));
+        UIView view = _virtualView.ContainerView.ToPlatform(_mauiContext);
+        view.UpdateAutomationId(_virtualView);
+
+        _bottomSheet.SetContentView(view);
 
         _virtualView.OnOpeningBottomSheet();
 

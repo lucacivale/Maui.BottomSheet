@@ -28,9 +28,9 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
         if (App.TryFindElementByAutomationId(BottomSheetHeaderTestsAutomationIds.BottomSheetBuiltInHeader, out _)
             || App.TryFindElementByAutomationId(BottomSheetHeaderTestsAutomationIds.BottomSheetCustomHeader, out _))
         {
-            await GoBackAsync();
+            await CloseOpenSheet();
         }
-        
+
         await GoBackAsync();
     }
     
@@ -61,7 +61,6 @@ public class BottomSheetHeaderTests : BaseTest, IAsyncLifetime
         bottomSheet.EnterTitle(title);
 
         await bottomSheet.ChangeBindingContextAsync();
-        
         Assert.False(bottomSheet.HeaderDisplayed());
         Assert.False(bottomSheet.TitleDisplayed(title));
     }

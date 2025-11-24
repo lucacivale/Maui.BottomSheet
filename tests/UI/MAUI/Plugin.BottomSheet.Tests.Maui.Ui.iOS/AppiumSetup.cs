@@ -1,3 +1,4 @@
+using OpenQA.Selenium.Appium.Enums;
 using Plugin.BottomSheet.Tests.Maui.Ui.Shared;
 
 // ReSharper disable once CheckNamespace

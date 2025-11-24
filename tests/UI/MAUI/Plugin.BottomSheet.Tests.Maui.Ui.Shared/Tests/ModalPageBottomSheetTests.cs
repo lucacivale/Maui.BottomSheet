@@ -27,10 +27,11 @@ public class ModalPageBottomSheetTests : BaseTest, IAsyncLifetime
     {
         if (App.TryFindElementByAutomationId(ModalPageBottomSheetTestsAutomationIds.BottomSheet, out _))
         {
-            await GoBackAsync();
+            await CloseOpenSheet();
         }
         
-        await GoBackAsync();
+        _modalPageBottomSheetTestsPage.Close();
+        await Task.Delay(500);
     }
     
     [Fact]

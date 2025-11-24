@@ -142,6 +142,8 @@ public class BottomSheetHeaderTestsBottomSheetBuiltInHeader : PomBase
     public void EnterTitle(string title)
     {
         TitleElement.SendKeys(title);
+
+        App.CloseKeyboard();
     }
 
     public bool TitleDisplayed(string title)
