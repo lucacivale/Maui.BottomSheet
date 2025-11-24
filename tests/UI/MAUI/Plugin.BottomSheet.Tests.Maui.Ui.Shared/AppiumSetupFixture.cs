@@ -17,3 +17,12 @@ public sealed class AppiumSetupFixture : IDisposable
         _appiumSetup.Dispose();
     }
 }
+
+[CollectionDefinition("UICollection")]
+// ReSharper disable once InconsistentNaming
+public class UICollection : ICollectionFixture<AppiumSetupFixture>
+{
+    // This class has no code, and is never created. Its purpose is simply
+    // to be the place to apply [CollectionDefinition] and all the
+    // ICollectionFixture<> interfaces.
+}

@@ -12,7 +12,7 @@ public sealed class AppiumServiceHelper : IDisposable
 
     public AppiumServiceHelper(string host = DefaultHostAddress, int port = DefaultHostPort)
     {
-        var builder = new AppiumServiceBuilder()
+        AppiumServiceBuilder? builder = new AppiumServiceBuilder()
             .WithIPAddress(host)
             .UsingPort(port);
 

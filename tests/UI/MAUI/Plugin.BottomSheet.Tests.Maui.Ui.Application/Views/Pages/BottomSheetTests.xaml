@@ -63,225 +63,234 @@
                 x:Name="BottomSheet">
                 <mauibottomsheet:BottomSheet.Content>
                     <mauibottomsheet:BottomSheetContent>
-                        <VerticalStackLayout AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.Content}">
-                            <Grid ColumnDefinitions="Auto, *">
-                                <Label Text="Test states" VerticalOptions="Center" />
-                                <Switch
-                                    AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.TestStates}"
-                                    Grid.Column="1"
-                                    VerticalOptions="Center"
-                                    x:Name="TestStates" />
-                            </Grid>
-                            <Grid
-                                ColumnDefinitions="Auto, *"
-                                RowDefinitions="40,40,40,40,40,40,40,40,50"
-                                RowSpacing="10">
-                                <Grid.Triggers>
-                                    <DataTrigger
-                                        Binding="{Binding IsToggled, Source={x:Reference TestStates}}"
-                                        TargetType="Grid"
-                                        Value="True">
-                                        <Setter Property="IsVisible" Value="False" />
-                                    </DataTrigger>
-                                    <DataTrigger
-                                        Binding="{Binding IsToggled, Source={x:Reference TestStates}}"
-                                        TargetType="Grid"
-                                        Value="False">
-                                        <Setter Property="IsVisible" Value="True" />
-                                    </DataTrigger>
-                                </Grid.Triggers>
-                                <Label Text="Corner radius" VerticalOptions="Center" />
-                                <Label
-                                    Grid.Row="1"
-                                    Text="Margin(Android only)"
-                                    VerticalOptions="Center">
-                                    <Label.FormattedText>
-                                        <FormattedString>
-                                            <Span Text="Margin " />
-                                            <Span
-                                                FontAttributes="Italic"
-                                                FontSize="10"
-                                                Text="(Android only)" />
-                                        </FormattedString>
-                                    </Label.FormattedText>
-                                </Label>
-                                <Label
-                                    Grid.Row="2"
-                                    Text="Padding"
-                                    VerticalOptions="Center" />
-                                <Label
-                                    Grid.Row="3"
-                                    Text="Half expanded ratio(Android only)"
-                                    VerticalOptions="Center">
-                                    <Label.FormattedText>
-                                        <FormattedString>
-                                            <Span Text="Half expanded ratio " />
-                                            <Span
-                                                FontAttributes="Italic"
-                                                FontSize="10"
-                                                Text="(Android only)" />
-                                        </FormattedString>
-                                    </Label.FormattedText>
-                                </Label>
-                                <Label
-                                    Grid.Row="4"
-                                    Text="Is modal?"
-                                    VerticalOptions="Center" />
-                                <Label
-                                    Grid.Row="5"
-                                    Text="Has handle?"
-                                    VerticalOptions="Center" />
-                                <Label
-                                    Grid.Row="6"
-                                    Text="Is cancelable?"
-                                    VerticalOptions="Center" />
-                                <Label
-                                    Grid.Row="7"
-                                    Text="Is draggable?"
-                                    VerticalOptions="Center" />
-                                <Entry
-                                    AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.CornerRadius}"
-                                    Grid.Column="1"
-                                    Keyboard="Numeric"
-                                    Text="{Binding CornerRadius}"
-                                    VerticalOptions="Center" />
-                                <Entry
-                                    AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.Margin}"
-                                    Grid.Column="1"
-                                    Grid.Row="1"
-                                    Text="{Binding Margin}"
-                                    VerticalOptions="Center" />
-                                <Entry
-                                    AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.Padding}"
-                                    Grid.Column="1"
-                                    Grid.Row="2"
-                                    Text="{Binding Padding}"
-                                    VerticalOptions="Center" />
-                                <Entry
-                                    AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.HalfExpandedRatio}"
-                                    Grid.Column="1"
-                                    Grid.Row="3"
-                                    HorizontalTextAlignment="End"
-                                    Keyboard="Numeric"
-                                    Text="{Binding HalfExpandedRatio}"
-                                    VerticalOptions="Center" />
-                                <Switch
-                                    AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.IsModal}"
-                                    Grid.Column="1"
-                                    Grid.Row="4"
-                                    IsToggled="{Binding IsModal}"
-                                    VerticalOptions="Center" />
-                                <Switch
-                                    AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.HasHandle}"
-                                    Grid.Column="1"
-                                    Grid.Row="5"
-                                    IsToggled="{Binding HasHandle}"
-                                    VerticalOptions="Center" />
-                                <Switch
-                                    AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.IsCancelable}"
-                                    Grid.Column="1"
-                                    Grid.Row="6"
-                                    IsToggled="{Binding IsCancelable}"
-                                    VerticalOptions="Center" />
-                                <Switch
-                                    AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.IsDraggable}"
-                                    Grid.Column="1"
-                                    Grid.Row="7"
-                                    IsToggled="{Binding IsDraggable}"
-                                    VerticalOptions="Center" />
+                        <ScrollView>
+                            <VerticalStackLayout AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.Content}">
+                                <Grid ColumnDefinitions="Auto, *" RowDefinitions="40">
+                                    <Label Text="Test statess" VerticalOptions="Center" />
+                                    <Switch
+                                        AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.TestStates}"
+                                        Grid.Column="1"
+                                        VerticalOptions="Center"
+                                        x:Name="TestStates" />
+                                </Grid>
+                                <Grid
+                                    ColumnDefinitions="Auto, *"
+                                    RowDefinitions="40,40,40,40,40,40,40,40,50"
+                                    RowSpacing="10">
+                                    <Grid.Triggers>
+                                        <DataTrigger
+                                            Binding="{Binding IsToggled, Source={x:Reference TestStates}}"
+                                            TargetType="Grid"
+                                            Value="True">
+                                            <Setter Property="IsVisible" Value="False" />
+                                        </DataTrigger>
+                                        <DataTrigger
+                                            Binding="{Binding IsToggled, Source={x:Reference TestStates}}"
+                                            TargetType="Grid"
+                                            Value="False">
+                                            <Setter Property="IsVisible" Value="True" />
+                                        </DataTrigger>
+                                    </Grid.Triggers>
+                                    <Label Text="Corner radius" VerticalOptions="Center" />
+                                    <Label
+                                        Grid.Row="1"
+                                        Text="Margin(Android only)"
+                                        VerticalOptions="Center">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="Margin " />
+                                                <Span
+                                                    FontAttributes="Italic"
+                                                    FontSize="10"
+                                                    Text="(Android only)" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                    <Label
+                                        Grid.Row="2"
+                                        Text="Padding"
+                                        VerticalOptions="Center" />
+                                    <Label
+                                        Grid.Row="3"
+                                        Text="Half expanded ratio(Android only)"
+                                        VerticalOptions="Center">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="Half expanded ratio " />
+                                                <Span
+                                                    FontAttributes="Italic"
+                                                    FontSize="10"
+                                                    Text="(Android only)" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                    <Label
+                                        Grid.Row="4"
+                                        Text="Is modal?"
+                                        VerticalOptions="Center" />
+                                    <Label
+                                        Grid.Row="5"
+                                        Text="Has handle?"
+                                        VerticalOptions="Center" />
+                                    <Label
+                                        Grid.Row="6"
+                                        Text="Is cancelable?"
+                                        VerticalOptions="Center" />
+                                    <Label
+                                        Grid.Row="7"
+                                        Text="Is draggable?"
+                                        VerticalOptions="Center" />
+                                    <Entry
+                                        AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.CornerRadius}"
+                                        Grid.Column="1"
+                                        Keyboard="Numeric"
+                                        Text="{Binding CornerRadius}"
+                                        VerticalOptions="Center" />
+                                    <Entry
+                                        AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.Margin}"
+                                        Grid.Column="1"
+                                        Grid.Row="1"
+                                        Text="{Binding Margin}"
+                                        VerticalOptions="Center" />
+                                    <Entry
+                                        AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.Padding}"
+                                        Grid.Column="1"
+                                        Grid.Row="2"
+                                        Text="{Binding Padding}"
+                                        VerticalOptions="Center" />
+                                    <Entry
+                                        AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.HalfExpandedRatio}"
+                                        Grid.Column="1"
+                                        Grid.Row="3"
+                                        HorizontalTextAlignment="End"
+                                        Keyboard="Numeric"
+                                        Text="{Binding HalfExpandedRatio}"
+                                        VerticalOptions="Center" />
+                                    <Switch
+                                        AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.IsModal}"
+                                        Grid.Column="1"
+                                        Grid.Row="4"
+                                        IsToggled="{Binding IsModal}"
+                                        VerticalOptions="Center" />
+                                    <Switch
+                                        AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.HasHandle}"
+                                        Grid.Column="1"
+                                        Grid.Row="5"
+                                        IsToggled="{Binding HasHandle}"
+                                        VerticalOptions="Center" />
+                                    <Switch
+                                        AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.IsCancelable}"
+                                        Grid.Column="1"
+                                        Grid.Row="6"
+                                        IsToggled="{Binding IsCancelable}"
+                                        VerticalOptions="Center" />
+                                    <Switch
+                                        AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.IsDraggable}"
+                                        Grid.Column="1"
+                                        Grid.Row="7"
+                                        IsToggled="{Binding IsDraggable}"
+                                        VerticalOptions="Center" />
+                                    <Grid
+                                        ColumnDefinitions="*,*"
+                                        ColumnSpacing="10"
+                                        Grid.ColumnSpan="2"
+                                        Grid.Row="8">
+                                        <Button
+                                            AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.ChangeWindowBackgroundColor}"
+                                            Command="{Binding ChangeWindowBackgroundColorCommand}"
+                                            FontSize="10"
+                                            HorizontalOptions="Center"
+                                            Text="Change window background color" />
+                                        <Button
+                                            AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.ChangeBackgroundColor}"
+                                            Command="{Binding ChangeBackgroundColorCommand}"
+                                            FontSize="10"
+                                            Grid.Column="1"
+                                            HorizontalOptions="Center"
+                                            Text="Change background color" />
+                                    </Grid>
+                                </Grid>
+                                <Grid ColumnDefinitions="*,*" RowDefinitions="25,25">
+                                    <Label
+                                        FontAttributes="Bold"
+                                        FontSize="20"
+                                        Grid.ColumnSpan="2"
+                                        Text="States" />
+                                    <Label
+                                        Grid.Row="1"
+                                        Margin="35,0,0,0"
+                                        Text="Medium"
+                                        VerticalOptions="Center" />
+                                    <Label
+                                        Grid.Column="1"
+                                        Grid.Row="1"
+                                        Margin="35,0,0,0"
+                                        Text="Large"
+                                        VerticalOptions="Center" />
+                                    <CheckBox
+                                        AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.MediumState}"
+                                        CheckedChanged="Medium_OnCheckedChanged"
+                                        Grid.Row="1"
+                                        HorizontalOptions="Start"
+                                        IsChecked="{Binding States, Mode=OneWay, Converter={x:StaticResource BottomSheetStatesToBoolConverter}, ConverterParameter={x:Static bottomsheet:BottomSheetState.Medium}}"
+                                        VerticalOptions="Center"
+                                        x:Name="Medium" />
+                                    <CheckBox
+                                        AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.LargeState}"
+                                        CheckedChanged="Large_OnCheckedChanged"
+                                        Grid.Column="1"
+                                        Grid.Row="1"
+                                        HorizontalOptions="Start"
+                                        IsChecked="{Binding States, Mode=OneWay, Converter={x:StaticResource BottomSheetStatesToBoolConverter}, ConverterParameter={x:Static bottomsheet:BottomSheetState.Large}}"
+                                        VerticalOptions="Center"
+                                        x:Name="Large" />
+                                </Grid>
                                 <Grid
                                     ColumnDefinitions="*,*"
-                                    ColumnSpacing="10"
-                                    Grid.ColumnSpan="2"
-                                    Grid.Row="8">
-                                    <Button
-                                        AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.ChangeWindowBackgroundColor}"
-                                        Command="{Binding ChangeWindowBackgroundColorCommand}"
-                                        FontSize="10"
-                                        HorizontalOptions="Center"
-                                        Text="Change window background color" />
-                                    <Button
-                                        AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.ChangeBackgroundColor}"
-                                        Command="{Binding ChangeBackgroundColorCommand}"
-                                        FontSize="10"
+                                    RowDefinitions="30,30"
+                                    x:Name="CurrentState">
+                                    <Label
+                                        FontAttributes="Bold"
+                                        FontSize="20"
+                                        Grid.ColumnSpan="2"
+                                        Text="Current state"
+                                        VerticalTextAlignment="Center" />
+                                    <Label
+                                        Grid.Row="1"
+                                        Text="Medium"
+                                        VerticalTextAlignment="Center" />
+                                    <CheckBox
+                                        AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.CurrentMediumState}"
+                                        CheckedChanged="MediumCheckBox_OnCheckedChanged"
+                                        Grid.Row="1"
+                                        x:Name="MediumCheckBox" />
+                                    <Label
                                         Grid.Column="1"
-                                        HorizontalOptions="Center"
-                                        Text="Change background color" />
+                                        Grid.Row="1"
+                                        Text="Large"
+                                        VerticalTextAlignment="Center" />
+                                    <CheckBox
+                                        AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.CurrentLargeState}"
+                                        CheckedChanged="LargeCheckBox_OnCheckedChanged"
+                                        Grid.Column="1"
+                                        Grid.Row="1"
+                                        x:Name="LargeCheckBox" />
                                 </Grid>
-                            </Grid>
-                            <Grid ColumnDefinitions="*,*" RowDefinitions="25,25">
-                                <Label
-                                    FontAttributes="Bold"
-                                    FontSize="20"
-                                    Grid.ColumnSpan="2"
-                                    Text="States" />
-                                <Label
-                                    Grid.Row="1"
-                                    Margin="35,0,0,0"
-                                    Text="Medium"
-                                    VerticalOptions="Center" />
-                                <Label
-                                    Grid.Column="1"
-                                    Grid.Row="1"
-                                    Margin="35,0,0,0"
-                                    Text="Large"
-                                    VerticalOptions="Center" />
-                                <CheckBox
-                                    AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.MediumState}"
-                                    CheckedChanged="Medium_OnCheckedChanged"
-                                    Grid.Row="1"
-                                    HorizontalOptions="Start"
-                                    IsChecked="{Binding States, Mode=OneWay, Converter={x:StaticResource BottomSheetStatesToBoolConverter}, ConverterParameter={x:Static bottomsheet:BottomSheetState.Medium}}"
-                                    VerticalOptions="Center"
-                                    x:Name="Medium" />
-                                <CheckBox
-                                    AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.LargeState}"
-                                    CheckedChanged="Large_OnCheckedChanged"
-                                    Grid.Column="1"
-                                    Grid.Row="1"
-                                    HorizontalOptions="Start"
-                                    IsChecked="{Binding States, Mode=OneWay, Converter={x:StaticResource BottomSheetStatesToBoolConverter}, ConverterParameter={x:Static bottomsheet:BottomSheetState.Large}}"
-                                    VerticalOptions="Center"
-                                    x:Name="Large" />
-                            </Grid>
-                            <Grid
-                                ColumnDefinitions="*,*"
-                                RadioButtonGroup.GroupName="CurrentState"
-                                RadioButtonGroup.SelectedValue="{Binding CurrentState}"
-                                RowDefinitions="25,25"
-                                x:Name="CurrentState">
-                                <Label
-                                    FontAttributes="Bold"
-                                    FontSize="20"
-                                    Grid.ColumnSpan="2"
-                                    Text="Current state"
-                                    VerticalTextAlignment="Center" />
-                                <RadioButton
-                                    AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.CurrentMediumState}"
-                                    Content="{x:Static bottomsheet:BottomSheetState.Medium}"
-                                    Grid.Row="1"
-                                    Value="{x:Static bottomsheet:BottomSheetState.Medium}" />
-                                <RadioButton
-                                    AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.CurrentLargeState}"
-                                    Content="{x:Static bottomsheet:BottomSheetState.Large}"
-                                    Grid.Column="1"
-                                    Grid.Row="1"
-                                    Value="{x:Static bottomsheet:BottomSheetState.Large}" />
-                            </Grid>
-                        </VerticalStackLayout>
+                            </VerticalStackLayout>
+                        </ScrollView>
                     </mauibottomsheet:BottomSheetContent>
                 </mauibottomsheet:BottomSheet.Content>
             </mauibottomsheet:BottomSheet>
             <mauibottomsheet:BottomSheet
                 AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.StaticPeekBottomSheet}"
-                PeekHeight="{mauibottomsheet:PeekView View={x:Reference Content}}"
+                PeekHeight="{mauibottomsheet:PeekView View={x:Reference ContentBox}}"
                 States="Peek"
                 x:Name="PeekBottomSheetStaticHeight">
                 <mauibottomsheet:BottomSheet.Content>
                     <mauibottomsheet:BottomSheetContent>
                         <mauibottomsheet:BottomSheetContent.Content>
                             <Grid AutomationId="{x:Static shared:BottomSheetTestsAutomationIds.Content}" RowDefinitions="300">
-                                <BoxView Color="Orange" x:Name="Content" />
+                                <BoxView Color="Orange" x:Name="ContentBox" />
                             </Grid>
                         </mauibottomsheet:BottomSheetContent.Content>
                     </mauibottomsheet:BottomSheetContent>

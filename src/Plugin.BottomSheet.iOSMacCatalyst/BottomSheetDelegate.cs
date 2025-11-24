@@ -1,17 +1,17 @@
-namespace Plugin.Maui.BottomSheet.Platform.MaciOS;
+namespace Plugin.BottomSheet.iOSMacCatalyst;
 
 using Plugin.BottomSheet;
 using UIKit;
 
 /// <summary>
-/// Handles presentation controller delegate methods for bottom sheet behavior and state management.
+/// Provides delegate methods for managing bottom sheet behaviors and transitions, including handling detent changes and dismissal events.
 /// </summary>
-internal sealed class BottomSheetControllerDelegate : UISheetPresentationControllerDelegate
+internal sealed class BottomSheetDelegate : UISheetPresentationControllerDelegate
 {
-    private readonly WeakEventManager _eventManager = new();
+    private readonly AsyncAwaitBestPractices.WeakEventManager _eventManager = new();
 
     /// <summary>
-    /// Occurs when the bottom sheet state changes.
+    /// Triggered when the state of the bottom sheet transitions to a different level.
     /// </summary>
     public event EventHandler<BottomSheetStateChangedEventArgs> StateChanged
     {
@@ -20,7 +20,7 @@ internal sealed class BottomSheetControllerDelegate : UISheetPresentationControl
     }
 
     /// <summary>
-    /// Occurs when the bottom sheet dismissal needs confirmation.
+    /// Occurs when a dismissal of the bottom sheet is triggered, allowing confirmation before it is completed.
     /// </summary>
     public event EventHandler ConfirmDismiss
     {
@@ -30,13 +30,13 @@ internal sealed class BottomSheetControllerDelegate : UISheetPresentationControl
 
     /// <summary>
     /// Determines whether the presentation controller should dismiss when touched outside or swiped.
-    /// Note: DidAttemptToDismiss is only called for swipe dismissal, while ShouldDismiss handles background taps.
+    /// Note: DidAttemptToDismiss is only called for swipe dismissal, while ShouldDismiss handles background taps and swipes.
     /// </summary>
     /// <param name="presentationController">The presentation controller requesting dismissal.</param>
-    /// <returns>Always returns false to prevent automatic dismissal and trigger confirmation.</returns>
+    /// <returns>Returns false to prevent automatic dismissal and trigger confirmation.</returns>
     public override bool ShouldDismiss(UIPresentationController presentationController)
     {
-        _eventManager.HandleEvent(
+        _eventManager.RaiseEvent(
             presentationController,
             EventArgs.Empty,
             nameof(ConfirmDismiss));
@@ -45,12 +45,13 @@ internal sealed class BottomSheetControllerDelegate : UISheetPresentationControl
     }
 
     /// <summary>
-    /// Called when the selected detent identifier changes, translating it to bottom sheet state.
+    /// Invoked when the selected detent identifier of the sheet presentation controller changes.
+    /// Converts the detent identifier to a corresponding bottom sheet state and raises a state change event.
     /// </summary>
-    /// <param name="sheetPresentationController">The sheet presentation controller with the changed detent.</param>
+    /// <param name="sheetPresentationController">The sheet presentation controller with the updated detent identifier.</param>
     public override void DidChangeSelectedDetentIdentifier(UISheetPresentationController sheetPresentationController)
     {
-        var state = sheetPresentationController.SelectedDetentIdentifier switch
+        BottomSheetState state = sheetPresentationController.SelectedDetentIdentifier switch
         {
             UISheetPresentationControllerDetentIdentifier.Unknown => BottomSheetState.Peek,
             UISheetPresentationControllerDetentIdentifier.Medium => BottomSheetState.Medium,
@@ -58,7 +59,7 @@ internal sealed class BottomSheetControllerDelegate : UISheetPresentationControl
             _ => throw new ArgumentOutOfRangeException(sheetPresentationController.SelectedDetentIdentifier.ToString()),
         };
 
-        _eventManager.HandleEvent(
+        _eventManager.RaiseEvent(
             sheetPresentationController,
             new BottomSheetStateChangedEventArgs(state),
             nameof(StateChanged));

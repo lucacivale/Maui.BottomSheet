@@ -4,16 +4,18 @@ using Plugin.Maui.BottomSheet.Navigation;
 namespace Plugin.Maui.BottomSheet;
 
 /// <summary>
-/// Provides helper methods for MVVM navigation patterns and bottom sheet lifecycle management.
+/// Contains static helper methods to facilitate navigation logic specific to bottom sheet lifecycle events.
+/// This includes managing navigation confirmations, handling navigation away from a bottom sheet,
+/// and processing navigation to a new bottom sheet.
 /// </summary>
 internal static class MvvmHelpers
 {
     /// <summary>
-    /// Determines whether the specified bottom sheet can be navigated away from by checking both synchronous and asynchronous navigation confirmation.
+    /// Verifies whether the specified bottom sheet allows navigation away by performing synchronous and asynchronous navigation confirmation checks.
     /// </summary>
-    /// <param name="bottomSheet">The bottom sheet to navigate from.</param>
-    /// <param name="parameters">The navigation parameters.</param>
-    /// <returns>A task that represents the asynchronous operation. The task result contains true if navigation is allowed; otherwise, false.</returns>
+    /// <param name="bottomSheet">The bottom sheet being navigated away from.</param>
+    /// <param name="parameters">The parameters associated with the navigation process.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains true if navigation is permitted; otherwise, false.</returns>
     [SuppressMessage("Usage", "MethodHasAsyncOverload: ReSharper disable once MethodHasAsyncOverload", Justification = "False positive.")]
     [SuppressMessage("Performance", "CA1849: Call async methods when in an async method", Justification = "False positive.")]
     [SuppressMessage("Usage", "VSTHRD103: Call async methods when in an async method", Justification = "False positive.")]
@@ -25,20 +27,22 @@ internal static class MvvmHelpers
     }
 
     /// <summary>
-    /// Invokes the OnNavigatedFrom method on both the view and its ViewModel if they implement INavigationAware.
+    /// Performs navigation logic by invoking the OnNavigatedFrom method on the view and its ViewModel
+    /// if they implement the INavigationAware interface. This method is executed when navigating away
+    /// from the specified view, allowing for cleanup or state updates.
     /// </summary>
-    /// <param name="view">The view object that is being navigated from.</param>
-    /// <param name="parameters">The navigation parameters associated with the navigation event.</param>
+    /// <param name="view">The view object being navigated away from. Can be null if not applicable.</param>
+    /// <param name="parameters">The navigation parameters containing context information about the navigation event.</param>
     internal static void OnNavigatedFrom(object? view, IBottomSheetNavigationParameters parameters)
     {
         InvokeViewAndViewModelAction<INavigationAware>(view, v => v.OnNavigatedFrom(parameters));
     }
 
     /// <summary>
-    /// Invokes the OnNavigatedTo method on both the view and its ViewModel if they implement INavigationAware.
+    /// Invokes the OnNavigatedTo method on the specified view and its ViewModel, if they implement the INavigationAware interface.
     /// </summary>
     /// <param name="view">The view object that is being navigated to.</param>
-    /// <param name="parameters">The navigation parameters associated with the navigation event.</param>
+    /// <param name="parameters">The navigation parameters passed to the view.</param>
     internal static void OnNavigatedTo(object? view, IBottomSheetNavigationParameters parameters)
     {
         InvokeViewAndViewModelAction<INavigationAware>(view, v => v.OnNavigatedTo(parameters));
@@ -94,7 +98,9 @@ internal static class MvvmHelpers
     /// <param name="parameters">The navigation parameters.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains true if navigation is allowed; otherwise, false.</returns>
     [SuppressMessage("Usage", "SuspiciousTypeConversion.Global: ReSharper disable once SuspiciousTypeConversion.Global", Justification = "False positive.")]
-    private static async Task<bool> CanNavigateAsync(IBottomSheet bottomSheet, IBottomSheetNavigationParameters parameters)
+    private static async Task<bool> CanNavigateAsync(
+        IBottomSheet bottomSheet,
+        IBottomSheetNavigationParameters parameters)
     {
         bool canNavigate = true;
 
@@ -131,11 +137,11 @@ internal static class MvvmHelpers
     }
 
     /// <summary>
-    /// Invokes an action on both the view and its ViewModel if they implement the specified interface type.
+    /// Invokes a specified action on both the provided view and its ViewModel if they implement the specified interface type.
     /// </summary>
-    /// <typeparam name="T">The interface type to check for and invoke the action on.</typeparam>
-    /// <param name="view">The view object to check and invoke the action on.</param>
-    /// <param name="action">The action to invoke on objects that implement the interface.</param>
+    /// <typeparam name="T">The interface type that the view or ViewModel must implement to have the action invoked on them.</typeparam>
+    /// <param name="view">The view object to inspect and potentially invoke the action on.</param>
+    /// <param name="action">The action to invoke on the view or ViewModel if they implement the specified interface type.</param>
     private static void InvokeViewAndViewModelAction<T>(object? view, Action<T> action)
         where T : class
     {

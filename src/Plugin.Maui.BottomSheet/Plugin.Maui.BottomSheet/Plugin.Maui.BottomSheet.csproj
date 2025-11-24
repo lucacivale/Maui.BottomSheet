@@ -27,6 +27,7 @@
         <PackageIcon>Icon.png</PackageIcon>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageId>Plugin.Maui.BottomSheet</PackageId>
+		<NoWarn>9270</NoWarn>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)'=='Release'">
@@ -35,6 +36,14 @@
 
     <ItemGroup>
         <PackageReference Include="AsyncAwaitBestPractices"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="$(TargetFramework.StartsWith('$(LegacyNETVersion)'))">
+        <PackageReference Include="Microsoft.Maui.Controls"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="$(TargetFramework.StartsWith('$(NETVersion)'))">
+        <PackageReference Include="Microsoft.Maui.Controls" />
     </ItemGroup>
 
     <ItemGroup>
@@ -50,6 +59,10 @@
 	
     <ItemGroup Condition="$(TargetFramework.EndsWith('android'))">
       <ProjectReference Include="..\..\Plugin.BottomSheet.Android\Plugin.BottomSheet.Android.csproj" />
+    </ItemGroup>
+
+    <ItemGroup Condition="$(TargetFramework.EndsWith('ios')) or $(TargetFramework.EndsWith('maccatalyst'))">
+        <ProjectReference Include="..\..\Plugin.BottomSheet.IOSMacCatalyst\Plugin.BottomSheet.IOSMacCatalyst.csproj" />
     </ItemGroup>
 	
     <ItemGroup>

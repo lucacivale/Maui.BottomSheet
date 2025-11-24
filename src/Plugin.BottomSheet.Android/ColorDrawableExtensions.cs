@@ -1,9 +1,7 @@
-using System.Diagnostics;
-
 namespace Plugin.BottomSheet.Android;
 
 /// <summary>
-/// Extension methods for animating color changes in ColorDrawable objects.
+/// A static class that provides extension methods for animating transitions on ColorDrawable objects in Android.
 /// </summary>
 internal static class ColorDrawableExtensions
 {

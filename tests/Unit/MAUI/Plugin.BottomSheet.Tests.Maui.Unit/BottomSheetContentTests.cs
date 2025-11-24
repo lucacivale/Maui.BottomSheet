@@ -8,7 +8,7 @@ public class BottomSheetContentTests
     public void Constructor_ShouldInitializeSuccessfully()
     {
         // Arrange & Act
-        var bottomSheetContent = new BottomSheetContent();
+        BottomSheetContent bottomSheetContent = new BottomSheetContent();
 
         // Assert
         Assert.NotNull(bottomSheetContent);
@@ -21,8 +21,8 @@ public class BottomSheetContentTests
     public void Content_SetAndGet_ShouldWorkCorrectly()
     {
         // Arrange
-        var bottomSheetContent = new BottomSheetContent();
-        var expectedContent = new Label { Text = "Test Content" };
+        BottomSheetContent bottomSheetContent = new BottomSheetContent();
+        Label expectedContent = new Label { Text = "Test Content" };
 
         // Act
         bottomSheetContent.Content = expectedContent;
@@ -35,8 +35,8 @@ public class BottomSheetContentTests
     public void ContentTemplate_SetAndGet_ShouldWorkCorrectly()
     {
         // Arrange
-        var bottomSheetContent = new BottomSheetContent();
-        var expectedTemplate = new DataTemplate(() => new Label { Text = "Template Content" });
+        BottomSheetContent bottomSheetContent = new BottomSheetContent();
+        DataTemplate expectedTemplate = new DataTemplate(() => new Label { Text = "Template Content" });
 
         // Act
         bottomSheetContent.ContentTemplate = expectedTemplate;
@@ -49,8 +49,8 @@ public class BottomSheetContentTests
     public void Parent_SetAndGet_ShouldWorkCorrectly()
     {
         // Arrange
-        var bottomSheetContent = new BottomSheetContent();
-        var expectedParent = new ContentPage();
+        BottomSheetContent bottomSheetContent = new BottomSheetContent();
+        ContentPage expectedParent = new ContentPage();
 
         // Act
         bottomSheetContent.Parent = expectedParent;
@@ -63,9 +63,9 @@ public class BottomSheetContentTests
     public void CreateContent_WithDirectContent_ShouldReturnContent()
     {
         // Arrange
-        var bottomSheetContent = new BottomSheetContent();
-        var expectedContent = new Label { Text = "Direct Content" };
-        var parentElement = new ContentPage();
+        BottomSheetContent bottomSheetContent = new BottomSheetContent();
+        Label expectedContent = new Label { Text = "Direct Content" };
+        ContentPage parentElement = new ContentPage();
         var bindingContext = new { TestProperty = "TestValue" };
 
         bottomSheetContent.Content = expectedContent;
@@ -73,7 +73,7 @@ public class BottomSheetContentTests
         bottomSheetContent.BindingContext = bindingContext;
 
         // Act
-        var result = bottomSheetContent.CreateContent();
+        View result = bottomSheetContent.CreateContent();
 
         // Assert
         Assert.Equal(expectedContent, result);
@@ -85,9 +85,9 @@ public class BottomSheetContentTests
     public void CreateContent_WithContentTemplate_ShouldCreateAndReturnContent()
     {
         // Arrange
-        var bottomSheetContent = new BottomSheetContent();
-        var template = new DataTemplate(() => new Label { Text = "Template Content" });
-        var parentElement = new ContentPage();
+        BottomSheetContent bottomSheetContent = new BottomSheetContent();
+        DataTemplate template = new DataTemplate(() => new Label { Text = "Template Content" });
+        ContentPage parentElement = new ContentPage();
         var bindingContext = new { TestProperty = "TestValue" };
 
         bottomSheetContent.ContentTemplate = template;
@@ -95,7 +95,7 @@ public class BottomSheetContentTests
         bottomSheetContent.BindingContext = bindingContext;
 
         // Act
-        var result = bottomSheetContent.CreateContent();
+        View result = bottomSheetContent.CreateContent();
 
         // Assert
         Assert.NotNull(result);
@@ -110,15 +110,15 @@ public class BottomSheetContentTests
     public void CreateContent_WithBothContentAndTemplate_ShouldPrioritizeTemplate()
     {
         // Arrange
-        var bottomSheetContent = new BottomSheetContent();
-        var directContent = new Label { Text = "Direct Content" };
-        var template = new DataTemplate(() => new Label { Text = "Template Content" });
+        BottomSheetContent bottomSheetContent = new BottomSheetContent();
+        Label directContent = new Label { Text = "Direct Content" };
+        DataTemplate template = new DataTemplate(() => new Label { Text = "Template Content" });
 
         bottomSheetContent.Content = directContent;
         bottomSheetContent.ContentTemplate = template;
 
         // Act
-        var result = bottomSheetContent.CreateContent();
+        View result = bottomSheetContent.CreateContent();
 
         // Assert
         Assert.NotNull(result);
@@ -131,10 +131,10 @@ public class BottomSheetContentTests
     public void CreateContent_WithNeitherContentNorTemplate_ShouldThrowException()
     {
         // Arrange
-        var bottomSheetContent = new BottomSheetContent();
+        BottomSheetContent bottomSheetContent = new BottomSheetContent();
 
         // Act & Assert
-        var exception = Assert.Throws<BottomSheetContentNotSetException>(() => bottomSheetContent.CreateContent());
+        BottomSheetContentNotSetException exception = Assert.Throws<BottomSheetContentNotSetException>(() => bottomSheetContent.CreateContent());
         Assert.Contains("Content must be set before creating content", exception.Message);
     }
 
@@ -142,13 +142,13 @@ public class BottomSheetContentTests
     public void CreateContent_WithNullTemplateResult_ShouldThrowException()
     {
         // Arrange
-        var bottomSheetContent = new BottomSheetContent();
-        var template = new DataTemplate(() => null); // Template returns null
+        BottomSheetContent bottomSheetContent = new BottomSheetContent();
+        DataTemplate template = new DataTemplate(() => null); // Template returns null
 
         bottomSheetContent.ContentTemplate = template;
 
         // Act & Assert
-        var exception = Assert.Throws<BottomSheetContentNotSetException>(() => bottomSheetContent.CreateContent());
+        BottomSheetContentNotSetException exception = Assert.Throws<BottomSheetContentNotSetException>(() => bottomSheetContent.CreateContent());
         Assert.Contains("Content must be set before creating content", exception.Message);
     }
 
@@ -156,13 +156,13 @@ public class BottomSheetContentTests
     public void CreateContent_WithTemplateReturningNonView_ShouldThrowException()
     {
         // Arrange
-        var bottomSheetContent = new BottomSheetContent();
-        var template = new DataTemplate(() => "Not a View"); // Template returns non-View object
+        BottomSheetContent bottomSheetContent = new BottomSheetContent();
+        DataTemplate template = new DataTemplate(() => "Not a View"); // Template returns non-View object
 
         bottomSheetContent.ContentTemplate = template;
 
         // Act & Assert
-        var exception = Assert.Throws<BottomSheetContentNotSetException>(() => bottomSheetContent.CreateContent());
+        BottomSheetContentNotSetException exception = Assert.Throws<BottomSheetContentNotSetException>(() => bottomSheetContent.CreateContent());
         Assert.Contains("Content must be set before creating content", exception.Message);
     }
 
@@ -170,13 +170,13 @@ public class BottomSheetContentTests
     public void CreateContent_MultipleCallsWithSameContent_ShouldReturnSameInstance()
     {
         // Arrange
-        var bottomSheetContent = new BottomSheetContent();
-        var content = new Label { Text = "Test Content" };
+        BottomSheetContent bottomSheetContent = new BottomSheetContent();
+        Label content = new Label { Text = "Test Content" };
         bottomSheetContent.Content = content;
 
         // Act
-        var result1 = bottomSheetContent.CreateContent();
-        var result2 = bottomSheetContent.CreateContent();
+        View result1 = bottomSheetContent.CreateContent();
+        View result2 = bottomSheetContent.CreateContent();
 
         // Assert
         Assert.Same(result1, result2);
@@ -187,8 +187,8 @@ public class BottomSheetContentTests
     public void CreateContent_ShouldPreserveContentProperties()
     {
         // Arrange
-        var bottomSheetContent = new BottomSheetContent();
-        var content = new Label 
+        BottomSheetContent bottomSheetContent = new BottomSheetContent();
+        Label content = new Label 
         { 
             Text = "Test Content",
             BackgroundColor = Colors.Red,
@@ -197,7 +197,7 @@ public class BottomSheetContentTests
         bottomSheetContent.Content = content;
 
         // Act
-        var result = bottomSheetContent.CreateContent();
+        View result = bottomSheetContent.CreateContent();
 
         // Assert
         Assert.Equal("Test Content", ((Label)result).Text);

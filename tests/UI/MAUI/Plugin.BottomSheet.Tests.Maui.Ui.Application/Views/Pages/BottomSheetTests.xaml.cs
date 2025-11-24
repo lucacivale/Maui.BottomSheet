@@ -17,7 +17,7 @@ public partial class BottomSheetTests
         
         await Task.Delay(TimeSpan.FromSeconds(1));
 
-        RadioButtonGroup.SetSelectedValue(CurrentState, BottomSheet.CurrentState);
+        MediumCheckBox.IsChecked = true;
     }
 
     private void Medium_OnCheckedChanged(object? sender, CheckedChangedEventArgs e)
@@ -81,5 +81,26 @@ public partial class BottomSheetTests
     private void OpenStaticPeekWithBuiltInHeaderBottomSheet_OnClicked(object? sender, EventArgs e)
     {
         PeekBottomSheetStaticHeightWithBuiltInHeader.IsOpen = true;
+    }
+
+    private void MediumCheckBox_OnCheckedChanged(object? sender, CheckedChangedEventArgs e)
+    {
+        if (MediumCheckBox.IsChecked)
+        {
+            LargeCheckBox.IsChecked = false;
+        }
+        BottomSheetTestsViewModel vm = (BottomSheetTestsViewModel)BindingContext;
+        vm.CurrentState = BottomSheetState.Medium;
+    }
+
+    private void LargeCheckBox_OnCheckedChanged(object? sender, CheckedChangedEventArgs e)
+    {
+        if (LargeCheckBox.IsChecked)
+        {
+            MediumCheckBox.IsChecked = false;
+        }
+        
+        BottomSheetTestsViewModel vm = (BottomSheetTestsViewModel)BindingContext;
+        vm.CurrentState = BottomSheetState.Large;
     }
 }

@@ -4,7 +4,8 @@ using AsyncAwaitBestPractices;
 namespace Plugin.BottomSheet.Android;
 
 /// <summary>
-/// Handles back button press events for bottom sheet dialogs.
+/// A callback class designed to manage back button presses specifically for bottom sheet dialogs.
+/// It ensures appropriate behavior when the back button is pressed while a bottom sheet dialog is active.
 /// </summary>
 internal sealed class BottomSheetDialogOnBackPressedCallback : OnBackPressedCallback
 {
@@ -12,15 +13,16 @@ internal sealed class BottomSheetDialogOnBackPressedCallback : OnBackPressedCall
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheetDialogOnBackPressedCallback"/> class.
+    /// Handles back button press events for bottom sheet dialogs.
     /// </summary>
-    /// <param name="enabled">Whether the callback is enabled.</param>
+    /// <param name="enabled">Indicates whether the callback is enabled.</param>
     public BottomSheetDialogOnBackPressedCallback(bool enabled)
         : base(enabled)
     {
     }
 
     /// <summary>
-    /// Occurs when the back button is pressed.
+    /// Event that is triggered when the back button is pressed while the bottom sheet dialog is active.
     /// </summary>
     public event EventHandler BackPressed
     {
@@ -29,7 +31,7 @@ internal sealed class BottomSheetDialogOnBackPressedCallback : OnBackPressedCall
     }
 
     /// <summary>
-    /// Handles the back button press event.
+    /// Handles the back button press event by raising the associated BackPressed event.
     /// </summary>
     public override void HandleOnBackPressed()
     {

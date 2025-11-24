@@ -1,25 +1,25 @@
 namespace Plugin.Maui.BottomSheet.Hosting
 {
     /// <summary>
-    /// Provides extension methods for <see cref="MauiAppBuilder"/> to register and configure
-    /// the BottomSheet plugin and its required services.
+    /// Contains extension methods to extend the functionality of <see cref="MauiAppBuilder"/>
+    /// and facilitate the integration and configuration of the BottomSheet plugin within a .NET MAUI application.
     /// </summary>
     public static class MauiAppBuilderExtensions
     {
         /// <summary>
-        /// Registers all necessary handlers and services required by the BottomSheet plugin.
-        /// Optionally applies configuration settings using the provided delegate.
+        /// Registers all required handlers and services for the BottomSheet plugin.
+        /// Allows optional plugin configuration using the provided delegate.
         /// </summary>
-        /// <param name="builder">The <see cref="MauiAppBuilder"/> instance to configure.</param>
+        /// <param name="builder">The <see cref="MauiAppBuilder"/> instance that is being configured.</param>
         /// <param name="configuration">
-        /// An optional delegate for configuring plugin-specific options with a <see cref="Configuration"/> instance.
+        /// A delegate optionally provided to configure settings using a <see cref="Configuration"/> instance.
         /// </param>
         /// <returns>
-        /// The same <see cref="MauiAppBuilder"/> instance, enabling method chaining.
+        /// The configured <see cref="MauiAppBuilder"/> instance, supporting method chaining.
         /// </returns>
         public static MauiAppBuilder UseBottomSheet(this MauiAppBuilder builder, Action<Configuration>? configuration = null)
         {
-            var config = new Configuration();
+            Configuration config = new();
             configuration?.Invoke(config);
 
             builder
@@ -29,7 +29,7 @@ namespace Plugin.Maui.BottomSheet.Hosting
                     x.AddHandler<CloseButton, Handlers.CloseButtonHandler>();
                 })
                 .Services
-                    .AddSingleton<Navigation.IBottomSheetNavigationService, Navigation.BottomSheetNavigationService>()
+                .AddSingleton<Navigation.IBottomSheetNavigationService, Navigation.BottomSheetNavigationService>()
                     .AddSingleton(config);
             return builder;
         }

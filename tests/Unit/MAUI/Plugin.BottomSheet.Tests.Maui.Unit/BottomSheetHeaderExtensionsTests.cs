@@ -14,7 +14,7 @@ public class BottomSheetHeaderExtensionsTests
         BottomSheetHeader? bottomSheetHeader = null;
 
         // Act
-        var result = bottomSheetHeader.HasTopLeftButton();
+        bool result = bottomSheetHeader.HasTopLeftButton();
 
         // Assert
         Assert.False(result);
@@ -24,14 +24,14 @@ public class BottomSheetHeaderExtensionsTests
     public void HasTopLeftButton_WhenHeaderAppearanceIsNotLeftOrBoth_ReturnsFalse()
     {
         // Arrange
-        var bottomSheetHeader = new BottomSheetHeader
+        BottomSheetHeader bottomSheetHeader = new BottomSheetHeader
         {
             HeaderAppearance = BottomSheetHeaderButtonAppearanceMode.RightButton,
             TopLeftButton = new Button(),
         };
 
         // Act
-        var result = bottomSheetHeader.HasTopLeftButton();
+        bool result = bottomSheetHeader.HasTopLeftButton();
 
         // Assert
         Assert.False(result);
@@ -41,14 +41,14 @@ public class BottomSheetHeaderExtensionsTests
     public void HasTopLeftButton_WhenTopLeftButtonIsNull_ReturnsFalse()
     {
         // Arrange
-        var bottomSheetHeader = new BottomSheetHeader
+        BottomSheetHeader bottomSheetHeader = new BottomSheetHeader
         {
             HeaderAppearance = BottomSheetHeaderButtonAppearanceMode.LeftButton,
             TopLeftButton = null,
         };
 
         // Act
-        var result = bottomSheetHeader.HasTopLeftButton();
+        bool result = bottomSheetHeader.HasTopLeftButton();
 
         // Assert
         Assert.False(result);
@@ -58,7 +58,7 @@ public class BottomSheetHeaderExtensionsTests
     public void HasTopLeftButton_WhenHasTopLeftCloseButton_ReturnsFalse()
     {
         // Arrange
-        var bottomSheetHeader = new BottomSheetHeader
+        BottomSheetHeader bottomSheetHeader = new BottomSheetHeader
         {
             HeaderAppearance = BottomSheetHeaderButtonAppearanceMode.LeftButton,
             TopLeftButton = new Button(),
@@ -67,7 +67,7 @@ public class BottomSheetHeaderExtensionsTests
         };
 
         // Act
-        var result = bottomSheetHeader.HasTopLeftButton();
+        bool result = bottomSheetHeader.HasTopLeftButton();
 
         // Assert
         Assert.False(result);
@@ -77,7 +77,7 @@ public class BottomSheetHeaderExtensionsTests
     public void HasTopLeftButton_WhenAllConditionsMet_ReturnsTrue()
     {
         // Arrange
-        var bottomSheetHeader = new BottomSheetHeader
+        BottomSheetHeader bottomSheetHeader = new BottomSheetHeader
         {
             HeaderAppearance = BottomSheetHeaderButtonAppearanceMode.LeftButton,
             TopLeftButton = new Button(),
@@ -85,7 +85,7 @@ public class BottomSheetHeaderExtensionsTests
         };
 
         // Act
-        var result = bottomSheetHeader.HasTopLeftButton();
+        bool result = bottomSheetHeader.HasTopLeftButton();
 
         // Assert
         Assert.True(result);
@@ -95,7 +95,7 @@ public class BottomSheetHeaderExtensionsTests
     public void HasTopLeftButton_WhenHeaderAppearanceIsLeftAndRightButton_ReturnsTrue()
     {
         // Arrange
-        var bottomSheetHeader = new BottomSheetHeader
+        BottomSheetHeader bottomSheetHeader = new BottomSheetHeader
         {
             HeaderAppearance = BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton,
             TopLeftButton = new Button(),
@@ -103,7 +103,7 @@ public class BottomSheetHeaderExtensionsTests
         };
 
         // Act
-        var result = bottomSheetHeader.HasTopLeftButton();
+        bool result = bottomSheetHeader.HasTopLeftButton();
 
         // Assert
         Assert.True(result);
@@ -116,7 +116,7 @@ public class BottomSheetHeaderExtensionsTests
         BottomSheetHeader? bottomSheetHeader = null;
 
         // Act
-        var result = bottomSheetHeader.HasTopLeftCloseButton();
+        bool result = bottomSheetHeader.HasTopLeftCloseButton();
 
         // Assert
         Assert.False(result);
@@ -126,14 +126,14 @@ public class BottomSheetHeaderExtensionsTests
     public void HasTopLeftCloseButton_WhenShowCloseButtonIsFalse_ReturnsFalse()
     {
         // Arrange
-        var bottomSheetHeader = new BottomSheetHeader
+        BottomSheetHeader bottomSheetHeader = new BottomSheetHeader
         {
             ShowCloseButton = false,
             CloseButtonPosition = BottomSheetHeaderCloseButtonPosition.TopLeft,
         };
 
         // Act
-        var result = bottomSheetHeader.HasTopLeftCloseButton();
+        bool result = bottomSheetHeader.HasTopLeftCloseButton();
 
         // Assert
         Assert.False(result);
@@ -143,14 +143,14 @@ public class BottomSheetHeaderExtensionsTests
     public void HasTopLeftCloseButton_WhenCloseButtonPositionIsNotTopLeft_ReturnsFalse()
     {
         // Arrange
-        var bottomSheetHeader = new BottomSheetHeader
+        BottomSheetHeader bottomSheetHeader = new BottomSheetHeader
         {
             ShowCloseButton = true,
             CloseButtonPosition = BottomSheetHeaderCloseButtonPosition.TopRight,
         };
 
         // Act
-        var result = bottomSheetHeader.HasTopLeftCloseButton();
+        bool result = bottomSheetHeader.HasTopLeftCloseButton();
 
         // Assert
         Assert.False(result);
@@ -160,14 +160,14 @@ public class BottomSheetHeaderExtensionsTests
     public void HasTopLeftCloseButton_WhenAllConditionsMet_ReturnsTrue()
     {
         // Arrange
-        var bottomSheetHeader = new BottomSheetHeader
+        BottomSheetHeader bottomSheetHeader = new BottomSheetHeader
         {
             ShowCloseButton = true,
             CloseButtonPosition = BottomSheetHeaderCloseButtonPosition.TopLeft,
         };
 
         // Act
-        var result = bottomSheetHeader.HasTopLeftCloseButton();
+        bool result = bottomSheetHeader.HasTopLeftCloseButton();
 
         // Assert
         Assert.True(result);
@@ -180,7 +180,7 @@ public class BottomSheetHeaderExtensionsTests
         BottomSheetHeader? bottomSheetHeader = null;
 
         // Act
-        var result = bottomSheetHeader.HasTopRightButton();
+        bool result = bottomSheetHeader.HasTopRightButton();
 
         // Assert
         Assert.False(result);
@@ -190,14 +190,14 @@ public class BottomSheetHeaderExtensionsTests
     public void HasTopRightButton_WhenHeaderAppearanceIsNotRightOrBoth_ReturnsFalse()
     {
         // Arrange
-        var bottomSheetHeader = new BottomSheetHeader
+        BottomSheetHeader bottomSheetHeader = new BottomSheetHeader
         {
             HeaderAppearance = BottomSheetHeaderButtonAppearanceMode.LeftButton,
             TopRightButton = new Button(),
         };
 
         // Act
-        var result = bottomSheetHeader.HasTopRightButton();
+        bool result = bottomSheetHeader.HasTopRightButton();
 
         // Assert
         Assert.False(result);
@@ -207,14 +207,14 @@ public class BottomSheetHeaderExtensionsTests
     public void HasTopRightButton_WhenTopRightButtonIsNull_ReturnsFalse()
     {
         // Arrange
-        var bottomSheetHeader = new BottomSheetHeader
+        BottomSheetHeader bottomSheetHeader = new BottomSheetHeader
         {
             HeaderAppearance = BottomSheetHeaderButtonAppearanceMode.RightButton,
             TopRightButton = null,
         };
 
         // Act
-        var result = bottomSheetHeader.HasTopRightButton();
+        bool result = bottomSheetHeader.HasTopRightButton();
 
         // Assert
         Assert.False(result);
@@ -224,7 +224,7 @@ public class BottomSheetHeaderExtensionsTests
     public void HasTopRightButton_WhenHasTopRightCloseButton_ReturnsFalse()
     {
         // Arrange
-        var bottomSheetHeader = new BottomSheetHeader
+        BottomSheetHeader bottomSheetHeader = new BottomSheetHeader
         {
             HeaderAppearance = BottomSheetHeaderButtonAppearanceMode.RightButton,
             TopRightButton = new Button(),
@@ -233,7 +233,7 @@ public class BottomSheetHeaderExtensionsTests
         };
 
         // Act
-        var result = bottomSheetHeader.HasTopRightButton();
+        bool result = bottomSheetHeader.HasTopRightButton();
 
         // Assert
         Assert.False(result);
@@ -243,7 +243,7 @@ public class BottomSheetHeaderExtensionsTests
     public void HasTopRightButton_WhenAllConditionsMet_ReturnsTrue()
     {
         // Arrange
-        var bottomSheetHeader = new BottomSheetHeader
+        BottomSheetHeader bottomSheetHeader = new BottomSheetHeader
         {
             HeaderAppearance = BottomSheetHeaderButtonAppearanceMode.RightButton,
             TopRightButton = new Button(),
@@ -251,7 +251,7 @@ public class BottomSheetHeaderExtensionsTests
         };
 
         // Act
-        var result = bottomSheetHeader.HasTopRightButton();
+        bool result = bottomSheetHeader.HasTopRightButton();
 
         // Assert
         Assert.True(result);
@@ -261,7 +261,7 @@ public class BottomSheetHeaderExtensionsTests
     public void HasTopRightButton_WhenHeaderAppearanceIsLeftAndRightButton_ReturnsTrue()
     {
         // Arrange
-        var bottomSheetHeader = new BottomSheetHeader
+        BottomSheetHeader bottomSheetHeader = new BottomSheetHeader
         {
             HeaderAppearance = BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton,
             TopRightButton = new Button(),
@@ -269,7 +269,7 @@ public class BottomSheetHeaderExtensionsTests
         };
 
         // Act
-        var result = bottomSheetHeader.HasTopRightButton();
+        bool result = bottomSheetHeader.HasTopRightButton();
 
         // Assert
         Assert.True(result);
@@ -282,7 +282,7 @@ public class BottomSheetHeaderExtensionsTests
         BottomSheetHeader? bottomSheetHeader = null;
 
         // Act
-        var result = bottomSheetHeader.HasTopRightCloseButton();
+        bool result = bottomSheetHeader.HasTopRightCloseButton();
 
         // Assert
         Assert.False(result);
@@ -292,14 +292,14 @@ public class BottomSheetHeaderExtensionsTests
     public void HasTopRightCloseButton_WhenShowCloseButtonIsFalse_ReturnsFalse()
     {
         // Arrange
-        var bottomSheetHeader = new BottomSheetHeader
+        BottomSheetHeader bottomSheetHeader = new BottomSheetHeader
         {
             ShowCloseButton = false,
             CloseButtonPosition = BottomSheetHeaderCloseButtonPosition.TopRight,
         };
 
         // Act
-        var result = bottomSheetHeader.HasTopRightCloseButton();
+        bool result = bottomSheetHeader.HasTopRightCloseButton();
 
         // Assert
         Assert.False(result);
@@ -309,14 +309,14 @@ public class BottomSheetHeaderExtensionsTests
     public void HasTopRightCloseButton_WhenCloseButtonPositionIsNotTopRight_ReturnsFalse()
     {
         // Arrange
-        var bottomSheetHeader = new BottomSheetHeader
+        BottomSheetHeader bottomSheetHeader = new BottomSheetHeader
         {
             ShowCloseButton = true,
             CloseButtonPosition = BottomSheetHeaderCloseButtonPosition.TopLeft,
         };
 
         // Act
-        var result = bottomSheetHeader.HasTopRightCloseButton();
+        bool result = bottomSheetHeader.HasTopRightCloseButton();
 
         // Assert
         Assert.False(result);
@@ -326,14 +326,14 @@ public class BottomSheetHeaderExtensionsTests
     public void HasTopRightCloseButton_WhenAllConditionsMet_ReturnsTrue()
     {
         // Arrange
-        var bottomSheetHeader = new BottomSheetHeader
+        BottomSheetHeader bottomSheetHeader = new BottomSheetHeader
         {
             ShowCloseButton = true,
             CloseButtonPosition = BottomSheetHeaderCloseButtonPosition.TopRight,
         };
 
         // Act
-        var result = bottomSheetHeader.HasTopRightCloseButton();
+        bool result = bottomSheetHeader.HasTopRightCloseButton();
 
         // Assert
         Assert.True(result);
@@ -346,7 +346,7 @@ public class BottomSheetHeaderExtensionsTests
         BottomSheetHeader? bottomSheetHeader = null;
 
         // Act
-        var result = bottomSheetHeader.HasTitle();
+        bool result = bottomSheetHeader.HasTitle();
 
         // Assert
         Assert.False(result);
@@ -356,13 +356,13 @@ public class BottomSheetHeaderExtensionsTests
     public void HasTitle_WhenTitleTextIsNull_ReturnsFalse()
     {
         // Arrange
-        var bottomSheetHeader = new BottomSheetHeader
+        BottomSheetHeader bottomSheetHeader = new BottomSheetHeader
         {
             TitleText = null,
         };
 
         // Act
-        var result = bottomSheetHeader.HasTitle();
+        bool result = bottomSheetHeader.HasTitle();
 
         // Assert
         Assert.False(result);
@@ -372,13 +372,13 @@ public class BottomSheetHeaderExtensionsTests
     public void HasTitle_WhenTitleTextIsEmpty_ReturnsFalse()
     {
         // Arrange
-        var bottomSheetHeader = new BottomSheetHeader
+        BottomSheetHeader bottomSheetHeader = new BottomSheetHeader
         {
             TitleText = string.Empty,
         };
 
         // Act
-        var result = bottomSheetHeader.HasTitle();
+        bool result = bottomSheetHeader.HasTitle();
 
         // Assert
         Assert.False(result);
@@ -388,13 +388,13 @@ public class BottomSheetHeaderExtensionsTests
     public void HasTitle_WhenTitleTextIsWhitespace_ReturnsFalse()
     {
         // Arrange
-        var bottomSheetHeader = new BottomSheetHeader
+        BottomSheetHeader bottomSheetHeader = new BottomSheetHeader
         {
             TitleText = "   ",
         };
 
         // Act
-        var result = bottomSheetHeader.HasTitle();
+        bool result = bottomSheetHeader.HasTitle();
 
         // Assert
         Assert.False(result);
@@ -404,13 +404,13 @@ public class BottomSheetHeaderExtensionsTests
     public void HasTitle_WhenTitleTextHasValue_ReturnsTrue()
     {
         // Arrange
-        var bottomSheetHeader = new BottomSheetHeader
+        BottomSheetHeader bottomSheetHeader = new BottomSheetHeader
         {
             TitleText = "Test Title",
         };
 
         // Act
-        var result = bottomSheetHeader.HasTitle();
+        bool result = bottomSheetHeader.HasTitle();
 
         // Assert
         Assert.True(result);
@@ -423,7 +423,7 @@ public class BottomSheetHeaderExtensionsTests
         BottomSheetHeader? bottomSheetHeader = null;
 
         // Act
-        var result = bottomSheetHeader.HasHeaderView();
+        bool result = bottomSheetHeader.HasHeaderView();
 
         // Assert
         Assert.False(result);
@@ -433,14 +433,14 @@ public class BottomSheetHeaderExtensionsTests
     public void HasHeaderView_WhenBothHeaderDataTemplateAndContentAreNull_ReturnsFalse()
     {
         // Arrange
-        var bottomSheetHeader = new BottomSheetHeader
+        BottomSheetHeader bottomSheetHeader = new BottomSheetHeader
         {
             ContentTemplate = null,
             Content = null,
         };
 
         // Act
-        var result = bottomSheetHeader.HasHeaderView();
+        bool result = bottomSheetHeader.HasHeaderView();
 
         // Assert
         Assert.False(result);
@@ -450,14 +450,14 @@ public class BottomSheetHeaderExtensionsTests
     public void HasHeaderView_WhenHeaderDataTemplateIsNotNull_ReturnsTrue()
     {
         // Arrange
-        var bottomSheetHeader = new BottomSheetHeader
+        BottomSheetHeader bottomSheetHeader = new BottomSheetHeader
         {
             ContentTemplate = new DataTemplate(() => new Label()),
             Content = null,
         };
 
         // Act
-        var result = bottomSheetHeader.HasHeaderView();
+        bool result = bottomSheetHeader.HasHeaderView();
 
         // Assert
         Assert.True(result);
@@ -467,14 +467,14 @@ public class BottomSheetHeaderExtensionsTests
     public void HasHeaderView_WhenContentIsNotNull_ReturnsTrue()
     {
         // Arrange
-        var bottomSheetHeader = new BottomSheetHeader
+        BottomSheetHeader bottomSheetHeader = new BottomSheetHeader
         {
             ContentTemplate = null,
             Content = new Label(),
         };
 
         // Act
-        var result = bottomSheetHeader.HasHeaderView();
+        bool result = bottomSheetHeader.HasHeaderView();
 
         // Assert
         Assert.True(result);
@@ -484,14 +484,14 @@ public class BottomSheetHeaderExtensionsTests
     public void HasHeaderView_WhenBothHeaderDataTemplateAndContentAreNotNull_ReturnsTrue()
     {
         // Arrange
-        var bottomSheetHeader = new BottomSheetHeader
+        BottomSheetHeader bottomSheetHeader = new BottomSheetHeader
         {
             ContentTemplate = new DataTemplate(() => new Label()),
             Content = new Label(),
         };
 
         // Act
-        var result = bottomSheetHeader.HasHeaderView();
+        bool result = bottomSheetHeader.HasHeaderView();
 
         // Assert
         Assert.True(result);

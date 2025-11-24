@@ -1,7 +1,8 @@
 namespace Plugin.Maui.BottomSheet.Navigation;
 
 /// <summary>
-/// Extension methods for simplified bottom sheet navigation.
+/// Provides extension methods for navigating to bottom sheets using the
+/// <see cref="IBottomSheetNavigationService"/> with options for view model resolution and customization.
 /// </summary>
 // ReSharper disable once InconsistentNaming
 public static class IBottomSheetNavigationServiceExtensions
@@ -18,11 +19,11 @@ public static class IBottomSheetNavigationServiceExtensions
     {
         ArgumentNullException.ThrowIfNull(navigationService);
 
-        var bottomSheet = navigationService.ServiceProvider.GetRequiredKeyedService<IBottomSheet>(name);
+        IBottomSheet bottomSheet = navigationService.ServiceProvider.GetRequiredKeyedService<IBottomSheet>(name);
 
         object? viewModel = null;
 
-        if (BottomSheetNavigationService.BottomSheetToViewModelMapping.TryGetValue(name, out var viewModelType))
+        if (BottomSheetNavigationService.BottomSheetToViewModelMapping.TryGetValue(name, out Type? viewModelType))
         {
             viewModel = navigationService.ServiceProvider.GetService(viewModelType);
         }
@@ -44,8 +45,8 @@ public static class IBottomSheetNavigationServiceExtensions
     {
         ArgumentNullException.ThrowIfNull(navigationService);
 
-        var bottomSheet = navigationService.ServiceProvider.GetRequiredKeyedService<IBottomSheet>(name);
-        var viewModel = navigationService.ServiceProvider.GetRequiredService<TViewModel>();
+        IBottomSheet bottomSheet = navigationService.ServiceProvider.GetRequiredKeyedService<IBottomSheet>(name);
+        TViewModel viewModel = navigationService.ServiceProvider.GetRequiredService<TViewModel>();
 
         return navigationService.NavigateToAsync(bottomSheet, viewModel, parameters, configure);
     }

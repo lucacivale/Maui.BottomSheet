@@ -30,10 +30,6 @@ public class BottomSheetTestsBottomSheet : PomBase
     
     private IWebElement IsDraggableElement => Wait.Until(d => d.FindElement(BottomSheetTestsAutomationIds.IsDraggable));
     
-    private IWebElement ChangeWindowBackgroundColorElement => Wait.Until(d => d.FindElement(BottomSheetTestsAutomationIds.ChangeWindowBackgroundColor));
-    
-    private IWebElement ChangeBackgroundColorElement => Wait.Until(d => d.FindElement(BottomSheetTestsAutomationIds.ChangeBackgroundColor));
-    
     private IWebElement MediumStateElement => Wait.Until(d => d.FindElement(BottomSheetTestsAutomationIds.MediumState));
     
     private IWebElement LargeStateElement => Wait.Until(d => d.FindElement(BottomSheetTestsAutomationIds.LargeState));
@@ -42,7 +38,7 @@ public class BottomSheetTestsBottomSheet : PomBase
     
     private IWebElement CurrentLargeStateElement => Wait.Until(d => d.FindElement(BottomSheetTestsAutomationIds.CurrentLargeState));
     
-    private IWebElement DesignContentElement => Wait.Until(d => d.FindElement(BottomSheetTestsAutomationIds.DesignBottomSheet));
+    private IWebElement BottomSheet => App.FindElement(BottomSheetTestsAutomationIds.BottomSheet);
 
     private IWebElement ContentElement => Wait.Until(d => d.FindElement(BottomSheetTestsAutomationIds.Content));
 
@@ -60,7 +56,8 @@ public class BottomSheetTestsBottomSheet : PomBase
     {
         CornerRadiusElement.Clear();
         CornerRadiusElement.SendKeys(value.ToString(CultureInfo.CurrentCulture));
-
+        App.CloseKeyboard();
+        
         await WaitShortAsync();
     }
     
@@ -68,25 +65,27 @@ public class BottomSheetTestsBottomSheet : PomBase
     {
         MarginElement.Clear();
         MarginElement.SendKeys(value.ToString(CultureInfo.CurrentCulture));
-
+        App.CloseKeyboard();
+        
         await WaitShortAsync();
     }
 
     public Size Size()
     {
-        return DesignContentElement.Size;
+        return BottomSheet.Size;
     }
     
     public Point Location()
     {
-        return DesignContentElement.Location;
+        return BottomSheet.Location;
     }
     
     public async Task SetPaddingAsync(float value)
     {
         PaddingElement.Clear();
         PaddingElement.SendKeys(value.ToString(CultureInfo.CurrentCulture));
-
+        App.CloseKeyboard();
+        
         await WaitShortAsync();
     }
 
@@ -94,7 +93,8 @@ public class BottomSheetTestsBottomSheet : PomBase
     {
         HalfExpandedRatioElement.Clear();
         HalfExpandedRatioElement.SendKeys(Convert.ToString(value, CultureInfo.InvariantCulture));
-
+        App.CloseKeyboard();
+        
         await WaitShortAsync();
     }
 
@@ -210,7 +210,7 @@ public class BottomSheetTestsBottomSheet : PomBase
     }
     public void ClickBackground()
     {
-        var location = Location();
+        Point location = Location();
         
         new Actions(App)
             .MoveToLocation(location.X, location.Y - 100)
@@ -220,8 +220,8 @@ public class BottomSheetTestsBottomSheet : PomBase
 
     public void DragDownToClose()
     {
-        var location = Location();
-        var size = Size();
+        Point location = Location();
+        Size size = Size();
         
         int startX = location.X + (size.Width / 2);
         int startY = location.Y + 50;
@@ -248,7 +248,7 @@ public class BottomSheetTestsBottomSheet : PomBase
 
     public void DragUp()
     {
-        var location = HandleLocation();
+        Point location = HandleLocation();
         
         int startX = location.X;
         int startY = location.Y + 100;

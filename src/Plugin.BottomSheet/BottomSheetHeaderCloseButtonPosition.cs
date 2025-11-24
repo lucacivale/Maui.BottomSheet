@@ -1,12 +1,12 @@
 ﻿namespace Plugin.BottomSheet;
 
 /// <summary>
-/// Specifies the position of the close button in the bottom sheet header.
+/// Defines the possible positions for the close button within the bottom sheet header.
 /// </summary>
 public enum BottomSheetHeaderCloseButtonPosition
 {
     /// <summary>
-    /// Positions the close button at the top left of the header.
+    /// Aligns the close button to the top-left corner of the bottom sheet header.
     /// </summary>
     TopLeft,
 

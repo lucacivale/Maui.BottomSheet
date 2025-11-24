@@ -5,9 +5,9 @@ using System.Diagnostics.CodeAnalysis;
 
 /// <summary>
 /// Provides extension methods for <see cref="IServiceCollection"/> to register <see cref="BottomSheet"/> instances.
-/// These methods allow registering a <see cref="ContentPage"/> as a <see cref="BottomSheet"/>,
-/// optionally associating a view model and providing custom configuration
-/// for use within a .NET MAUI application using dependency injection.
+/// These methods enable the registration of <see cref="ContentPage"/> types as <see cref="BottomSheet"/>
+/// components, optionally associating view models and allowing custom configuration for integration
+/// within a .NET MAUI application using dependency injection.
 /// </summary>
 // ReSharper disable once InconsistentNaming
 public static class IServiceCollectionExtensions
@@ -70,7 +70,7 @@ public static class IServiceCollectionExtensions
             name,
             (serviceProvider, _) =>
             {
-                var (bottomSheet, element) = BottomSheetFactory<T>(serviceProvider);
+                (BottomSheet bottomSheet, T element) = BottomSheetFactory<T>(serviceProvider);
                 configure.Invoke(bottomSheet, element);
                 return bottomSheet;
             });
@@ -78,8 +78,8 @@ public static class IServiceCollectionExtensions
     }
 
     /// <summary>
-    /// Registers a <typeparamref name="T"/> ContentPage as a <see cref="BottomSheet"/> with an associated view model <typeparamref name="TViewModel"/>,
-    /// by the specified name, and applies custom configuration.
+    /// Registers a <typeparamref name="T"/> ContentPage as a <see cref="BottomSheet"/> with an associated view model <typeparamref name="TViewModel"/>.
+    /// This registration uses a specified name, allows custom configuration, and maps the view model to the bottom sheet.
     /// </summary>
     /// <typeparam name="T">The ContentPage type to register as <see cref="BottomSheet"/>. Must implement <see cref="IView"/>.</typeparam>
     /// <typeparam name="TViewModel">The view model type to associate with the bottom sheet.</typeparam>
@@ -89,9 +89,7 @@ public static class IServiceCollectionExtensions
     /// The action used to configure the created <see cref="BottomSheet"/> and its underlying element of type <typeparamref name="T"/>.
     /// </param>
     /// <returns>The updated <see cref="IServiceCollection"/> with the bottom sheet and view model registered and configured.</returns>
-    public static IServiceCollection AddBottomSheet<
-        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T,
-        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TViewModel>(this IServiceCollection services, string name, Action<IBottomSheet, T> configure)
+    public static IServiceCollection AddBottomSheet<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TViewModel>(this IServiceCollection services, string name, Action<IBottomSheet, T> configure)
         where T : class, IView
         where TViewModel : class
     {
@@ -102,7 +100,7 @@ public static class IServiceCollectionExtensions
             name,
             (serviceProvider, _) =>
             {
-                var (bottomSheet, element) = BottomSheetFactory<T>(serviceProvider);
+                (BottomSheet bottomSheet, T element) = BottomSheetFactory<T>(serviceProvider);
                 configure.Invoke(bottomSheet, element);
                 return bottomSheet;
             });
@@ -110,27 +108,27 @@ public static class IServiceCollectionExtensions
     }
 
     /// <summary>
-    /// Creates the <see cref="BottomSheet"/> and its associated element of type <typeparamref name="T"/>.
-    /// Assigns the content and optionally copies relevant page properties if the element is a <see cref="ContentPage"/>.
+    /// Creates a <see cref="BottomSheet"/> and its associated element of type <typeparamref name="T"/>.
+    /// Configures the content and optionally synchronizes properties if the associated element is a <see cref="ContentPage"/>.
     /// </summary>
-    /// <typeparam name="T">The type of <see cref="IView"/> to use for the bottom sheet's content.</typeparam>
-    /// <param name="serviceProvider">The service provider for dependency resolution.</param>
+    /// <typeparam name="T">The type of <see cref="IView"/> to create and associate with the bottom sheet.</typeparam>
+    /// <param name="serviceProvider">The service provider used for resolving dependencies.</param>
     /// <returns>
-    /// A tuple containing the instantiated <see cref="BottomSheet"/> and its associated <typeparamref name="T"/> element.
+    /// A tuple containing the created <see cref="BottomSheet"/> instance and the associated <typeparamref name="T"/> element.
     /// </returns>
     private static (BottomSheet BottomSheet, T Element) BottomSheetFactory<T>(IServiceProvider serviceProvider)
         where T : class, IView
     {
         if (typeof(IBottomSheet).IsAssignableFrom(typeof(T)))
         {
-            var sheet = serviceProvider.GetRequiredService<T>();
+            T sheet = serviceProvider.GetRequiredService<T>();
             return ((sheet as BottomSheet)!, sheet);
         }
 
-        var element = serviceProvider.GetRequiredService<T>();
+        T element = serviceProvider.GetRequiredService<T>();
         IView view = element;
         object? bindingContext = null;
-        var bottomSheet = new BottomSheet();
+        BottomSheet bottomSheet = new();
 
         if (view is ContentPage page)
         {

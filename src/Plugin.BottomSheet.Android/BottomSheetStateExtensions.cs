@@ -3,7 +3,8 @@ using Google.Android.Material.BottomSheet;
 namespace Plugin.BottomSheet.Android;
 
 /// <summary>
-/// Extension methods for converting between BottomSheetState enum and Android platform constants.
+/// Provides extension methods for converting between <see cref="BottomSheetState"/> enum values
+/// and Android platform constants used by the BottomSheetBehavior.
 /// </summary>
 internal static class BottomSheetStateExtensions
 {

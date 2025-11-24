@@ -9,7 +9,7 @@ public partial class BottomSheetTestsViewModel : ObservableObject
     private bool _isOpen;
     
     [ObservableProperty]
-    private float _cornerRadius = 20;
+    private float _cornerRadius = 50;
     
     [ObservableProperty]
     private float _margin;
@@ -30,7 +30,7 @@ public partial class BottomSheetTestsViewModel : ObservableObject
     private bool _isDraggable = true;
     
     [ObservableProperty]
-    private bool _isModal = true;
+    private bool _isModal = false;
 
     [ObservableProperty]
     private List<BottomSheetState> _states = [BottomSheetState.Medium, BottomSheetState.Large];

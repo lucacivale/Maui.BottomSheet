@@ -9,6 +9,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
     <ContentPage.Content>
         <VerticalStackLayout Padding="30,0" Spacing="25">
+            <Button
+                AutomationId="{x:Static shared:ModalPageBottomSheetTestsAutomationIds.CloseModalPage}"
+                Clicked="Button_OnClicked"
+                Text="Close" />
             <mauibottomsheet:BottomSheet AutomationId="{x:Static shared:ModalPageBottomSheetTestsAutomationIds.BottomSheet}" IsOpen="True">
                 <mauibottomsheet:BottomSheet.Content>
                     <mauibottomsheet:BottomSheetContent>

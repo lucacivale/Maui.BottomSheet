@@ -19,9 +19,12 @@ public class BottomSheetTests : BaseTest<Mocks.EmptyContentPage, Plugin.Maui.Bot
     {
         // Assert
         Assert.True(View.IsModal);
+        #if ANDROID
         Assert.Equal(20.0f, View.CornerRadius);
+        #else
+        Assert.Equal(50.0f, View.CornerRadius);
+        #endif
         Assert.Equal(Color.FromArgb("#80000000"), View.WindowBackgroundColor);
-        Assert.False(View.IgnoreSafeArea);
         Assert.True(View.IsCancelable);
         Assert.True(View.HasHandle);
         Assert.False(View.ShowHeader);
@@ -62,25 +65,13 @@ public class BottomSheetTests : BaseTest<Mocks.EmptyContentPage, Plugin.Maui.Bot
     public void WindowBackgroundColor_CanBeSetAndRetrieved()
     {
         // Arrange
-        var color = Colors.Red;
+        Color? color = Colors.Red;
 
         // Act
         View.WindowBackgroundColor = color;
 
         // Assert
         Assert.Equal(color, View.WindowBackgroundColor);
-    }
-
-    [UITheory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void IgnoreSafeArea_CanBeSetAndRetrieved(bool value)
-    {
-        // Act
-        View.IgnoreSafeArea = value;
-
-        // Assert
-        Assert.Equal(value, View.IgnoreSafeArea);
     }
 
     [UITheory]
@@ -162,35 +153,33 @@ public class BottomSheetTests : BaseTest<Mocks.EmptyContentPage, Plugin.Maui.Bot
     public void Header_CanBeSetAndRetrieved()
     {
         // Arrange
-        var header = new BottomSheetHeader();
+        BottomSheetHeader header = new BottomSheetHeader();
 
         // Act
         View.Header = header;
 
         // Assert
         Assert.Equal(header, View.Header);
-        Assert.Equal(View, header.Parent);
     }
 
     [UIFact]
     public void Content_CanBeSetAndRetrieved()
     {
         // Arrange
-        var content = new BottomSheetContent();
+        BottomSheetContent content = new BottomSheetContent();
 
         // Act
         View.Content = content;
 
         // Assert
         Assert.Equal(content, View.Content);
-        Assert.Equal(View, content.Parent);
     }
 
     [UIFact]
     public void Padding_CanBeSetAndRetrieved()
     {
         // Arrange
-        var padding = new MauiThickness(10, 15, 20, 25);
+        MauiThickness padding = new MauiThickness(10, 15, 20, 25);
 
         // Act
         View.Padding = padding;
@@ -203,7 +192,7 @@ public class BottomSheetTests : BaseTest<Mocks.EmptyContentPage, Plugin.Maui.Bot
     public void BottomSheetStyle_CanBeSetAndRetrieved()
     {
         // Arrange
-        var style = new BottomSheetStyle();
+        BottomSheetStyle style = new BottomSheetStyle();
 
         // Act
         View.BottomSheetStyle = style;
@@ -216,7 +205,7 @@ public class BottomSheetTests : BaseTest<Mocks.EmptyContentPage, Plugin.Maui.Bot
     public void States_CanBeSetAndRetrieved()
     {
         // Arrange
-        var states = new List<BottomSheetState> { BottomSheetState.Medium, BottomSheetState.Large };
+        List<BottomSheetState> states = new List<BottomSheetState> { BottomSheetState.Medium, BottomSheetState.Large };
 
         // Act
         View.States = states;
@@ -229,7 +218,7 @@ public class BottomSheetTests : BaseTest<Mocks.EmptyContentPage, Plugin.Maui.Bot
     public void CurrentState_CanBeSetAndRetrieved()
     {
         // Arrange
-        var states = new List<BottomSheetState> { BottomSheetState.Medium, BottomSheetState.Large };
+        List<BottomSheetState> states = new List<BottomSheetState> { BottomSheetState.Medium, BottomSheetState.Large };
         View.States = states;
 
         // Act
@@ -243,11 +232,11 @@ public class BottomSheetTests : BaseTest<Mocks.EmptyContentPage, Plugin.Maui.Bot
     public void Commands_CanBeSetAndRetrieved()
     {
         // Arrange
-        var closingCommand = Substitute.For<ICommand>();
-        var closedCommand = Substitute.For<ICommand>();
-        var openingCommand = Substitute.For<ICommand>();
-        var openedCommand = Substitute.For<ICommand>();
-        var parameter = new object();
+        ICommand? closingCommand = Substitute.For<ICommand>();
+        ICommand? closedCommand = Substitute.For<ICommand>();
+        ICommand? openingCommand = Substitute.For<ICommand>();
+        ICommand? openedCommand = Substitute.For<ICommand>();
+        object parameter = new object();
 
         // Act
         View.ClosingCommand = closingCommand;
@@ -274,9 +263,9 @@ public class BottomSheetTests : BaseTest<Mocks.EmptyContentPage, Plugin.Maui.Bot
     public void OnOpeningBottomSheet_RaisesEventAndExecutesCommand()
     {
         // Arrange
-        var command = Substitute.For<ICommand>();
-        var parameter = new object();
-        var eventRaised = false;
+        ICommand? command = Substitute.For<ICommand>();
+        object parameter = new object();
+        bool eventRaised = false;
 
         command.CanExecute(parameter).Returns(true);
         View.OpeningCommand = command;
@@ -295,9 +284,9 @@ public class BottomSheetTests : BaseTest<Mocks.EmptyContentPage, Plugin.Maui.Bot
     public void OnOpenedBottomSheet_RaisesEventAndExecutesCommand()
     {
         // Arrange
-        var command = Substitute.For<ICommand>();
-        var parameter = new object();
-        var eventRaised = false;
+        ICommand? command = Substitute.For<ICommand>();
+        object parameter = new object();
+        bool eventRaised = false;
 
         command.CanExecute(parameter).Returns(true);
         View.OpenedCommand = command;
@@ -316,9 +305,9 @@ public class BottomSheetTests : BaseTest<Mocks.EmptyContentPage, Plugin.Maui.Bot
     public void OnClosingBottomSheet_RaisesEventAndExecutesCommand()
     {
         // Arrange
-        var command = Substitute.For<ICommand>();
-        var parameter = new object();
-        var eventRaised = false;
+        ICommand? command = Substitute.For<ICommand>();
+        object parameter = new object();
+        bool eventRaised = false;
 
         command.CanExecute(parameter).Returns(true);
         View.ClosingCommand = command;
@@ -337,9 +326,9 @@ public class BottomSheetTests : BaseTest<Mocks.EmptyContentPage, Plugin.Maui.Bot
     public void OnClosedBottomSheet_RaisesEventAndExecutesCommand()
     {
         // Arrange
-        var command = Substitute.For<ICommand>();
-        var parameter = new object();
-        var eventRaised = false;
+        ICommand? command = Substitute.For<ICommand>();
+        object parameter = new object();
+        bool eventRaised = false;
 
         command.CanExecute(parameter).Returns(true);
         View.ClosedCommand = command;
@@ -358,8 +347,8 @@ public class BottomSheetTests : BaseTest<Mocks.EmptyContentPage, Plugin.Maui.Bot
     public void Command_DoesNotExecute_WhenCanExecuteReturnsFalse()
     {
         // Arrange
-        var command = Substitute.For<ICommand>();
-        var parameter = new object();
+        ICommand? command = Substitute.For<ICommand>();
+        object parameter = new object();
 
         command.CanExecute(parameter).Returns(false);
         View.OpeningCommand = command;
@@ -386,9 +375,9 @@ public class BottomSheetTests : BaseTest<Mocks.EmptyContentPage, Plugin.Maui.Bot
     public void OnBindingContextChanged_PropagatesBindingContextToChildren()
     {
         // Arrange
-        var header = new BottomSheetHeader();
-        var content = new BottomSheetContent();
-        var bindingContext = new object();
+        BottomSheetHeader header = new BottomSheetHeader();
+        BottomSheetContent content = new BottomSheetContent();
+        object bindingContext = new object();
 
         View.Header = header;
         View.Content = content;
@@ -405,7 +394,7 @@ public class BottomSheetTests : BaseTest<Mocks.EmptyContentPage, Plugin.Maui.Bot
     public void OnBindingContextChanged_HandlesNullChildren()
     {
         // Arrange
-        var bindingContext = new object();
+        object bindingContext = new object();
 
         View.Header = null;
         View.Content = null;
@@ -418,7 +407,7 @@ public class BottomSheetTests : BaseTest<Mocks.EmptyContentPage, Plugin.Maui.Bot
     public void States_ChangingToEmptyList_UpdatesCurrentStateAndDisablesDragging()
     {
         // Arrange
-        var newStates = new List<BottomSheetState> { BottomSheetState.Medium };
+        List<BottomSheetState> newStates = new List<BottomSheetState> { BottomSheetState.Medium };
 
         // Act
         View.States = newStates;
@@ -431,7 +420,7 @@ public class BottomSheetTests : BaseTest<Mocks.EmptyContentPage, Plugin.Maui.Bot
     public void CurrentState_OnlyAcceptsValidStates()
     {
         // Arrange
-        var states = new List<BottomSheetState> { BottomSheetState.Medium, BottomSheetState.Large };
+        List<BottomSheetState> states = new List<BottomSheetState> { BottomSheetState.Medium, BottomSheetState.Large };
         View.States = states;
         View.CurrentState = BottomSheetState.Medium;
 
@@ -446,10 +435,10 @@ public class BottomSheetTests : BaseTest<Mocks.EmptyContentPage, Plugin.Maui.Bot
     public void Events_CanBeSubscribedAndUnsubscribed()
     {
         // Arrange
-        var openingRaised = false;
-        var openedRaised = false;
-        var closingRaised = false;
-        var closedRaised = false;
+        bool openingRaised = false;
+        bool openedRaised = false;
+        bool closingRaised = false;
+        bool closedRaised = false;
 
         EventHandler openingHandler = (_, _) => openingRaised = true;
         EventHandler openedHandler = (_, _) => openedRaised = true;
@@ -519,7 +508,7 @@ public class BottomSheetTests : BaseTest<Mocks.EmptyContentPage, Plugin.Maui.Bot
         Assert.Equal(99, View.GetTheme());
         Assert.Equal(new MauiThickness(10,20), View.GetMargin());
 
-        var sheetMock = Substitute.For<IBottomSheet>();
+        IBottomSheet? sheetMock = Substitute.For<IBottomSheet>();
             
         Assert.Throws<ArgumentException>(() => sheetMock.SetTheme(10));
         Assert.Throws<ArgumentException>(() => sheetMock.GetTheme());

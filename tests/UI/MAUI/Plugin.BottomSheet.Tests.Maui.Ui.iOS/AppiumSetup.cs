@@ -1,3 +1,4 @@
+using OpenQA.Selenium.Appium.Enums;
 using Plugin.BottomSheet.Tests.Maui.Ui.Shared;
 
 // ReSharper disable once CheckNamespace
@@ -21,7 +22,7 @@ public sealed partial class AppiumSetup : IDisposable
         _appiumService = new AppiumServiceHelper();
         _appiumService.StartAppiumLocalServer();
 
-        var options = new AppiumOptions
+        AppiumOptions options = new AppiumOptions
         {
             AutomationName = "XCUITest",
             PlatformName = Platform,

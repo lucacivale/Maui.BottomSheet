@@ -1,22 +1,21 @@
 namespace Plugin.Maui.BottomSheet;
 
-// ReSharper disable once InconsistentNaming
-
 /// <summary>
-/// Extension methods for the IBottomSheet interface.
+/// Provides a set of extension methods for the IBottomSheet interface
+/// to enable additional functionality such as traversing the visual
+/// tree to locate the parent page.
 /// </summary>
 internal static class IBottomSheetExtensions
 {
     /// <summary>
-    /// Gets the parent page of the bottom sheet by traversing the visual tree.
+    /// Retrieves the parent page of the specified bottom sheet by navigating through its visual tree.
     /// </summary>
-    /// <param name="bottomSheet">The bottom sheet instance.</param>
+    /// <param name="bottomSheet">The bottom sheet instance from which to locate the parent page.</param>
     /// <returns>The parent page if found, otherwise null.</returns>
     internal static Page? GetPageParent(this IBottomSheet bottomSheet)
     {
         Page? page = null;
-
-        var parent = bottomSheet.Parent;
+        Element? parent = bottomSheet.Parent;
 
         if (parent is IPageContainer<Page> pageContainer)
         {

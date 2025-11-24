@@ -55,9 +55,9 @@ public partial class AddEditTaskViewModel : ObservableObject, INavigationAware, 
     {
         try
         {
-            var categoryList = await _taskService.GetCategoriesAsync();
+            List<string> categoryList = await _taskService.GetCategoriesAsync();
             Categories.Clear();
-            foreach (var cat in categoryList)
+            foreach (string cat in categoryList)
             {
                 Categories.Add(cat);
             }
@@ -73,7 +73,7 @@ public partial class AddEditTaskViewModel : ObservableObject, INavigationAware, 
         try
         {
             _isLoading = true;
-            var task = await _taskService.GetTaskByIdAsync(TaskId);
+            TaskItem? task = await _taskService.GetTaskByIdAsync(TaskId);
             if (task != null)
             {
                 Title = task.Title;
@@ -104,7 +104,7 @@ public partial class AddEditTaskViewModel : ObservableObject, INavigationAware, 
 
         try
         {
-            var task = new TaskItem
+            TaskItem task = new TaskItem
             {
                 Id = TaskId,
                 Title = Title.Trim(),
@@ -145,7 +145,7 @@ public partial class AddEditTaskViewModel : ObservableObject, INavigationAware, 
     {
         await LoadCategoriesAsync();
         
-        if (parameters.TryGetValue("id", out var id)
+        if (parameters.TryGetValue("id", out object? id)
             && id is int taskId)
         {
             TaskId = taskId;
@@ -226,7 +226,7 @@ public partial class AddEditTaskViewModel : ObservableObject, INavigationAware, 
         bool canNavigate = true;
         if (_somethingChanged)
         {
-            var confirm = await Shell.Current.DisplayAlertAsync(
+            bool confirm = await Shell.Current.DisplayAlertAsync(
                 "Confirm",
                 "You have unsaved changes. Do you want to discard them and exit without saving?",
                 "Yes",

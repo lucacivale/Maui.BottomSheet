@@ -9,77 +9,77 @@ using OpenQA.Selenium.Appium.Android;
 
 public sealed partial class AppiumSetup : IDisposable
 {
-	public const string Platform = "Android";
+    public const string Platform = "Android";
 
-	private const string AvdName = "CI_Emulator";
-	private const string PackageName = "com.companyname.plugin.bottomsheet.tests.maui.ui.application";
+    private const string AvdName = "CI_Emulator";
+    private const string PackageName = "com.companyname.plugin.bottomsheet.tests.maui.ui.application";
     
-	private readonly AppiumServiceHelper _appiumService;
-	private readonly Emulator.AndroidEmulatorProcess _emulatorProcess;
+    private readonly AppiumServiceHelper _appiumService;
+    private readonly Emulator.AndroidEmulatorProcess _emulatorProcess;
     private readonly AndroidSdkManager _sdk;
 
     private readonly string _apkPath;
 
-	public AppiumDriver App { get; }
+    public AppiumDriver App { get; }
 
-	public AppiumSetup()
-	{
+    public AppiumSetup()
+    {
         _apkPath = GetApkPath();
         _sdk = InstallSoftware();
-		_emulatorProcess = _sdk.Emulator.Start(AvdName, new Emulator.EmulatorStartOptions { NoSnapshot = true });
-		_emulatorProcess.WaitForBootComplete();
+        _emulatorProcess = _sdk.Emulator.Start(AvdName, new Emulator.EmulatorStartOptions { NoSnapshot = true });
+        _emulatorProcess.WaitForBootComplete();
 
         UninstallApk();
         InstallApk();
         
-		_appiumService = new AppiumServiceHelper();
-		_appiumService.StartAppiumLocalServer();
+        _appiumService = new AppiumServiceHelper();
+        _appiumService.StartAppiumLocalServer();
 
-		var options = new AppiumOptions
-		{
-			AutomationName = "UIAutomator2",
-			PlatformName = Platform,
-			PlatformVersion = "11",
-		};
+        AppiumOptions options = new()
+        {
+            AutomationName = "UIAutomator2",
+            PlatformName = Platform,
+            PlatformVersion = "11",
+        };
 
         options.AddAdditionalAppiumOption(MobileCapabilityType.NoReset, "true");
         options.AddAdditionalAppiumOption(AndroidMobileCapabilityType.AppPackage, PackageName);
         options.AddAdditionalAppiumOption(AndroidMobileCapabilityType.AppActivity, $"{PackageName}.MainActivity");
         
-		App = new AndroidDriver(options);
-	}
+        App = new AndroidDriver(options);
+    }
 
-	public void Dispose()
-	{
+    public void Dispose()
+    {
         UninstallApk();
-		_emulatorProcess.Shutdown();
-		_appiumService.Dispose();
-	}
+        _emulatorProcess.Shutdown();
+        _appiumService.Dispose();
+    }
 
-	private static AndroidSdkManager InstallSoftware()
-	{
+    private static AndroidSdkManager InstallSoftware()
+    {
         #if CI
 		const string avdSdkId = "system-images;android-30;default;x86_64";
         #else
         const string avdSdkId = "system-images;android-30;google_apis_playstore;arm64-v8a";
         #endif
 
-        var sdkPackages = new[]
+        string[] sdkPackages = new[]
         {
             "platforms;android-30"
         };
 
-		var sdk = new AndroidSdkManager();
-		sdk.Acquire();
-		sdk.SdkManager.Install(sdkPackages);
-		sdk.SdkManager.Install(avdSdkId);
-		if (sdk.AvdManager.ListAvds().All(x => x.Name != AvdName))
-		{
-			sdk.AvdManager.Create(AvdName, avdSdkId, "pixel", force: true);
-		}
+        AndroidSdkManager sdk = new();
+        sdk.Acquire();
+        sdk.SdkManager.Install(sdkPackages);
+        sdk.SdkManager.Install(avdSdkId);
+        if (sdk.AvdManager.ListAvds().All(x => x.Name != AvdName))
+        {
+            sdk.AvdManager.Create(AvdName, avdSdkId, "pixel", force: true);
+        }
 
-		return sdk;
-	}
+        return sdk;
+    }
     
     private static string GetApkPath()
     {

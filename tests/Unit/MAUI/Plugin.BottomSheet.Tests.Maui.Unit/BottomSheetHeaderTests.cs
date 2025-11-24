@@ -8,7 +8,7 @@ public class BottomSheetHeaderTests
     public void Constructor_ShouldInitializeWithDefaultValues()
     {
         // Arrange & Act
-        var header = new BottomSheetHeader();
+        BottomSheetHeader header = new BottomSheetHeader();
 
         // Assert
         Assert.Null(header.TitleText);
@@ -26,7 +26,7 @@ public class BottomSheetHeaderTests
     public void TitleText_ShouldSetAndGetValue()
     {
         // Arrange
-        var header = new BottomSheetHeader();
+        BottomSheetHeader header = new BottomSheetHeader();
         const string expectedTitle = "Test Title";
 
         // Act
@@ -40,8 +40,8 @@ public class BottomSheetHeaderTests
     public void TopLeftButton_ShouldSetAndGetValue()
     {
         // Arrange
-        var header = new BottomSheetHeader();
-        var button = new Button { Text = "Left Button" };
+        BottomSheetHeader header = new BottomSheetHeader();
+        Button button = new Button { Text = "Left Button" };
 
         // Act
         header.TopLeftButton = button;
@@ -54,8 +54,8 @@ public class BottomSheetHeaderTests
     public void TopRightButton_ShouldSetAndGetValue()
     {
         // Arrange
-        var header = new BottomSheetHeader();
-        var button = new Button { Text = "Right Button" };
+        BottomSheetHeader header = new BottomSheetHeader();
+        Button button = new Button { Text = "Right Button" };
 
         // Act
         header.TopRightButton = button;
@@ -68,7 +68,7 @@ public class BottomSheetHeaderTests
     public void ShowCloseButton_ShouldSetAndGetValue()
     {
         // Arrange
-        var header = new BottomSheetHeader();
+        BottomSheetHeader header = new BottomSheetHeader();
 
         // Act
         header.ShowCloseButton = true;
@@ -83,7 +83,7 @@ public class BottomSheetHeaderTests
     public void CloseButtonPosition_ShouldSetAndGetValue(BottomSheetHeaderCloseButtonPosition position)
     {
         // Arrange
-        var header = new BottomSheetHeader();
+        BottomSheetHeader header = new BottomSheetHeader();
 
         // Act
         header.CloseButtonPosition = position;
@@ -96,8 +96,8 @@ public class BottomSheetHeaderTests
     public void HeaderDataTemplate_ShouldSetAndGetValue()
     {
         // Arrange
-        var header = new BottomSheetHeader();
-        var template = new DataTemplate(() => new Label { Text = "Template Content" });
+        BottomSheetHeader header = new BottomSheetHeader();
+        DataTemplate template = new DataTemplate(() => new Label { Text = "Template Content" });
 
         // Act
         header.ContentTemplate = template;
@@ -110,8 +110,8 @@ public class BottomSheetHeaderTests
     public void Content_ShouldSetAndGetValue()
     {
         // Arrange
-        var header = new BottomSheetHeader();
-        var content = new Label { Text = "Direct Content" };
+        BottomSheetHeader header = new BottomSheetHeader();
+        Label content = new Label { Text = "Direct Content" };
 
         // Act
         header.Content = content;
@@ -128,7 +128,7 @@ public class BottomSheetHeaderTests
     public void HeaderAppearance_ShouldSetAndGetValue(BottomSheetHeaderButtonAppearanceMode appearance)
     {
         // Arrange
-        var header = new BottomSheetHeader();
+        BottomSheetHeader header = new BottomSheetHeader();
 
         // Act
         header.HeaderAppearance = appearance;
@@ -141,8 +141,8 @@ public class BottomSheetHeaderTests
     public void Parent_ShouldSetAndGetValue()
     {
         // Arrange
-        var header = new BottomSheetHeader();
-        var parent = new ContentPage();
+        BottomSheetHeader header = new BottomSheetHeader();
+        ContentPage parent = new ContentPage();
 
         // Act
         header.Parent = parent;
@@ -155,17 +155,17 @@ public class BottomSheetHeaderTests
     public void CreateContent_WithDirectContent_ShouldReturnContent()
     {
         // Arrange
-        var header = new BottomSheetHeader();
-        var content = new Label { Text = "Test Content" };
+        BottomSheetHeader header = new BottomSheetHeader();
+        Label content = new Label { Text = "Test Content" };
         var bindingContext = new { Title = "Test" };
-        var parent = new ContentPage();
+        ContentPage parent = new ContentPage();
 
         header.Content = content;
         header.BindingContext = bindingContext;
         header.Parent = parent;
 
         // Act
-        var result = header.CreateContent();
+        View result = header.CreateContent();
 
         // Assert
         Assert.Equal(content, result);
@@ -177,17 +177,17 @@ public class BottomSheetHeaderTests
     public void CreateContent_WithDataTemplate_ShouldCreateAndReturnContent()
     {
         // Arrange
-        var header = new BottomSheetHeader();
-        var template = new DataTemplate(() => new Label { Text = "Template Content" });
+        BottomSheetHeader header = new BottomSheetHeader();
+        DataTemplate template = new DataTemplate(() => new Label { Text = "Template Content" });
         var bindingContext = new { Title = "Test" };
-        var parent = new ContentPage();
+        ContentPage parent = new ContentPage();
 
         header.ContentTemplate = template;
         header.BindingContext = bindingContext;
         header.Parent = parent;
 
         // Act
-        var result = header.CreateContent();
+        View result = header.CreateContent();
 
         // Assert
         Assert.NotNull(result);
@@ -202,15 +202,15 @@ public class BottomSheetHeaderTests
     public void CreateContent_WithBothTemplateAndContent_ShouldPrioritizeTemplate()
     {
         // Arrange
-        var header = new BottomSheetHeader();
-        var directContent = new Label { Text = "Direct Content" };
-        var template = new DataTemplate(() => new Label { Text = "Template Content" });
+        BottomSheetHeader header = new BottomSheetHeader();
+        Label directContent = new Label { Text = "Direct Content" };
+        DataTemplate template = new DataTemplate(() => new Label { Text = "Template Content" });
 
         header.Content = directContent;
         header.ContentTemplate = template;
 
         // Act
-        var result = header.CreateContent();
+        View result = header.CreateContent();
 
         // Assert
         Assert.NotNull(result);
@@ -223,13 +223,13 @@ public class BottomSheetHeaderTests
     public void CreateContent_WithNullTemplateResult_ShouldThrowException()
     {
         // Arrange
-        var header = new BottomSheetHeader();
-        var template = new DataTemplate(() => null); // Template returns null
+        BottomSheetHeader header = new BottomSheetHeader();
+        DataTemplate template = new DataTemplate(() => null); // Template returns null
 
         header.ContentTemplate = template;
 
         // Act & Assert
-        var exception = Assert.Throws<BottomSheetContentNotSetException>(() => header.CreateContent());
+        BottomSheetContentNotSetException exception = Assert.Throws<BottomSheetContentNotSetException>(() => header.CreateContent());
         Assert.Contains("Content must be set before creating content", exception.Message);
     }
 
@@ -237,10 +237,10 @@ public class BottomSheetHeaderTests
     public void CloseButtonPositionProperty_ShouldHaveCorrectDefaultValue()
     {
         // Arrange
-        var header = new BottomSheetHeader();
+        BottomSheetHeader header = new BottomSheetHeader();
 
         // Act
-        var defaultValue = header.CloseButtonPosition;
+        BottomSheetHeaderCloseButtonPosition defaultValue = header.CloseButtonPosition;
 
         // Assert
         Assert.Equal(BottomSheetHeaderCloseButtonPosition.TopRight, defaultValue);
@@ -250,15 +250,15 @@ public class BottomSheetHeaderTests
     public void CreateContent_ShouldPreserveBindingContextFromHeader()
     {
         // Arrange
-        var header = new BottomSheetHeader();
-        var content = new Label { Text = "Test Content" };
+        BottomSheetHeader header = new BottomSheetHeader();
+        Label content = new Label { Text = "Test Content" };
         var bindingContext = new { TestProperty = "TestValue" };
 
         header.Content = content;
         header.BindingContext = bindingContext;
 
         // Act
-        var result = header.CreateContent();
+        View result = header.CreateContent();
 
         // Assert
         Assert.Equal(bindingContext, result.BindingContext);
@@ -268,15 +268,15 @@ public class BottomSheetHeaderTests
     public void CreateContent_ShouldSetParentFromHeader()
     {
         // Arrange
-        var header = new BottomSheetHeader();
-        var content = new Label { Text = "Test Content" };
-        var parent = new ContentPage();
+        BottomSheetHeader header = new BottomSheetHeader();
+        Label content = new Label { Text = "Test Content" };
+        ContentPage parent = new ContentPage();
 
         header.Content = content;
         header.Parent = parent;
 
         // Act
-        var result = header.CreateContent();
+        View result = header.CreateContent();
 
         // Assert
         Assert.Equal(parent, result.Parent);

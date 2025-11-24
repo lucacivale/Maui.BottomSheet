@@ -6,7 +6,7 @@ public static class AutomationIds
     public const string HeaderElementId = "Plugin.Maui.BottomSheet.BottomSheetHeader";
     public const string HeaderTitleElementId = "Plugin.Maui.BottomSheet.BottomSheetHeaderTitle";
     public const string HeaderCloseButtonElementId = "Plugin.Maui.BottomSheet.BottomSheetHeaderCloseButton";
-    public const string Handle = "Plugin.BottomSheet.Android.Handle";
+    public const string Handle = "Plugin.Maui.BottomSheet.Handle";
     
     public const string OpenBottomSheetHeaderTestsPage = "OpenBottomSheetHeaderTestsPage";
     public const string OpenBottomSheetTestsPage = "OpenBottomSheetTestsPage";
@@ -79,4 +79,5 @@ public static class BottomSheetTestsAutomationIds
 public static class ModalPageBottomSheetTestsAutomationIds
 {
     public const string BottomSheet = "BottomSheet";
+    public const string CloseModalPage = "CloseModalPage";
 }

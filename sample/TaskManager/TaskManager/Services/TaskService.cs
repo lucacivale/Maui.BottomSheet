@@ -22,7 +22,7 @@ public class TaskService : ITaskService
 
     public Task<TaskItem?> GetTaskByIdAsync(int id)
     {
-        var task = _tasks.FirstOrDefault(t => t.Id == id);
+        TaskItem? task = _tasks.FirstOrDefault(t => t.Id == id);
         return Task.FromResult(task);
     }
 
@@ -36,7 +36,7 @@ public class TaskService : ITaskService
 
     public Task<bool> UpdateTaskAsync(TaskItem task)
     {
-        var index = _tasks.FindIndex(t => t.Id == task.Id);
+        int index = _tasks.FindIndex(t => t.Id == task.Id);
         if (index >= 0)
         {
             _tasks[index] = task;
@@ -47,7 +47,7 @@ public class TaskService : ITaskService
 
     public Task<bool> DeleteTaskAsync(int id)
     {
-        var task = _tasks.FirstOrDefault(t => t.Id == id);
+        TaskItem? task = _tasks.FirstOrDefault(t => t.Id == id);
         if (task != null)
         {
             _tasks.Remove(task);
@@ -58,7 +58,7 @@ public class TaskService : ITaskService
 
     public Task<List<TaskItem>> FilterTasksAsync(TaskFilter filter)
     {
-        var query = _tasks.AsQueryable();
+        IQueryable<TaskItem> query = _tasks.AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(filter.SearchText))
         {
@@ -96,7 +96,7 @@ public class TaskService : ITaskService
 
     public Task<List<string>> GetCategoriesAsync()
     {
-        var categories = _tasks.Select(t => t.Category)
+        List<string> categories = _tasks.Select(t => t.Category)
                               .Where(c => !string.IsNullOrWhiteSpace(c))
                               .Distinct()
                               .OrderBy(c => c)
@@ -106,9 +106,9 @@ public class TaskService : ITaskService
 
     private List<TaskItem> GenerateDummyData()
     {
-        var random = new Random();
-        var categories = new[] { "Work", "Personal", "Shopping", "Health", "Education", "Travel" };
-        var titles = new[]
+        Random random = new Random();
+        string[] categories = new[] { "Work", "Personal", "Shopping", "Health", "Education", "Travel" };
+        string[] titles = new[]
         {
             "Complete project proposal", "Buy groceries", "Schedule dentist appointment",
             "Prepare presentation", "Exercise routine", "Learn new programming language",
@@ -117,7 +117,7 @@ public class TaskService : ITaskService
             "Team meeting", "Code review", "Database backup", "Client call"
         };
 
-        var descriptions = new[]
+        string[] descriptions = new[]
         {
             "Important task that needs attention",
             "Don't forget to complete this",
@@ -129,12 +129,12 @@ public class TaskService : ITaskService
             "Coordinate with team members"
         };
 
-        var tasks = new List<TaskItem>();
+        List<TaskItem> tasks = new List<TaskItem>();
 
         for (int i = 1; i <= 25; i++)
         {
-            var dueDate = DateTime.Now.AddDays(random.Next(-30, 60));
-            var createdDate = DateTime.Now.AddDays(random.Next(-45, 0));
+            DateTime dueDate = DateTime.Now.AddDays(random.Next(-30, 60));
+            DateTime createdDate = DateTime.Now.AddDays(random.Next(-45, 0));
 
             tasks.Add(new TaskItem
             {

@@ -15,14 +15,13 @@ public static class MauiProgram
 {
     public static MauiApp CreateMauiApp()
     {
-        var builder = MauiApp.CreateBuilder();
+        MauiAppBuilder builder = MauiApp.CreateBuilder();
         builder
             .UseMauiApp<App>()
             .UseBottomSheet(config =>
             {
 
                 config.CopyPagePropertiesToBottomSheet = true;
-                config.FeatureFlags.ContentFillsAvailableSpace = true;
             })
             .UseMauiCommunityToolkit()
             .ConfigureFonts(fonts =>

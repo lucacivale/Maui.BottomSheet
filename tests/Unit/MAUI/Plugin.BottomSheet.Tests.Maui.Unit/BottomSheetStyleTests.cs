@@ -10,7 +10,7 @@ public class BottomSheetStyleTests
     public void Constructor_ShouldInitializeWithDefaultValues()
     {
         // Arrange & Act
-        var style = new BottomSheetStyle();
+        BottomSheetStyle style = new BottomSheetStyle();
 
         // Assert
         Assert.NotNull(style.HeaderStyle);
@@ -22,8 +22,8 @@ public class BottomSheetStyleTests
     public void HeaderStyle_ShouldGetAndSetValue()
     {
         // Arrange
-        var style = new BottomSheetStyle();
-        var newHeaderStyle = new BottomSheetHeaderStyle();
+        BottomSheetStyle style = new BottomSheetStyle();
+        BottomSheetHeaderStyle newHeaderStyle = new BottomSheetHeaderStyle();
 
         // Act
         style.HeaderStyle = newHeaderStyle;
@@ -36,8 +36,8 @@ public class BottomSheetStyleTests
     public void HeaderStyle_ShouldUseBindableProperty()
     {
         // Arrange
-        var style = new BottomSheetStyle();
-        var newHeaderStyle = new BottomSheetHeaderStyle();
+        BottomSheetStyle style = new BottomSheetStyle();
+        BottomSheetHeaderStyle newHeaderStyle = new BottomSheetHeaderStyle();
 
         // Act
         style.SetValue(BottomSheetStyle.HeaderStyleProperty, newHeaderStyle);
@@ -51,7 +51,7 @@ public class BottomSheetStyleTests
     public void HeaderStyle_WhenSetToNull_ShouldAcceptNullValue()
     {
         // Arrange
-        var style = new BottomSheetStyle();
+        BottomSheetStyle style = new BottomSheetStyle();
 
         // Act
         style.HeaderStyle = null!;
@@ -64,9 +64,9 @@ public class BottomSheetStyleTests
     public void HeaderStyle_PropertyChanged_ShouldTriggerPropertyChangedEvent()
     {
         // Arrange
-        var style = new BottomSheetStyle();
-        var newHeaderStyle = new BottomSheetHeaderStyle();
-        var propertyChangedTriggered = false;
+        BottomSheetStyle style = new BottomSheetStyle();
+        BottomSheetHeaderStyle newHeaderStyle = new BottomSheetHeaderStyle();
+        bool propertyChangedTriggered = false;
         string changedPropertyName = null!;
 
         style.PropertyChanged += (sender, e) =>
@@ -87,9 +87,9 @@ public class BottomSheetStyleTests
     public void HeaderStyle_SetSameValue_ShouldNotTriggerPropertyChangedEvent()
     {
         // Arrange
-        var style = new BottomSheetStyle();
-        var headerStyle = style.HeaderStyle;
-        var propertyChangedTriggered = false;
+        BottomSheetStyle style = new BottomSheetStyle();
+        BottomSheetHeaderStyle headerStyle = style.HeaderStyle;
+        bool propertyChangedTriggered = false;
 
         style.PropertyChanged += (_, _) =>
         {
@@ -107,14 +107,14 @@ public class BottomSheetStyleTests
     public void BindingContext_WhenHeaderStyleIsNull_ShouldNotThrow()
     {
         // Arrange
-        var style = new BottomSheetStyle
+        BottomSheetStyle style = new BottomSheetStyle
         {
             HeaderStyle = null!
         };
-        var bindingContext = new object();
+        object bindingContext = new object();
 
         // Act & Assert
-        var exception = Record.Exception(() => style.BindingContext = bindingContext);
+        Exception? exception = Record.Exception(() => style.BindingContext = bindingContext);
         Assert.Null(exception);
     }
 
@@ -124,9 +124,9 @@ public class BottomSheetStyleTests
     public void PropertyChanged_Event_ShouldBeRaisedCorrectly(bool useBindableProperty)
     {
         // Arrange
-        var style = new BottomSheetStyle();
-        var newHeaderStyle = new BottomSheetHeaderStyle();
-        var eventArgs = new List<PropertyChangedEventArgs>();
+        BottomSheetStyle style = new BottomSheetStyle();
+        BottomSheetHeaderStyle newHeaderStyle = new BottomSheetHeaderStyle();
+        List<PropertyChangedEventArgs> eventArgs = new List<PropertyChangedEventArgs>();
 
         style.PropertyChanged += (_, e) => eventArgs.Add(e);
 
@@ -149,7 +149,7 @@ public class BottomSheetStyleTests
     public void HeaderStyleProperty_ShouldBeReadOnly()
     {
         // Arrange & Act
-        var property = BottomSheetStyle.HeaderStyleProperty;
+        BindableProperty property = BottomSheetStyle.HeaderStyleProperty;
 
         // Assert
         Assert.True(property.IsReadOnly == false); // BindableProperty.Create creates writable properties by default
@@ -159,9 +159,9 @@ public class BottomSheetStyleTests
     public void MultipleInstances_ShouldHaveIndependentHeaderStyles()
     {
         // Arrange
-        var style1 = new BottomSheetStyle();
-        var style2 = new BottomSheetStyle();
-        var customHeaderStyle = new BottomSheetHeaderStyle();
+        BottomSheetStyle style1 = new BottomSheetStyle();
+        BottomSheetStyle style2 = new BottomSheetStyle();
+        BottomSheetHeaderStyle customHeaderStyle = new BottomSheetHeaderStyle();
 
         // Act
         style1.HeaderStyle = customHeaderStyle;

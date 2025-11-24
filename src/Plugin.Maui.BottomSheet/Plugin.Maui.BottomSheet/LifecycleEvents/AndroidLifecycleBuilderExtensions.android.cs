@@ -3,7 +3,7 @@ using Microsoft.Maui.LifecycleEvents;
 namespace Plugin.Maui.BottomSheet.LifecycleEvents;
 
 /// <summary>
-/// IAndroidLifecycleBuilder extension methods.
+/// Provides extension methods for <see cref="IAndroidLifecycleBuilder"/> to support BottomSheet-related lifecycle events.
 /// </summary>
 public static class AndroidLifecycleBuilderExtensions
 {

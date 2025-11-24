@@ -1,12 +1,12 @@
 namespace Plugin.Maui.BottomSheet.Navigation;
 
 /// <summary>
-/// Provides navigation capabilities for bottom sheet management.
+/// Defines navigation functionalities for managing bottom sheet components in a Maui application.
 /// </summary>
 public interface IBottomSheetNavigationService
 {
     /// <summary>
-    /// Gets the service provider for dependency resolution.
+    /// Gets access to the service provider for resolving dependencies.
     /// </summary>
     internal IServiceProvider ServiceProvider { get; }
 
@@ -23,19 +23,21 @@ public interface IBottomSheetNavigationService
     /// <summary>
     /// Closes the current bottom sheet and navigates back.
     /// </summary>
-    /// <param name="parameters">Optional navigation parameters.</param>
-    /// <returns>A task containing the navigation result.</returns>
+    /// <param name="parameters">Optional navigation parameters to pass during the back navigation.</param>
+    /// <returns>A task containing the result of the navigation operation.</returns>
     Task<INavigationResult> GoBackAsync(IBottomSheetNavigationParameters? parameters = null);
 
     /// <summary>
-    /// Closes all open bottom sheets in the navigation stack.
+    /// Clears the navigation stack of all bottom sheets by closing them sequentially.
     /// </summary>
-    /// <returns>A task containing the results of all closing operations.</returns>
+    /// <returns>A task that represents the asynchronous operation.
+    /// The result contains a collection of <see cref="INavigationResult"/> detailing the outcome
+    /// of each close operation.</returns>
     Task<IEnumerable<INavigationResult>> ClearBottomSheetStackAsync();
 
     /// <summary>
-    /// Gets the current bottom sheet navigation stack.
+    /// Retrieves the current stack of bottom sheets being managed by the navigation service.
     /// </summary>
-    /// <returns>A read-only collection of bottom sheets in the stack.</returns>
+    /// <returns>A read-only collection representing the bottom sheets currently in the navigation stack.</returns>
     IReadOnlyCollection<IBottomSheet> NavigationStack();
 }

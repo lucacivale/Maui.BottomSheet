@@ -1,22 +1,22 @@
 namespace Plugin.Maui.BottomSheet.Navigation;
 
 /// <summary>
-/// Contains the result information from a navigation operation.
+/// Represents the outcome of a navigation operation within the bottom sheet navigation system.
 /// </summary>
 public interface INavigationResult
 {
     /// <summary>
-    /// Gets a value indicating whether the navigation completed successfully without errors.
+    /// Gets a value indicating whether the navigation operation was successful.
     /// </summary>
     bool Success { get; }
 
     /// <summary>
-    /// Gets a value indicating whether the navigation was cancelled by user or system action.
+    /// Gets a value indicating whether the navigation operation was cancelled before completion.
     /// </summary>
     bool Cancelled { get; }
 
     /// <summary>
-    /// Gets any exception that occurred during navigation.
+    /// Gets the exception encountered during the navigation operation, if any.
     /// </summary>
     Exception? Exception { get; }
 }

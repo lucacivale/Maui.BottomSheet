@@ -139,7 +139,7 @@ public partial class MainViewModel : ObservableObject, INavigationAware
 
     private async Task UpdateStatistics()
     {
-        var allTasks = await _taskService.GetTasksAsync();
+        List<TaskItem> allTasks = await _taskService.GetTasksAsync();
         TotalTasks = allTasks.Count;
         CompletedTasks = allTasks.Count(t => t.Status == TaskStatus.Completed);
         PendingTasks = allTasks.Count(t => t.Status != TaskStatus.Completed);
@@ -160,7 +160,7 @@ public partial class MainViewModel : ObservableObject, INavigationAware
 
     public async void OnNavigatedTo(IBottomSheetNavigationParameters parameters)
     {
-        if (parameters.TryGetValue("filter", out var filter)
+        if (parameters.TryGetValue("filter", out object? filter)
             && filter is TaskFilter taskFilter)
         {
             CurrentFilter = taskFilter;
@@ -168,7 +168,7 @@ public partial class MainViewModel : ObservableObject, INavigationAware
             await ApplyFilterAsync();
         }
         
-        if (parameters.TryGetValue("Task", out var task)
+        if (parameters.TryGetValue("Task", out object? task)
             && task is TaskItem taskItem)
         {
             if (Tasks.FirstOrDefault(x => x.Id == taskItem.Id) is TaskItem existingTask)
