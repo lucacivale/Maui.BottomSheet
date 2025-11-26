@@ -814,10 +814,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S6608:Prefer indexing instead of \"Enumerable\" methods on types implementing \"IList\"", Justification = "Improced readability.")]
     private void OnStatesPropertyChanged(List<BottomSheetState> newValue)
     {
-        if (!newValue.IsStateAllowed(CurrentState))
-        {
-            CurrentState = newValue.First();
-        }
+        CurrentState = newValue.Order().First();
     }
 
     /// <summary>
