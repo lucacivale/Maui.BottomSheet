@@ -40,7 +40,7 @@ Check out the sample project to see the API in action!
 <td>
 
 ### 🤖 Android
-**Minimum:** API 23+
+**Minimum:** API 21+
 
 <img src="screenshots/Android/Showcase.gif" width="200" alt="Android Demo"/>
 <img src="screenshots/Android/Tablet/Showcase.gif" width="250" alt="Android Tablet Demo"/>
@@ -101,6 +101,49 @@ Create a simple bottom sheet:
 </bottomsheet:BottomSheet>
 ```
 
+Set peek height to view height (peek height changes dynamically as view height changes)
+
+```xaml
+<mauibottomsheet:BottomSheet
+    PeekHeight="{mauibottomsheet:PeekView View={x:Reference ContentBox}}"
+    States="Peek">
+    <mauibottomsheet:BottomSheet.Content>
+        <mauibottomsheet:BottomSheetContent>
+            <mauibottomsheet:BottomSheetContent.Content>
+                <Grid RowDefinitions="300">
+                    <BoxView x:Name="ContentBox" Color="Orange" />
+                </Grid>
+            </mauibottomsheet:BottomSheetContent.Content>
+        </mauibottomsheet:BottomSheetContent>
+    </mauibottomsheet:BottomSheet.Content>
+</mauibottomsheet:BottomSheet>
+```
+
+or
+
+```xaml
+<mauibottomsheet:BottomSheet
+    PeekHeight="{mauibottomsheet:PeekView ContentBox}"
+    States="Peek">
+    <mauibottomsheet:BottomSheet.Content>
+        <mauibottomsheet:BottomSheetContent>
+            <mauibottomsheet:BottomSheetContent.ContentTemplate>
+                <DataTemplate>
+                    <Grid RowDefinitions="300">
+                        <BoxView x:Name="ContentBox" Color="Orange" />
+                    </Grid>
+                </DataTemplate>
+            </mauibottomsheet:BottomSheetContent.ContentTemplate>
+        </mauibottomsheet:BottomSheetContent>
+    </mauibottomsheet:BottomSheet.Content>
+</mauibottomsheet:BottomSheet>
+```
+
+> [!CAUTION]
+> The peek height is calculated using ***MAUI's*** measurement behavior. Different platforms may return different heights for the same layout.
+> This is especially true when using ScrollView, VerticalStackLayout, or Grid with Auto rows.
+> To observe the differences, launch the **Plugin.BottomSheet.Tests.Maui.Ui.Application** test project and open the various peek BottomSheets
+
 ## 📖 API Reference
 
 ### 🔧 Core Properties
@@ -112,13 +155,12 @@ Create a simple bottom sheet:
 | `HasHandle`             | `bool`                   | Show/hide the drag handle                                 |
 | `ShowHeader`            | `bool`                   | Show/hide the header section                              |
 | `IsOpen`                | `bool`                   | Control open/close state                                  |
-| `IsDraggable`           | `bool`                   | Enable/disable drag gestures                              |
+| `IsDraggable`           | `bool`                   | Enable/disable drag gestures (useful for drawing)         |
 | `States`                | `List<BottomSheetState>` | Allowed states (Peek, Medium, Large)                      |
 | `CurrentState`          | `BottomSheetState`       | Current display state                                     |
 | `PeekHeight`            | `double`                 | Height when in peek state (iOS 16+)                       |
 | `Padding`               | `double`                 | Internal padding                                          |
 | `BackgroundColor`       | `Color`                  | Background color                                          |
-| `IgnoreSafeArea`        | `bool`                   | Ignore safe area (iOS only)                               |
 | `CornerRadius`          | `float`                  | Top corner radius                                         |
 | `WindowBackgroundColor` | `Color`                  | Window background (modal only)                            |
 
@@ -189,7 +231,6 @@ Create a simple bottom sheet:
     Padding="20"
     CornerRadius="20"
     HasHandle="True"
-    IgnoreSafeArea="True"
     IsCancelable="True"
     IsDraggable="True"
     IsModal="True"
@@ -320,7 +361,7 @@ public class MainViewModel
     // Navigate to a bottom sheet
     public async Task ShowUserProfile()
     {
-        await _navigationService.NavigateTo("UserProfile");
+        await _navigationService.NavigateToAsync("UserProfile");
     }
 
     // Navigate with parameters
@@ -333,7 +374,7 @@ public class MainViewModel
             { "ShowActions", true }
         };
         
-        await _navigationService.NavigateTo("UserProfile", parameters);
+        await _navigationService.NavigateToAsync("UserProfile", parameters);
     }
 
     // Navigate with parameters and custom configuration
@@ -346,7 +387,7 @@ public class MainViewModel
             { "ReadOnly", false }
         };
 
-        await _navigationService.NavigateTo("ProductDetails", parameters, configure: sheet =>
+        await _navigationService.NavigateToAsync("ProductDetails", parameters, configure: sheet =>
         {
             sheet.Header.TitleText = product.Name;
             sheet.CurrentState = BottomSheetState.Large;
@@ -364,7 +405,7 @@ public class MainViewModel
             { "Timestamp", DateTime.Now }
         };
 
-        await _navigationService.NavigateTo<EditFormViewModel>("EditForm", parameters);
+        await _navigationService.NavigateToAsync<EditFormViewModel>("EditForm", parameters);
     }
 
     // Navigate with complex object parameters
@@ -379,7 +420,7 @@ public class MainViewModel
             { "CanEdit", order.Status == OrderStatus.Draft }
         };
 
-        await _navigationService.NavigateTo("OrderSummary", parameters);
+        await _navigationService.NavigateToAsync("OrderSummary", parameters);
     }
 
     // Go back with result parameters
@@ -392,23 +433,11 @@ public class MainViewModel
             { "HasChanges", true }
         };
 
-        await _navigationService.GoBack(resultParameters);
-    }
-
-    // Go back to specific sheet with parameters
-    public async Task GoBackToSheet(string targetSheet)
-    {
-        var parameters = new BottomSheetNavigationParameters
-        {
-            { "ReturnReason", "UserCancelled" },
-            { "Timestamp", DateTime.Now }
-        };
-
-        await _navigationService.GoBack(parameters, targetSheet);
+        await _navigationService.GoBackAsync(resultParameters);
     }
 
     // Clear all sheets with notification parameters
-    public async Task CloseAllSheets()
+    public async Task ClearBottomSheetStackAsync()
     {
         var parameters = new BottomSheetNavigationParameters
         {
