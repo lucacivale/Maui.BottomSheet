@@ -8,6 +8,17 @@ public static partial class AppiumDriverExtensions
 {
     public static partial void CloseKeyboard(this AppiumDriver app)
     {
-        app.FindElement("Return").Click();
+        AppiumElement? submitButton = null;
+        
+        if (app.TryFindElement("Return", out AppiumElement? returnButton))
+        {
+            submitButton = returnButton;
+        }
+        else if (app.TryFindElement("selected", out AppiumElement? selectedButton))
+        {
+            submitButton = selectedButton;
+        }
+        
+        submitButton?.Click();
     }
 }

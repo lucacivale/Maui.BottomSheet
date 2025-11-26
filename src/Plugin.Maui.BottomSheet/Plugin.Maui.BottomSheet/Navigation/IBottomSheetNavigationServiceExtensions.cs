@@ -15,7 +15,7 @@ public static class IBottomSheetNavigationServiceExtensions
     /// <param name="parameters">Optional navigation parameters.</param>
     /// <param name="configure">Optional action to configure the bottom sheet.</param>
     /// <returns>A task representing the navigation operation.</returns>
-    public static Task NavigateToAsync(this IBottomSheetNavigationService navigationService, string name, IBottomSheetNavigationParameters? parameters = null, Action<IBottomSheet>? configure = null)
+    public static Task<INavigationResult> NavigateToAsync(this IBottomSheetNavigationService navigationService, string name, IBottomSheetNavigationParameters? parameters = null, Action<IBottomSheet>? configure = null)
     {
         ArgumentNullException.ThrowIfNull(navigationService);
 
@@ -40,7 +40,7 @@ public static class IBottomSheetNavigationServiceExtensions
     /// <param name="parameters">Optional navigation parameters.</param>
     /// <param name="configure">Optional action to configure the bottom sheet.</param>
     /// <returns>A task representing the navigation operation.</returns>
-    public static Task NavigateToAsync<TViewModel>(this IBottomSheetNavigationService navigationService, string name, IBottomSheetNavigationParameters? parameters = null, Action<IBottomSheet>? configure = null)
+    public static Task<INavigationResult> NavigateToAsync<TViewModel>(this IBottomSheetNavigationService navigationService, string name, IBottomSheetNavigationParameters? parameters = null, Action<IBottomSheet>? configure = null)
         where TViewModel : class
     {
         ArgumentNullException.ThrowIfNull(navigationService);

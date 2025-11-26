@@ -1,6 +1,9 @@
 ﻿using DeviceRunners.UITesting;
 using DeviceRunners.VisualRunners;
 using Microsoft.Extensions.Logging;
+using Plugin.BottomSheet.Tests.Maui.Unit.Application.Mocks;
+using Plugin.BottomSheet.Tests.Maui.Unit.Application.Mocks.ViewModels;
+using Plugin.Maui.BottomSheet;
 using Plugin.Maui.BottomSheet.Hosting;
 #if MODE_XHARNESS
 using DeviceRunners.XHarness;
@@ -54,6 +57,53 @@ public static class MauiProgram
 #endif
 
 	    builder.UseBottomSheet();
+
+        builder.Services.AddBottomSheet<EmptyBottomSheet>("EmptyBottomSheet");
+        builder.Services.AddBottomSheet<EmptyBottomSheet, ViewModelA>("EmptyBottomSheetWithViewModel");
+        builder.Services.AddBottomSheet<EmptyBottomSheet, ViewModelA>("EmptyBottomSheetWithViewModelAndConfig", (sheet, _) =>
+        {
+            sheet.ShowHeader = true;
+            sheet.Header = new();
+            sheet.Header.SetBinding(BottomSheetHeader.TitleTextProperty, static (ViewModelA vm) => vm.Title);
+        });
+    
+        builder.Services.AddBottomSheet<EmptyView>("EmptyView");
+        builder.Services.AddBottomSheet<EmptyView>("EmptyViewWithConfig", (sheet, _) =>
+        {
+            sheet.ShowHeader = true;
+            sheet.Header = new()
+            {
+                TitleText = "Title"
+            };
+        });
+        builder.Services.AddBottomSheet<EmptyView, ViewModelA>("EmptyViewWithViewModel");
+        builder.Services.AddBottomSheet<EmptyView, ViewModelA>("EmptyViewWithViewModelAndConfig", (sheet, _) =>
+        {
+            sheet.ShowHeader = true;
+            sheet.Header = new();
+            sheet.Header.SetBinding(BottomSheetHeader.TitleTextProperty, static (ViewModelA vm) => vm.Title);
+        });
+        
+        builder.Services.AddBottomSheet<AContentPage>("EmptyContentPage");
+        builder.Services.AddBottomSheet<AContentPage>("EmptyContentPageWithConfig", (sheet, _) =>
+        {
+            sheet.ShowHeader = true;
+            sheet.Header = new()
+            {
+                TitleText = "Title"
+            };
+        });
+        builder.Services.AddBottomSheet<AContentPage, ViewModelA>("EmptyContentPageWithViewModel");
+        builder.Services.AddBottomSheet<AContentPage, ViewModelA>("EmptyContentPageWithViewModelAndConfig", (sheet, _) =>
+        {
+            sheet.ShowHeader = true;
+            sheet.Header = new();
+            sheet.Header.SetBinding(BottomSheetHeader.TitleTextProperty, static (ViewModelA vm) => vm.Title);
+        });
+        
+        builder.Services.AddBottomSheet<BottomSheetPeek>("BottomSheetPeek");
+        builder.Services.AddBottomSheet<NavigationAwareBottomSheet, NavigationAwareViewModel>("NavigationAwareBottomSheet");
+        builder.Services.AddBottomSheet<NavigationAwareContentPage, NavigationAwareViewModel>("NavigationAwareContentPage");
         
         return builder.Build();
     }

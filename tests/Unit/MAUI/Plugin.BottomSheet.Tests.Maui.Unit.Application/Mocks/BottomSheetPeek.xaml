@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<mauibottomsheet:BottomSheet
+    PeekHeight="{mauibottomsheet:PeekView View={x:Reference ContentBox}}"
+    States="Peek"
+    x:Class="Plugin.BottomSheet.Tests.Maui.Unit.Application.Mocks.BottomSheetPeek"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:mauibottomsheet="http://pluginmauibottomsheet.com"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    <mauibottomsheet:BottomSheet.Content>
+        <mauibottomsheet:BottomSheetContent>
+            <mauibottomsheet:BottomSheetContent.Content>
+                <Grid RowDefinitions="300">
+                    <BoxView Color="Orange" x:Name="ContentBox" />
+                </Grid>
+            </mauibottomsheet:BottomSheetContent.Content>
+        </mauibottomsheet:BottomSheetContent>
+    </mauibottomsheet:BottomSheet.Content>
+</mauibottomsheet:BottomSheet>

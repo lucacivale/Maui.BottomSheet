@@ -45,8 +45,12 @@ public sealed class PeekViewExtension : IMarkupExtension<double>
         IProvideValueTarget provideValueTarget = serviceProvider.GetRequiredService<IProvideValueTarget>();
 
         BottomSheet sheet = (BottomSheet)provideValueTarget.TargetObject;
+
         sheet.Loaded += SheetOnLoaded;
         sheet.Unloaded += SheetOnUnloaded;
+
+        sheet.Opening += SheetOnOpening;
+        sheet.Closing += SheetOnClosing;
 
         _bottomSheet = new(sheet);
 
@@ -76,11 +80,8 @@ public sealed class PeekViewExtension : IMarkupExtension<double>
     /// <param name="e">An <see cref="EventArgs"/> that contains no event data.</param>
     private void SheetOnLoaded(object? sender, EventArgs e)
     {
-        if (_bottomSheet?.TryGetTarget(out BottomSheet? sheet) == true)
-        {
-            sheet.Opening += SheetOnOpening;
-            sheet.Closing += SheetOnClosing;
-        }
+        // Keep strong reference to the BottomSheet and View instances to prevent garbage collection.
+        // Otherwise other events not fired. MAUI behavior.
     }
 
     /// <summary>

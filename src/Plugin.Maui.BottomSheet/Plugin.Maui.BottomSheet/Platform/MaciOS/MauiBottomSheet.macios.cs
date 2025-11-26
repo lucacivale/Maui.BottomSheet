@@ -65,6 +65,8 @@ internal sealed class MauiBottomSheet : UIView
     public void Cleanup()
     {
         _bottomSheet?.Dispose();
+
+        RemoveFromSuperview();
     }
 
     /// <summary>
@@ -121,6 +123,12 @@ internal sealed class MauiBottomSheet : UIView
         _bottomSheet.SetContentView(view);
 
         _virtualView.OnOpeningBottomSheet();
+
+        if (Window is null
+            && _virtualView.Parent.ToPlatform(_mauiContext) is UIView parent)
+        {
+            parent.Window?.AddSubview(this);
+        }
 
         await _bottomSheet.OpenAsync(Window).ConfigureAwait(true);
 
@@ -408,12 +416,7 @@ internal sealed class MauiBottomSheet : UIView
     /// <param name="e">The event data that contains information about the layout change.</param>
     private void BottomSheetOnLayoutChanged(object? sender, EventArgs e)
     {
-        if (_virtualView is null)
-        {
-            return;
-        }
-
-        _virtualView.OnLayoutChanged();
+        _virtualView?.OnLayoutChanged();
     }
 
     /// <summary>

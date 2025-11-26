@@ -448,6 +448,7 @@ internal sealed class MauiBottomSheet : AndroidView
     /// <param name="e">The event data associated with the layout change.</param>
     private void BottomSheetOnLayoutChanged(object? sender, EventArgs e)
     {
+        _virtualView?.OnLayoutChanged();
         SetFrame();
     }
 

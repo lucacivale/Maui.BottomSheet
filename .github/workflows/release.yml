@@ -21,7 +21,7 @@ jobs:
       with:
         scheme: semver
         increment: patch
-          
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:

@@ -378,15 +378,24 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
 
             double height = value;
 
-            if (Window is not null
-                && height > Window.DecorView.Height)
+            if (Window is not null)
             {
-                height = Window.DecorView.Height;
+                WindowInsetsCompat? insets = ViewCompat.GetRootWindowInsets(Window.DecorView);
+                AndroidX.Core.Graphics.Insets? systemBarInsets = insets?.GetInsets(WindowInsetsCompat.Type.SystemBars());
 
-                if (ViewCompat.GetRootWindowInsets(Window.DecorView) is WindowInsetsCompat insets
-                    && insets.GetInsets(WindowInsetsCompat.Type.SystemBars()) is AndroidX.Core.Graphics.Insets systemBarInsets)
+                if (systemBarInsets is not null)
                 {
-                    height -= systemBarInsets.Top;
+                    height += systemBarInsets.Bottom;
+                }
+
+                if (height > Window.DecorView.Height)
+                {
+                    height = Window.DecorView.Height;
+
+                    if (systemBarInsets is not null)
+                    {
+                        height -= systemBarInsets.Top;
+                    }
                 }
             }
 
