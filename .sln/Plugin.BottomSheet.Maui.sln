@@ -1,0 +1,149 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11205.157
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{092D84AB-4D40-4926-94E9-82F2A82A809F}"
+	ProjectSection(SolutionItems) = preProject
+		..\.editorconfig = ..\.editorconfig
+		..\.gitignore = ..\.gitignore
+		..\Directory.Build.props = ..\Directory.Build.props
+		..\Directory.Packages.props = ..\Directory.Packages.props
+		..\global.json = ..\global.json
+		..\nuget.config = ..\nuget.config
+		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{C88D6978-CEF9-49FF-B0F9-82B9BD03EF71}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.Maui.BottomSheet.Sample", "..\sample\Plugin.Maui.BottomSheet.Sample\Plugin.Maui.BottomSheet.Sample\Plugin.Maui.BottomSheet.Sample.csproj", "{225CC44F-6D7B-DDD9-B927-2C05CD6751B5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManager", "..\sample\TaskManager\TaskManager\TaskManager.csproj", "{28241E10-F102-FB41-18B1-DC3503A7449F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{99D41455-7552-4C58-ADFD-2771227FBFA5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{E39C020F-EF76-425A-A118-9C5AEA69D9B3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit", "Unit", "{F231B0DD-2789-4B3E-8434-9595080D8793}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Maui", "Maui", "{68B73131-FB43-407B-927C-6579A12C5C48}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Maui", "Maui", "{E37CFB13-C995-446A-8C48-BA4125BB1968}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.BottomSheet.Tests.Maui.Ui.Application", "..\tests\UI\MAUI\Plugin.BottomSheet.Tests.Maui.Ui.Application\Plugin.BottomSheet.Tests.Maui.Ui.Application.csproj", "{8BD76F1C-4233-5603-90C1-BA8C883D37CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.BottomSheet.Tests.Maui.Ui.Android", "..\tests\UI\MAUI\Plugin.BottomSheet.Tests.Maui.Ui.Android\Plugin.BottomSheet.Tests.Maui.Ui.Android.csproj", "{4244499E-017A-DA47-190A-A8AF0581DF9D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.BottomSheet.Tests.Maui.Ui.iOS", "..\tests\UI\MAUI\Plugin.BottomSheet.Tests.Maui.Ui.iOS\Plugin.BottomSheet.Tests.Maui.Ui.iOS.csproj", "{B42C7E53-14CB-AEA1-B107-106EBB3E3066}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.BottomSheet.Tests.Maui.Unit", "..\tests\Unit\MAUI\Plugin.BottomSheet.Tests.Maui.Unit\Plugin.BottomSheet.Tests.Maui.Unit.csproj", "{FAD327D1-A38F-902D-CFB3-FF131B884E87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.BottomSheet.Tests.Maui.Unit.Application", "..\tests\Unit\MAUI\Plugin.BottomSheet.Tests.Maui.Unit.Application\Plugin.BottomSheet.Tests.Maui.Unit.Application.csproj", "{16D53B91-4ED9-E7AF-9680-958B4D767BBA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.BottomSheet", "..\src\Plugin.BottomSheet\Plugin.BottomSheet.csproj", "{AD818F95-C93A-2359-8E2F-DE0AF2E43B94}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.BottomSheet.Android", "..\src\Plugin.BottomSheet.Android\Plugin.BottomSheet.Android.csproj", "{FE36F418-E137-FE1A-18E9-8D69D61AFC91}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.BottomSheet.iOSMacCatalyst", "..\src\Plugin.BottomSheet.iOSMacCatalyst\Plugin.BottomSheet.iOSMacCatalyst.csproj", "{38ACBBBB-4D5E-5F07-1586-16E45CA6CB9A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.Maui.BottomSheet", "..\src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet.csproj", "{52D70865-4D31-72AE-5530-4C87626443DC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{1B6FF552-48E9-457E-9A76-85D21B9F9B65}"
+	ProjectSection(SolutionItems) = preProject
+		..\.github\platform_identification_config.json = ..\.github\platform_identification_config.json
+		..\.github\pull_request_template.md = ..\.github\pull_request_template.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IssueTemplate", "IssueTemplate", "{59C65FBA-9F3E-4EC1-8828-A174D7E94643}"
+	ProjectSection(SolutionItems) = preProject
+		..\.github\ISSUE_TEMPLATE\bug_report.yml = ..\.github\ISSUE_TEMPLATE\bug_report.yml
+		..\.github\ISSUE_TEMPLATE\config.yml = ..\.github\ISSUE_TEMPLATE\config.yml
+		..\.github\ISSUE_TEMPLATE\feature_request.md = ..\.github\ISSUE_TEMPLATE\feature_request.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{209FAF6A-B346-4915-90AA-9AAF24DE2E0B}"
+	ProjectSection(SolutionItems) = preProject
+		..\.github\workflows\ci-preview.yml = ..\.github\workflows\ci-preview.yml
+		..\.github\workflows\ci.yml = ..\.github\workflows\ci.yml
+		..\.github\workflows\issue_platform_identification.yml = ..\.github\workflows\issue_platform_identification.yml
+		..\.github\workflows\pr_platform_identification.yml = ..\.github\workflows\pr_platform_identification.yml
+		..\.github\workflows\release.yml = ..\.github\workflows\release.yml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{225CC44F-6D7B-DDD9-B927-2C05CD6751B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{225CC44F-6D7B-DDD9-B927-2C05CD6751B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{225CC44F-6D7B-DDD9-B927-2C05CD6751B5}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{225CC44F-6D7B-DDD9-B927-2C05CD6751B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{225CC44F-6D7B-DDD9-B927-2C05CD6751B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{225CC44F-6D7B-DDD9-B927-2C05CD6751B5}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{28241E10-F102-FB41-18B1-DC3503A7449F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28241E10-F102-FB41-18B1-DC3503A7449F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28241E10-F102-FB41-18B1-DC3503A7449F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28241E10-F102-FB41-18B1-DC3503A7449F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BD76F1C-4233-5603-90C1-BA8C883D37CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BD76F1C-4233-5603-90C1-BA8C883D37CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BD76F1C-4233-5603-90C1-BA8C883D37CC}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{8BD76F1C-4233-5603-90C1-BA8C883D37CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BD76F1C-4233-5603-90C1-BA8C883D37CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4244499E-017A-DA47-190A-A8AF0581DF9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4244499E-017A-DA47-190A-A8AF0581DF9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4244499E-017A-DA47-190A-A8AF0581DF9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4244499E-017A-DA47-190A-A8AF0581DF9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B42C7E53-14CB-AEA1-B107-106EBB3E3066}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B42C7E53-14CB-AEA1-B107-106EBB3E3066}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B42C7E53-14CB-AEA1-B107-106EBB3E3066}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B42C7E53-14CB-AEA1-B107-106EBB3E3066}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAD327D1-A38F-902D-CFB3-FF131B884E87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAD327D1-A38F-902D-CFB3-FF131B884E87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAD327D1-A38F-902D-CFB3-FF131B884E87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAD327D1-A38F-902D-CFB3-FF131B884E87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16D53B91-4ED9-E7AF-9680-958B4D767BBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16D53B91-4ED9-E7AF-9680-958B4D767BBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16D53B91-4ED9-E7AF-9680-958B4D767BBA}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{16D53B91-4ED9-E7AF-9680-958B4D767BBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16D53B91-4ED9-E7AF-9680-958B4D767BBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD818F95-C93A-2359-8E2F-DE0AF2E43B94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD818F95-C93A-2359-8E2F-DE0AF2E43B94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD818F95-C93A-2359-8E2F-DE0AF2E43B94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD818F95-C93A-2359-8E2F-DE0AF2E43B94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE36F418-E137-FE1A-18E9-8D69D61AFC91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE36F418-E137-FE1A-18E9-8D69D61AFC91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE36F418-E137-FE1A-18E9-8D69D61AFC91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE36F418-E137-FE1A-18E9-8D69D61AFC91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38ACBBBB-4D5E-5F07-1586-16E45CA6CB9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38ACBBBB-4D5E-5F07-1586-16E45CA6CB9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38ACBBBB-4D5E-5F07-1586-16E45CA6CB9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38ACBBBB-4D5E-5F07-1586-16E45CA6CB9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52D70865-4D31-72AE-5530-4C87626443DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52D70865-4D31-72AE-5530-4C87626443DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52D70865-4D31-72AE-5530-4C87626443DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52D70865-4D31-72AE-5530-4C87626443DC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{225CC44F-6D7B-DDD9-B927-2C05CD6751B5} = {C88D6978-CEF9-49FF-B0F9-82B9BD03EF71}
+		{28241E10-F102-FB41-18B1-DC3503A7449F} = {C88D6978-CEF9-49FF-B0F9-82B9BD03EF71}
+		{E39C020F-EF76-425A-A118-9C5AEA69D9B3} = {99D41455-7552-4C58-ADFD-2771227FBFA5}
+		{F231B0DD-2789-4B3E-8434-9595080D8793} = {99D41455-7552-4C58-ADFD-2771227FBFA5}
+		{68B73131-FB43-407B-927C-6579A12C5C48} = {E39C020F-EF76-425A-A118-9C5AEA69D9B3}
+		{E37CFB13-C995-446A-8C48-BA4125BB1968} = {F231B0DD-2789-4B3E-8434-9595080D8793}
+		{8BD76F1C-4233-5603-90C1-BA8C883D37CC} = {68B73131-FB43-407B-927C-6579A12C5C48}
+		{4244499E-017A-DA47-190A-A8AF0581DF9D} = {68B73131-FB43-407B-927C-6579A12C5C48}
+		{B42C7E53-14CB-AEA1-B107-106EBB3E3066} = {68B73131-FB43-407B-927C-6579A12C5C48}
+		{FAD327D1-A38F-902D-CFB3-FF131B884E87} = {E37CFB13-C995-446A-8C48-BA4125BB1968}
+		{16D53B91-4ED9-E7AF-9680-958B4D767BBA} = {E37CFB13-C995-446A-8C48-BA4125BB1968}
+		{59C65FBA-9F3E-4EC1-8828-A174D7E94643} = {1B6FF552-48E9-457E-9A76-85D21B9F9B65}
+		{209FAF6A-B346-4915-90AA-9AAF24DE2E0B} = {1B6FF552-48E9-457E-9A76-85D21B9F9B65}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BB818B9B-2AA8-4699-ACE9-51B5E7D92205}
+	EndGlobalSection
+EndGlobal
