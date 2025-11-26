@@ -109,7 +109,6 @@ internal sealed class MauiBottomSheet : UIView
 
         SetStates();
         SetIsCancelable();
-        SetIsDraggable();
         SetCurrentState();
 
         SetWindowBackgroundColor();
@@ -134,6 +133,7 @@ internal sealed class MauiBottomSheet : UIView
 
         SetPeekHeight();
         SetFrame();
+        SetIsDraggable();
 
         _virtualView.OnOpenedBottomSheet();
     }
