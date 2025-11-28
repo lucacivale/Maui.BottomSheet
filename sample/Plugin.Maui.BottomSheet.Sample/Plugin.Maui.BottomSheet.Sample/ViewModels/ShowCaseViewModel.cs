@@ -118,6 +118,9 @@ public sealed partial class ShowCaseViewModel : ObservableObject, IConfirmNaviga
     [ObservableProperty]
     private bool _isDraggable = true;
 
+    [ObservableProperty]
+    private bool _aboveTabBar = false;
+
     [RelayCommand]
     private void OpenShowcase()
     {
