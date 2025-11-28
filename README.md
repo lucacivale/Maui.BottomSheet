@@ -141,7 +141,7 @@ or
 
 > [!CAUTION]
 > The peek height is calculated using ***MAUI's*** measurement behavior. Different platforms may return different heights for the same layout.
-> This is especially true when using ScrollView, VerticalStackLayout, or Grid with Auto rows.
+> This is especially true when using ScrollView, VerticalStackLayout, or Grid with Star rows.
 > To observe the differences, launch the **Plugin.BottomSheet.Tests.Maui.Ui.Application** test project and open the various peek BottomSheets
 
 ## 📖 API Reference
