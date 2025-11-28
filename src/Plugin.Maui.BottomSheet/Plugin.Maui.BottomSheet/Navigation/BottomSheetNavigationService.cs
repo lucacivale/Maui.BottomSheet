@@ -240,9 +240,9 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
         {
             await DispatchAsync(() => DoGoBackAsync()).ConfigureAwait(false);
         }
-        catch
+        catch (Exception ex)
         {
-            Trace.TraceError("Invoking GoBackAsync failed.");
+            Trace.TraceError("Invoking GoBackAsync failed: {0}", ex);
         }
     }
 
