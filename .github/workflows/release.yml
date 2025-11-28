@@ -41,4 +41,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Plugin.Maui.BottomSheet.${{ steps.version.outputs.version }}.nupkg
-          path: src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet\bin\${{ env.Configuration }}\Plugin.Maui.BottomSheet.${{ steps.version.outputs.version }}.nupkg
+          path: src/Plugin.Maui.BottomSheet/Plugin.Maui.BottomSheet/bin/${{ env.Configuration }}/Plugin.Maui.BottomSheet.${{ steps.version.outputs.version }}.nupkg
