@@ -1,0 +1,52 @@
+﻿<Project>
+	<PropertyGroup>
+		<LegacyNETVersion>net9.0</LegacyNETVersion>
+		<NETVersion>net10.0</NETVersion>
+
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+
+		<Owners>Luca Civale </Owners>
+		<Authors>Luca Civale</Authors>
+		<Company>Luca Civale</Company>
+		<Copyright>Luca Civale</Copyright>
+		<PackageProjectUrl>https://github.com/lucacivale/Maui.BottomSheet</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/lucacivale/Maui.BottomSheet</RepositoryUrl>
+		<NeutralLanguage>en</NeutralLanguage>
+		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<RepositoryType>git</RepositoryType>
+        
+        <ManagePackageVersionsCentrally>True</ManagePackageVersionsCentrally>
+        
+        <!-- Something broken. Check and enable again
+        <PublishAot>true</PublishAot>
+        <IsAotCompatible>true</IsAotCompatible>
+        -->
+	</PropertyGroup>
+    
+    <PropertyGroup Condition="$(MSBuildProjectName.Contains('Test')) == false and $(MSBuildProjectDirectory.Contains('sample')) == false">
+        <EnableNETAnalyzers>true</EnableNETAnalyzers>
+        <AnalysisMode>All</AnalysisMode>
+        <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+        <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
+        <RunAnalyzers>true</RunAnalyzers>
+        <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+
+	<ItemGroup Condition="$(MSBuildProjectName.Contains('Test')) == false and $(MSBuildProjectDirectory.Contains('sample')) == false">
+		<PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="SonarAnalyzer.CSharp">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="StyleCop.Analyzers">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+</Project>

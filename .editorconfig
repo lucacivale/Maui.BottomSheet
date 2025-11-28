@@ -23,9 +23,9 @@ csharp_style_prefer_null_check_over_type_check = true:suggestion
 csharp_style_prefer_utf8_string_literals = true:suggestion
 csharp_prefer_simple_default_expression = true:suggestion
 csharp_style_prefer_local_over_anonymous_function = true:suggestion
-csharp_style_prefer_index_operator = true:suggestion
-csharp_style_prefer_range_operator = true:suggestion
-csharp_style_implicit_object_creation_when_type_is_apparent = true:suggestion
+csharp_style_prefer_index_operator = true:silent
+csharp_style_prefer_range_operator = true:silent
+csharp_style_implicit_object_creation_when_type_is_apparent = true:warning
 csharp_style_prefer_tuple_swap = true:suggestion
 csharp_style_inlined_variable_declaration = true:suggestion
 csharp_style_deconstructed_variable_declaration = true:suggestion
@@ -42,19 +42,19 @@ csharp_style_allow_blank_line_after_token_in_arrow_expression_clause_experimenta
 csharp_style_conditional_delegate_call = true:suggestion
 csharp_style_prefer_switch_expression = true:suggestion
 csharp_style_prefer_pattern_matching = true:silent
-csharp_style_pattern_matching_over_is_with_cast_check = true:suggestion
+csharp_style_pattern_matching_over_is_with_cast_check = true:silent
 csharp_style_pattern_matching_over_as_with_null_check = true:suggestion
-csharp_style_prefer_not_pattern = true:suggestion
+csharp_style_prefer_not_pattern = true:silent
 csharp_style_prefer_extended_property_pattern = true:suggestion
-csharp_style_var_for_built_in_types = false:silent
-csharp_style_var_when_type_is_apparent = false:silent
-csharp_style_var_elsewhere = false:silent
+csharp_style_var_for_built_in_types = false:warning
+csharp_style_var_when_type_is_apparent = false:warning
+csharp_style_var_elsewhere = false:warning
 dotnet_diagnostic.SA1101.severity = none
-dotnet_diagnostic.SA1600.severity = none
+dotnet_diagnostic.SA1600.severity = warning
 dotnet_diagnostic.SA1633.severity = none
-dotnet_diagnostic.SA1602.severity = none
+dotnet_diagnostic.SA1602.severity = warning
 dotnet_diagnostic.SA1309.severity = none
-dotnet_diagnostic.SA1601.severity = none
+dotnet_diagnostic.SA1601.severity = warning
 dotnet_diagnostic.SA1010.severity = none
 dotnet_diagnostic.SA1011.severity = none
 dotnet_diagnostic.SA1200.severity = none
@@ -68,11 +68,28 @@ dotnet_diagnostic.IDE0290.severity = none
 csharp_style_prefer_primary_constructors = false:suggestion
 dotnet_diagnostic.CA1812.severity = none
 
+# IDE0100: Remove redundant equality
+dotnet_diagnostic.IDE0100.severity = silent
+
 # IDE0005: Using directive is unnecessary.
 dotnet_diagnostic.IDE0005.severity = warning
 dotnet_diagnostic.CA1507.severity = warning
 dotnet_diagnostic.RS1036.severity = none
 dotnet_diagnostic.S1125.severity = none
+csharp_prefer_system_threading_lock = true:suggestion
+dotnet_diagnostic.SA1131.severity = error
+
+# IDE0008: Use explicit type
+dotnet_diagnostic.IDE0008.severity = warning
+csharp_style_prefer_simple_property_accessors = true:suggestion
+csharp_style_prefer_implicitly_typed_lambda_expression = true:suggestion
+csharp_style_prefer_unbound_generic_type_in_nameof = true:suggestion
+csharp_prefer_static_anonymous_function = true:suggestion
+
+# Require explicit types instead of 'var'
+csharp_style_var_for_built_in_types = false:error
+csharp_style_var_when_type_is_apparent = false:error
+csharp_style_var_elsewhere = false:error
 
 [*.{cs,vb}]
 dotnet_naming_rule.private_members_with_underscore.symbols  = private_fields
@@ -104,7 +121,7 @@ dotnet_style_prefer_is_null_check_over_reference_equality_method = true:suggesti
 dotnet_style_prefer_auto_properties = true:silent
 dotnet_style_object_initializer = true:suggestion
 dotnet_style_collection_initializer = true:suggestion
-dotnet_style_prefer_simplified_boolean_expressions = true:suggestion
+dotnet_style_prefer_simplified_boolean_expressions = false:error
 dotnet_style_prefer_conditional_expression_over_assignment = true:silent
 dotnet_style_prefer_conditional_expression_over_return = true:silent
 dotnet_style_explicit_tuple_names = true:suggestion
@@ -164,7 +181,7 @@ dotnet_style_prefer_collection_expression = when_types_loosely_match:suggestion
 dotnet_style_readonly_field = true:suggestion
 dotnet_style_predefined_type_for_locals_parameters_members = true:silent
 dotnet_style_predefined_type_for_member_access = true:silent
-dotnet_style_require_accessibility_modifiers = for_non_interface_members:silent
+dotnet_style_require_accessibility_modifiers = for_non_interface_members:warning
 dotnet_style_allow_multiple_blank_lines_experimental = true:silent
 dotnet_style_allow_statement_immediately_after_block_experimental = true:silent
 dotnet_code_quality_unused_parameters = all:suggestion

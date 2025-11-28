@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11205.157
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.BottomSheet", "..\src\Plugin.BottomSheet\Plugin.BottomSheet.csproj", "{BAA8EADB-995F-B0FE-9962-1F6DECD47D83}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.BottomSheet.iOSMacCatalyst", "..\src\Plugin.BottomSheet.iOSMacCatalyst\Plugin.BottomSheet.iOSMacCatalyst.csproj", "{CC2AAAF8-64CD-D941-55DF-3C54841D2A17}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BAA8EADB-995F-B0FE-9962-1F6DECD47D83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAA8EADB-995F-B0FE-9962-1F6DECD47D83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAA8EADB-995F-B0FE-9962-1F6DECD47D83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAA8EADB-995F-B0FE-9962-1F6DECD47D83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC2AAAF8-64CD-D941-55DF-3C54841D2A17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC2AAAF8-64CD-D941-55DF-3C54841D2A17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC2AAAF8-64CD-D941-55DF-3C54841D2A17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC2AAAF8-64CD-D941-55DF-3C54841D2A17}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9D0B4447-DA0B-421F-97B6-A35EA0A15272}
+	EndGlobalSection
+EndGlobal

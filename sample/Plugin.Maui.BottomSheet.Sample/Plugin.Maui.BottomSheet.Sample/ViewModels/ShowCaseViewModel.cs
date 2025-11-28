@@ -1,6 +1,7 @@
 using AsyncAwaitBestPractices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Plugin.BottomSheet;
 using Plugin.Maui.BottomSheet.Navigation;
 
 namespace Plugin.Maui.BottomSheet.Sample.ViewModels;
@@ -40,18 +41,18 @@ public sealed partial class ShowCaseViewModel : ObservableObject, IConfirmNaviga
     private bool _isModal;
 
     [ObservableProperty]
-    private CloseButtonPosition _closeButtonPosition = CloseButtonPosition.TopRight;
+    private BottomSheetHeaderCloseButtonPosition _closeButtonPosition = BottomSheetHeaderCloseButtonPosition.TopRight;
 
     [RelayCommand]
     private void TopLeftCloseButton()
     {
-        CloseButtonPosition = CloseButtonPosition.TopLeft;
+        CloseButtonPosition = BottomSheetHeaderCloseButtonPosition.TopLeft;
     }
 
     [RelayCommand]
     private void TopRightCloseButton()
     {
-        CloseButtonPosition = CloseButtonPosition.TopRight;
+        CloseButtonPosition = BottomSheetHeaderCloseButtonPosition.TopRight;
     }
 
     [RelayCommand]
@@ -66,13 +67,13 @@ public sealed partial class ShowCaseViewModel : ObservableObject, IConfirmNaviga
     [RelayCommand]
     private static void TopLefButton()
     {
-        Shell.Current.DisplayAlert("Notification", "Top left clicked", "Cancel").SafeFireAndForget(continueOnCapturedContext: false);
+        Shell.Current.DisplayAlertAsync("Notification", "Top left clicked", "Cancel").SafeFireAndForget(continueOnCapturedContext: false);
     }
 
     [RelayCommand]
     private static void TopRightButton()
     {
-        Shell.Current.DisplayAlert("Notification", "Top right clicked", "Cancel").SafeFireAndForget(continueOnCapturedContext: false);
+        Shell.Current.DisplayAlertAsync("Notification", "Top right clicked", "Cancel").SafeFireAndForget(continueOnCapturedContext: false);
     }
 
     [RelayCommand]
@@ -170,10 +171,11 @@ public sealed partial class ShowCaseViewModel : ObservableObject, IConfirmNaviga
 
     public Task<bool> CanNavigateAsync(IBottomSheetNavigationParameters? parameters)
     {
-        return Shell.Current.CurrentPage.DisplayAlert(
+        return Task.FromResult(true);
+        /*return Shell.Current.CurrentPage.DisplayAlertAsync(
             "Warning",
             "You are about to navigate away",
             "OK",
-            "Cancel");
+            "Cancel");*/
     }
 }

@@ -1,16 +1,19 @@
+using Plugin.BottomSheet;
+
 namespace Plugin.Maui.BottomSheet;
 
 /// <summary>
-/// Bottom sheet states collection extensions.
+/// Provides a set of extension methods for interaction with collections of <see cref="BottomSheetState"/>,
+/// enabling functionalities like checking if a state is allowed within a given set of allowed states.
 /// </summary>
 internal static class BottomSheetStatesExtensions
 {
     /// <summary>
-    /// Is bottom sheet state allowed.
+    /// Determines whether the specified state is included in the provided collection of bottom sheet states.
     /// </summary>
-    /// <param name="states">Allowed states.</param>
-    /// <param name="state">State to check.</param>
-    /// <returns>Is state allowed.</returns>
+    /// <param name="states">The collection of bottom sheet states to evaluate.</param>
+    /// <param name="state">The bottom sheet state to check for inclusion.</param>
+    /// <returns>True if the state is included in the collection, false otherwise.</returns>
     public static bool IsStateAllowed(this IEnumerable<BottomSheetState> states, BottomSheetState state)
     {
         return states.Contains(state);

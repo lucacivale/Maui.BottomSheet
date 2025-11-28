@@ -1,76 +1,29 @@
 namespace Plugin.Maui.BottomSheet.Navigation;
 
 /// <summary>
-/// <see cref="IBottomSheetNavigationService"/> extension methods.
+/// Provides extension methods for navigating to bottom sheets using the
+/// <see cref="IBottomSheetNavigationService"/> with options for view model resolution and customization.
 /// </summary>
 // ReSharper disable once InconsistentNaming
 public static class IBottomSheetNavigationServiceExtensions
 {
     /// <summary>
-    /// Open a <see cref="BottomSheet"/>.
+    /// Navigates to a bottom sheet by name with automatic view model resolution.
     /// </summary>
-    /// <param name="navigationService">Navigation service.</param>
-    /// <param name="name">Name of the <see cref="BottomSheet"/> to be opened.</param>
-    /// <param name="parameters">Navigation parameters.</param>
-    /// <param name="configure">Action to modify the <see cref="BottomSheet"/>.</param>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "S1133:Do not forget to remove this deprecated code someday.", Justification = "Will be removed with v10.")]
-    [Obsolete("Use NavigateToAsync instead.")]
-    public static void NavigateTo(this IBottomSheetNavigationService navigationService, string name, IBottomSheetNavigationParameters? parameters = null, Action<IBottomSheet>? configure = null)
+    /// <param name="navigationService">The navigation service.</param>
+    /// <param name="name">The registered name of the bottom sheet.</param>
+    /// <param name="parameters">Optional navigation parameters.</param>
+    /// <param name="configure">Optional action to configure the bottom sheet.</param>
+    /// <returns>A task representing the navigation operation.</returns>
+    public static Task<INavigationResult> NavigateToAsync(this IBottomSheetNavigationService navigationService, string name, IBottomSheetNavigationParameters? parameters = null, Action<IBottomSheet>? configure = null)
     {
         ArgumentNullException.ThrowIfNull(navigationService);
 
-        var bottomSheet = navigationService.ServiceProvider.GetRequiredKeyedService<IBottomSheet>(name);
+        IBottomSheet bottomSheet = navigationService.ServiceProvider.GetRequiredKeyedService<IBottomSheet>(name);
 
         object? viewModel = null;
 
-        if (BottomSheetNavigationService.BottomSheetToViewModelMapping.TryGetValue(name, out var viewModelType))
-        {
-            viewModel = navigationService.ServiceProvider.GetService(viewModelType);
-        }
-
-        navigationService.NavigateTo(bottomSheet, viewModel, parameters, configure);
-    }
-
-    /// <summary>
-    /// Open a <see cref="BottomSheet"/>.
-    /// If <typeparamref name="TViewModel"/> isn't null it'll be assigned to BindingContext.
-    /// If <typeparamref name="TViewModel"/> implements <see cref="IQueryAttributable"/> <paramref name="parameters"/> will be applied on navigation.
-    /// </summary>
-    /// <param name="navigationService">Navigation service.</param>
-    /// <param name="name">Name of the <see cref="BottomSheet"/> to be opened.</param>
-    /// <param name="parameters">Navigation parameters.</param>
-    /// <param name="configure">Action to modify the <see cref="BottomSheet"/>.</param>
-    /// <typeparam name="TViewModel">View model type.</typeparam>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "S1133:Do not forget to remove this deprecated code someday.", Justification = "Will be removed with v10.")]
-    [Obsolete("Use NavigateToAsync instead.")]
-    public static void NavigateTo<TViewModel>(this IBottomSheetNavigationService navigationService, string name, IBottomSheetNavigationParameters? parameters = null, Action<IBottomSheet>? configure = null)
-        where TViewModel : class
-    {
-        ArgumentNullException.ThrowIfNull(navigationService);
-
-        var bottomSheet = navigationService.ServiceProvider.GetRequiredKeyedService<IBottomSheet>(name);
-        var viewModel = navigationService.ServiceProvider.GetRequiredService<TViewModel>();
-
-        navigationService.NavigateTo(bottomSheet, viewModel, parameters, configure);
-    }
-
-    /// <summary>
-    /// Open a <see cref="BottomSheet"/>.
-    /// </summary>
-    /// <param name="navigationService">Navigation service.</param>
-    /// <param name="name">Name of the <see cref="BottomSheet"/> to be opened.</param>
-    /// <param name="parameters">Navigation parameters.</param>
-    /// <param name="configure">Action to modify the <see cref="BottomSheet"/>.</param>
-    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    public static Task NavigateToAsync(this IBottomSheetNavigationService navigationService, string name, IBottomSheetNavigationParameters? parameters = null, Action<IBottomSheet>? configure = null)
-    {
-        ArgumentNullException.ThrowIfNull(navigationService);
-
-        var bottomSheet = navigationService.ServiceProvider.GetRequiredKeyedService<IBottomSheet>(name);
-
-        object? viewModel = null;
-
-        if (BottomSheetNavigationService.BottomSheetToViewModelMapping.TryGetValue(name, out var viewModelType))
+        if (BottomSheetNavigationService.BottomSheetToViewModelMapping.TryGetValue(name, out Type? viewModelType))
         {
             viewModel = navigationService.ServiceProvider.GetService(viewModelType);
         }
@@ -79,23 +32,21 @@ public static class IBottomSheetNavigationServiceExtensions
     }
 
     /// <summary>
-    /// Open a <see cref="BottomSheet"/>.
-    /// If <typeparamref name="TViewModel"/> isn't null it'll be assigned to BindingContext.
-    /// If <typeparamref name="TViewModel"/> implements <see cref="IQueryAttributable"/> <paramref name="parameters"/> will be applied on navigation.
+    /// Navigates to a bottom sheet by name with a strongly-typed view model.
     /// </summary>
-    /// <param name="navigationService">Navigation service.</param>
-    /// <param name="name">Name of the <see cref="BottomSheet"/> to be opened.</param>
-    /// <param name="parameters">Navigation parameters.</param>
-    /// <param name="configure">Action to modify the <see cref="BottomSheet"/>.</param>
-    /// <typeparam name="TViewModel">View model type.</typeparam>
-    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    public static Task NavigateToAsync<TViewModel>(this IBottomSheetNavigationService navigationService, string name, IBottomSheetNavigationParameters? parameters = null, Action<IBottomSheet>? configure = null)
+    /// <typeparam name="TViewModel">The type of view model to bind.</typeparam>
+    /// <param name="navigationService">The navigation service.</param>
+    /// <param name="name">The registered name of the bottom sheet.</param>
+    /// <param name="parameters">Optional navigation parameters.</param>
+    /// <param name="configure">Optional action to configure the bottom sheet.</param>
+    /// <returns>A task representing the navigation operation.</returns>
+    public static Task<INavigationResult> NavigateToAsync<TViewModel>(this IBottomSheetNavigationService navigationService, string name, IBottomSheetNavigationParameters? parameters = null, Action<IBottomSheet>? configure = null)
         where TViewModel : class
     {
         ArgumentNullException.ThrowIfNull(navigationService);
 
-        var bottomSheet = navigationService.ServiceProvider.GetRequiredKeyedService<IBottomSheet>(name);
-        var viewModel = navigationService.ServiceProvider.GetRequiredService<TViewModel>();
+        IBottomSheet bottomSheet = navigationService.ServiceProvider.GetRequiredKeyedService<IBottomSheet>(name);
+        TViewModel viewModel = navigationService.ServiceProvider.GetRequiredService<TViewModel>();
 
         return navigationService.NavigateToAsync(bottomSheet, viewModel, parameters, configure);
     }

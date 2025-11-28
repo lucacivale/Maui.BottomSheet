@@ -1,7 +1,13 @@
 ﻿using Plugin.Maui.BottomSheet.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.LifecycleEvents;
+using Plugin.BottomSheet;
 using Plugin.Maui.BottomSheet.Sample.ViewModels;
 using Plugin.Maui.BottomSheet.Sample.Views;
+#if ANDROID
+using System.Diagnostics;
+using Plugin.Maui.BottomSheet.LifecycleEvents;
+#endif
 
 namespace Plugin.Maui.BottomSheet.Sample
 {
@@ -9,7 +15,7 @@ namespace Plugin.Maui.BottomSheet.Sample
     {
         public static MauiApp CreateMauiApp()
         {
-            var builder = MauiApp.CreateBuilder();
+            MauiAppBuilder builder = MauiApp.CreateBuilder();
 
             builder
                 .UseMauiApp<App>()
@@ -19,6 +25,19 @@ namespace Plugin.Maui.BottomSheet.Sample
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
+
+            #if ANDROID
+            builder.ConfigureLifecycleEvents(events =>
+            {
+                events.AddAndroid(android =>
+                {
+                    android.OnBottomSheetBackPressed(_ =>
+                    {
+                        Debug.WriteLine("BACK PRESSED!!!!");
+                    });
+                });
+            });
+            #endif
 
             builder.Services.AddTransient<ShowCasePage>();
             builder.Services.AddTransient<ShowCaseViewModel>();

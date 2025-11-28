@@ -1,73 +1,43 @@
 namespace Plugin.Maui.BottomSheet.Navigation;
 
 /// <summary>
-/// BottomSheet navigation service.
+/// Defines navigation functionalities for managing bottom sheet components in a Maui application.
 /// </summary>
 public interface IBottomSheetNavigationService
 {
     /// <summary>
-    /// Gets service provider.
+    /// Gets access to the service provider for resolving dependencies.
     /// </summary>
     internal IServiceProvider ServiceProvider { get; }
 
     /// <summary>
-    /// Open a <see cref="BottomSheet"/>.
-    /// If <paramref name="viewModel"/> isn't null it'll be assigned to BindingContext.
-    /// If <paramref name="viewModel"/> implements <see cref="IQueryAttributable"/> <paramref name="parameters"/> will be applied on navigation.
+    /// Navigates to a bottom sheet with optional view model and parameters.
     /// </summary>
-    /// <param name="bottomSheet"><see cref="BottomSheet"/> to be opened.</param>
-    /// <param name="viewModel">BindingContext of <see cref="BottomSheet"/>.</param>
-    /// <param name="parameters">Navigation parameters.</param>
-    /// <param name="configure">Action to modify the <see cref="BottomSheet"/>.</param>
-    /// <returns>A <see cref="Task"/> representing the asynchronous navigation operation.</returns>
-    Task NavigateToAsync(IBottomSheet bottomSheet, object? viewModel = null, IBottomSheetNavigationParameters? parameters = null, Action<IBottomSheet>? configure = null);
+    /// <param name="bottomSheet">The bottom sheet to display.</param>
+    /// <param name="viewModel">Optional view model to bind to the bottom sheet.</param>
+    /// <param name="parameters">Optional navigation parameters.</param>
+    /// <param name="configure">Optional action to configure the bottom sheet.</param>
+    /// <returns>A task containing the navigation result.</returns>
+    Task<INavigationResult> NavigateToAsync(IBottomSheet bottomSheet, object? viewModel = null, IBottomSheetNavigationParameters? parameters = null, Action<IBottomSheet>? configure = null);
 
     /// <summary>
-    /// Open a <see cref="BottomSheet"/>.
-    /// If <paramref name="viewModel"/> isn't null it'll be assigned to BindingContext.
-    /// If <paramref name="viewModel"/> implements <see cref="IQueryAttributable"/> <paramref name="parameters"/> will be applied on navigation.
+    /// Closes the current bottom sheet and navigates back.
     /// </summary>
-    /// <param name="bottomSheet"><see cref="BottomSheet"/> to be opened.</param>
-    /// <param name="viewModel">BindingContext of <see cref="BottomSheet"/>.</param>
-    /// <param name="parameters">Navigation parameters.</param>
-    /// <param name="configure">Action to modify the <see cref="BottomSheet"/>.</param>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "S1133:Do not forget to remove this deprecated code someday.", Justification = "Will be removed with v10.")]
-    [Obsolete("Use NavigateToAsync instead.")]
-    void NavigateTo(IBottomSheet bottomSheet, object? viewModel = null, IBottomSheetNavigationParameters? parameters = null, Action<IBottomSheet>? configure = null);
+    /// <param name="parameters">Optional navigation parameters to pass during the back navigation.</param>
+    /// <returns>A task containing the result of the navigation operation.</returns>
+    Task<INavigationResult> GoBackAsync(IBottomSheetNavigationParameters? parameters = null);
 
     /// <summary>
-    /// Close current <see cref="BottomSheet"/>.
-    /// If BindingContext implements <see cref="IQueryAttributable"/> <paramref name="parameters"/> will be applied on navigation.
+    /// Clears the navigation stack of all bottom sheets by closing them sequentially.
     /// </summary>
-    /// <param name="parameters">Navigation parameters.</param>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "S1133:Do not forget to remove this deprecated code someday.", Justification = "Will be removed with v10.")]
-    [Obsolete("Use GoBackAsync instead.")]
-    void GoBack(IBottomSheetNavigationParameters? parameters = null);
+    /// <returns>A task that represents the asynchronous operation.
+    /// The result contains a collection of <see cref="INavigationResult"/> detailing the outcome
+    /// of each close operation.</returns>
+    Task<IEnumerable<INavigationResult>> ClearBottomSheetStackAsync();
 
     /// <summary>
-    /// Close current <see cref="BottomSheet"/>.
-    /// If BindingContext implements <see cref="IQueryAttributable"/> <paramref name="parameters"/> will be applied on navigation.
+    /// Retrieves the current stack of bottom sheets being managed by the navigation service.
     /// </summary>
-    /// <param name="parameters">Navigation parameters.</param>
-    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    Task GoBackAsync(IBottomSheetNavigationParameters? parameters = null);
-
-    /// <summary>
-    /// Close all BottomSheets.
-    /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "S1133:Do not forget to remove this deprecated code someday.", Justification = "Will be removed with v10.")]
-    [Obsolete("Use ClearBottomSheetAsync instead.")]
-    void ClearBottomSheetStack();
-
-    /// <summary>
-    /// Close all BottomSheets.
-    /// </summary>
-    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    Task ClearBottomSheetStackAsync();
-
-    /// <summary>
-    /// Returns the current navigation stack.
-    /// </summary>
-    /// <returns>The current stack.</returns>
+    /// <returns>A read-only collection representing the bottom sheets currently in the navigation stack.</returns>
     IReadOnlyCollection<IBottomSheet> NavigationStack();
 }

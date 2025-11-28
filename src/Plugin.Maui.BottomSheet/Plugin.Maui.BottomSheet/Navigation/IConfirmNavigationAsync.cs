@@ -1,14 +1,15 @@
 namespace Plugin.Maui.BottomSheet.Navigation;
 
 /// <summary>
-/// Provides a way for ViewModels involved in navigation to asynchronously determine if a navigation request should continue.
+/// Provides functionality for view models to determine asynchronously
+/// whether they allow navigation away from their current state.
 /// </summary>
 public interface IConfirmNavigationAsync
 {
     /// <summary>
-    /// Determines whether this instance accepts being navigated away from.
+    /// Asynchronously determines if navigation away from this view model is allowed.
     /// </summary>
-    /// <param name="parameters">The navigation parameters.</param>
-    /// <returns><c>True</c> if navigation can continue, <c>False</c> if navigation is not allowed to continue.</returns>
+    /// <param name="parameters">The navigation parameters, providing context and data for the navigation request.</param>
+    /// <returns>A task containing true if navigation can proceed; otherwise, false.</returns>
     Task<bool> CanNavigateAsync(IBottomSheetNavigationParameters parameters);
 }
