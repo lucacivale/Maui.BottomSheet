@@ -336,13 +336,12 @@ public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>
     /// <param name="e">The event arguments containing details of the state change.</param>
     private void BottomSheetOnStateChanged(object? sender, BottomSheetStateChangedEventArgs e)
     {
-        if (_virtualView is null
-            || _bottomSheet is null)
+        if (_virtualView is null)
         {
             return;
         }
 
-        _bottomSheet.State = e.NewState;
+        _virtualView.CurrentState = e.NewState;
         SetFrame();
     }
 

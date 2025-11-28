@@ -9,9 +9,9 @@ public class StringToThicknessConverter : IValueConverter
         if (value is string str
             && string.IsNullOrWhiteSpace(str))
         {
-            return Thickness.Zero;
+            return Microsoft.Maui.Thickness.Zero;
         }
-        return new Thickness(System.Convert.ToDouble(value));
+        return new Microsoft.Maui.Thickness(System.Convert.ToDouble(value));
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
