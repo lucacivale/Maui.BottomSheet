@@ -6,7 +6,7 @@ namespace Plugin.BottomSheet.iOSMacCatalyst;
 /// <summary>
 /// Represents a UI component that provides bottom sheet functionality, typically used to display additional contextual content or user actions on supported platforms.
 /// </summary>
-internal sealed class BottomSheet : UINavigationController
+public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
 {
     private const string AccessibilityIdentifier = "Plugin.BottomSheet.iOSMacCatalyst.BottomSheet";
     private const string PeekDetentId = "Plugin.Maui.BottomSheet.PeekDetentId";
@@ -72,7 +72,7 @@ internal sealed class BottomSheet : UINavigationController
     /// <summary>
     /// Triggered when the frame content is updated or modified.
     /// </summary>
-    public event EventHandler<Rect> FrameChanged
+    public event EventHandler FrameChanged
     {
         add => _eventManager.AddEventHandler(value);
         remove => _eventManager.RemoveEventHandler(value);
@@ -249,6 +249,13 @@ internal sealed class BottomSheet : UINavigationController
     }
 
     /// <summary>
+    /// Returns an enumerator that iterates through the collection of subviews.
+    /// </summary>
+    /// <returns>An enumerator for the collection of <see cref="UIView"/> objects.</returns>
+    IEnumerator<UIView> IEnumerable<UIView>.GetEnumerator()
+        => (IEnumerator<UIView>?)_containerViewController?.GetEnumerator() ?? Enumerable.Empty<UIView>().GetEnumerator();
+
+    /// <summary>
     /// Called after the controller's view is loaded into memory.
     /// Configures the view by setting its accessibility identifier for better UI automation support.
     /// </summary>
@@ -300,11 +307,7 @@ internal sealed class BottomSheet : UINavigationController
 
         _eventManager.RaiseEvent(
             this,
-            new Rect(
-                Frame.X,
-                Frame.Y,
-                Frame.Width,
-                Frame.Height),
+            EventArgs.Empty,
             nameof(FrameChanged));
     }
 

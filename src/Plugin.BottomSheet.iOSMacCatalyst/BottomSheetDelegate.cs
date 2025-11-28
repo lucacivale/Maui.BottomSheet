@@ -61,7 +61,7 @@ internal sealed class BottomSheetDelegate : UISheetPresentationControllerDelegat
 
         _eventManager.RaiseEvent(
             sheetPresentationController,
-            new BottomSheetStateChangedEventArgs(state),
+            new BottomSheetStateChangedEventArgs(state, state),
             nameof(StateChanged));
     }
 }

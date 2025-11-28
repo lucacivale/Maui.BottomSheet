@@ -36,6 +36,11 @@ public interface IBottomSheet : IView, IPadding
     event EventHandler LayoutChanged;
 
     /// <summary>
+    /// Triggered whenever the state of the bottom sheet changes, allowing subscribers to track transitions between different states.
+    /// </summary>
+    event EventHandler<BottomSheetStateChangedEventArgs> StateChanged;
+
+    /// <summary>
     /// Gets or sets the parent element or object in a hierarchy, providing access to and context within its logical container or structure.
     /// </summary>
     new Element Parent { get; set; }

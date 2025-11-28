@@ -16,7 +16,7 @@ namespace Plugin.Maui.BottomSheet.Platform.Android;
 /// <summary>
 /// Represents the Android-specific implementation for a MAUI bottom sheet component.
 /// </summary>
-internal sealed class MauiBottomSheet : AndroidView
+public sealed class MauiBottomSheet : AndroidView
 {
     private readonly IMauiContext _mauiContext;
     private readonly Context _context;
@@ -47,6 +47,11 @@ internal sealed class MauiBottomSheet : AndroidView
     public bool IsOpen => _bottomSheet?.IsShowing == true;
 
     /// <summary>
+    /// Gets the underlying Android BottomSheetDialog instance associated with the MAUI bottom sheet.
+    /// </summary>
+    public BottomSheetDialog? BottomSheet => _bottomSheet;
+
+    /// <summary>
     /// Configures the allowed states for the bottom sheet.
     /// Updates the bottom sheet's states based on the associated virtual view.
     /// </summary>
@@ -58,7 +63,7 @@ internal sealed class MauiBottomSheet : AndroidView
             return;
         }
 
-        _bottomSheet.States = new(_virtualView.States);
+        _bottomSheet.States = new List<BottomSheetState>(_virtualView.States);
     }
 
     /// <summary>
@@ -413,7 +418,7 @@ internal sealed class MauiBottomSheet : AndroidView
     /// <param name="e">The event arguments containing details of the state change.</param>
     private void BottomSheetOnStateChanged(object? sender, BottomSheetStateChangedEventArgs e)
     {
-        BottomSheetState state = e.State;
+        BottomSheetState state = e.NewState;
 
         if (_virtualView is null
             || state == _virtualView.CurrentState)

@@ -3,7 +3,7 @@ namespace Plugin.BottomSheet;
 /// <summary>
 /// Represents a rectangle defined by its position and dimensions.
 /// </summary>
-internal record Rect
+public record Rect
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Rect"/> class.

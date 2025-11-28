@@ -8,7 +8,7 @@ namespace Plugin.BottomSheet.Android;
 /// <summary>
 /// Defines a bottom sheet dialog designed to display content in an overlay that slides up from the bottom of the screen.
 /// </summary>
-internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.BottomSheetDialog
+public sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.BottomSheetDialog
 {
     private readonly Context _context;
     private readonly WeakEventManager _eventManager = new();
@@ -263,12 +263,12 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
     /// <summary>
     /// Gets or sets the collection of states associated with the application, process, or workflow.
     /// </summary>
-    public List<BottomSheetState> States
+    public IList<BottomSheetState> States
     {
         get => _bottomSheetStates;
         set
         {
-            _bottomSheetStates = value;
+            _bottomSheetStates = new List<BottomSheetState>(value);
 
             if (_bottomSheetStates.Contains(BottomSheetState.Peek) == false)
             {
@@ -591,7 +591,7 @@ internal sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bo
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S6608:Prefer indexing instead of \"Enumerable\" methods on types implementing \"IList\"", Justification = "Improve readability and no performance impact")]
     private void BottomSheetCallback_StateChanged(object? sender, BottomSheetStateChangedEventArgs e)
     {
-        if (States.IsStateAllowed(e.State) == false)
+        if (States.IsStateAllowed(e.NewState) == false)
         {
             State = States.First();
         }

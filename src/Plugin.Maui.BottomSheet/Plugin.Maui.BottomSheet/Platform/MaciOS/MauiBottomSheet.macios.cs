@@ -11,7 +11,7 @@ using UIKit;
 /// <summary>
 /// Represents a platform-specific implementation of a bottom sheet for macOS and iOS, integrated into the .NET MAUI framework.
 /// </summary>
-internal sealed class MauiBottomSheet : UIView
+public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>
 {
     private readonly IMauiContext _mauiContext;
     private readonly TaskCompletionSource _isAttachedToWindowTcs;
@@ -37,6 +37,13 @@ internal sealed class MauiBottomSheet : UIView
     /// Gets a value indicating whether the bottom sheet is currently open.
     /// </summary>
     public bool IsOpen => _bottomSheet?.IsOpen == true;
+
+    /// <summary>
+    /// Returns an enumerator that iterates through the collection of subviews.
+    /// </summary>
+    /// <returns>An enumerator for the collection of <see cref="UIView"/> objects.</returns>
+    IEnumerator<UIView> IEnumerable<UIView>.GetEnumerator()
+        => (IEnumerator<UIView>)Subviews.GetEnumerator();
 
     /// <summary>
     /// Called when the view is moved to a window, and ensures any pending operations
@@ -335,7 +342,7 @@ internal sealed class MauiBottomSheet : UIView
             return;
         }
 
-        _bottomSheet.State = e.State;
+        _bottomSheet.State = e.NewState;
         SetFrame();
     }
 
@@ -399,7 +406,7 @@ internal sealed class MauiBottomSheet : UIView
     /// </summary>
     /// <param name="sender">The source triggering the event, typically the bottom sheet instance.</param>
     /// <param name="e">The new dimensions of the frame.</param>
-    private void BottomSheetOnFrameChanged(object? sender, Rect e)
+    private void BottomSheetOnFrameChanged(object? sender, EventArgs e)
     {
         if (_virtualView is null)
         {

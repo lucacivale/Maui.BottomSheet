@@ -44,7 +44,7 @@ internal sealed class BottomSheetCallback : BottomSheetBehavior.BottomSheetCallb
         {
             _eventManager.RaiseEvent(
                 p0,
-                new BottomSheetStateChangedEventArgs(p1.ToBottomSheetState()),
+                new BottomSheetStateChangedEventArgs(p1.ToBottomSheetState(), p1.ToBottomSheetState()),
                 nameof(StateChanged));
         }
     }

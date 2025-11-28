@@ -86,6 +86,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             nameof(CurrentState),
             typeof(BottomSheetState),
             typeof(BottomSheet),
+            propertyChanged: CurrentStatePropertyChanged,
             defaultBindingMode: BindingMode.TwoWay,
             defaultValueCreator: bindable =>
             {
@@ -364,6 +365,15 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     /// Gets or sets event that is triggered when the layout of an element has been updated or modified.
     /// </summary>
     public event EventHandler LayoutChanged
+    {
+        add => _eventManager.AddEventHandler(value);
+        remove => _eventManager.RemoveEventHandler(value);
+    }
+
+    /// <summary>
+    /// Occurs when the state of the bottom sheet changes.
+    /// </summary>
+    public event EventHandler<BottomSheetStateChangedEventArgs> StateChanged
     {
         add => _eventManager.AddEventHandler(value);
         remove => _eventManager.RemoveEventHandler(value);
@@ -778,6 +788,40 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     /// <param name="newValue">The new value of the property.</param>
     private static void OnPaddingPropertyChanged(BindableObject bindable, object oldValue, object newValue)
         => ((BottomSheet)bindable).OnPaddingPropertyChanged();
+
+    /// <summary>
+    /// Handles the property change event for the <see cref="BottomSheet.CurrentStateProperty"/>.
+    /// Updates the state of the <see cref="BottomSheet"/> when the <see cref="BottomSheetState"/> changes.
+    /// </summary>
+    /// <param name="bindable">
+    /// The <see cref="BindableObject"/> that contains the <see cref="BottomSheet"/> instance whose property changed.
+    /// </param>
+    /// <param name="oldValue">
+    /// The previous value of the <see cref="BottomSheetState"/> before the change.
+    /// </param>
+    /// <param name="newValue">
+    /// The new value of the <see cref="BottomSheetState"/> after the change.
+    /// </param>
+    private static void CurrentStatePropertyChanged(BindableObject bindable, object oldValue, object newValue)
+        => ((BottomSheet)bindable).CurrentStatePropertyChanged((BottomSheetState)oldValue, (BottomSheetState)newValue);
+
+    /// <summary>
+    /// Handles changes to the current state of the <see cref="BottomSheet"/> control.
+    /// Invoked when the <see cref="StatesProperty"/> changes.
+    /// </summary>
+    /// <param name="oldValue">
+    /// The previous <see cref="BottomSheetState"/> before the change.
+    /// </param>
+    /// <param name="newValue">
+    /// The new <see cref="BottomSheetState"/> after the change.
+    /// </param>
+    private void CurrentStatePropertyChanged(BottomSheetState oldValue, BottomSheetState newValue)
+    {
+        _eventManager.HandleEvent(
+            this,
+            new BottomSheetStateChangedEventArgs(oldValue, newValue),
+            nameof(StateChanged));
+    }
 
     /// <summary>
     /// Handles the change in the padding property of the <see cref="BottomSheet"/>

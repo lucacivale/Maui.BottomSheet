@@ -3,7 +3,7 @@ namespace Plugin.BottomSheet;
 /// <summary>
 /// Represents a thickness value that defines the space or padding on all four sides (left, top, right, and bottom).
 /// </summary>
-internal record Thickness
+public record Thickness
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Thickness"/> class.
