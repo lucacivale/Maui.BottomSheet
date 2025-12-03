@@ -12,7 +12,7 @@ jobs:
   
   Build-Plugin_Maui_BottomSheet:
     runs-on: macos-15
-    
+
     strategy:
       matrix:
         include:
@@ -20,7 +20,7 @@ jobs:
           - project: Plugin.BottomSheet
           - project: Plugin.BottomSheet.Android
           - project: Plugin.BottomSheet.iOSMacCatalyst
-
+  
     steps:
       - uses: actions/checkout@v4
 
@@ -29,7 +29,7 @@ jobs:
         id: version
         with:
           scheme: semver
-          increment: major
+          increment: patch
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -43,10 +43,10 @@ jobs:
         run: dotnet workload install maui --version ${{ env.DOTNET_VERSION }}
             
       - name: Build ${{ matrix.project }}
-        run: dotnet build src/${{ matrix.project }}/${{ matrix.project }}/${{ matrix.project }}.csproj -c ${{ env.Configuration }} -p:Version=${{ steps.version.outputs.version }}
+        run: dotnet build src/**/${{ matrix.project }}.csproj -c ${{ env.Configuration }} -p:Version=${{ steps.version.outputs.version }}
         
       - name: Archive NuGet
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.project }}.${{ steps.version.outputs.version }}.nupkg
-          path: src/${{ matrix.project }}/${{ matrix.project }}/bin/${{ env.Configuration }}/${{ matrix.project }}.${{ steps.version.outputs.version }}.nupkg
+          path: src/**/${{ matrix.project }}.${{ steps.version.outputs.version }}.nupkg
