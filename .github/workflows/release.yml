@@ -17,7 +17,7 @@ jobs:
       matrix:
         include:
           - project: Plugin.Maui.BottomSheet
-          - project: Plugin.BottomSheet
+          - project: Plugin.BottomSheet.Core
           - project: Plugin.BottomSheet.Android
           - project: Plugin.BottomSheet.iOSMacCatalyst
   
