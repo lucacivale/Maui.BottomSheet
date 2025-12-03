@@ -56,8 +56,7 @@ internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, Mau
     /// </exception>
     protected override MauiBottomSheet CreatePlatformView()
     {
-        _ = MauiContext ??
-            throw new InvalidOperationException("MauiContext is null, please check your MauiApplication.");
+        _ = MauiContext ?? throw new InvalidOperationException("MauiContext is null, please check your MauiApplication.");
 
         MauiBottomSheet bottomSheet = new(MauiContext);
 

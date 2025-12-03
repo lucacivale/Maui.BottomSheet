@@ -1,19 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>
-            $(LegacyNETVersion);
-            $(LegacyNETVersion)-ios;
-            $(LegacyNETVersion)-android;
-            $(LegacyNETVersion)-maccatalyst;
-            $(NETVersion);
-            $(NETVersion)-ios;
-            $(NETVersion)-android;
-            $(NETVersion)-maccatalyst</TargetFrameworks>
+		<TargetFrameworks>
+			$(LegacyNETVersion);
+			$(LegacyNETVersion)-ios;
+			$(LegacyNETVersion)-android;
+			$(LegacyNETVersion)-maccatalyst;
+			$(NETVersion);
+			$(NETVersion)-ios;
+			$(NETVersion)-android;
+			$(NETVersion)-maccatalyst
+		</TargetFrameworks>
+		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);$(NETVersion)-windows$(WindowsVersion);$(LegacyNETVersion)-windows$(WindowsVersion)</TargetFrameworks>
+		
         <UseMaui>true</UseMaui>
         <SingleProject>true</SingleProject>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
+		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+		
         <Title>.NET MAUI BottomSheet</Title>
         <Description>
             Open native BottomSheets with .NET MAUI
@@ -35,11 +41,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AsyncAwaitBestPractices"/>
+        <PackageReference Include="AsyncAwaitBestPractices" />
     </ItemGroup>
 
     <ItemGroup Condition="$(TargetFramework.StartsWith('$(LegacyNETVersion)'))">
-        <PackageReference Include="Microsoft.Maui.Controls"/>
+        <PackageReference Include="Microsoft.Maui.Controls" />
     </ItemGroup>
 
     <ItemGroup Condition="$(TargetFramework.StartsWith('$(NETVersion)'))">
@@ -62,11 +68,15 @@
     </ItemGroup>
 
     <ItemGroup Condition="$(TargetFramework.EndsWith('ios')) or $(TargetFramework.EndsWith('maccatalyst'))">
-        <ProjectReference Include="..\..\Plugin.BottomSheet.IOSMacCatalyst\Plugin.BottomSheet.IOSMacCatalyst.csproj" />
+        <ProjectReference Include="..\..\Plugin.BottomSheet.IOSMacCatalyst\Plugin.BottomSheet.iOSMacCatalyst.csproj" />
     </ItemGroup>
+
+	<ItemGroup Condition="$(TargetFramework.Contains('windows'))">
+		<ProjectReference Include="..\..\Plugin.BottomSheet.Windows\Plugin.BottomSheet.Windows.csproj" />
+	</ItemGroup>
 	
     <ItemGroup>
-      <ProjectReference Include="..\..\Plugin.BottomSheet\Plugin.BottomSheet.csproj" />
+      <ProjectReference Include="..\..\Plugin.BottomSheet\Plugin.BottomSheet.csproj"/>
     </ItemGroup>
 
 </Project>

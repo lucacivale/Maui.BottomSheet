@@ -1,0 +1,14 @@
+﻿<maui:MauiWinUIApplication
+    x:Class="Plugin.BottomSheet.Tests.Maui.Ui.Application.WinUI.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Plugin.BottomSheet.Tests.Maui.Ui.Application.WinUI"
+    xmlns:maui="using:Microsoft.Maui">
+    <maui:MauiWinUIApplication.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ms-appx:///Plugin.BottomSheet.Windows/Themes/Generic.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </maui:MauiWinUIApplication.Resources>
+</maui:MauiWinUIApplication>
