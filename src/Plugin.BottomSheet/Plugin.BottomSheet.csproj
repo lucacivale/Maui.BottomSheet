@@ -2,6 +2,8 @@
 
     <PropertyGroup>
         <TargetFrameworks>$(NETVersion);$(LegacyNETVersion);</TargetFrameworks>
+        <PackageId>$(AssemblyName).Core</PackageId>
+        <Product>$(AssemblyName).Core</Product>
     </PropertyGroup>
 
 	<ItemGroup>
