@@ -53,7 +53,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\Plugin.BottomSheet\Plugin.BottomSheet.csproj" />
-    <ProjectReference Include="..\..\..\src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet.csproj" />
+    <ProjectReference Include="..\..\..\src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet.csproj" />
   </ItemGroup>
 
 </Project>

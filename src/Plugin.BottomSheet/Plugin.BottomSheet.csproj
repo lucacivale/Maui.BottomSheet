@@ -21,4 +21,8 @@
 			<_Parameter1>Plugin.Maui.BottomSheet.Tests.Application</_Parameter1>
 		</AssemblyAttribute>
 	</ItemGroup>
+
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	</PropertyGroup>
 </Project>
