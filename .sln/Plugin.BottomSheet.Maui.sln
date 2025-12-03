@@ -46,7 +46,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.BottomSheet.Android"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.BottomSheet.iOSMacCatalyst", "..\src\Plugin.BottomSheet.iOSMacCatalyst\Plugin.BottomSheet.iOSMacCatalyst.csproj", "{38ACBBBB-4D5E-5F07-1586-16E45CA6CB9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.Maui.BottomSheet", "..\src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet.csproj", "{52D70865-4D31-72AE-5530-4C87626443DC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.Maui.BottomSheet", "..\src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet.csproj", "{52D70865-4D31-72AE-5530-4C87626443DC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{1B6FF552-48E9-457E-9A76-85D21B9F9B65}"
 	ProjectSection(SolutionItems) = preProject
