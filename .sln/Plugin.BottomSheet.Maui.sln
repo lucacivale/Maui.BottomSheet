@@ -63,7 +63,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IssueTemplate", "IssueTempl
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{209FAF6A-B346-4915-90AA-9AAF24DE2E0B}"
 	ProjectSection(SolutionItems) = preProject
-		..\.github\workflows\ci-preview.yml = ..\.github\workflows\ci-preview.yml
+		..\.github\workflows\ci.yml = ..\.github\workflows\ci.yml
 		..\.github\workflows\issue_platform_identification.yml = ..\.github\workflows\issue_platform_identification.yml
 		..\.github\workflows\pr_platform_identification.yml = ..\.github\workflows\pr_platform_identification.yml
 		..\.github\workflows\release.yml = ..\.github\workflows\release.yml
