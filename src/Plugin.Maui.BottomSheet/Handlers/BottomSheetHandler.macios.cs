@@ -15,7 +15,7 @@ using System.Diagnostics.CodeAnalysis;
 /// The <c>BottomSheetHandler</c> is responsible for coordinating the platform-specific behavior of the bottom sheet,
 /// ensuring property synchronization, lifecycle management, and interoperation with the native implementation on supported devices.
 /// </remarks>
-internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, MauiBottomSheet>
+public sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, MauiBottomSheet>
 {
     /// <summary>
     /// Asynchronously opens a bottom sheet using the platform-specific implementation on macOS/iOS.

@@ -12,7 +12,7 @@ using Plugin.Maui.BottomSheet.Platform.Android;
 /// <summary>
 /// Handles the platform-specific behavior and lifecycle of a bottom sheet view within the Android platform.
 /// </summary>
-internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, MauiBottomSheet>
+public sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, MauiBottomSheet>
 {
     /// <summary>
     /// Asynchronously opens a bottom sheet using the platform-specific implementation.

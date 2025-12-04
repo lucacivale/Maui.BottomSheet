@@ -39,6 +39,11 @@ public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>
     public bool IsOpen => _bottomSheet?.IsOpen == true;
 
     /// <summary>
+    /// Gets the underlying UIViewController instance associated with the MAUI bottom sheet.
+    /// </summary>
+    public Plugin.BottomSheet.iOSMacCatalyst.BottomSheet? BottomSheet => _bottomSheet;
+
+    /// <summary>
     /// Returns an enumerator that iterates through the collection of subviews.
     /// </summary>
     /// <returns>An enumerator for the collection of <see cref="UIView"/> objects.</returns>

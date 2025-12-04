@@ -14,7 +14,7 @@ namespace Plugin.BottomSheet.Windows;
 /// Represents a BottomSheet that is a custom content dialog with specialized behaviors such as open, close, and cancel actions.
 /// It allows setting custom content and adjusting visual properties such as background and window background.
 /// </summary>
-internal sealed partial class BottomSheet : ContentDialog
+public sealed partial class BottomSheet : ContentDialog
 {
     private const string WindowBackgroundViewName = "SmokeLayerBackground";
     private const string BackgroundViewName = "Content";

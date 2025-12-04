@@ -10,7 +10,7 @@ namespace Plugin.Maui.BottomSheet.Platform.Windows;
 /// <summary>
 /// Represents a platform-specific implementation of a bottom sheet for Windows, integrated into the .NET MAUI framework.
 /// </summary>
-internal sealed partial class MauiBottomSheet : FrameworkElement
+public sealed partial class MauiBottomSheet : FrameworkElement
 {
     private readonly IMauiContext _mauiContext;
     private readonly TaskCompletionSource _isAttachedToWindowTcs;
@@ -38,6 +38,11 @@ internal sealed partial class MauiBottomSheet : FrameworkElement
     /// Gets a value indicating whether the bottom sheet is currently open.
     /// </summary>
     public bool IsOpen => _bottomSheet?.IsOpen == true;
+
+    /// <summary>
+    /// Gets the underlying ContentDialog instance associated with the MAUI bottom sheet.
+    /// </summary>
+    public Plugin.BottomSheet.Windows.BottomSheet? BottomSheet => _bottomSheet;
 
     /// <summary>
     /// Sets the virtual view for the bottom sheet.

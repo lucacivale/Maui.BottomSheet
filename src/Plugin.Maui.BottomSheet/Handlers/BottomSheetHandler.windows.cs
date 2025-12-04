@@ -11,7 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 /// A handler for managing a <see cref="IBottomSheet"/> in a .NET MAUI application.
 /// This handler is responsible for interacting with the platform-specific implementation of the BottomSheet view.
 /// </summary>
-internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, MauiBottomSheet>
+public sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, MauiBottomSheet>
 {
     /// <summary>
     /// Opens the BottomSheet asynchronously.

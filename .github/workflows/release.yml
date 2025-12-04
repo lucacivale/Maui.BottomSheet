@@ -20,6 +20,7 @@ jobs:
           - project: Plugin.BottomSheet.Core
           - project: Plugin.BottomSheet.Android
           - project: Plugin.BottomSheet.iOSMacCatalyst
+          - project: Plugin.BottomSheet.Windows
   
     steps:
       - uses: actions/checkout@v4

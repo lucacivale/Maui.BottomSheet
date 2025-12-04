@@ -4,7 +4,7 @@
 
 [![NuGet](https://img.shields.io/nuget/v/Plugin.Maui.BottomSheet.svg?style=flat-square&label=NuGet)](https://www.nuget.org/packages/Plugin.Maui.BottomSheet)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
-[![Platform Support](https://img.shields.io/badge/platform-iOS%20%7C%20Android%20%7C%20MacCatalyst-lightgrey.svg?style=flat-square)](#platforms)
+[![Platform Support](https://img.shields.io/badge/platforms-iOS%20%7C%20Android%20%7C%20MacCatalyst%20%7C%20Windows-lightgrey.svg?style=flat-square)](#platforms)
 
 ## ✨ Features
 
@@ -21,29 +21,58 @@ Check out the sample project to see the API in action!
 
 ## 🌍 Platform Support
 
+### Mobile
+
 <table>
 <tr>
 <td>
 
-### 📱 iOS
-**Minimum:** iOS 15+
+### 📱 Apple iOS 15+
 
-<img src="screenshots/iOS/Showcase.gif" width="200" alt="iOS Demo"/>
-<img src="screenshots/iPad/Showcase.gif" alt="iPad Demo"/>
-<td>
+<figure>
+<figcaption>iPhone</figcaption>
+<img src="screenshots/iOS/Showcase.gif" width="150" height="250" alt="iOS Demo"/>
+</figure>
 
-### 💻 MacCatalyst
-
-<img src="screenshots/MacCatalyst/Showcase.gif" width="300" alt="MacCatalyst Demo"/>
+<figure>
+<figcaption>iPad</figcaption>
+<img src="screenshots/iPad/Showcase.gif" width="200" height="200" alt="iPad Demo"/>
+</figure>
 
 </td>
 <td>
 
-### 🤖 Android
-**Minimum:** API 21+
+### 🤖 Android API 21+
 
-<img src="screenshots/Android/Showcase.gif" width="200" alt="Android Demo"/>
-<img src="screenshots/Android/Tablet/Showcase.gif" width="250" alt="Android Tablet Demo"/>
+<figure>
+<figcaption>Phone</figcaption>
+<img src="screenshots/Android/Showcase.gif" width="150" height="250" alt="Android Demo"/>
+</figure>
+
+<figure>
+<figcaption>Tablet</figcaption>
+<img src="screenshots/Android/Tablet/Showcase.gif" width="200" height="200" alt="Android Tablet Demo"/>
+</figure>
+
+</td>
+</tr>
+</table>
+
+### Desktop
+
+<table>
+<tr>
+<td>
+
+### 💻 MacCatalyst iOS 15+
+
+<img src="screenshots/MacCatalyst/Showcase.gif" height="200" width="500" alt="MacCatalyst Demo"/>
+</td>
+<td>
+
+### 💻 Windows
+
+<img src="screenshots/MacCatalyst/Showcase.gif" height="200" width="500" alt="Windows Demo"/>
 
 </td>
 </tr>
@@ -583,14 +612,23 @@ To disable:
 
 By design, sheets are always [modal](https://developer.apple.com/design/human-interface-guidelines/sheets#macOS) on macOS.
 
+### 💻 Windows
+
+To ensure the same user experience (UX) across desktop applications, Windows sheets are always modal too.
+
+> [!CAUTION]
+> Only one sheet can be open at a time. [Known Windows limitation](https://github.com/microsoft/microsoft-ui-xaml/issues/794)
+
 ### 📱 Platform Considerations
 
-| Feature       | iOS     | Android | MacCatalyst |
-|---------------|---------|---------|-------------|
-| Edge-to-Edge  | ✅       | ✅       | ✅           |
-| PeekHeight    | iOS 16+ | ✅       | ❌           |
-| Custom Themes | ❌       | ✅       | ❌           |
-| Modal Only    | ❌       | ❌       | ✅           |
+| Feature       | iOS     | Android | MacCatalyst | Windows |
+|---------------|---------|---------|-------------|---------|
+| Edge-to-Edge  | ✅       | ✅       | ❌           | ❌       |
+| PeekHeight    | iOS 16+ | ✅       | ❌           | ❌       |
+| Custom Themes | ❌       | ✅       | ❌           | ❌       |
+| Modal Only    | ❌       | ❌       | ✅           | ✅       |
+| Multiple sheets simultaneously    | ✅       | ✅       | ✅           | ❌       |
+
 
 ## 🔄 Lifecycle Events
 
