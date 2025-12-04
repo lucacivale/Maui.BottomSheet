@@ -64,7 +64,7 @@ Check out the sample project to see the API in action!
 <tr>
 <td>
 
-### 💻 MacCatalyst iOS 15+
+### 💻 MacCatalyst 15+
 
 <img src="screenshots/MacCatalyst/Showcase.gif" height="200" width="500" alt="MacCatalyst Demo"/>
 </td>
@@ -616,9 +616,6 @@ By design, sheets are always [modal](https://developer.apple.com/design/human-in
 
 To ensure the same user experience (UX) across desktop applications, Windows sheets are always modal too.
 
-> [!CAUTION]
-> Only one sheet can be open at a time. [Known Windows limitation](https://github.com/microsoft/microsoft-ui-xaml/issues/794)
-
 ### 📱 Platform Considerations
 
 | Feature       | iOS     | Android | MacCatalyst | Windows |
@@ -627,7 +624,6 @@ To ensure the same user experience (UX) across desktop applications, Windows she
 | PeekHeight    | iOS 16+ | ✅       | ❌           | ❌       |
 | Custom Themes | ❌       | ✅       | ❌           | ❌       |
 | Modal Only    | ❌       | ❌       | ✅           | ✅       |
-| Multiple sheets simultaneously    | ✅       | ✅       | ✅           | ❌       |
 
 
 ## 🔄 Lifecycle Events

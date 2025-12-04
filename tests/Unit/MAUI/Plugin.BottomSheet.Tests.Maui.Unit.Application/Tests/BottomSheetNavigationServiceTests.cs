@@ -436,7 +436,7 @@ public class BottomSheetNavigationServiceTests : IAsyncLifetime
         Assert.True(vm2.NavigatedFromCalled);
         Assert.True(vm2.NavigatedToCalled);
         Assert.Same(vm2.Parameters, parameters);
-        Assert.Equal(17, parameters.Count);
+        Assert.Equal(19, parameters.Count);
     }
     
     private void WriteResult(INavigationResult result)

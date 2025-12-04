@@ -80,7 +80,9 @@ public sealed partial class MauiBottomSheet : FrameworkElement
             await _isAttachedToWindowTcs.Task.WaitAsync(cts.Token).ConfigureAwait(true);
         }
 
-        _bottomSheet = new Plugin.BottomSheet.Windows.BottomSheet();
+        WWindow window = (((View)_virtualView).Window.Handler.PlatformView as WWindow) ?? throw new NotSupportedException("Window can not be null.");
+
+        _bottomSheet = new Plugin.BottomSheet.Windows.BottomSheet(window);
         _bottomSheet.Canceled += BottomSheetOnCanceled;
         _bottomSheet.SizeChanged += BottomSheetOnFrameChanged;
 
@@ -95,8 +97,7 @@ public sealed partial class MauiBottomSheet : FrameworkElement
 
         _virtualView.OnOpeningBottomSheet();
 
-        if (XamlRoot is null
-            && ((View)_virtualView).Window.Handler.PlatformView is WWindow window)
+        if (XamlRoot is null)
         {
             XamlRoot = window.Content.XamlRoot;
         }
@@ -169,13 +170,13 @@ public sealed partial class MauiBottomSheet : FrameworkElement
     /// </summary>
     public void SetBottomSheetBackgroundColor()
     {
-        if (_bottomSheet is null)
+        if (_bottomSheet is null
+            || _virtualView?.BackgroundColor is null)
         {
             return;
         }
 
-        // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
-        _bottomSheet.Background = _virtualView?.BackgroundColor?.ToPlatform();
+        _bottomSheet.Background = _virtualView.BackgroundColor.ToPlatform();
     }
 
     /// <summary>
@@ -188,7 +189,7 @@ public sealed partial class MauiBottomSheet : FrameworkElement
             return;
         }
 
-        _bottomSheet.CornerRadius = new(_virtualView?.CornerRadius ?? 0);
+        _bottomSheet.CornerRadius = _virtualView?.CornerRadius ?? 0;
     }
 
     /// <summary>
@@ -196,13 +197,14 @@ public sealed partial class MauiBottomSheet : FrameworkElement
     /// </summary>
     public void SetWindowBackgroundColor()
     {
-        if (_bottomSheet is null)
+        if (_bottomSheet is null
+            || _virtualView?.WindowBackgroundColor is null)
         {
             return;
         }
 
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
-        _bottomSheet.WindowBackground = _virtualView?.WindowBackgroundColor?.ToPlatform();
+        _bottomSheet.WindowBackground = _virtualView.WindowBackgroundColor.ToPlatform();
     }
 
     /// <summary>

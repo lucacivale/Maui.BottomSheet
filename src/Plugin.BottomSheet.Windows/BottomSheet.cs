@@ -1,11 +1,9 @@
 ﻿using AsyncAwaitBestPractices;
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Shapes;
-using Plugin.BottomSheet.Windows.Extensions;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using Windows.Foundation;
 
 namespace Plugin.BottomSheet.Windows;
@@ -14,20 +12,79 @@ namespace Plugin.BottomSheet.Windows;
 /// Represents a BottomSheet that is a custom content dialog with specialized behaviors such as open, close, and cancel actions.
 /// It allows setting custom content and adjusting visual properties such as background and window background.
 /// </summary>
-public sealed partial class BottomSheet : ContentDialog
+public sealed partial class BottomSheet
 {
-    private const string WindowBackgroundViewName = "SmokeLayerBackground";
-    private const string BackgroundViewName = "Content";
-
     private readonly WeakEventManager _eventManager = new();
 
-    private Brush? _defaultWindowBackground;
-    private Brush? _defaultBackground;
+    private readonly Brush _defaultWindowBackground;
+    private readonly Brush _defaultBackground;
+
+    private readonly Popup _popup;
+    private readonly Grid _container;
+    private readonly Border _dialogBorder;
+    private readonly StackPanel _contentPanel;
+    private readonly ContentPresenter _contentPresenter;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BottomSheet"/> class.
+    /// </summary>
+    /// <param name="window">Window.</param>
+    public BottomSheet(Window window)
+    {
+        _defaultWindowBackground = _defaultBackground = new SolidColorBrush(Colors.Black)
+        {
+            Opacity = 0.5,
+        };
+        _defaultBackground = (Brush)Application.Current.Resources["SolidBackgroundFillColorBaseBrush"];
+
+        _popup = new Popup
+        {
+            IsLightDismissEnabled = false,
+        };
+
+        _container = new Grid
+        {
+            Height = window.Bounds.Height,
+            Width = window.Bounds.Width,
+            Background = _defaultWindowBackground,
+        };
+
+        _dialogBorder = new Border
+        {
+            Background = _defaultBackground,
+            BorderThickness = (Microsoft.UI.Xaml.Thickness)Application.Current.Resources["ContentDialogBorderWidth"],
+            MinWidth = (double)Application.Current.Resources["ContentDialogMinWidth"],
+            MinHeight = (double)Application.Current.Resources["ContentDialogMinHeight"],
+            MaxWidth = (double)Application.Current.Resources["ContentDialogMaxWidth"],
+            MaxHeight = (double)Application.Current.Resources["ContentDialogMaxHeight"],
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
+        };
+
+        _contentPanel = new StackPanel();
+
+        _contentPresenter = new ContentPresenter();
+
+        _contentPanel.Children.Add(_contentPresenter);
+
+        _dialogBorder.Child = _contentPanel;
+        _container.Children.Add(_dialogBorder);
+        _popup.Child = _container;
+    }
 
     /// <summary>
     /// Occurs when the bottom sheet is canceled.
     /// </summary>
     public event EventHandler Canceled
+    {
+        add => _eventManager.AddEventHandler(value);
+        remove => _eventManager.RemoveEventHandler(value);
+    }
+
+    /// <summary>
+    /// Occurs when the bottom sheet size changed.
+    /// </summary>
+    public event EventHandler<SizeChangedEventArgs> SizeChanged
     {
         add => _eventManager.AddEventHandler(value);
         remove => _eventManager.RemoveEventHandler(value);
@@ -41,29 +98,19 @@ public sealed partial class BottomSheet : ContentDialog
     /// <summary>
     /// Gets or sets the background of the bottom sheet's window.
     /// </summary>
-    public Brush? WindowBackground
+    public Brush WindowBackground
     {
-        get
-        {
-            Brush? windowBackground = null;
+        get => _container.Background;
+        set => _container.Background = value;
+    }
 
-            if (this.FindAscendant<Canvas>() is Canvas popupRoot
-                && popupRoot.Children.OfType<Rectangle>().FirstOrDefault(x => x.Name is WindowBackgroundViewName) is Rectangle background)
-            {
-                windowBackground = background.Fill;
-            }
-
-            return windowBackground;
-        }
-
-        set
-        {
-            if (this.FindAscendant<Canvas>() is Canvas popupRoot
-                && popupRoot.Children.OfType<Rectangle>().FirstOrDefault(x => x.Name is WindowBackgroundViewName) is Rectangle background)
-            {
-                background.Fill = value ?? _defaultWindowBackground;
-            }
-        }
+    /// <summary>
+    /// Gets or sets the corner radius.
+    /// </summary>
+    public double CornerRadius
+    {
+        get => _dialogBorder.CornerRadius.TopRight;
+        set => _dialogBorder.CornerRadius = new(value);
     }
 
     /// <summary>
@@ -73,44 +120,19 @@ public sealed partial class BottomSheet : ContentDialog
     {
         get
         {
-            Rect frame = new(0, 0, 0, 0);
+            Point point = _dialogBorder.TransformToVisual(_popup).TransformPoint(new(0, 0));
 
-            if (this.FindDescendant(BackgroundViewName)?.Parent is Grid container
-                && this.FindAscendant<Canvas>() is Canvas popupRoot)
-            {
-                Point point = container.TransformToVisual(popupRoot).TransformPoint(new(0, 0));
-                frame = new Rect(point.X, point.Y, ActualWidth, ActualHeight);
-            }
-
-            return frame;
+            return new Rect(point.X, point.Y, _dialogBorder.ActualWidth, _dialogBorder.ActualHeight);
         }
     }
 
     /// <summary>
     /// Gets or sets the background of the bottom sheet's content area.
     /// </summary>
-    public new Brush? Background
+    public Brush Background
     {
-        get
-        {
-            Brush? background = null;
-
-            if (this.FindDescendant(BackgroundViewName)?.Parent is Grid container)
-            {
-                background = container.Background;
-            }
-
-            return background;
-        }
-
-        set
-        {
-            if (this.FindDescendant(BackgroundViewName)?.Parent is Grid container)
-            {
-                base.Background = value ?? _defaultBackground;
-                container.Background = base.Background;
-            }
-        }
+        get => _dialogBorder.Background;
+        set => _dialogBorder.Background = value;
     }
 
     /// <summary>
@@ -119,7 +141,7 @@ public sealed partial class BottomSheet : ContentDialog
     /// <param name="view">The view to set as the content of the bottom sheet.</param>
     public void SetContentView(UIElement view)
     {
-        Content = view;
+        _contentPresenter.Content = view;
     }
 
     /// <summary>
@@ -129,26 +151,26 @@ public sealed partial class BottomSheet : ContentDialog
     /// <returns>A task that represents the asynchronous operation.</returns>
     public async Task OpenAsync(XamlRoot? root)
     {
-        XamlRoot = root;
+        _popup.XamlRoot = root;
 
         TaskCompletionSource taskCompletionSource = new();
 
-        TypedEventHandler<ContentDialog, ContentDialogOpenedEventArgs> @event = null!;
+        EventHandler<object> @event = null!;
         @event = (s, e) =>
         {
-            ((BottomSheet)s!).Opened -= @event;
+            _popup.Opened -= @event;
 
-            ((BottomSheet)s!).IsOpen = true;
-
-            SetDefaultValues();
+            IsOpen = true;
 
             _ = taskCompletionSource.TrySetResult();
         };
 
-        Opened += @event;
-        Closing += BottomSheet_Closing;
+        _popup.Opened += @event;
 
-        ShowAsync().AsTask().SafeFireAndForget();
+        _dialogBorder.SizeChanged += DialogBorder_SizeChanged;
+        _container.Tapped += Container_Tapped;
+
+        _popup.IsOpen = true;
 
         await taskCompletionSource.Task.ConfigureAwait(true);
     }
@@ -161,20 +183,21 @@ public sealed partial class BottomSheet : ContentDialog
     {
         TaskCompletionSource taskCompletionSource = new();
 
-        TypedEventHandler<ContentDialog, ContentDialogClosedEventArgs> @event = null!;
+        EventHandler<object> @event = null!;
         @event = (s, e) =>
         {
-            ((BottomSheet)s!).Closed -= @event;
+            _popup.Closed -= @event;
 
             _ = taskCompletionSource.TrySetResult();
-            ((BottomSheet)s!).IsOpen = false;
+            IsOpen = false;
         };
 
-        Closed += @event;
+        _popup.Closed += @event;
 
-        using CloseContext context = new();
+        _dialogBorder.SizeChanged -= DialogBorder_SizeChanged;
+        _container.Tapped -= Container_Tapped;
 
-        Hide();
+        _popup.IsOpen = false;
 
         await taskCompletionSource.Task.ConfigureAwait(true);
     }
@@ -187,43 +210,17 @@ public sealed partial class BottomSheet : ContentDialog
         _eventManager.RaiseEvent(this, EventArgs.Empty, nameof(Canceled));
     }
 
-    /// <summary>
-    /// Sets default values for background and window background when the bottom sheet is opened.
-    /// </summary>
-    private void SetDefaultValues()
+    private void DialogBorder_SizeChanged(object sender, SizeChangedEventArgs e)
     {
-        _defaultBackground = Background;
-        _defaultWindowBackground = WindowBackground;
-
-        if (this.FindDescendant(BackgroundViewName)?.Parent is Grid container)
-        {
-            container.Padding = new(0);
-        }
+        _eventManager.RaiseEvent(this, e, nameof(SizeChanged));
     }
 
-    /// <summary>
-    /// Handles the <see cref="ContentDialog.Closing"/> event for the bottom sheet.
-    /// Attempts to cancel the closing if certain conditions are met.
-    /// </summary>
-    /// <param name="sender">The content dialog that is closing.</param>
-    /// <param name="args">The event arguments for the closing event.</param>
-    [SuppressMessage("Usage", "VSTHRD100: Avoid async void methods", Justification = "Is okay here.")]
-    [SuppressMessage("Design", "CA1031: Do not catch general exception types", Justification = "Catch all exceptions to prevent crash.")]
-    private async void BottomSheet_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
+    private void Container_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
     {
-        try
+        if (e.OriginalSource is Grid grid
+            && grid == _container)
         {
-            if (CloseContext.Instance() is null)
-            {
-                args.Cancel = true;
-                await Task.Delay(100).ConfigureAwait(true);
-            }
-
-            Cancel();
-        }
-        catch (Exception ex)
-        {
-            Trace.TraceError("Invoking BottomSheet_Closing: {0}", ex);
+            _eventManager.RaiseEvent(this, EventArgs.Empty, nameof(Canceled));
         }
     }
 }
