@@ -12,7 +12,15 @@ jobs:
   
   Build-Plugin_Maui_BottomSheet:
     runs-on: macos-15
-    
+
+    strategy:
+      matrix:
+        include:
+          - project: Plugin.Maui.BottomSheet
+          - project: Plugin.BottomSheet.Core
+          - project: Plugin.BottomSheet.Android
+          - project: Plugin.BottomSheet.iOSMacCatalyst
+  
     steps:
       - uses: actions/checkout@v4
 
@@ -21,7 +29,7 @@ jobs:
         id: version
         with:
           scheme: semver
-          increment: major
+          increment: patch
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -34,11 +42,24 @@ jobs:
       - name: Install .NET MAUI Workload
         run: dotnet workload install maui --version ${{ env.DOTNET_VERSION }}
             
-      - name: Build Plugin.Maui.BottomSheet
-        run: dotnet build src/Plugin.Maui.BottomSheet/Plugin.Maui.BottomSheet/Plugin.Maui.BottomSheet.csproj -c ${{ env.Configuration }} -p:Version=${{ steps.version.outputs.version }}
+      - name: Build ${{ matrix.project }}
+        if: matrix.project != 'Plugin.BottomSheet.Core'
+        run: dotnet build src/${{ matrix.project }}/${{ matrix.project }}.csproj -c ${{ env.Configuration }} -p:Version=${{ steps.version.outputs.version }}
+
+      - name: Build ${{ matrix.project }}
+        if: matrix.project == 'Plugin.BottomSheet.Core'
+        run: dotnet build src/Plugin.BottomSheet/Plugin.BottomSheet.csproj -c ${{ env.Configuration }} -p:Version=${{ steps.version.outputs.version }}
         
       - name: Archive NuGet
+        if: matrix.project != 'Plugin.BottomSheet.Core'
         uses: actions/upload-artifact@v4
         with:
-          name: Plugin.Maui.BottomSheet.${{ steps.version.outputs.version }}.nupkg
-          path: src/Plugin.Maui.BottomSheet/Plugin.Maui.BottomSheet/bin/${{ env.Configuration }}/Plugin.Maui.BottomSheet.${{ steps.version.outputs.version }}.nupkg
+          name: ${{ matrix.project }}.${{ steps.version.outputs.version }}.nupkg
+          path: src/${{ matrix.project }}/bin/${{ env.Configuration }}/${{ matrix.project }}.${{ steps.version.outputs.version }}.nupkg
+        
+      - name: Archive NuGet
+        if: matrix.project == 'Plugin.BottomSheet.Core'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.project }}.${{ steps.version.outputs.version }}.nupkg
+          path: src/Plugin.BottomSheet/bin/${{ env.Configuration }}/${{ matrix.project }}.${{ steps.version.outputs.version }}.nupkg

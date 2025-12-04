@@ -41,7 +41,7 @@ jobs:
         run: dotnet workload install maui --version ${{ env.DOTNET_VERSION }}
             
       - name: Build Plugin.Maui.BottomSheet
-        run: dotnet build src/Plugin.Maui.BottomSheet/Plugin.Maui.BottomSheet/Plugin.Maui.BottomSheet.csproj -c ${{ env.Configuration }}
+        run: dotnet build src/Plugin.Maui.BottomSheet/Plugin.Maui.BottomSheet.csproj -c ${{ env.Configuration }}
 
   # Enable as soon as xHarness apple tests work again
   #Build-Maui-Test-Applications:

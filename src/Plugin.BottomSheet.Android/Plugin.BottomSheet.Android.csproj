@@ -24,6 +24,10 @@
 		<Using Include="Android.Animation"/>
 	</ItemGroup>
 
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	</PropertyGroup>
+	
 	<ItemGroup>
 		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
 			<_Parameter1>Plugin.Maui.BottomSheet</_Parameter1>

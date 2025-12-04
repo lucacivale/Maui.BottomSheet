@@ -53,30 +53,30 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="..\..\..\Icon.png">
+        <None Include="..\..\Icon.png">
             <Pack>True</Pack>
             <PackagePath>\</PackagePath>
         </None>
-        <None Include="..\..\..\README.md">
+        <None Include="..\..\README.md">
             <Pack>True</Pack>
             <PackagePath>\</PackagePath>
         </None>
     </ItemGroup>
 	
     <ItemGroup Condition="$(TargetFramework.EndsWith('android'))">
-      <ProjectReference Include="..\..\Plugin.BottomSheet.Android\Plugin.BottomSheet.Android.csproj" />
+      <ProjectReference Include="..\Plugin.BottomSheet.Android\Plugin.BottomSheet.Android.csproj" />
     </ItemGroup>
 
     <ItemGroup Condition="$(TargetFramework.EndsWith('ios')) or $(TargetFramework.EndsWith('maccatalyst'))">
-        <ProjectReference Include="..\..\Plugin.BottomSheet.IOSMacCatalyst\Plugin.BottomSheet.iOSMacCatalyst.csproj" />
+        <ProjectReference Include="..\Plugin.BottomSheet.IOSMacCatalyst\Plugin.BottomSheet.IOSMacCatalyst.csproj" />
     </ItemGroup>
 
 	<ItemGroup Condition="$(TargetFramework.Contains('windows'))">
-		<ProjectReference Include="..\..\Plugin.BottomSheet.Windows\Plugin.BottomSheet.Windows.csproj" />
+		<ProjectReference Include="..\Plugin.BottomSheet.Windows\Plugin.BottomSheet.Windows.csproj" />
 	</ItemGroup>
 	
     <ItemGroup>
-      <ProjectReference Include="..\..\Plugin.BottomSheet\Plugin.BottomSheet.csproj"/>
+      <ProjectReference Include="..\Plugin.BottomSheet\Plugin.BottomSheet.csproj" />
     </ItemGroup>
 
 </Project>
