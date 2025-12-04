@@ -2,15 +2,19 @@
     <PropertyGroup>
         <TargetFrameworks>$(NETVersion);$(NETVersion)-android</TargetFrameworks>
         <TargetFrameworks Condition="!$([MSBuild]::IsOSPlatform('linux'))">$(TargetFrameworks);$(NETVersion)-ios;$(NETVersion)-maccatalyst</TargetFrameworks>
-        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);</TargetFrameworks>
+        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);$(NETVersion)-windows$(WindowsVersion)</TargetFrameworks>
 
         <OutputType Condition="'$(TargetFramework)' != '$(NETVersion)'">Exe</OutputType>
         <UseMaui>true</UseMaui>
         <SingleProject>true</SingleProject>
         <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+		<!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
+		<WindowsPackageType>None</WindowsPackageType>
         
         <DefineConstants Condition="'$(TestingMode)' == 'NonInteractiveVisual'">$(DefineConstants);MODE_NON_INTERACTIVE_VISUAL</DefineConstants>
         <DefineConstants Condition="'$(TestingMode)' == 'XHarness'">$(DefineConstants);MODE_XHARNESS</DefineConstants>
+
+		<LangVersion>preview</LangVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition="($(TargetFramework.Contains('-ios')) or $(TargetFramework.Contains('-maccatalyst'))) and '$(Configuration)' == 'Release'">
@@ -100,6 +104,12 @@
       <ProjectReference Include="..\Plugin.BottomSheet.Tests.Maui.Unit\Plugin.BottomSheet.Tests.Maui.Unit.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <MauiXaml Update="Platforms\Windows\App.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </MauiXaml>
+    </ItemGroup>
+
     <Target Name="RemoveVisualStudioTestRunner" BeforeTargets="_ComputeAppxPackagePayload">
         <ItemGroup>
             <_VisualStudioTestRunnerFiles Include="@(PackagingOutputs)" Condition="$([System.String]::Copy('%(PackagingOutputs.FullPath)').Contains('xunit.runner.visualstudio'))" />
@@ -109,9 +119,7 @@
 
     <Target Name="AddApplePlatformsFolder" BeforeTargets="_MauiRemovePlatformCompileItems">
         <ItemGroup Condition=" '$(SingleProject)' == 'true' ">
-            <Compile
-                    Condition=" '$(TargetPlatformIdentifier)' == 'ios' or '$(TargetPlatformIdentifier)' == 'maccatalyst' "
-                    Include="$(PlatformsProjectFolder)Apple\**\*$(DefaultLanguageSourceExtension)">
+            <Compile Condition=" '$(TargetPlatformIdentifier)' == 'ios' or '$(TargetPlatformIdentifier)' == 'maccatalyst' " Include="$(PlatformsProjectFolder)Apple\**\*$(DefaultLanguageSourceExtension)">
                 <ExcludeFromCurrentConfiguration>false</ExcludeFromCurrentConfiguration>
             </Compile>
         </ItemGroup>

@@ -6,40 +6,40 @@ namespace Plugin.BottomSheet.Tests.Maui.Ui.Application.ViewModels;
 public partial class BottomSheetTestsViewModel : ObservableObject
 {
     [ObservableProperty]
-    private bool _isOpen;
+    public partial bool IsOpen { get; set; }
     
     [ObservableProperty]
-    private float _cornerRadius = 50;
+    public partial float CornerRadius { get; set; } = 50;
     
     [ObservableProperty]
-    private float _margin;
+    public partial float Margin { get; set; }
     
     [ObservableProperty]
-    private float _padding = 20;
+    public partial float Padding { get; set; } = 20;
     
     [ObservableProperty]
-    private float _halfExpandedRatio = 0.5f;
+    public partial float HalfExpandedRatio { get; set; } = 0.5f;
     
     [ObservableProperty]
-    private bool _hasHandle = true;
+    public partial bool HasHandle { get; set; } = true;
     
     [ObservableProperty]
-    private bool _isCancelable = true;
+    public partial bool IsCancelable { get; set; } = true;
     
     [ObservableProperty]
-    private bool _isDraggable = true;
+    public partial bool IsDraggable { get; set; } = true;
     
     [ObservableProperty]
-    private bool _isModal = false;
+    public partial bool IsModal { get; set; } = false;
 
     [ObservableProperty]
-    private List<BottomSheetState> _states = [BottomSheetState.Medium, BottomSheetState.Large];
+    public partial List<BottomSheetState>States { get; set; } = [BottomSheetState.Medium, BottomSheetState.Large];
 
     [ObservableProperty]
-    private Color? _windowBackgroundColor = Color.FromArgb("#80000000");
+    public partial Color? WindowBackgroundColor { get; set; } = Color.FromArgb("#80000000");
     
     [ObservableProperty]
-    private Color? _backgroundColor;
+    public partial Color? BackgroundColor { get; set; }
 
     public BottomSheetTestsViewModel()
     {
@@ -48,7 +48,7 @@ public partial class BottomSheetTestsViewModel : ObservableObject
     }
 
     [ObservableProperty]
-    private BottomSheetState _currentState;
+    public partial BottomSheetState CurrentState { get; set; }
 
     [RelayCommand]
     private void ChangeWindowBackgroundColor()

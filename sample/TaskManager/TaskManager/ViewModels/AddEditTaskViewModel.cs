@@ -19,31 +19,31 @@ public partial class AddEditTaskViewModel : ObservableObject, INavigationAware, 
     private bool _somethingChanged;
 
     [ObservableProperty]
-    private int _taskId;
+    public partial int TaskId { get; set; }
 
     [ObservableProperty]
-    private string _title = string.Empty;
+    public partial string Title { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private string _description = string.Empty;
+    public partial string Description { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private DateTime? _dueDate;
+    public partial DateTime? DueDate { get; set; }
 
     [ObservableProperty]
-    private TaskPriority _priority = TaskPriority.Medium;
+    public partial TaskPriority Priority { get; set; } = TaskPriority.Medium;
 
     [ObservableProperty]
-    private TaskStatus _status = TaskStatus.Todo;
+    public partial TaskStatus Status { get; set; } = TaskStatus.Todo;
 
     [ObservableProperty]
-    private string _category = string.Empty;
+    public partial string Category { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private ObservableCollection<string> _categories = new();
+    public partial ObservableCollection<string> Categories { get; set; } = new();
 
     [ObservableProperty]
-    private bool _isEditMode;
+    public partial bool IsEditMode { get; set; }
     
     public AddEditTaskViewModel(ITaskService taskService, IBottomSheetNavigationService bottomSheetNavigationService)
     {
@@ -104,7 +104,7 @@ public partial class AddEditTaskViewModel : ObservableObject, INavigationAware, 
 
         try
         {
-            TaskItem task = new TaskItem
+            TaskItem task = new()
             {
                 Id = TaskId,
                 Title = Title.Trim(),

@@ -7,7 +7,7 @@ namespace Plugin.Maui.BottomSheet.Sample.ViewModels;
 public partial class CustomHeaderShowcaseViewModel : ObservableObject
 {
     [ObservableProperty]
-    private BottomSheetState _bottomSheetState;
+    public partial BottomSheetState BottomSheetState { get; set; }
 
     [RelayCommand]
     private void Medium()

@@ -17,25 +17,25 @@ public partial class FilterViewModel : ObservableObject, INavigationAware
     private bool _filterChanged;
 
     [ObservableProperty]
-    private string _searchText = string.Empty;
+    public partial string SearchText { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private TaskStatus? _selectedStatus;
+    public partial TaskStatus? SelectedStatus { get; set; }
 
     [ObservableProperty]
-    private TaskPriority? _selectedPriority;
+    public partial TaskPriority? SelectedPriority { get; set; }
 
     [ObservableProperty]
-    private string _selectedCategory = string.Empty;
+    public partial string SelectedCategory { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private DateTime? _dueDateFrom;
+    public partial DateTime? DueDateFrom { get; set; }
 
     [ObservableProperty]
-    private DateTime? _dueDateTo;
+    public partial DateTime? DueDateTo { get; set; }
 
     [ObservableProperty]
-    private ObservableCollection<string> _categories = new();
+    public partial ObservableCollection<string> Categories { get; set; } = new();
 
     public FilterViewModel(ITaskService taskService, IBottomSheetNavigationService bottomSheetNavigationService)
     {
@@ -87,7 +87,7 @@ public partial class FilterViewModel : ObservableObject, INavigationAware
     {
         if (_filterChanged)
         {
-            TaskFilter filter = new TaskFilter
+            TaskFilter filter = new()
             {
                 SearchText = SearchText.Trim(),
                 Status = SelectedStatus,

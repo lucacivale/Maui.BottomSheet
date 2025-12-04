@@ -23,25 +23,25 @@ public sealed partial class ShowCaseViewModel : ObservableObject, IConfirmNaviga
     }
 
     [ObservableProperty]
-    private BottomSheetHeaderButtonAppearanceMode _headerButtonAppearanceMode = BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton;
+    public partial BottomSheetHeaderButtonAppearanceMode HeaderButtonAppearanceMode { get; set; } = BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton;
 
     [ObservableProperty]
-    private string _title = "My Title";
+    public partial string Title { get; set; } = "My Title";
 
     [ObservableProperty]
-    private float _cornerRadius = 20;
+    public partial float CornerRadius { get; set; } = 20;
 
     [ObservableProperty]
-    private Color _windowBackgroundColor = Color.FromArgb("#80000000");
+    public partial Color WindowBackgroundColor { get; set; } = Color.FromArgb("#80000000");
 
     [ObservableProperty]
-    private bool _showCloseButton;
+    public partial bool ShowCloseButton { get; set; }
 
     [ObservableProperty]
-    private bool _isModal;
+    public partial bool IsModal { get; set; }
 
     [ObservableProperty]
-    private BottomSheetHeaderCloseButtonPosition _closeButtonPosition = BottomSheetHeaderCloseButtonPosition.TopRight;
+    public partial BottomSheetHeaderCloseButtonPosition CloseButtonPosition { get; set; } = BottomSheetHeaderCloseButtonPosition.TopRight;
 
     [RelayCommand]
     private void TopLeftCloseButton()
@@ -101,25 +101,25 @@ public sealed partial class ShowCaseViewModel : ObservableObject, IConfirmNaviga
     }
 
     [ObservableProperty]
-    private bool _isOpen;
+    public partial bool IsOpen { get; set; }
 
     [ObservableProperty]
-    private bool _isNonModalOpen;
+    public partial bool IsNonModalOpen { get; set; }
 
     [ObservableProperty]
-    private bool _hasHandle = true;
+    public partial bool HasHandle { get; set; } = true;
 
     [ObservableProperty]
-    private bool _isCancelable = true;
+    public partial bool IsCancelable { get; set; } = true;
 
     [ObservableProperty]
-    private bool _showHeader = true;
+    public partial bool ShowHeader { get; set; } = true;
 
     [ObservableProperty]
-    private bool _isDraggable = true;
+    public partial bool IsDraggable { get; set; } = true;
 
     [ObservableProperty]
-    private bool _aboveTabBar = false;
+    public partial bool AboveTabBar { get; set; } = false;
 
     [RelayCommand]
     private void OpenShowcase()

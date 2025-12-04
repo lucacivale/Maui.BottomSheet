@@ -1,14 +1,15 @@
-﻿using CommunityToolkit.WinUI;
-using Microsoft.Maui;
-using Microsoft.Maui.Platform;
+﻿using Microsoft.Maui.Platform;
 using Microsoft.UI.Xaml;
-using Plugin.BottomSheet;
 using Plugin.Maui.BottomSheet.Navigation;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using WWindow = Microsoft.UI.Xaml.Window;
 
 namespace Plugin.Maui.BottomSheet.Platform.Windows;
 
+/// <summary>
+/// Represents a platform-specific implementation of a bottom sheet for Windows, integrated into the .NET MAUI framework.
+/// </summary>
 internal sealed partial class MauiBottomSheet : FrameworkElement
 {
     private readonly IMauiContext _mauiContext;
@@ -20,6 +21,11 @@ internal sealed partial class MauiBottomSheet : FrameworkElement
 
     private bool _isAttachedToWindow;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MauiBottomSheet"/> class.
+    /// MAUI implementation of a bottom sheet for windows.
+    /// </summary>
+    /// <param name="mauiContext">The MAUI context associated with the bottom sheet.</param>
     public MauiBottomSheet(IMauiContext mauiContext)
     {
         _mauiContext = mauiContext;
@@ -28,18 +34,33 @@ internal sealed partial class MauiBottomSheet : FrameworkElement
         Loaded += MauiBottomSheet_Loaded;
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the bottom sheet is currently open.
+    /// </summary>
     public bool IsOpen => _bottomSheet?.IsOpen == true;
 
+    /// <summary>
+    /// Sets the virtual view for the bottom sheet.
+    /// </summary>
+    /// <param name="virtualView">The virtual view to associate with this bottom sheet.</param>
     public void SetView(IBottomSheet virtualView)
     {
         _virtualView = virtualView;
     }
 
+    /// <summary>
+    /// Releases resources allocated by the bottom sheet and performs any necessary cleanup operations.
+    /// </summary>
     public void Cleanup()
     {
         Loaded -= MauiBottomSheet_Loaded;
     }
 
+    /// <summary>
+    /// Opens the bottom sheet asynchronously, initializing the required states and configurations.
+    /// </summary>
+    /// <param name="force">A boolean indicating whether to forcefully open the bottom sheet, even if not attached to the window.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public async Task OpenAsync(bool force = false)
     {
         if (_virtualView is null)
@@ -56,8 +77,11 @@ internal sealed partial class MauiBottomSheet : FrameworkElement
 
         _bottomSheet = new Plugin.BottomSheet.Windows.BottomSheet();
         _bottomSheet.Canceled += BottomSheetOnCanceled;
-        //_bottomSheet.FrameChanged += BottomSheetOnFrameChanged;
-        //_bottomSheet.LayoutChanged += BottomSheetOnLayoutChanged;
+        _bottomSheet.SizeChanged += BottomSheetOnFrameChanged;
+
+        SetWindowBackgroundColor();
+        SetBottomSheetBackgroundColor();
+        SetCornerRadius();
 
         FrameworkElement view = _virtualView.ContainerView.ToPlatform(_mauiContext);
         view.UpdateAutomationId(_virtualView);
@@ -67,18 +91,14 @@ internal sealed partial class MauiBottomSheet : FrameworkElement
         _virtualView.OnOpeningBottomSheet();
 
         if (XamlRoot is null
-            && ((View)_virtualView).Window.ToPlatform(_mauiContext) is FrameworkElement frameworkElement)
+            && ((View)_virtualView).Window.Handler.PlatformView is WWindow window)
         {
-            XamlRoot = frameworkElement.XamlRoot;
+            XamlRoot = window.Content.XamlRoot;
         }
 
         await _bottomSheet.OpenAsync(XamlRoot).ConfigureAwait(true);
 
-        SetWindowBackgroundColor();
-        SetBottomSheetBackgroundColor();
-        SetCornerRadius();
         SetFrame();
-        SetIsDraggable();
 
         _virtualView.OnOpenedBottomSheet();
     }
@@ -97,10 +117,8 @@ internal sealed partial class MauiBottomSheet : FrameworkElement
 
         _virtualView.OnClosingBottomSheet();
 
-        //_bottomSheet.StateChanged -= BottomSheetOnStateChanged;
         _bottomSheet.Canceled -= BottomSheetOnCanceled;
-        //_bottomSheet.FrameChanged -= BottomSheetOnFrameChanged;
-        //_bottomSheet.LayoutChanged -= BottomSheetOnLayoutChanged;
+        _bottomSheet.SizeChanged -= BottomSheetOnFrameChanged;
 
         await _bottomSheet.CloseAsync().ConfigureAwait(true);
 
@@ -139,19 +157,6 @@ internal sealed partial class MauiBottomSheet : FrameworkElement
     public void Cancel()
     {
         _bottomSheet?.Cancel();
-    }
-
-    /// <summary>
-    /// Configures the bottom sheet to determine whether it can be dragged by the user.
-    /// </summary>
-    public void SetIsDraggable()
-    {
-        if (_bottomSheet is null)
-        {
-            return;
-        }
-
-        //_bottomSheet.Draggable = _virtualView?.IsDraggable == true;
     }
 
     /// <summary>
@@ -250,7 +255,7 @@ internal sealed partial class MauiBottomSheet : FrameworkElement
     /// </summary>
     /// <param name="sender">The source triggering the event, typically the bottom sheet instance.</param>
     /// <param name="e">The new dimensions of the frame.</param>
-    private void BottomSheetOnFrameChanged(object? sender, EventArgs e)
+    private void BottomSheetOnFrameChanged(object? sender, SizeChangedEventArgs e)
     {
         if (_virtualView is null)
         {
@@ -282,11 +287,11 @@ internal sealed partial class MauiBottomSheet : FrameworkElement
             return;
         }
 
-        //_virtualView.Frame = isClosed ? Microsoft.Maui.Graphics.Rect.Zero : new Microsoft.Maui.Graphics.Rect(
-        //    _bottomSheet.Frame.X,
-        //    _bottomSheet.Frame.Y,
-        //    _bottomSheet.Frame.Width,
-        //    _bottomSheet.Frame.Height);
+        _virtualView.Frame = isClosed ? Rect.Zero : new Rect(
+            _bottomSheet.Frame.X,
+            _bottomSheet.Frame.Y,
+            _bottomSheet.Frame.Width,
+            _bottomSheet.Frame.Height);
     }
 
     private void MauiBottomSheet_Loaded(object sender, RoutedEventArgs e)

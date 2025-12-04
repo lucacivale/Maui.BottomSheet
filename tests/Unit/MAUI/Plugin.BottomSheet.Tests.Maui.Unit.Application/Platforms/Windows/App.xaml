@@ -1,6 +1,6 @@
 ﻿<maui:MauiWinUIApplication
-    x:Class="Plugin.BottomSheet.Tests.Maui.Ui.Application.WinUI.App"
+    x:Class="Plugin.BottomSheet.Tests.Maui.Unit.Application.WinUI.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Plugin.BottomSheet.Tests.Maui.Ui.Application.WinUI"
+    xmlns:local="using:Plugin.BottomSheet.Tests.Maui.Unit.Application.WinUI"
     xmlns:maui="using:Microsoft.Maui" />

@@ -5,7 +5,6 @@
     <PackageVersion Include="AsyncAwaitBestPractices" Version="9.0.0" />
     <PackageVersion Include="CommunityToolkit.Maui" Version="13.0.0" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageVersion Include="CommunityToolkit.WinUI.Extensions" Version="8.2.250402" />
     <PackageVersion Include="coverlet.collector" Version="6.0.2" />
     <PackageVersion Include="DeviceRunners.UITesting.Maui" Version="0.1.0-preview.5" />
     <PackageVersion Include="DeviceRunners.UITesting.Xunit" Version="0.1.0-preview.5" />
@@ -18,7 +17,6 @@
     <PackageVersion Include="Microsoft.DotNet.XHarness.TestRunners.Xunit" Version="10.0.0-prerelease.25327.1" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="10.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
-    <PackageVersion Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
     <PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.7.250909003" />
     <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />

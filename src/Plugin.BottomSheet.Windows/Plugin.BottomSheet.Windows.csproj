@@ -13,15 +13,9 @@
 		<UseWinUI>true</UseWinUI>
 		<WinUISDKReferences>false</WinUISDKReferences>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<None Remove="Themes\Generic.xaml" />
-	</ItemGroup>
 	
 	<ItemGroup>
 		<PackageReference Include="AsyncAwaitBestPractices" />
-		<PackageReference Include="CommunityToolkit.WinUI.Extensions" />
-		<PackageReference Include="Microsoft.Windows.CsWinRT" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
 	</ItemGroup>
@@ -29,17 +23,15 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Plugin.BottomSheet\Plugin.BottomSheet.csproj" />
 	</ItemGroup>
+
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	</PropertyGroup>
 	
 	<ItemGroup>
 		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
 			<_Parameter1>Plugin.Maui.BottomSheet</_Parameter1>
 		</AssemblyAttribute>
-	</ItemGroup>
-	
-	<ItemGroup>
-	  <Page Update="Themes\Generic.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
 	</ItemGroup>
 	
 </Project>
