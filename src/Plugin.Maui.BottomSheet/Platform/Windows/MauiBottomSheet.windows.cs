@@ -212,6 +212,9 @@ public sealed partial class MauiBottomSheet : FrameworkElement
         _bottomSheet.WindowBackground = _virtualView.WindowBackgroundColor.ToPlatform();
     }
 
+    /// <summary>
+    /// Sets the minimal width.
+    /// </summary>
     public void SetMinWidth()
     {
         if (_bottomSheet is null
@@ -223,6 +226,9 @@ public sealed partial class MauiBottomSheet : FrameworkElement
         _bottomSheet.MinWidth = _virtualView.GetMinWidth();
     }
 
+    /// <summary>
+    /// Sets the minimal height.
+    /// </summary>
     public void SetMinHeight()
     {
         if (_bottomSheet is null
@@ -234,6 +240,9 @@ public sealed partial class MauiBottomSheet : FrameworkElement
         _bottomSheet.MinHeight = _virtualView.GetMinHeight();
     }
 
+    /// <summary>
+    /// Sets the maximal width.
+    /// </summary>
     public void SetMaxWidth()
     {
         if (_bottomSheet is null
@@ -245,6 +254,9 @@ public sealed partial class MauiBottomSheet : FrameworkElement
         _bottomSheet.MaxWidth = _virtualView.GetMaxWidth();
     }
 
+    /// <summary>
+    /// Sets the maximal height.
+    /// </summary>
     public void SetMaxHeight()
     {
         if (_bottomSheet is null

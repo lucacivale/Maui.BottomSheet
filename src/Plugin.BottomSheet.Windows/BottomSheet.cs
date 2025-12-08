@@ -130,6 +130,9 @@ public sealed partial class BottomSheet
         set => _dialogBorder.CornerRadius = new(value);
     }
 
+    /// <summary>
+    /// Gets or sets the minimal width.
+    /// </summary>
     public double MinWidth
     {
         get => _dialogBorder.MinWidth;
@@ -139,6 +142,9 @@ public sealed partial class BottomSheet
         }
     }
 
+    /// <summary>
+    /// Gets or sets the minimal height.
+    /// </summary>
     public double MinHeight
     {
         get => _dialogBorder.MinHeight;
@@ -148,6 +154,9 @@ public sealed partial class BottomSheet
         }
     }
 
+    /// <summary>
+    /// Gets or sets the maximal width.
+    /// </summary>
     public double MaxWidth
     {
         get => _dialogBorder.MaxWidth;
@@ -157,6 +166,9 @@ public sealed partial class BottomSheet
         }
     }
 
+    /// <summary>
+    /// Gets or sets the maximal height.
+    /// </summary>
     public double MaxHeight
     {
         get => _dialogBorder.MaxHeight;
@@ -188,12 +200,24 @@ public sealed partial class BottomSheet
         set => _dialogBorder.Background = value;
     }
 
+    /// <summary>
+    /// Gets the content dialog resource minimal width.
+    /// </summary>
     internal static double ContentDialogMinWidth => (double)Application.Current.Resources[ContentDialogMinWidthResourceKey];
 
+    /// <summary>
+    /// Gets the content dialog resource minimal height.
+    /// </summary>
     internal static double ContentDialogMinHeight => (double)Application.Current.Resources[ContentDialogMinHeightResourceKey];
 
+    /// <summary>
+    /// Gets the content dialog resource maximal width.
+    /// </summary>
     internal static double ContentDialogMaxWidth => (double)Application.Current.Resources[ContentDialogMaxWidthResourceKey];
 
+    /// <summary>
+    /// Gets the content dialog resource maximal height.
+    /// </summary>
     internal static double ContentDialogMaxHeight => (double)Application.Current.Resources[ContentDialogMaxHeightResourceKey];
 
     /// <summary>

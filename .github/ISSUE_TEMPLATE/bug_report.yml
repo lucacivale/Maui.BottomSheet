@@ -34,6 +34,7 @@ body:
         - iOS
         - Android
         - macOS
+        - Windows
         - I was *not* able test on other platforms
     validations:
       required: true
