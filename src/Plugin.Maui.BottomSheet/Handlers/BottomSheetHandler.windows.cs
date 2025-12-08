@@ -210,4 +210,48 @@ public sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, MauiB
     {
         handler.PlatformView.Cancel();
     }
+
+    /// <summary>
+    /// Maps the min width property of the bottom sheet to the corresponding platform-specific implementation on Android.
+    /// </summary>
+    /// <param name="handler">The bottom sheet handler instance managing the platform-specific implementation.</param>
+    /// <param name="bottomSheet">The bottom sheet interface instance whose min width is being mapped.</param>
+    /// <param name="sender">The optional sender triggering this operation, if applicable.</param>
+    private static void MapMinWidth(BottomSheetHandler handler, IBottomSheet bottomSheet, object? sender)
+    {
+        handler.PlatformView.SetMinWidth();
+    }
+
+    /// <summary>
+    /// Maps the min height property of the bottom sheet to the corresponding platform-specific implementation on Android.
+    /// </summary>
+    /// <param name="handler">The bottom sheet handler instance managing the platform-specific implementation.</param>
+    /// <param name="bottomSheet">The bottom sheet interface instance whose min height is being mapped.</param>
+    /// <param name="sender">The optional sender triggering this operation, if applicable.</param>
+    private static void MapMinHeight(BottomSheetHandler handler, IBottomSheet bottomSheet, object? sender)
+    {
+        handler.PlatformView.SetMinHeight();
+    }
+
+    /// <summary>
+    /// Maps the max width property of the bottom sheet to the corresponding platform-specific implementation on Android.
+    /// </summary>
+    /// <param name="handler">The bottom sheet handler instance managing the platform-specific implementation.</param>
+    /// <param name="bottomSheet">The bottom sheet interface instance whose max width is being mapped.</param>
+    /// <param name="sender">The optional sender triggering this operation, if applicable.</param>
+    private static void MapMaxWidth(BottomSheetHandler handler, IBottomSheet bottomSheet, object? sender)
+    {
+        handler.PlatformView.SetMaxWidth();
+    }
+
+    /// <summary>
+    /// Maps the max height property of the bottom sheet to the corresponding platform-specific implementation on Android.
+    /// </summary>
+    /// <param name="handler">The bottom sheet handler instance managing the platform-specific implementation.</param>
+    /// <param name="bottomSheet">The bottom sheet interface instance whose max height is being mapped.</param>
+    /// <param name="sender">The optional sender triggering this operation, if applicable.</param>
+    private static void MapMaxHeight(BottomSheetHandler handler, IBottomSheet bottomSheet, object? sender)
+    {
+        handler.PlatformView.SetMaxHeight();
+    }
 }

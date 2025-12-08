@@ -1,6 +1,7 @@
 ﻿using Microsoft.Maui.Platform;
 using Microsoft.UI.Xaml;
 using Plugin.Maui.BottomSheet.Navigation;
+using Plugin.Maui.BottomSheet.PlatformConfiguration.WindowsSpecific;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using WWindow = Microsoft.UI.Xaml.Window;
@@ -89,6 +90,10 @@ public sealed partial class MauiBottomSheet : FrameworkElement
         SetWindowBackgroundColor();
         SetBottomSheetBackgroundColor();
         SetCornerRadius();
+        SetMinWidth();
+        SetMinHeight();
+        SetMaxWidth();
+        SetMaxHeight();
 
         FrameworkElement view = _virtualView.ContainerView.ToPlatform(_mauiContext);
         view.UpdateAutomationId(_virtualView);
@@ -205,6 +210,50 @@ public sealed partial class MauiBottomSheet : FrameworkElement
 
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         _bottomSheet.WindowBackground = _virtualView.WindowBackgroundColor.ToPlatform();
+    }
+
+    public void SetMinWidth()
+    {
+        if (_bottomSheet is null
+            || _virtualView is null)
+        {
+            return;
+        }
+
+        _bottomSheet.MinWidth = _virtualView.GetMinWidth();
+    }
+
+    public void SetMinHeight()
+    {
+        if (_bottomSheet is null
+            || _virtualView is null)
+        {
+            return;
+        }
+
+        _bottomSheet.MinHeight = _virtualView.GetMinHeight();
+    }
+
+    public void SetMaxWidth()
+    {
+        if (_bottomSheet is null
+            || _virtualView is null)
+        {
+            return;
+        }
+
+        _bottomSheet.MaxWidth = _virtualView.GetMaxWidth();
+    }
+
+    public void SetMaxHeight()
+    {
+        if (_bottomSheet is null
+            || _virtualView is null)
+        {
+            return;
+        }
+
+        _bottomSheet.MaxHeight = _virtualView.GetMaxHeight();
     }
 
     /// <summary>

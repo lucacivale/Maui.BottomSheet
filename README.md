@@ -70,7 +70,7 @@ Check out the sample project to see the API in action!
 </td>
 <td>
 
-### 💻 Windows
+### 🪟 Windows
 
 <img src="screenshots/MacCatalyst/Showcase.gif" height="200" width="500" alt="Windows Demo"/>
 
@@ -612,9 +612,41 @@ To disable:
 
 By design, sheets are always [modal](https://developer.apple.com/design/human-interface-guidelines/sheets#macOS) on macOS.
 
-### 💻 Windows
+### 🪟 Windows
 
 To ensure the same user experience (UX) across desktop applications, Windows sheets are always modal too.
+The sheet implementation mimics `Microsoft.UI.Xaml.Controls.ContentDialog` therefore some [default](https://github.com/microsoft/microsoft-ui-xaml/blob/main/src/dxaml/xcp/dxaml/themes/generic.xaml) properties are set.
+
+|Property       | ResourceKey               |   Value |
+|---------------|---------------------------|---------|
+|BorderThickness| ContentDialogBorderWidth  |   1     |
+|MinWidth       | ContentDialogMinWidth     |   320   |
+|MinHeight      | ContentDialogMinHeight    |   184   |
+|MaxWidth       | ContentDialogMaxWidth     |   548   |
+|MaxHeight      | ContentDialogMaxHeight    |   756   |
+
+#### 📏 Size Constraints
+
+```csharp
+// Code approach
+MyBottomSheet.On<Windows>().SetMaxHeight(800);
+MyBottomSheet.On<Windows>().SetMaxWidth(600);
+MyBottomSheet.On<Windows>().SetMinHeight(800);
+MyBottomSheet.On<Windows>().SetMinWidth(600);
+```
+
+```xaml
+<!-- XAML approach -->
+xmlns:windowsBottomsheet="http://pluginmauibottomsheet.com/platformconfiguration/windows"
+
+<bottomsheet:BottomSheet
+    androidBottomsheet:BottomSheet.MinWidth="300"
+    androidBottomsheet:BottomSheet.MinHeight="300"
+    androidBottomsheet:BottomSheet.MaxWidth="300"
+    androidBottomsheet:BottomSheet.MaxHeight="300">
+    <!-- Content -->
+</bottomsheet:BottomSheet>
+```
 
 ### 📱 Platform Considerations
 

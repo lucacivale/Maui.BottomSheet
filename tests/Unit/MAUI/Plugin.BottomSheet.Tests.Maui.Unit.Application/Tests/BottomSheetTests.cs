@@ -508,7 +508,7 @@ public class BottomSheetTests : BaseTest<Mocks.EmptyContentPage, Plugin.Maui.Bot
         Assert.Equal(99, View.GetTheme());
         Assert.Equal(new MauiThickness(10,20), View.GetMargin());
     }
-    
+
     [UIFact]
     public void SettingEmptyStates_StatesRemainsNonEmpty()
     {
