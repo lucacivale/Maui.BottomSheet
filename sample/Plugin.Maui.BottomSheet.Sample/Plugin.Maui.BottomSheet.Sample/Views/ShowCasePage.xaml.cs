@@ -48,7 +48,7 @@ public partial class ShowCasePage : ContentPage
             showCaseViewModel.AboveTabBar &&
             sender is BottomSheet bottomSheet &&
             bottomSheet.Handler?.PlatformView is MauiBottomSheet platformView &&
-            platformView.Dialog is AppCompatDialog dialog &&
+            platformView.BottomSheet is AppCompatDialog dialog &&
             dialog.Window?.DecorView is AndroidView decorView)
         {
             // Show the bottom sheet above the tab bar.
@@ -70,7 +70,7 @@ public partial class ShowCasePage : ContentPage
             _bottomSheetDialog = bottomSheetDialog;
         }
 
-        WindowInsetsCompat IOnApplyWindowInsetsListener.OnApplyWindowInsets(AndroidView v, WindowInsetsCompat insets)
+        WindowInsetsCompat? IOnApplyWindowInsetsListener.OnApplyWindowInsets(AndroidView? v, WindowInsetsCompat? insets)
         {
             if (_bottomSheetDialog.Context.Resources is Android.Content.Res.Resources resources)
             {

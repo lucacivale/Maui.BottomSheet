@@ -10,11 +10,11 @@ public partial class CustomBottomSheetViewModel : ObservableObject, IConfirmNavi
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(SaveCommand))]
-    private string? _oldusername;
+    public partial string? Oldusername { get; set; }
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(SaveCommand))]
-    private string? _newusername;
+    public partial string? Newusername { get; set; }
 
     public CustomBottomSheetViewModel(IBottomSheetNavigationService bottomSheetNavigationService)
     {

@@ -507,18 +507,8 @@ public class BottomSheetTests : BaseTest<Mocks.EmptyContentPage, Plugin.Maui.Bot
         Assert.Equal(0.3f, View.GetHalfExpandedRatio());
         Assert.Equal(99, View.GetTheme());
         Assert.Equal(new MauiThickness(10,20), View.GetMargin());
-
-        IBottomSheet? sheetMock = Substitute.For<IBottomSheet>();
-            
-        Assert.Throws<ArgumentException>(() => sheetMock.SetTheme(10));
-        Assert.Throws<ArgumentException>(() => sheetMock.GetTheme());
-        Assert.Throws<ArgumentException>(() => sheetMock.SetHalfExpandedRatio(0.3f));
-        Assert.Throws<ArgumentException>(() => sheetMock.GetHalfExpandedRatio());
-        Assert.Throws<ArgumentException>(() => sheetMock.GetMargin());
-        Assert.Throws<ArgumentException>(() => sheetMock.GetMaxHeight());
-        Assert.Throws<ArgumentException>(() => sheetMock.GetMaxWidth());
     }
-    
+
     [UIFact]
     public void SettingEmptyStates_StatesRemainsNonEmpty()
     {

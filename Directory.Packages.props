@@ -1,59 +1,46 @@
 <Project>
-	<ItemGroup>
-		<PackageVersion Include="AndroidSdk" Version="0.25.0" />
-		<PackageVersion Include="Appium.WebDriver" Version="8.0.0" />
-
-		<PackageVersion Include="AsyncAwaitBestPractices" Version="9.0.0" />
-
-		<PackageVersion Include="CommunityToolkit.Maui" Version="13.0.0" />
-		<PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-
-		<PackageVersion Include="coverlet.collector" Version="6.0.2" />
-
-		<PackageVersion Include="DeviceRunners.UITesting.Maui" Version="0.1.0-preview.5" />
-		<PackageVersion Include="DeviceRunners.UITesting.Xunit" Version="0.1.0-preview.5" />
-		<PackageVersion Include="DeviceRunners.VisualRunners.Maui" Version="0.1.0-preview.5" />
-		<PackageVersion Include="DeviceRunners.VisualRunners.Xunit" Version="0.1.0-preview.5" />
-		<PackageVersion Include="DeviceRunners.XHarness.Maui" Version="0.1.0-preview.5" />
-		<PackageVersion Include="DeviceRunners.XHarness.Xunit" Version="0.1.0-preview.5" />
-
-		<PackageVersion Include="Microsoft.DotNet.XHarness.DefaultAndroidEntryPoint.Xunit" Version="10.0.0-prerelease.25327.1" />
-		<PackageVersion Include="Microsoft.DotNet.XHarness.TestRunners.Common" Version="10.0.0-prerelease.25327.1" />
-		<PackageVersion Include="Microsoft.DotNet.XHarness.TestRunners.Xunit" Version="10.0.0-prerelease.25327.1" />
-
-		<PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="10.0.0" />
-		<PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
-
-		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
-		<PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.12.19" />
-
-		<PackageVersion Include="NSubstitute" Version="5.3.0" />
-		<PackageVersion Include="NSubstitute.Analyzers.CSharp" Version="1.0.17" />
-
-		<PackageVersion Include="SonarAnalyzer.CSharp" Version="10.15.0.120848" />
-		<PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
-
-		<PackageVersion Include="xunit" Version="2.9.2" />
-		<PackageVersion Include="xunit.analyzers" Version="1.23.0" />
-		<PackageVersion Include="xunit.runner.utility" Version="2.9.3" />
-		<PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
-
-		<PackageVersion Include="AppleDev" Version="0.6.6" />
-	</ItemGroup>
-
-	<ItemGroup Condition="$(TargetFramework.StartsWith('$(NETVersion)')) and $(TargetFramework.EndsWith('android'))">
-		<PackageVersion Include="Xamarin.Google.Android.Material" Version="1.12.0.5" />
-	</ItemGroup>
-
-	<ItemGroup Condition="$(TargetFramework.StartsWith('$(LegacyNETVersion)')) and $(TargetFramework.EndsWith('android'))">
-		<PackageVersion Include="Xamarin.Google.Android.Material" Version="1.11.0.3" />
-	</ItemGroup>
-
-	<ItemGroup Condition="$(TargetFramework.StartsWith('$(LegacyNETVersion)'))">
-		<PackageVersion Include="Microsoft.Maui.Controls" Version="9.0.21" />
-	</ItemGroup>
-
-	<ItemGroup Condition="$(TargetFramework.StartsWith('$(NETVersion)'))">
-		<PackageVersion Include="Microsoft.Maui.Controls" Version="10.0.10" />
-	</ItemGroup>
+  <ItemGroup>
+    <PackageVersion Include="AndroidSdk" Version="0.25.0" />
+    <PackageVersion Include="Appium.WebDriver" Version="8.0.0" />
+    <PackageVersion Include="AsyncAwaitBestPractices" Version="9.0.0" />
+    <PackageVersion Include="CommunityToolkit.Maui" Version="13.0.0" />
+    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.2" />
+    <PackageVersion Include="DeviceRunners.UITesting.Maui" Version="0.1.0-preview.5" />
+    <PackageVersion Include="DeviceRunners.UITesting.Xunit" Version="0.1.0-preview.5" />
+    <PackageVersion Include="DeviceRunners.VisualRunners.Maui" Version="0.1.0-preview.5" />
+    <PackageVersion Include="DeviceRunners.VisualRunners.Xunit" Version="0.1.0-preview.5" />
+    <PackageVersion Include="DeviceRunners.XHarness.Maui" Version="0.1.0-preview.5" />
+    <PackageVersion Include="DeviceRunners.XHarness.Xunit" Version="0.1.0-preview.5" />
+    <PackageVersion Include="Microsoft.DotNet.XHarness.DefaultAndroidEntryPoint.Xunit" Version="10.0.0-prerelease.25327.1" />
+    <PackageVersion Include="Microsoft.DotNet.XHarness.TestRunners.Common" Version="10.0.0-prerelease.25327.1" />
+    <PackageVersion Include="Microsoft.DotNet.XHarness.TestRunners.Xunit" Version="10.0.0-prerelease.25327.1" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.7.250909003" />
+    <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+    <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.12.19" />
+    <PackageVersion Include="NSubstitute" Version="5.3.0" />
+    <PackageVersion Include="NSubstitute.Analyzers.CSharp" Version="1.0.17" />
+    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.15.0.120848" />
+    <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
+    <PackageVersion Include="xunit" Version="2.9.2" />
+    <PackageVersion Include="xunit.analyzers" Version="1.23.0" />
+    <PackageVersion Include="xunit.runner.utility" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageVersion Include="AppleDev" Version="0.6.6" />
+  </ItemGroup>
+  <ItemGroup Condition="$(TargetFramework.StartsWith('$(NETVersion)')) and $(TargetFramework.EndsWith('android'))">
+    <PackageVersion Include="Xamarin.Google.Android.Material" Version="1.12.0.5" />
+  </ItemGroup>
+  <ItemGroup Condition="$(TargetFramework.StartsWith('$(LegacyNETVersion)')) and $(TargetFramework.EndsWith('android'))">
+    <PackageVersion Include="Xamarin.Google.Android.Material" Version="1.11.0.3" />
+  </ItemGroup>
+  <ItemGroup Condition="$(TargetFramework.StartsWith('$(LegacyNETVersion)'))">
+    <PackageVersion Include="Microsoft.Maui.Controls" Version="9.0.21" />
+  </ItemGroup>
+  <ItemGroup Condition="$(TargetFramework.StartsWith('$(NETVersion)'))">
+    <PackageVersion Include="Microsoft.Maui.Controls" Version="10.0.10" />
+  </ItemGroup>
 </Project>

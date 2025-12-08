@@ -158,6 +158,19 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
                     await bottomSheetHandler.OpenAsync().ConfigureAwait(true);
                     _bottomSheetStack.Add(bottomSheet);
                     _bottomSheetStack.Current.IsOpen = true;
+
+                    TaskCompletionSource taskCompletionSource = new();
+                    EventHandler @event = null!;
+
+                    @event = (s, e) =>
+                    {
+                        ((View)s!).Loaded -= @event;
+                        _ = taskCompletionSource.TrySetResult();
+                    };
+
+                    bottomSheet.ContainerView.Loaded += @event;
+
+                    await taskCompletionSource.Task.ConfigureAwait(true);
                 }
             }
         }

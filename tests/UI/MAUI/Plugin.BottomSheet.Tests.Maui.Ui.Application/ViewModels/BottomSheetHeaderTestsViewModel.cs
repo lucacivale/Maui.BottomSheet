@@ -6,43 +6,43 @@ namespace Plugin.BottomSheet.Tests.Maui.Ui.Application.ViewModels;
 public partial class BottomSheetHeaderTestsViewModel : ObservableObject
 {
     [ObservableProperty]
-    private bool _isOpen;
+    public partial bool IsOpen { get; set; }
     
     [ObservableProperty]
-    private bool _showHeader;
+    public partial bool ShowHeader { get; set; }
     
     [ObservableProperty]
-    private string? _title;
+    public partial string? Title { get; set; }
     
     [ObservableProperty]
-    private bool _showCloseButton;
+    public partial bool ShowCloseButton { get; set; }
     
     [ObservableProperty]
-    private bool _isCancelable = true;
+    public partial bool IsCancelable { get; set; } = true;
     
     [ObservableProperty]
-    private BottomSheetHeaderCloseButtonPosition _closeButtonPosition;
+    public partial BottomSheetHeaderCloseButtonPosition CloseButtonPosition { get; set; }
     
     [ObservableProperty]
-    private BottomSheetHeaderButtonAppearanceMode _buttonAppearanceMode;
+    public partial BottomSheetHeaderButtonAppearanceMode ButtonAppearanceMode { get; set; }
     
     [ObservableProperty]
-    private string _topLeftButtonOneText = "Left One";
+    public partial string TopLeftButtonOneText { get; set; } = "Left One";
     
     [ObservableProperty]
-    private string _topLeftButtonTwoText = "Left Two";
+    public partial string TopLeftButtonTwoText { get; set; } = "Left Two";
     
     [ObservableProperty]
-    private string _topRightButtonOneText = "Right One";
+    public partial string TopRightButtonOneText { get; set; } = "Right One";
     
     [ObservableProperty]
-    private string _topRightButtonTwoText = "Right Two";
+    public partial string TopRightButtonTwoText { get; set; } = "Right Two";
     
     [ObservableProperty]
-    private Button? _topLeftButton;
+    public partial Button? TopLeftButton { get; set; }
     
     [ObservableProperty]
-    private Button? _topRightButton;
+    public partial Button? TopRightButton { get; set; }
     
     [RelayCommand]
     private void OpenBottomSheet()
@@ -75,10 +75,10 @@ public partial class BottomSheetHeaderTestsViewModel : ObservableObject
     }
 
     [ObservableProperty]
-    private bool _isOpenCustomHeader;
+    public partial bool IsOpenCustomHeader { get; set; }
 
     [ObservableProperty]
-    private string? _customHeaderButtonText = "Click Me";
+    public partial string? CustomHeaderButtonText { get; set; } = "Click Me";
 
     [RelayCommand]
     private void CustomHeaderButton()

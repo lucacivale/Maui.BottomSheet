@@ -8,6 +8,10 @@ public class EmptyBottomSheet : Plugin.Maui.BottomSheet.BottomSheet
 
     public EmptyBottomSheet()
     {
+        Content = new()
+        {
+            Content = new EmptyView()
+        };
         Loaded += (_, _) => { Debug.WriteLine("Loaded"); }; 
         Unloaded += (_, _) => { IsUnloaded = true; }; 
     }

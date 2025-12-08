@@ -9,7 +9,7 @@ using Plugin.Maui.BottomSheet;
 /// The <see cref="BottomSheetHandler"/> integrates platform-specific views with the <see cref="IBottomSheet"/> interface,
 /// handling property mapping, commands, and lifecycle management for bottom sheet components.
 /// </remarks>
-internal sealed partial class BottomSheetHandler
+public sealed partial class BottomSheetHandler
 {
     /// <summary>
     /// Defines a static property mapper for the <see cref="IBottomSheet"/> interface,
@@ -48,10 +48,16 @@ internal sealed partial class BottomSheetHandler
     private static readonly CommandMapper<IBottomSheet, BottomSheetHandler> _bottomSheetCommandMapper = new(ElementCommandMapper)
     {
         [nameof(IBottomSheet.Cancel)] = MapCancel,
-        #if ANDROID
+#if ANDROID
         [nameof(PlatformConfiguration.AndroidSpecific.BottomSheet.SetMargin)] = MapMargin,
         [nameof(PlatformConfiguration.AndroidSpecific.BottomSheet.SetHalfExpandedRatio)] = MapHalfExpandedRatio,
-        #endif
+#endif
+#if WINDOWS
+        [nameof(PlatformConfiguration.WindowsSpecific.BottomSheet.SetMaxWidth)] = MapMaxWidth,
+        [nameof(PlatformConfiguration.WindowsSpecific.BottomSheet.SetMaxHeight)] = MapMaxHeight,
+        [nameof(PlatformConfiguration.WindowsSpecific.BottomSheet.SetMinWidth)] = MapMinWidth,
+        [nameof(PlatformConfiguration.WindowsSpecific.BottomSheet.SetMinHeight)] = MapMinHeight,
+#endif
     };
 
     /// <summary>

@@ -15,22 +15,22 @@ public partial class MainViewModel : ObservableObject, INavigationAware
     private readonly ITaskService _taskService;
 
     [ObservableProperty]
-    private ObservableCollection<TaskItem> _tasks = new();
+    public partial ObservableCollection<TaskItem> Tasks { get; set; } = new();
 
     [ObservableProperty]
-    private string _searchText = string.Empty;
+    public partial string SearchText { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private TaskFilter _currentFilter = new();
+    public partial TaskFilter CurrentFilter { get; set; } = new();
 
     [ObservableProperty]
-    private int _totalTasks;
+    public partial int TotalTasks { get; set; }
 
     [ObservableProperty]
-    private int _completedTasks;
+    public partial int CompletedTasks { get; set; }
 
     [ObservableProperty]
-    private int _pendingTasks;
+    public partial int PendingTasks { get; set; }
 
     public MainViewModel(ITaskService taskService, IBottomSheetNavigationService bottomSheetNavigationService)
     {

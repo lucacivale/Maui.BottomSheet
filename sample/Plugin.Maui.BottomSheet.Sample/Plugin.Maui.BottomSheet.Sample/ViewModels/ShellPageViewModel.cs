@@ -7,10 +7,10 @@ namespace Plugin.Maui.BottomSheet.Sample.ViewModels;
 public partial class ShellPageViewModel (IBottomSheetNavigationService bottomSheetNavigationService) : ObservableObject, INavigationAware
 {
     [ObservableProperty]
-    string? _username = "John, Smith";
+    public partial string? Username { get; set; } = "John, Smith";
 
     [RelayCommand]
-    async Task OpenCustomBottomSheet()
+    public async Task OpenCustomBottomSheet()
     {
         await bottomSheetNavigationService.NavigateToAsync("CustomBottomSheet", new BottomSheetNavigationParameters()
         {

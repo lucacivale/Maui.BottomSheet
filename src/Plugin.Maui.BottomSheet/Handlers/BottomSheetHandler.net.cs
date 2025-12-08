@@ -11,7 +11,7 @@ using Microsoft.Maui.Handlers;
 /// Designed for internal use, this handler enables support for cross-platform bottom sheet behavior,
 /// including property updates, platform view creation, and asynchronous operations such as opening and closing the view.
 /// </remarks>
-internal sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, object>
+public sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, object>
 {
     /// <summary>
     /// Asynchronously opens the bottom sheet.

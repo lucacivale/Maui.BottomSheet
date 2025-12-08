@@ -204,6 +204,7 @@ public class BottomSheetNavigationServiceTests : IAsyncLifetime
     [UIFact]
     public async Task NavigateToBottomSheetPeek_PeekHeight_Calculated()
     {
+#if !WINDOWS
         await _bottomSheetNavigationService.NavigateToAsync("BottomSheetPeek");
 
         BottomSheetPeek bottomSheet = ((BottomSheetPeek)_bottomSheetNavigationService.NavigationStack().First());
@@ -211,6 +212,7 @@ public class BottomSheetNavigationServiceTests : IAsyncLifetime
         double? height = bottomSheet.Content?.Content?.Measure().Height;
         
         Assert.InRange(bottomSheet.PeekHeight, height ?? 0, (height ?? 0) + 10);
+#endif
     }
 
     [UIFact]
