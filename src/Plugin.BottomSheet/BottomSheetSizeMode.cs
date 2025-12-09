@@ -2,8 +2,7 @@
 
 /// <summary>
 /// Represents a size mode for the bottom sheet where the height is adjusted dynamically
-/// to fit the content displayed within it. In this mode, the bottom sheet wraps its
-/// content and does not occupy more space than necessary.
+/// to fit the content displayed within it or a fixed value based on the number of states it can display.
 /// </summary>
 public enum BottomSheetSizeMode
 {

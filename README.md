@@ -177,22 +177,35 @@ or
 
 ### 🔧 Core Properties
 
-| Property                | Type                     | Description                                               |
-|-------------------------|--------------------------|-----------------------------------------------------------|
-| `IsModal`               | `bool`                   | Enable/disable interaction with content under BottomSheet |
-| `IsCancelable`          | `bool`                   | Allow user to close via gestures or background click      |
-| `HasHandle`             | `bool`                   | Show/hide the drag handle                                 |
-| `ShowHeader`            | `bool`                   | Show/hide the header section                              |
-| `IsOpen`                | `bool`                   | Control open/close state                                  |
-| `IsDraggable`           | `bool`                   | Enable/disable drag gestures (useful for drawing)         |
-| `States`                | `List<BottomSheetState>` | Allowed states (Peek, Medium, Large)                      |
-| `CurrentState`          | `BottomSheetState`       | Current display state                                     |
-| `PeekHeight`            | `double`                 | Height when in peek state (iOS 16+)                       |
-| `Padding`               | `double`                 | Internal padding                                          |
-| `BackgroundColor`       | `Color`                  | Background color                                          |
-| `CornerRadius`          | `float`                  | Top corner radius                                         |
-| `WindowBackgroundColor` | `Color`                  | Window background (modal only)                            |
+| Property                | Type                     | Description                                                                                                                                                                                |
+|-------------------------|--------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `IsModal`               | `bool`                   | Enable/disable interaction with content under BottomSheet                                                                                                                                  |
+| `IsCancelable`          | `bool`                   | Allow user to close via gestures or background click                                                                                                                                       |
+| `HasHandle`             | `bool`                   | Show/hide the drag handle                                                                                                                                                                  |
+| `ShowHeader`            | `bool`                   | Show/hide the header section                                                                                                                                                               |
+| `IsOpen`                | `bool`                   | Control open/close state                                                                                                                                                                   |
+| `IsDraggable`           | `bool`                   | Enable/disable drag gestures (useful for drawing)                                                                                                                                          |
+| `States`                | `List<BottomSheetState>` | Allowed states (Peek, Medium, Large)                                                                                                                                                       |
+| `CurrentState`          | `BottomSheetState`       | Current display state                                                                                                                                                                      |
+| `PeekHeight`            | `double`                 | Height when in peek state (iOS 16+)                                                                                                                                                        |
+| `Padding`               | `double`                 | Internal padding                                                                                                                                                                           |
+| `BackgroundColor`       | `Color`                  | Background color                                                                                                                                                                           |
+| `CornerRadius`          | `float`                  | Top corner radius                                                                                                                                                                          |
+| `WindowBackgroundColor` | `Color`                  | Window background (modal only)                                                                                                                                                             |
+| `SizeMode`              | `BottomSheetSizeMode`    | Represents a size mode for the bottom sheet where the height is adjusted dynamically to fit the content displayed within it or a fixed value based on the number of states it can display. |
 
+
+### Size Modes
+
+| State          | Description                                                                                                                                                                                                                                        |
+|----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `States`       | Represents a size mode for the bottom sheet where the height is set to a fixed value based on the number of states it can display. This mode ensures the bottom sheet is fully expanded rather than dynamically adjusting its size to-fit content. |
+| `FitToContent` | A size mode indicating that the bottom sheet dynamically adjusts its height to precisely fit the content it displays. In this mode, the bottom sheet wraps around its contents and does not occupy any more vertical space than necessary.         |
+
+> [!CAUTION]
+> Mode `FitToContent` is not compatible with the `States` and `CurrentState` property. Do not mix these two properties.
+> Requires iOS 16+. On prior versions of iOS, the medium state will be used instead.
+> 
 ### 🎭 BottomSheet States
 
 | State    | Description                      |
