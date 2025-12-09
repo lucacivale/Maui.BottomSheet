@@ -152,4 +152,14 @@ public sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, objec
     {
         throw new NotImplementedException();
     }
+
+    /// <summary>
+    /// Maps the <c>SizeMode</c> property of the <see cref="IBottomSheet"/> to the platform-specific implementation.
+    /// </summary>
+    /// <param name="handler">The <see cref="BottomSheetHandler"/> responsible for managing the platform-specific view representation.</param>
+    /// <param name="bottomSheet">The <see cref="IBottomSheet"/> whose <c>SizeMode</c> is being mapped.</param>
+    private static void MapSizeMode(BottomSheetHandler handler, IBottomSheet bottomSheet)
+    {
+        throw new NotImplementedException();
+    }
 }

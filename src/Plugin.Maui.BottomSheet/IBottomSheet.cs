@@ -171,6 +171,12 @@ public interface IBottomSheet : IView, IPadding
     Grid ContainerView { get; }
 
     /// <summary>
+    /// Gets or sets the size behavior of the bottom sheet, allowing customization of its mode such as fitting to content
+    /// or using predefined states.
+    /// </summary>
+    BottomSheetSizeMode SizeMode { get; set; }
+
+    /// <summary>
     /// Invoked when the bottom sheet begins the opening process.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]

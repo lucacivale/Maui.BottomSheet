@@ -36,6 +36,8 @@ public sealed partial class BottomSheet
     private readonly ContentPresenter _contentPresenter;
     private readonly KeyboardAccelerator _escapeKeyboardAccelerator;
 
+    private Size _contentSize = Size.Empty;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheet"/> class.
     /// </summary>
@@ -201,6 +203,12 @@ public sealed partial class BottomSheet
     }
 
     /// <summary>
+    /// Gets or sets the sizing behavior of the bottom sheet, determining whether it resizes
+    /// to fit its content or adheres to predefined states.
+    /// </summary>
+    public BottomSheetSizeMode SizeMode { get; set; }
+
+    /// <summary>
     /// Gets the content dialog resource minimal width.
     /// </summary>
     internal static double ContentDialogMinWidth => (double)Application.Current.Resources[ContentDialogMinWidthResourceKey];
@@ -252,6 +260,8 @@ public sealed partial class BottomSheet
 
         _popup.Opened += @event;
 
+        _contentPresenter.SizeChanged += Content_SizeChanged;
+
         _dialogBorder.SizeChanged += DialogBorder_SizeChanged;
         _container.Tapped += WindowBackgroundClicked;
 
@@ -282,6 +292,7 @@ public sealed partial class BottomSheet
 
         _popup.Closed += @event;
 
+        _contentPresenter.SizeChanged -= Content_SizeChanged;
         _dialogBorder.SizeChanged -= DialogBorder_SizeChanged;
         _container.Tapped -= WindowBackgroundClicked;
 
@@ -304,6 +315,18 @@ public sealed partial class BottomSheet
     private void DialogBorder_SizeChanged(object sender, SizeChangedEventArgs e)
     {
         _eventManager.RaiseEvent(this, e, nameof(SizeChanged));
+    }
+
+    private void Content_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        if (SizeMode == BottomSheetSizeMode.FitToContent
+            && _contentSize != e.PreviousSize)
+        {
+            _contentSize = e.NewSize;
+
+            _dialogBorder.Height = _contentSize.Height;
+            _dialogBorder.Width = _contentSize.Width;
+        }
     }
 
     private void WindowBackgroundClicked(object sender, TappedRoutedEventArgs e)

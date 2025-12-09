@@ -33,6 +33,7 @@ public sealed partial class BottomSheetHandler
             [nameof(IBottomSheet.CornerRadius)] = MapCornerRadius,
             [nameof(IBottomSheet.WindowBackgroundColor)] = MapWindowBackgroundColor,
             [nameof(IBottomSheet.IsModal)] = MapIsModal,
+            [nameof(IBottomSheet.SizeMode)] = MapSizeMode,
         };
 
     /// <summary>

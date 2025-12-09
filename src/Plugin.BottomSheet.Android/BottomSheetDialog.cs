@@ -44,7 +44,6 @@ public sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bott
         Behavior.AddBottomSheetCallback(_bottomSheetCallback);
 
         Behavior.GestureInsetBottomIgnored = true;
-        Behavior.FitToContents = false;
 
         if (context is not AndroidX.AppCompat.App.AppCompatActivity activity)
         {
@@ -404,6 +403,24 @@ public sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bott
     }
 
     /// <summary>
+    /// Gets or sets the sizing behavior of the bottom sheet, specifying whether it adapts to its content size or supports different predefined states.
+    /// </summary>
+    public BottomSheetSizeMode SizeMode
+    {
+        get => Behavior.FitToContents == true ? BottomSheetSizeMode.FitToContent : BottomSheetSizeMode.States;
+        set
+        {
+            Behavior.FitToContents = value == BottomSheetSizeMode.FitToContent ? true : false;
+
+            if (_content?.Parent is View parent
+                && parent.LayoutParameters is not null)
+            {
+                parent.LayoutParameters.Height = Behavior.FitToContents ? ViewGroup.LayoutParams.WrapContent : ViewGroup.LayoutParams.MatchParent;
+            }
+        }
+    }
+
+    /// <summary>
     /// Displays the bottom sheet or to the user.
     /// </summary>
     public override void Show()
@@ -549,7 +566,8 @@ public sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bott
         Window?.ClearFlags(WindowManagerFlags.DimBehind);
 
         if (_content?.Parent is View parent
-            && parent.LayoutParameters is not null)
+            && parent.LayoutParameters is not null
+            && SizeMode == BottomSheetSizeMode.States)
         {
             parent.LayoutParameters.Height = ViewGroup.LayoutParams.MatchParent;
         }

@@ -137,6 +137,7 @@ public sealed class MauiBottomSheet : AndroidView
         SetIsCancelable();
         SetIsDraggable();
         SetCurrentState();
+        SetSizeMode();
 
         _bottomSheet.SetContentView(_virtualView.ContainerView.ToPlatform(_mauiContext));
 
@@ -341,6 +342,20 @@ public sealed class MauiBottomSheet : AndroidView
         }
 
         _bottomSheet.WindowBackgroundColor = _virtualView.WindowBackgroundColor.ToPlatform();
+    }
+
+    /// <summary>
+    /// Configures the size mode of the bottom sheet based on the associated virtual view's size mode.
+    /// </summary>
+    public void SetSizeMode()
+    {
+        if (_virtualView is null
+            || _bottomSheet is null)
+        {
+            return;
+        }
+
+        _bottomSheet.SizeMode = _virtualView.SizeMode;
     }
 
     /// <summary>
