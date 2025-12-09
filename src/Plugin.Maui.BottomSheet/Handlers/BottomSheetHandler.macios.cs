@@ -255,6 +255,11 @@ public sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, MauiB
         handler.PlatformView.Cancel();
     }
 
+    /// <summary>
+    /// Maps the <c>SizeMode</c> property of the <see cref="IBottomSheet"/> to the platform-specific implementation.
+    /// </summary>
+    /// <param name="handler">The <see cref="BottomSheetHandler"/> responsible for managing the platform-specific view representation.</param>
+    /// <param name="bottomSheet">The <see cref="IBottomSheet"/> whose <c>SizeMode</c> is being mapped.</param>
     private static void MapSizeMode(BottomSheetHandler handler, IBottomSheet bottomSheet)
     {
         if (handler.PlatformView.IsOpen == false)

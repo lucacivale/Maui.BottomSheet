@@ -402,6 +402,9 @@ public sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bott
         }
     }
 
+    /// <summary>
+    /// Gets or sets the sizing behavior of the bottom sheet, specifying whether it adapts to its content size or supports different predefined states.
+    /// </summary>
     public BottomSheetSizeMode SizeMode
     {
         get => Behavior.FitToContents == true ? BottomSheetSizeMode.FitToContent : BottomSheetSizeMode.States;

@@ -169,6 +169,7 @@ public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>
         _bottomSheet.Canceled -= BottomSheetOnCanceled;
         _bottomSheet.FrameChanged -= BottomSheetOnFrameChanged;
         _bottomSheet.LayoutChanged -= BottomSheetOnLayoutChanged;
+        _bottomSheet.FitToContentCalculation = null;
 
         await _bottomSheet.CloseAsync().ConfigureAwait(true);
 
@@ -319,6 +320,11 @@ public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>
         _bottomSheet.WindowBackgroundColor = _virtualView?.WindowBackgroundColor?.ToPlatform();
     }
 
+    /// <summary>
+    /// Configures the size mode for the underlying bottom sheet implementation based on the associated virtual view.
+    /// Maps the virtual view's size mode to the platform-specific bottom sheet and, if applicable,
+    /// sets a fit-to-content calculation for dynamic content height adjustment.
+    /// </summary>
     public void SetSizeMode()
     {
         if (_virtualView is null
@@ -328,6 +334,7 @@ public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>
         }
 
         _bottomSheet.SizeMode = _virtualView.SizeMode;
+        _bottomSheet.FitToContentCalculation = _bottomSheet.SizeMode == BottomSheetSizeMode.FitToContent ? () => _virtualView.ContainerView.Measure().Height : null;
     }
 
     /// <summary>

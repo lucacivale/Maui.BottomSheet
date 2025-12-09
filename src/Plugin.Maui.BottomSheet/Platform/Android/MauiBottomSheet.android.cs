@@ -344,6 +344,9 @@ public sealed class MauiBottomSheet : AndroidView
         _bottomSheet.WindowBackgroundColor = _virtualView.WindowBackgroundColor.ToPlatform();
     }
 
+    /// <summary>
+    /// Configures the size mode of the bottom sheet based on the associated virtual view's size mode.
+    /// </summary>
     public void SetSizeMode()
     {
         if (_virtualView is null

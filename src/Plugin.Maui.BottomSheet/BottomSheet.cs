@@ -603,6 +603,10 @@ public partial class BottomSheet : View, IBottomSheet, IElementConfiguration<Bot
     /// </summary>
     public Grid ContainerView { get; }
 
+    /// <summary>
+    /// Gets or sets a property that defines the sizing behavior of the bottom sheet,
+    /// determining whether it adapts to predefined states or adjusts to fit its content.
+    /// </summary>
     public BottomSheetSizeMode SizeMode
     {
         get => (BottomSheetSizeMode)GetValue(SizeModeProperty);

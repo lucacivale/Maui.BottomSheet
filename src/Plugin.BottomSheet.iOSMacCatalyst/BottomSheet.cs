@@ -249,6 +249,10 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
         }
     }
 
+    /// <summary>
+    /// Gets or sets the sizing behavior of the bottom sheet, determining whether it resizes
+    /// to fit its content or adheres to predefined states.
+    /// </summary>
     [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "Is validated.")]
     public BottomSheetSizeMode SizeMode
     {
@@ -265,6 +269,13 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
             });
         }
     }
+
+    /// <summary>
+    /// Gets or sets a custom calculation for determining the height of the BottomSheet
+    /// when the SizeMode is set to FitToContent. Allows users to provide a function
+    /// that calculates the desired content height based on specific requirements.
+    /// </summary>
+    public Func<double>? FitToContentCalculation { get; set; }
 
     /// <summary>
     /// Returns an enumerator that iterates through the collection of subviews.
@@ -491,10 +502,31 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
         return new(peekHeight);
     }
 
+    /// <summary>
+    /// Calculates the content height value for the bottom sheet based on the specified resolution context.
+    /// Takes into account the safe area insets, platform compatibility, and maximum detent value constraints.
+    /// </summary>
+    /// <param name="arg">The context used to resolve detent properties, providing relevant detent configuration information.</param>
+    /// <returns>The calculated content height as a <see cref="nfloat"/> value.</returns>
     [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "Is validated.")]
     private nfloat ContentHeightValue(IUISheetPresentationControllerDetentResolutionContext arg)
     {
-        return (_containerViewController?.View?.Frame.Height <= arg.MaximumDetentValue ? _containerViewController?.View?.Frame.Height : arg.MaximumDetentValue) ?? 0;
+        double height = FitToContentCalculation?.Invoke() ?? 0;
+
+        if (View?.Window is not null
+            && height > 0)
+        {
+            height += View.Window.SafeAreaInsets.Bottom;
+        }
+
+        if (OperatingSystem.IsMacCatalyst()
+            || (OperatingSystem.IsIOS()
+                && OperatingSystem.IsIOSVersionAtLeast(16)))
+        {
+            height = height <= arg.MaximumDetentValue ? height : arg.MaximumDetentValue;
+        }
+
+        return new nfloat(height);
     }
 
     /// <summary>
