@@ -266,5 +266,7 @@ public sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, MauiB
         {
             return;
         }
+
+        handler.PlatformView.SetSizeMode();
     }
 }

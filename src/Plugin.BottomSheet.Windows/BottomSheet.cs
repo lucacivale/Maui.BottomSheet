@@ -36,7 +36,7 @@ public sealed partial class BottomSheet
     private readonly ContentPresenter _contentPresenter;
     private readonly KeyboardAccelerator _escapeKeyboardAccelerator;
 
-    private BottomSheetSizeMode _sizeMode;
+    private Size _contentSize = Size.Empty;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheet"/> class.
@@ -202,11 +202,11 @@ public sealed partial class BottomSheet
         set => _dialogBorder.Background = value;
     }
 
-    public BottomSheetSizeMode SizeMode
-    {
-        get => _sizeMode;
-        set => _sizeMode = value;
-    }
+    /// <summary>
+    /// Gets or sets the sizing behavior of the bottom sheet, determining whether it resizes
+    /// to fit its content or adheres to predefined states.
+    /// </summary>
+    public BottomSheetSizeMode SizeMode { get; set; }
 
     /// <summary>
     /// Gets the content dialog resource minimal width.
@@ -319,10 +319,13 @@ public sealed partial class BottomSheet
 
     private void Content_SizeChanged(object sender, SizeChangedEventArgs e)
     {
-        if (SizeMode == BottomSheetSizeMode.FitToContent)
+        if (SizeMode == BottomSheetSizeMode.FitToContent
+            && _contentSize != e.PreviousSize)
         {
-            _dialogBorder.Height = e.NewSize.Height;
-            _dialogBorder.Width = e.NewSize.Width;
+            _contentSize = e.NewSize;
+
+            _dialogBorder.Height = _contentSize.Height;
+            _dialogBorder.Width = _contentSize.Width;
         }
     }
 

@@ -94,6 +94,7 @@ public sealed partial class MauiBottomSheet : FrameworkElement
         SetMinHeight();
         SetMaxWidth();
         SetMaxHeight();
+        SetSizeMode();
 
         FrameworkElement view = _virtualView.ContainerView.ToPlatform(_mauiContext);
         view.UpdateAutomationId(_virtualView);
@@ -266,6 +267,20 @@ public sealed partial class MauiBottomSheet : FrameworkElement
         }
 
         _bottomSheet.MaxHeight = _virtualView.GetMaxHeight();
+    }
+
+    /// <summary>
+    /// Configures the size mode of the bottom sheet based on the associated virtual view's size mode.
+    /// </summary>
+    public void SetSizeMode()
+    {
+        if (_virtualView is null
+            || _bottomSheet is null)
+        {
+            return;
+        }
+
+        _bottomSheet.SizeMode = _virtualView.SizeMode;
     }
 
     /// <summary>
