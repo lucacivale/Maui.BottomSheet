@@ -205,7 +205,7 @@ or
 > [!CAUTION]
 > Mode `FitToContent` is not compatible with the `States` and `CurrentState` property. Do not mix these two properties.
 > Requires iOS 16+. On prior versions of iOS, the medium state will be used instead.
-> 
+
 ### 🎭 BottomSheet States
 
 | State    | Description                      |
@@ -336,6 +336,22 @@ or
         </bottomsheet:BottomSheetStyle>
     </bottomsheet:BottomSheet.BottomSheetStyle>
 </bottomsheet:BottomSheet>
+```
+### 📋 Easy and fast popups with content based size
+
+```xaml
+<mauibottomsheet:BottomSheet
+    SizeMode="FitToContent">
+    <mauibottomsheet:BottomSheet.Content>
+        <mauibottomsheet:BottomSheetContent>
+            <mauibottomsheet:BottomSheetContent.Content>
+                <Grid RowDefinitions="300">
+                    <BoxView x:Name="ContentBox" Color="Orange" />
+                </Grid>
+            </mauibottomsheet:BottomSheetContent.Content>
+        </mauibottomsheet:BottomSheetContent>
+    </mauibottomsheet:BottomSheet.Content>
+</mauibottomsheet:BottomSheet>
 ```
 
 ### 🎨 Global Styling
