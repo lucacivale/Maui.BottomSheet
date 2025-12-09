@@ -127,6 +127,7 @@ public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>
         SetBottomSheetBackgroundColor();
         SetIsModal();
         SetCornerRadius();
+        SetSizeMode();
 
         UIView view = _virtualView.ContainerView.ToPlatform(_mauiContext);
         view.UpdateAutomationId(_virtualView);
@@ -316,6 +317,17 @@ public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>
 
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         _bottomSheet.WindowBackgroundColor = _virtualView?.WindowBackgroundColor?.ToPlatform();
+    }
+
+    public void SetSizeMode()
+    {
+        if (_virtualView is null
+            || _bottomSheet is null)
+        {
+            return;
+        }
+
+        _bottomSheet.SizeMode = _virtualView.SizeMode;
     }
 
     /// <summary>

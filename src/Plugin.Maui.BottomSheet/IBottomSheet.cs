@@ -170,6 +170,8 @@ public interface IBottomSheet : IView, IPadding
     /// </summary>
     Grid ContainerView { get; }
 
+    BottomSheetSizeMode SizeMode { get; set; }
+
     /// <summary>
     /// Invoked when the bottom sheet begins the opening process.
     /// </summary>

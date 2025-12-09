@@ -12,6 +12,7 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
     private const string PeekDetentId = "Plugin.Maui.BottomSheet.PeekDetentId";
 
     private readonly WeakEventManager _eventManager = new();
+    private readonly UISheetPresentationControllerDetent _contentDetent;
     private readonly UISheetPresentationControllerDetent _peekDetent;
     private readonly UISheetPresentationControllerDetent _mediumDetent = UISheetPresentationControllerDetent.CreateMediumDetent();
     private readonly UISheetPresentationControllerDetent _largeDetent = UISheetPresentationControllerDetent.CreateLargeDetent();
@@ -25,10 +26,13 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
 
     private BottomSheetContainerViewController? _containerViewController;
 
+    private BottomSheetSizeMode _sizeMode;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheet"/> class.
     /// Represents a bottom sheet component that provides a configurable and interactive user interface element.
     /// </summary>
+    [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "Is validated.")]
     public BottomSheet()
     {
         SetToolbarHidden(true, false);
@@ -41,13 +45,13 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
             || (OperatingSystem.IsIOS()
                 && OperatingSystem.IsIOSVersionAtLeast(16)))
         {
-#pragma warning disable CA1416
             _peekDetent = UISheetPresentationControllerDetent.Create(PeekDetentId, PeekHeightValue);
-#pragma warning restore CA1416
+            _contentDetent = UISheetPresentationControllerDetent.Create(PeekDetentId, ContentHeightValue);
         }
         else
         {
             _peekDetent = UISheetPresentationControllerDetent.CreateMediumDetent();
+            _contentDetent = UISheetPresentationControllerDetent.CreateMediumDetent();
         }
     }
 
@@ -90,6 +94,7 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
     /// <summary>
     /// Gets or sets the height at which the bottom sheet is partially expanded.
     /// </summary>
+    [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "Is validated.")]
     public double PeekHeight
     {
         get => _peekHeight;
@@ -100,13 +105,9 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
             if ((OperatingSystem.IsMacCatalyst()
                 || (OperatingSystem.IsIOS()
                     && OperatingSystem.IsIOSVersionAtLeast(16)))
-#pragma warning disable CA1416
-#pragma warning disable S6605
                 && SheetPresentationController?.Detents.Any(x => x.Identifier == PeekDetentId) == true)
-#pragma warning restore S6605
             {
                 SheetPresentationController?.InvalidateDetents();
-#pragma warning restore CA1416
             }
         }
     }
@@ -248,6 +249,23 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
         }
     }
 
+    [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "Is validated.")]
+    public BottomSheetSizeMode SizeMode
+    {
+        get => _sizeMode;
+        set
+        {
+            _sizeMode = value;
+
+            UISheetPresentationControllerDetent[] detents = _sizeMode == BottomSheetSizeMode.FitToContent ? [_contentDetent] : [_largeDetent];
+
+            SheetPresentationController?.AnimateChanges(() =>
+            {
+                SheetPresentationController.Detents = detents;
+            });
+        }
+    }
+
     /// <summary>
     /// Returns an enumerator that iterates through the collection of subviews.
     /// </summary>
@@ -296,9 +314,21 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
     /// <summary>
     /// Notifies the view controller that its view has just laid out its subviews.
     /// </summary>
+    [SuppressMessage("Major Code Smell", "S1066:Mergeable \"if\" statements should be combined", Justification = "Improve readability.")]
+    [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "Is validated.")]
     public override void ViewDidLayoutSubviews()
     {
         base.ViewDidLayoutSubviews();
+
+        if (_sizeMode == BottomSheetSizeMode.FitToContent)
+        {
+            if (OperatingSystem.IsMacCatalyst()
+                || (OperatingSystem.IsIOS()
+                    && OperatingSystem.IsIOSVersionAtLeast(16)))
+            {
+                SheetPresentationController?.InvalidateDetents();
+            }
+        }
 
         _eventManager.RaiseEvent(
             this,
@@ -381,6 +411,7 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
         _peekDetent.Dispose();
         _mediumDetent.Dispose();
         _largeDetent.Dispose();
+        _contentDetent.Dispose();
 
         _bottomSheetDelegate.StateChanged -= BottomSheetDelegateOnStateChanged;
         _bottomSheetDelegate.ConfirmDismiss -= BottomSheetDelegateOnConfirmDismiss;
@@ -439,10 +470,10 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
     /// </summary>
     /// <param name="arg">The context providing detent resolution constraints.</param>
     /// <returns>The calculated peek height as a native float.</returns>
-    [SuppressMessage("Major Bug", "S1244:Floating point numbers should not be tested for equality", Justification = "False positive")]
+    [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "Is validated.")]
     private nfloat PeekHeightValue(IUISheetPresentationControllerDetentResolutionContext arg)
     {
-        nfloat peekHeight = new(_peekHeight);
+        double peekHeight = _peekHeight;
 
         if (View?.Window is not null
             && peekHeight > 0)
@@ -454,14 +485,16 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
             || (OperatingSystem.IsIOS()
                 && OperatingSystem.IsIOSVersionAtLeast(16)))
         {
-#pragma warning disable CA1416
-            return peekHeight <= arg.MaximumDetentValue ? new nfloat(peekHeight) : arg.MaximumDetentValue;
-#pragma warning restore CA1416
+            peekHeight = peekHeight <= arg.MaximumDetentValue ? peekHeight : arg.MaximumDetentValue;
         }
-        else
-        {
-            return new nfloat(peekHeight);
-        }
+
+        return new(peekHeight);
+    }
+
+    [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "Is validated.")]
+    private nfloat ContentHeightValue(IUISheetPresentationControllerDetentResolutionContext arg)
+    {
+        return (_containerViewController?.View?.Frame.Height <= arg.MaximumDetentValue ? _containerViewController?.View?.Frame.Height : arg.MaximumDetentValue) ?? 0;
     }
 
     /// <summary>

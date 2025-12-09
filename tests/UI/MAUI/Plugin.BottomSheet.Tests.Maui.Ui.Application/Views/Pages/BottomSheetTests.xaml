@@ -58,6 +58,7 @@
                 IsDraggable="{Binding IsDraggable}"
                 IsModal="{Binding IsModal, Mode=TwoWay}"
                 IsOpen="{Binding IsOpen}"
+                SizeMode="FitToContent"
                 States="{Binding States}"
                 WindowBackgroundColor="{Binding WindowBackgroundColor}">
                 <mauibottomsheet:BottomSheet.Content>

@@ -254,4 +254,12 @@ public sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, MauiB
     {
         handler.PlatformView.SetMaxHeight();
     }
+
+    private static void MapSizeMode(BottomSheetHandler handler, IBottomSheet bottomSheet)
+    {
+        if (handler.PlatformView.IsOpen == false)
+        {
+            return;
+        }
+    }
 }

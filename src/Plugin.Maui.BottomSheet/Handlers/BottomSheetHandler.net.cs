@@ -152,4 +152,9 @@ public sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, objec
     {
         throw new NotImplementedException();
     }
+
+    private static void MapSizeMode(BottomSheetHandler handler, IBottomSheet bottomSheet)
+    {
+        throw new NotImplementedException();
+    }
 }

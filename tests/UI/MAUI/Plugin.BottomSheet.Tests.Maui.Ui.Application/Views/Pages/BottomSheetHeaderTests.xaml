@@ -22,7 +22,8 @@
                 AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.BottomSheetBuiltInHeader}"
                 IsCancelable="{Binding IsCancelable}"
                 IsOpen="{Binding IsOpen}"
-                ShowHeader="{Binding ShowHeader}">
+                ShowHeader="{Binding ShowHeader}"
+                SizeMode="FitToContent">
                 <mauibottomsheet:BottomSheet.Header>
                     <mauibottomsheet:BottomSheetHeader
                         CloseButtonPosition="{Binding CloseButtonPosition}"
@@ -243,7 +244,8 @@
                 x:Name="BottomSheetCustomHeader"
                 AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.BottomSheetCustomHeader}"
                 IsOpen="{Binding IsOpenCustomHeader}"
-                ShowHeader="{Binding ShowHeader}">
+                ShowHeader="{Binding ShowHeader}"
+                SizeMode="FitToContent">
                 <mauibottomsheet:BottomSheet.Header>
                     <mauibottomsheet:BottomSheetHeader>
                         <mauibottomsheet:BottomSheetHeader.Content>

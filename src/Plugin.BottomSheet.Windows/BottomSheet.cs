@@ -36,6 +36,8 @@ public sealed partial class BottomSheet
     private readonly ContentPresenter _contentPresenter;
     private readonly KeyboardAccelerator _escapeKeyboardAccelerator;
 
+    private BottomSheetSizeMode _sizeMode;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheet"/> class.
     /// </summary>
@@ -200,6 +202,12 @@ public sealed partial class BottomSheet
         set => _dialogBorder.Background = value;
     }
 
+    public BottomSheetSizeMode SizeMode
+    {
+        get => _sizeMode;
+        set => _sizeMode = value;
+    }
+
     /// <summary>
     /// Gets the content dialog resource minimal width.
     /// </summary>
@@ -252,6 +260,8 @@ public sealed partial class BottomSheet
 
         _popup.Opened += @event;
 
+        _contentPresenter.SizeChanged += Content_SizeChanged;
+
         _dialogBorder.SizeChanged += DialogBorder_SizeChanged;
         _container.Tapped += WindowBackgroundClicked;
 
@@ -282,6 +292,7 @@ public sealed partial class BottomSheet
 
         _popup.Closed += @event;
 
+        _contentPresenter.SizeChanged -= Content_SizeChanged;
         _dialogBorder.SizeChanged -= DialogBorder_SizeChanged;
         _container.Tapped -= WindowBackgroundClicked;
 
@@ -304,6 +315,15 @@ public sealed partial class BottomSheet
     private void DialogBorder_SizeChanged(object sender, SizeChangedEventArgs e)
     {
         _eventManager.RaiseEvent(this, e, nameof(SizeChanged));
+    }
+
+    private void Content_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        if (SizeMode == BottomSheetSizeMode.FitToContent)
+        {
+            _dialogBorder.Height = e.NewSize.Height;
+            _dialogBorder.Width = e.NewSize.Width;
+        }
     }
 
     private void WindowBackgroundClicked(object sender, TappedRoutedEventArgs e)

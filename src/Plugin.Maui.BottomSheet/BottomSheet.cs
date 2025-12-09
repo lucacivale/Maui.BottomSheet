@@ -282,6 +282,16 @@ public partial class BottomSheet : View, IBottomSheet, IElementConfiguration<Bot
             defaultValue: new BottomSheetStyle());
 
     /// <summary>
+    /// Bindable property that indicates whether the element is open or closed.
+    /// </summary>
+    public static readonly BindableProperty SizeModeProperty =
+        BindableProperty.Create(
+            nameof(SizeMode),
+            typeof(BottomSheetSizeMode),
+            typeof(BottomSheet),
+            defaultBindingMode: BindingMode.TwoWay);
+
+    /// <summary>
     /// Gets the constant row index used to position the handle element in the BottomSheet layout.
     /// </summary>
     internal const int HandleRow = 0;
@@ -592,6 +602,12 @@ public partial class BottomSheet : View, IBottomSheet, IElementConfiguration<Bot
     /// Gets the container view element.
     /// </summary>
     public Grid ContainerView { get; }
+
+    public BottomSheetSizeMode SizeMode
+    {
+        get => (BottomSheetSizeMode)GetValue(SizeModeProperty);
+        set => SetValue(SizeModeProperty, value);
+    }
 
     /// <summary>
     /// Activates the current instance and sets its state to "On".
