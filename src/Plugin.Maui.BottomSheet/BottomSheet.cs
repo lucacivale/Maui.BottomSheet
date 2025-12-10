@@ -9,6 +9,7 @@ namespace Plugin.Maui.BottomSheet;
 /// <summary>
 /// A UI component that provides a collapsible and expandable container, typically used to display additional content at the bottom of the screen.
 /// </summary>
+[ContentProperty(nameof(Content))]
 public partial class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet>
 {
     /// <summary>

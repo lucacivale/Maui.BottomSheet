@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
     x:Class="Plugin.BottomSheet.Tests.Maui.Ui.Application.Views.Pages.BottomSheetHeaderTests"
-    x:DataType="viewModels:BottomSheetHeaderTestsViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:mauibottomsheet="http://pluginmauibottomsheet.com"
     xmlns:shared="clr-namespace:Plugin.BottomSheet.Tests.Maui.Ui.Application.Shared"
     xmlns:viewModels="clr-namespace:Plugin.BottomSheet.Tests.Maui.Ui.Application.ViewModels"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    x:DataType="viewModels:BottomSheetHeaderTestsViewModel">
     <ContentPage.Content>
         <VerticalStackLayout Padding="30,0" Spacing="25">
             <Button
@@ -18,11 +18,11 @@
                 Clicked="OpenBottomSheetCustomHeader"
                 Text="Open BottomSheet with custom header" />
             <mauibottomsheet:BottomSheet
+                x:Name="BottomSheet"
                 AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.BottomSheetBuiltInHeader}"
                 IsCancelable="{Binding IsCancelable}"
                 IsOpen="{Binding IsOpen}"
-                ShowHeader="{Binding ShowHeader}"
-                x:Name="BottomSheet">
+                ShowHeader="{Binding ShowHeader}">
                 <mauibottomsheet:BottomSheet.Header>
                     <mauibottomsheet:BottomSheetHeader
                         CloseButtonPosition="{Binding CloseButtonPosition}"
@@ -32,218 +32,216 @@
                         TopLeftButton="{Binding TopLeftButton}"
                         TopRightButton="{Binding TopRightButton}" />
                 </mauibottomsheet:BottomSheet.Header>
-                <mauibottomsheet:BottomSheet.Content>
-                    <mauibottomsheet:BottomSheetContent>
-                        <mauibottomsheet:BottomSheetContent.ContentTemplate>
-                            <DataTemplate>
+                <mauibottomsheet:BottomSheetContent>
+                    <mauibottomsheet:BottomSheetContent.ContentTemplate>
+                        <DataTemplate>
+                            <Grid
+                                ColumnDefinitions="*,*"
+                                RowDefinitions="30,30,40,90,90,60,50,50,30"
+                                RowSpacing="20">
+                                <Label Text="Show header:" VerticalOptions="Center" />
+                                <Switch
+                                    Grid.Column="1"
+                                    AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.ShowHeader}"
+                                    HorizontalOptions="Start"
+                                    IsToggled="{Binding ShowHeader}"
+                                    VerticalOptions="Center" />
+                                <Label
+                                    Grid.Row="1"
+                                    Text="Show close button:"
+                                    VerticalOptions="Center" />
+                                <Switch
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.ShowCloseButton}"
+                                    HorizontalOptions="Start"
+                                    IsToggled="{Binding ShowCloseButton}"
+                                    VerticalOptions="Center" />
+                                <Entry
+                                    Grid.Row="2"
+                                    AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.Title}"
+                                    ClearButtonVisibility="WhileEditing"
+                                    Placeholder="Title"
+                                    Text="{Binding Title}" />
                                 <Grid
+                                    Grid.Row="3"
+                                    Grid.ColumnSpan="2"
                                     ColumnDefinitions="*,*"
-                                    RowDefinitions="30,30,40,90,90,60,50,50,30"
-                                    RowSpacing="20">
-                                    <Label Text="Show header:" VerticalOptions="Center" />
-                                    <Switch
-                                        AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.ShowHeader}"
-                                        Grid.Column="1"
-                                        HorizontalOptions="Start"
-                                        IsToggled="{Binding ShowHeader}"
-                                        VerticalOptions="Center" />
+                                    RadioButtonGroup.GroupName="HeaderAppearanceMode"
+                                    RadioButtonGroup.SelectedValue="{Binding ButtonAppearanceMode}"
+                                    RowDefinitions="30,30,30">
+                                    <Label
+                                        Margin="0,0,0,5"
+                                        FontAttributes="Bold"
+                                        FontSize="20"
+                                        Text="Header mode"
+                                        VerticalTextAlignment="Center" />
                                     <Label
                                         Grid.Row="1"
-                                        Text="Show close button:"
-                                        VerticalOptions="Center" />
-                                    <Switch
-                                        AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.ShowCloseButton}"
-                                        Grid.Column="1"
+                                        Text="None"
+                                        VerticalTextAlignment="Center" />
+                                    <CheckBox
+                                        x:Name="BottomSheetHeaderButtonAppearanceModeNone"
                                         Grid.Row="1"
-                                        HorizontalOptions="Start"
-                                        IsToggled="{Binding ShowCloseButton}"
-                                        VerticalOptions="Center" />
-                                    <Entry
-                                        AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.Title}"
-                                        ClearButtonVisibility="WhileEditing"
+                                        AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.BottomSheetHeaderButtonAppearanceModeNone}"
+                                        CheckedChanged="BottomSheetHeaderButtonAppearanceModeNone_OnCheckedChanged"
+                                        HorizontalOptions="End"
+                                        IsChecked="True" />
+                                    <Label
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        Text="LeftButton"
+                                        VerticalTextAlignment="Center" />
+                                    <CheckBox
+                                        x:Name="BottomSheetHeaderButtonAppearanceModeLeft"
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.BottomSheetHeaderButtonAppearanceModeLeft}"
+                                        CheckedChanged="BottomSheetHeaderButtonAppearanceModeLeft_OnCheckedChanged"
+                                        HorizontalOptions="End" />
+                                    <Label
                                         Grid.Row="2"
-                                        Placeholder="Title"
-                                        Text="{Binding Title}" />
-                                    <Grid
-                                        ColumnDefinitions="*,*"
-                                        Grid.ColumnSpan="2"
-                                        Grid.Row="3"
-                                        RadioButtonGroup.GroupName="HeaderAppearanceMode"
-                                        RadioButtonGroup.SelectedValue="{Binding ButtonAppearanceMode}"
-                                        RowDefinitions="30,30,30">
-                                        <Label
-                                            FontAttributes="Bold"
-                                            FontSize="20"
-                                            Margin="0,0,0,5"
-                                            Text="Header mode"
-                                            VerticalTextAlignment="Center" />
-                                        <Label
-                                            Grid.Row="1"
-                                            Text="None"
-                                            VerticalTextAlignment="Center" />
-                                        <CheckBox
-                                            AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.BottomSheetHeaderButtonAppearanceModeNone}"
-                                            CheckedChanged="BottomSheetHeaderButtonAppearanceModeNone_OnCheckedChanged"
-                                            Grid.Row="1"
-                                            HorizontalOptions="End"
-                                            IsChecked="True"
-                                            x:Name="BottomSheetHeaderButtonAppearanceModeNone" />
-                                        <Label
-                                            Grid.Column="1"
-                                            Grid.Row="1"
-                                            Text="LeftButton"
-                                            VerticalTextAlignment="Center" />
-                                        <CheckBox
-                                            AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.BottomSheetHeaderButtonAppearanceModeLeft}"
-                                            CheckedChanged="BottomSheetHeaderButtonAppearanceModeLeft_OnCheckedChanged"
-                                            Grid.Column="1"
-                                            Grid.Row="1"
-                                            HorizontalOptions="End"
-                                            x:Name="BottomSheetHeaderButtonAppearanceModeLeft" />
-                                        <Label
-                                            Grid.Row="2"
-                                            Text="RightButton"
-                                            VerticalTextAlignment="Center" />
-                                        <CheckBox
-                                            AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.BottomSheetHeaderButtonAppearanceModeRight}"
-                                            CheckedChanged="BottomSheetHeaderButtonAppearanceModeRight_OnCheckedChanged"
-                                            Grid.Row="2"
-                                            HorizontalOptions="End"
-                                            x:Name="BottomSheetHeaderButtonAppearanceModeRight" />
-                                        <Label
-                                            Grid.Column="1"
-                                            Grid.Row="2"
-                                            Text="LeftAndRightButton"
-                                            VerticalTextAlignment="Center" />
-                                        <CheckBox
-                                            AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.BottomSheetHeaderButtonAppearanceModeLeftAndRight}"
-                                            CheckedChanged="BottomSheetHeaderButtonAppearanceModeLeftAndRight_OnCheckedChanged"
-                                            Grid.Column="1"
-                                            Grid.Row="2"
-                                            HorizontalOptions="End"
-                                            x:Name="BottomSheetHeaderButtonAppearanceModeLeftAndRight" />
-                                    </Grid>
-                                    <Grid
-                                        Grid.ColumnSpan="2"
-                                        Grid.Row="4"
-                                        RowDefinitions="30,30,30">
-                                        <Label
-                                            FontAttributes="Bold"
-                                            FontSize="20"
-                                            Margin="0,0,0,5"
-                                            Text="Header button versions"
-                                            VerticalTextAlignment="Center" />
-                                        <Grid ColumnDefinitions="*,*" Grid.Row="1">
-                                            <Label Text="Top Left Button One" VerticalTextAlignment="Center" />
-                                            <CheckBox
-                                                AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.HeaderLeftButtonVersionOne}"
-                                                CheckedChanged="HeaderLeftButtonVersionOne_OnCheckedChanged"
-                                                HorizontalOptions="End"
-                                                IsChecked="True"
-                                                x:Name="TopLeftButtonVersionOne" />
-                                            <Label
-                                                Grid.Column="1"
-                                                Text="Top Left Button Two"
-                                                VerticalTextAlignment="Center" />
-                                            <CheckBox
-                                                AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.HeaderLeftButtonVersionTwo}"
-                                                CheckedChanged="HeaderLeftButtonVersionTwo_OnCheckedChanged"
-                                                Grid.Column="1"
-                                                HorizontalOptions="End"
-                                                x:Name="TopLeftButtonVersionTwo" />
-                                        </Grid>
-                                        <Grid ColumnDefinitions="*,*" Grid.Row="2">
-                                            <Label Text="Top Right Button One" VerticalTextAlignment="Center" />
-                                            <CheckBox
-                                                AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.HeaderRightButtonVersionOne}"
-                                                CheckedChanged="HeaderRightButtonVersionOne_OnCheckedChanged"
-                                                HorizontalOptions="End"
-                                                IsChecked="True"
-                                                x:Name="TopRightButtonVersionOne" />
-                                            <Label
-                                                Grid.Column="1"
-                                                Text="Top Right Button Two"
-                                                VerticalTextAlignment="Center" />
-                                            <CheckBox
-                                                AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.HeaderRightButtonVersionTwo}"
-                                                CheckedChanged="HeaderRightButtonVersionTwo_OnCheckedChanged"
-                                                Grid.Column="1"
-                                                HorizontalOptions="End"
-                                                x:Name="TopRightButtonVersionTwo" />
-                                        </Grid>
-                                    </Grid>
-                                    <Grid
-                                        ColumnDefinitions="*,*"
-                                        Grid.ColumnSpan="2"
-                                        Grid.Row="5"
-                                        RowDefinitions="30,30">
-                                        <Label
-                                            FontAttributes="Bold"
-                                            FontSize="20"
-                                            Margin="0,0,0,5"
-                                            Text="Close button position"
-                                            VerticalTextAlignment="Center" />
-                                        <Label
-                                            Grid.Row="1"
-                                            Text="TopLeft"
-                                            VerticalTextAlignment="Center" />
-                                        <CheckBox
-                                            AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.CloseButtonPositionLeft}"
-                                            CheckedChanged="CloseButtonPositionLeft_OnCheckedChanged"
-                                            Grid.Row="1"
-                                            HorizontalOptions="End"
-                                            IsChecked="True"
-                                            x:Name="CloseButtonPositionLeft" />
-                                        <Label
-                                            Grid.Column="1"
-                                            Grid.Row="1"
-                                            Text="TopRight"
-                                            VerticalTextAlignment="Center" />
-                                        <CheckBox
-                                            AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.CloseButtonPositionRight}"
-                                            CheckedChanged="CloseButtonPositionRight_OnCheckedChanged"
-                                            Grid.Column="1"
-                                            Grid.Row="1"
-                                            HorizontalOptions="End"
-                                            x:Name="CloseButtonPositionRight" />
-                                    </Grid>
-                                    <Button
-                                        AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.ChangeBindingContext}"
-                                        Clicked="ChangeBindingContext"
-                                        Grid.ColumnSpan="2"
-                                        Grid.Row="6"
-                                        HorizontalOptions="Center"
-                                        Text="Change BindingContext" />
-                                    <Button
-                                        AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.CloseBottomSheet}"
-                                        Clicked="CloseBottomSheet"
-                                        Grid.ColumnSpan="2"
-                                        Grid.Row="7"
-                                        HorizontalOptions="Center"
-                                        Text="Close" />
+                                        Text="RightButton"
+                                        VerticalTextAlignment="Center" />
+                                    <CheckBox
+                                        x:Name="BottomSheetHeaderButtonAppearanceModeRight"
+                                        Grid.Row="2"
+                                        AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.BottomSheetHeaderButtonAppearanceModeRight}"
+                                        CheckedChanged="BottomSheetHeaderButtonAppearanceModeRight_OnCheckedChanged"
+                                        HorizontalOptions="End" />
                                     <Label
-                                        Grid.Row="8"
-                                        Text="Is cancelable:"
-                                        VerticalOptions="Center" />
-                                    <Switch
-                                        AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.IsCancelable}"
+                                        Grid.Row="2"
                                         Grid.Column="1"
-                                        Grid.Row="8"
-                                        HorizontalOptions="Start"
-                                        IsToggled="{Binding IsCancelable}"
-                                        VerticalOptions="Center"
-                                        x:Name="IsCancelable" />
+                                        Text="LeftAndRightButton"
+                                        VerticalTextAlignment="Center" />
+                                    <CheckBox
+                                        x:Name="BottomSheetHeaderButtonAppearanceModeLeftAndRight"
+                                        Grid.Row="2"
+                                        Grid.Column="1"
+                                        AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.BottomSheetHeaderButtonAppearanceModeLeftAndRight}"
+                                        CheckedChanged="BottomSheetHeaderButtonAppearanceModeLeftAndRight_OnCheckedChanged"
+                                        HorizontalOptions="End" />
                                 </Grid>
-                            </DataTemplate>
-                        </mauibottomsheet:BottomSheetContent.ContentTemplate>
-                    </mauibottomsheet:BottomSheetContent>
-                </mauibottomsheet:BottomSheet.Content>
+                                <Grid
+                                    Grid.Row="4"
+                                    Grid.ColumnSpan="2"
+                                    RowDefinitions="30,30,30">
+                                    <Label
+                                        Margin="0,0,0,5"
+                                        FontAttributes="Bold"
+                                        FontSize="20"
+                                        Text="Header button versions"
+                                        VerticalTextAlignment="Center" />
+                                    <Grid Grid.Row="1" ColumnDefinitions="*,*">
+                                        <Label Text="Top Left Button One" VerticalTextAlignment="Center" />
+                                        <CheckBox
+                                            x:Name="TopLeftButtonVersionOne"
+                                            AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.HeaderLeftButtonVersionOne}"
+                                            CheckedChanged="HeaderLeftButtonVersionOne_OnCheckedChanged"
+                                            HorizontalOptions="End"
+                                            IsChecked="True" />
+                                        <Label
+                                            Grid.Column="1"
+                                            Text="Top Left Button Two"
+                                            VerticalTextAlignment="Center" />
+                                        <CheckBox
+                                            x:Name="TopLeftButtonVersionTwo"
+                                            Grid.Column="1"
+                                            AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.HeaderLeftButtonVersionTwo}"
+                                            CheckedChanged="HeaderLeftButtonVersionTwo_OnCheckedChanged"
+                                            HorizontalOptions="End" />
+                                    </Grid>
+                                    <Grid Grid.Row="2" ColumnDefinitions="*,*">
+                                        <Label Text="Top Right Button One" VerticalTextAlignment="Center" />
+                                        <CheckBox
+                                            x:Name="TopRightButtonVersionOne"
+                                            AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.HeaderRightButtonVersionOne}"
+                                            CheckedChanged="HeaderRightButtonVersionOne_OnCheckedChanged"
+                                            HorizontalOptions="End"
+                                            IsChecked="True" />
+                                        <Label
+                                            Grid.Column="1"
+                                            Text="Top Right Button Two"
+                                            VerticalTextAlignment="Center" />
+                                        <CheckBox
+                                            x:Name="TopRightButtonVersionTwo"
+                                            Grid.Column="1"
+                                            AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.HeaderRightButtonVersionTwo}"
+                                            CheckedChanged="HeaderRightButtonVersionTwo_OnCheckedChanged"
+                                            HorizontalOptions="End" />
+                                    </Grid>
+                                </Grid>
+                                <Grid
+                                    Grid.Row="5"
+                                    Grid.ColumnSpan="2"
+                                    ColumnDefinitions="*,*"
+                                    RowDefinitions="30,30">
+                                    <Label
+                                        Margin="0,0,0,5"
+                                        FontAttributes="Bold"
+                                        FontSize="20"
+                                        Text="Close button position"
+                                        VerticalTextAlignment="Center" />
+                                    <Label
+                                        Grid.Row="1"
+                                        Text="TopLeft"
+                                        VerticalTextAlignment="Center" />
+                                    <CheckBox
+                                        x:Name="CloseButtonPositionLeft"
+                                        Grid.Row="1"
+                                        AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.CloseButtonPositionLeft}"
+                                        CheckedChanged="CloseButtonPositionLeft_OnCheckedChanged"
+                                        HorizontalOptions="End"
+                                        IsChecked="True" />
+                                    <Label
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        Text="TopRight"
+                                        VerticalTextAlignment="Center" />
+                                    <CheckBox
+                                        x:Name="CloseButtonPositionRight"
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.CloseButtonPositionRight}"
+                                        CheckedChanged="CloseButtonPositionRight_OnCheckedChanged"
+                                        HorizontalOptions="End" />
+                                </Grid>
+                                <Button
+                                    Grid.Row="6"
+                                    Grid.ColumnSpan="2"
+                                    AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.ChangeBindingContext}"
+                                    Clicked="ChangeBindingContext"
+                                    HorizontalOptions="Center"
+                                    Text="Change BindingContext" />
+                                <Button
+                                    Grid.Row="7"
+                                    Grid.ColumnSpan="2"
+                                    AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.CloseBottomSheet}"
+                                    Clicked="CloseBottomSheet"
+                                    HorizontalOptions="Center"
+                                    Text="Close" />
+                                <Label
+                                    Grid.Row="8"
+                                    Text="Is cancelable:"
+                                    VerticalOptions="Center" />
+                                <Switch
+                                    x:Name="IsCancelable"
+                                    Grid.Row="8"
+                                    Grid.Column="1"
+                                    AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.IsCancelable}"
+                                    HorizontalOptions="Start"
+                                    IsToggled="{Binding IsCancelable}"
+                                    VerticalOptions="Center" />
+                            </Grid>
+                        </DataTemplate>
+                    </mauibottomsheet:BottomSheetContent.ContentTemplate>
+                </mauibottomsheet:BottomSheetContent>
             </mauibottomsheet:BottomSheet>
             <mauibottomsheet:BottomSheet
+                x:Name="BottomSheetCustomHeader"
                 AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.BottomSheetCustomHeader}"
                 IsOpen="{Binding IsOpenCustomHeader}"
-                ShowHeader="{Binding ShowHeader}"
-                x:Name="BottomSheetCustomHeader">
+                ShowHeader="{Binding ShowHeader}">
                 <mauibottomsheet:BottomSheet.Header>
                     <mauibottomsheet:BottomSheetHeader>
                         <mauibottomsheet:BottomSheetHeader.Content>
@@ -256,28 +254,26 @@
                         </mauibottomsheet:BottomSheetHeader.Content>
                     </mauibottomsheet:BottomSheetHeader>
                 </mauibottomsheet:BottomSheet.Header>
-                <mauibottomsheet:BottomSheet.Content>
-                    <mauibottomsheet:BottomSheetContent>
-                        <Grid
-                            ColumnDefinitions="*,*"
-                            RowDefinitions="30,50"
-                            RowSpacing="20">
-                            <Label Text="Show header:" VerticalOptions="Center" />
-                            <Switch
-                                AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.ShowHeader}"
-                                Grid.Column="1"
-                                HorizontalOptions="Start"
-                                IsToggled="{Binding ShowHeader}"
-                                VerticalOptions="Center" />
-                            <Button
-                                AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.ChangeBindingContext}"
-                                Clicked="ChangeBindingContext"
-                                Grid.ColumnSpan="2"
-                                Grid.Row="1"
-                                Text="Change Binding Context" />
-                        </Grid>
-                    </mauibottomsheet:BottomSheetContent>
-                </mauibottomsheet:BottomSheet.Content>
+                <mauibottomsheet:BottomSheetContent>
+                    <Grid
+                        ColumnDefinitions="*,*"
+                        RowDefinitions="30,50"
+                        RowSpacing="20">
+                        <Label Text="Show header:" VerticalOptions="Center" />
+                        <Switch
+                            Grid.Column="1"
+                            AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.ShowHeader}"
+                            HorizontalOptions="Start"
+                            IsToggled="{Binding ShowHeader}"
+                            VerticalOptions="Center" />
+                        <Button
+                            Grid.Row="1"
+                            Grid.ColumnSpan="2"
+                            AutomationId="{x:Static shared:BottomSheetHeaderTestsAutomationIds.ChangeBindingContext}"
+                            Clicked="ChangeBindingContext"
+                            Text="Change Binding Context" />
+                    </Grid>
+                </mauibottomsheet:BottomSheetContent>
             </mauibottomsheet:BottomSheet>
         </VerticalStackLayout>
     </ContentPage.Content>

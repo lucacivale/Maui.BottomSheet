@@ -122,11 +122,9 @@ xmlns:bottomsheet="http://pluginmauibottomsheet.com"
 Create a simple bottom sheet:
 ```xaml
 <bottomsheet:BottomSheet x:Name="MyBottomSheet" IsOpen="{Binding IsSheetOpen}">
-    <bottomsheet:BottomSheet.Content>
-        <bottomsheet:BottomSheetContent>
-            <Label Text="Hello from Bottom Sheet!" />
-        </bottomsheet:BottomSheetContent>
-    </bottomsheet:BottomSheet.Content>
+    <bottomsheet:BottomSheetContent>
+        <Label Text="Hello from Bottom Sheet!" />
+    </bottomsheet:BottomSheetContent>
 </bottomsheet:BottomSheet>
 ```
 
@@ -136,15 +134,13 @@ Set peek height to view height (peek height changes dynamically as view height c
 <mauibottomsheet:BottomSheet
     PeekHeight="{mauibottomsheet:PeekView View={x:Reference ContentBox}}"
     States="Peek">
-    <mauibottomsheet:BottomSheet.Content>
-        <mauibottomsheet:BottomSheetContent>
-            <mauibottomsheet:BottomSheetContent.Content>
-                <Grid RowDefinitions="300">
-                    <BoxView x:Name="ContentBox" Color="Orange" />
-                </Grid>
-            </mauibottomsheet:BottomSheetContent.Content>
-        </mauibottomsheet:BottomSheetContent>
-    </mauibottomsheet:BottomSheet.Content>
+    <mauibottomsheet:BottomSheetContent>
+        <mauibottomsheet:BottomSheetContent.Content>
+            <Grid RowDefinitions="300">
+                <BoxView x:Name="ContentBox" Color="Orange" />
+            </Grid>
+        </mauibottomsheet:BottomSheetContent.Content>
+    </mauibottomsheet:BottomSheetContent>
 </mauibottomsheet:BottomSheet>
 ```
 
@@ -154,17 +150,15 @@ or
 <mauibottomsheet:BottomSheet
     PeekHeight="{mauibottomsheet:PeekView ContentBox}"
     States="Peek">
-    <mauibottomsheet:BottomSheet.Content>
-        <mauibottomsheet:BottomSheetContent>
-            <mauibottomsheet:BottomSheetContent.ContentTemplate>
-                <DataTemplate>
-                    <Grid RowDefinitions="300">
-                        <BoxView x:Name="ContentBox" Color="Orange" />
-                    </Grid>
-                </DataTemplate>
-            </mauibottomsheet:BottomSheetContent.ContentTemplate>
-        </mauibottomsheet:BottomSheetContent>
-    </mauibottomsheet:BottomSheet.Content>
+    <mauibottomsheet:BottomSheetContent>
+        <mauibottomsheet:BottomSheetContent.ContentTemplate>
+            <DataTemplate>
+                <Grid RowDefinitions="300">
+                    <BoxView x:Name="ContentBox" Color="Orange" />
+                </Grid>
+            </DataTemplate>
+        </mauibottomsheet:BottomSheetContent.ContentTemplate>
+    </mauibottomsheet:BottomSheetContent>
 </mauibottomsheet:BottomSheet>
 ```
 
@@ -299,29 +293,27 @@ or
     </bottomsheet:BottomSheet.Header>
     
     <!-- Content with Peek Height Behavior -->
-    <bottomsheet:BottomSheet.Content>
-        <bottomsheet:BottomSheetContent>
-            <bottomsheet:BottomSheetContent.ContentTemplate>
-                <DataTemplate>
-                    <VerticalStackLayout>
-                        <!-- Peek Content -->
-                        <ContentView>
-                            <ContentView.Behaviors>
-                                <bottomsheet:BottomSheetPeekBehavior />
-                            </ContentView.Behaviors>
-                            <Label Text="This content is visible in peek mode" />
-                        </ContentView>
+    <bottomsheet:BottomSheetContent>
+        <bottomsheet:BottomSheetContent.ContentTemplate>
+            <DataTemplate>
+                <VerticalStackLayout>
+                    <!-- Peek Content -->
+                    <ContentView>
+                        <ContentView.Behaviors>
+                            <bottomsheet:BottomSheetPeekBehavior />
+                        </ContentView.Behaviors>
+                        <Label Text="This content is visible in peek mode" />
+                    </ContentView>
                         
-                        <!-- Full Content -->
-                        <Grid>
-                            <Label Text="This content appears when expanded" />
-                            <!-- Your content here -->
-                        </Grid>
-                    </VerticalStackLayout>
-                </DataTemplate>
-            </bottomsheet:BottomSheetContent.ContentTemplate>
-        </bottomsheet:BottomSheetContent>
-    </bottomsheet:BottomSheet.Content>
+                    <!-- Full Content -->
+                    <Grid>
+                        <Label Text="This content appears when expanded" />
+                        <!-- Your content here -->
+                    </Grid>
+                </VerticalStackLayout>
+            </DataTemplate>
+        </bottomsheet:BottomSheetContent.ContentTemplate>
+    </bottomsheet:BottomSheetContent>
     
     <!-- Styling -->
     <bottomsheet:BottomSheet.BottomSheetStyle>
@@ -342,15 +334,13 @@ or
 ```xaml
 <mauibottomsheet:BottomSheet
     SizeMode="FitToContent">
-    <mauibottomsheet:BottomSheet.Content>
-        <mauibottomsheet:BottomSheetContent>
-            <mauibottomsheet:BottomSheetContent.Content>
-                <Grid RowDefinitions="300">
-                    <BoxView x:Name="ContentBox" Color="Orange" />
-                </Grid>
-            </mauibottomsheet:BottomSheetContent.Content>
-        </mauibottomsheet:BottomSheetContent>
-    </mauibottomsheet:BottomSheet.Content>
+    <mauibottomsheet:BottomSheetContent>
+        <mauibottomsheet:BottomSheetContent.Content>
+            <Grid RowDefinitions="300">
+                <BoxView x:Name="ContentBox" Color="Orange" />
+            </Grid>
+        </mauibottomsheet:BottomSheetContent.Content>
+    </mauibottomsheet:BottomSheetContent>
 </mauibottomsheet:BottomSheet>
 ```
 
