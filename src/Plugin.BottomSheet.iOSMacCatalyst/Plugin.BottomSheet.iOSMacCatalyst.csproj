@@ -8,6 +8,9 @@
         </TargetFrameworks>
 
         <SupportedOSPlatformVersion>15.0</SupportedOSPlatformVersion>
+
+        <AssemblyName>Plugin.BottomSheet.iOSMacCatalyst</AssemblyName>
+        <RootNamespace>Plugin.BottomSheet.iOSMacCatalyst</RootNamespace>
     </PropertyGroup>
 	
     <ItemGroup>
