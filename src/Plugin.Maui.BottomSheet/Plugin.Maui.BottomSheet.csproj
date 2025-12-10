@@ -68,7 +68,7 @@
     </ItemGroup>
 
     <ItemGroup Condition="$(TargetFramework.EndsWith('ios')) or $(TargetFramework.EndsWith('maccatalyst'))">
-        <ProjectReference Include="..\Plugin.BottomSheet.IOSMacCatalyst\Plugin.BottomSheet.IOSMacCatalyst.csproj" />
+        <ProjectReference Include="..\Plugin.BottomSheet.iOSMacCatalyst\Plugin.BottomSheet.iOSMacCatalyst.csproj" />
     </ItemGroup>
 
 	<ItemGroup Condition="$(TargetFramework.Contains('windows'))">
