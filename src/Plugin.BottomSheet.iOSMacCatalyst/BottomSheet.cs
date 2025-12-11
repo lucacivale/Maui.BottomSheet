@@ -261,7 +261,7 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
         {
             _sizeMode = value;
 
-            UISheetPresentationControllerDetent[] detents = _sizeMode == BottomSheetSizeMode.FitToContent ? [_contentDetent] : [_largeDetent];
+            UISheetPresentationControllerDetent[] detents = _sizeMode == BottomSheetSizeMode.FitToContent ? [_contentDetent] : SheetPresentationController?.Detents ?? [_largeDetent];
 
             SheetPresentationController?.AnimateChanges(() =>
             {
