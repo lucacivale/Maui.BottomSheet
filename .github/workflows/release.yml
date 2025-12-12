@@ -20,7 +20,6 @@ jobs:
           - project: Plugin.BottomSheet.Core
           - project: Plugin.BottomSheet.Android
           - project: Plugin.BottomSheet.iOSMacCatalyst
-          - project: Plugin.BottomSheet.Windows
   
     steps:
       - uses: actions/checkout@v4
@@ -64,3 +63,38 @@ jobs:
         with:
           name: ${{ matrix.project }}.${{ steps.version.outputs.version }}.nupkg
           path: src/Plugin.BottomSheet/bin/${{ env.Configuration }}/${{ matrix.project }}.${{ steps.version.outputs.version }}.nupkg
+
+  Build-Plugin_Maui_BottomSheet_Windows:
+    runs-on: windows
+
+    strategy:
+      matrix:
+        include:
+          - project: Plugin.BottomSheet.Windows
+  
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get next version
+        uses: reecetech/version-increment@2024.10.1
+        id: version
+        with:
+          scheme: semver
+          increment: patch
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          
+      - name: Install .NET MAUI Workload
+        run: dotnet workload install maui --version ${{ env.DOTNET_VERSION }}
+            
+      - name: Build ${{ matrix.project }}
+        run: dotnet build src/${{ matrix.project }}/${{ matrix.project }}.csproj -c ${{ env.Configuration }} -p:Version=${{ steps.version.outputs.version }}
+
+      - name: Archive NuGet
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.project }}.${{ steps.version.outputs.version }}.nupkg
+          path: src/${{ matrix.project }}/bin/${{ env.Configuration }}/${{ matrix.project }}.${{ steps.version.outputs.version }}.nupkg
