@@ -41,22 +41,22 @@ jobs:
             
       - name: Build ${{ matrix.project }}
         if: matrix.project != 'Plugin.BottomSheet.Core'
-        run: dotnet build src/${{ matrix.project }}/${{ matrix.project }}.csproj -c ${{ env.Configuration }} -p:Version=10.0.4
+        run: dotnet build src/${{ matrix.project }}/${{ matrix.project }}.csproj -c ${{ env.Configuration }} -p:Version=${{ steps.version.outputs.version }}
 
       - name: Build ${{ matrix.project }}
         if: matrix.project == 'Plugin.BottomSheet.Core'
-        run: dotnet build src/Plugin.BottomSheet/Plugin.BottomSheet.csproj -c ${{ env.Configuration }} -p:Version=10.0.4
+        run: dotnet build src/Plugin.BottomSheet/Plugin.BottomSheet.csproj -c ${{ env.Configuration }} -p:Version=${{ steps.version.outputs.version }}
         
       - name: Archive NuGet
         if: matrix.project != 'Plugin.BottomSheet.Core'
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.project }}.${{ steps.version.outputs.version }}.nupkg
-          path: src/${{ matrix.project }}/bin/${{ env.Configuration }}/${{ matrix.project }}.10.0.4.nupkg
+          path: src/${{ matrix.project }}/bin/${{ env.Configuration }}/${{ matrix.project }}.${{ steps.version.outputs.version }}.nupkg
         
       - name: Archive NuGet
         if: matrix.project == 'Plugin.BottomSheet.Core'
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.project }}.${{ steps.version.outputs.version }}.nupkg
-          path: src/Plugin.BottomSheet/bin/${{ env.Configuration }}/${{ matrix.project }}.10.0.4.nupkg
+          path: src/Plugin.BottomSheet/bin/${{ env.Configuration }}/${{ matrix.project }}.${{ steps.version.outputs.version }}.nupkg
