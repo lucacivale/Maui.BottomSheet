@@ -6,12 +6,11 @@ env:
   Configuration: 'Release'
   DOTNETFrameworkVersion: 'net10.0'
   DOTNET_VERSION: '10.0.100'
-  XCODE_VERSION: '26.1'
 
 jobs:
   
   Build-Plugin_Maui_BottomSheet:
-    runs-on: macos-15
+    runs-on: windows-latest
 
     strategy:
       matrix:
@@ -20,56 +19,6 @@ jobs:
           - project: Plugin.BottomSheet.Core
           - project: Plugin.BottomSheet.Android
           - project: Plugin.BottomSheet.iOSMacCatalyst
-  
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Get next version
-        uses: reecetech/version-increment@2024.10.1
-        id: version
-        with:
-          scheme: semver
-          increment: patch
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-        
-      - name: Set Xcode version ${{ env.XCODE_VERSION }}
-        run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app
-          
-      - name: Install .NET MAUI Workload
-        run: dotnet workload install maui --version ${{ env.DOTNET_VERSION }}
-            
-      - name: Build ${{ matrix.project }}
-        if: matrix.project != 'Plugin.BottomSheet.Core'
-        run: dotnet build src/${{ matrix.project }}/${{ matrix.project }}.csproj -c ${{ env.Configuration }} -p:Version=${{ steps.version.outputs.version }}
-
-      - name: Build ${{ matrix.project }}
-        if: matrix.project == 'Plugin.BottomSheet.Core'
-        run: dotnet build src/Plugin.BottomSheet/Plugin.BottomSheet.csproj -c ${{ env.Configuration }} -p:Version=${{ steps.version.outputs.version }}
-        
-      - name: Archive NuGet
-        if: matrix.project != 'Plugin.BottomSheet.Core'
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.project }}.${{ steps.version.outputs.version }}.nupkg
-          path: src/${{ matrix.project }}/bin/${{ env.Configuration }}/${{ matrix.project }}.${{ steps.version.outputs.version }}.nupkg
-        
-      - name: Archive NuGet
-        if: matrix.project == 'Plugin.BottomSheet.Core'
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.project }}.${{ steps.version.outputs.version }}.nupkg
-          path: src/Plugin.BottomSheet/bin/${{ env.Configuration }}/${{ matrix.project }}.${{ steps.version.outputs.version }}.nupkg
-
-  Build-Plugin_Maui_BottomSheet_Windows:
-    runs-on: windows-latest
-
-    strategy:
-      matrix:
-        include:
           - project: Plugin.BottomSheet.Windows
   
     steps:
@@ -91,10 +40,23 @@ jobs:
         run: dotnet workload install maui --version ${{ env.DOTNET_VERSION }}
             
       - name: Build ${{ matrix.project }}
-        run: dotnet build src/${{ matrix.project }}/${{ matrix.project }}.csproj -c ${{ env.Configuration }} -p:Version=${{ steps.version.outputs.version }}
+        if: matrix.project != 'Plugin.BottomSheet.Core'
+        run: dotnet build src/${{ matrix.project }}/${{ matrix.project }}.csproj -c ${{ env.Configuration }} -p:Version=10.0.4
 
+      - name: Build ${{ matrix.project }}
+        if: matrix.project == 'Plugin.BottomSheet.Core'
+        run: dotnet build src/Plugin.BottomSheet/Plugin.BottomSheet.csproj -c ${{ env.Configuration }} -p:Version=10.0.4
+        
       - name: Archive NuGet
+        if: matrix.project != 'Plugin.BottomSheet.Core'
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.project }}.${{ steps.version.outputs.version }}.nupkg
-          path: src/${{ matrix.project }}/bin/${{ env.Configuration }}/${{ matrix.project }}.${{ steps.version.outputs.version }}.nupkg
+          path: src/${{ matrix.project }}/bin/${{ env.Configuration }}/${{ matrix.project }}.10.0.4.nupkg
+        
+      - name: Archive NuGet
+        if: matrix.project == 'Plugin.BottomSheet.Core'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.project }}.${{ steps.version.outputs.version }}.nupkg
+          path: src/Plugin.BottomSheet/bin/${{ env.Configuration }}/${{ matrix.project }}.10.0.4.nupkg
