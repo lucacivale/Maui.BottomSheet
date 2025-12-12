@@ -12,6 +12,7 @@
 		<RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
 		<UseWinUI>true</UseWinUI>
 		<WinUISDKReferences>false</WinUISDKReferences>
+		<EnableMsixTooling>true</EnableMsixTooling>
 	</PropertyGroup>
 	
 	<ItemGroup>
