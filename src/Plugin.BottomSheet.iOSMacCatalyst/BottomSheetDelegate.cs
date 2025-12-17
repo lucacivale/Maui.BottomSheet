@@ -36,12 +36,20 @@ internal sealed class BottomSheetDelegate : UISheetPresentationControllerDelegat
     /// <returns>Returns false to prevent automatic dismissal and trigger confirmation.</returns>
     public override bool ShouldDismiss(UIPresentationController presentationController)
     {
+        return false;
+    }
+
+    /// <summary>
+    /// Notifies that an attempt to dismiss the presentation controller was made through a swipe gesture.
+    /// Typically used to trigger additional logic, such as confirmation prompts or cleanup operations.
+    /// </summary>
+    /// <param name="presentationController">The presentation controller where the dismissal attempt occurred.</param>
+    public override void DidAttemptToDismiss(UIPresentationController presentationController)
+    {
         _eventManager.RaiseEvent(
             presentationController,
             EventArgs.Empty,
             nameof(ConfirmDismiss));
-
-        return false;
     }
 
     /// <summary>
