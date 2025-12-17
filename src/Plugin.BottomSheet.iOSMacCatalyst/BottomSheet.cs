@@ -17,6 +17,7 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
     private readonly UISheetPresentationControllerDetent _mediumDetent = UISheetPresentationControllerDetent.CreateMediumDetent();
     private readonly UISheetPresentationControllerDetent _largeDetent = UISheetPresentationControllerDetent.CreateLargeDetent();
     private readonly BottomSheetDelegate _bottomSheetDelegate = new();
+    private readonly UIGestureRecognizer _dimViewGestureRecognizer;
 
     private double _peekHeight;
     private bool _isModal;
@@ -53,6 +54,16 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
             _peekDetent = UISheetPresentationControllerDetent.CreateMediumDetent();
             _contentDetent = UISheetPresentationControllerDetent.CreateMediumDetent();
         }
+
+        _dimViewGestureRecognizer = new UITapGestureRecognizer(tap =>
+        {
+            if (tap.State == UIGestureRecognizerState.Ended
+                && SheetPresentationController?.Delegate is not null)
+            {
+                SheetPresentationController.Delegate.ShouldDismiss(SheetPresentationController);
+                SheetPresentationController.Delegate.DidAttemptToDismiss(SheetPresentationController);
+            }
+        });
     }
 
     /// <summary>
@@ -166,6 +177,8 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
         set
         {
             _isModal = value;
+
+            _dimViewGestureRecognizer.Enabled = _isModal;
 
             if (SheetPresentationController is not null)
             {
@@ -308,6 +321,16 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
 
         ApplyBackgroundColor();
         ApplyWindowBackgroundColor();
+
+        if (PresentationController?.ContainerView.Subviews.FirstOrDefault()?.GestureRecognizers is UIGestureRecognizer[] gestureRecognizers)
+        {
+            if (gestureRecognizers.FirstOrDefault() is UITapGestureRecognizer defaultGestureRecognizer)
+            {
+                defaultGestureRecognizer.Enabled = false;
+            }
+
+            PresentationController.ContainerView.AddGestureRecognizer(_dimViewGestureRecognizer);
+        }
     }
 
     /// <summary>
@@ -427,6 +450,8 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
         _bottomSheetDelegate.StateChanged -= BottomSheetDelegateOnStateChanged;
         _bottomSheetDelegate.ConfirmDismiss -= BottomSheetDelegateOnConfirmDismiss;
         _bottomSheetDelegate.Dispose();
+
+        _dimViewGestureRecognizer.Dispose();
 
         if (IsOpen)
         {
