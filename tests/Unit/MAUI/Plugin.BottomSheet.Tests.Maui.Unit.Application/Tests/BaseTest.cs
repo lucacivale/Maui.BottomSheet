@@ -18,7 +18,7 @@ public abstract class BaseTest<TPage, TView> : IAsyncLifetime
         TestOutputHelper = testOutputHelper;
     }
     
-    protected TView View { get; }
+    protected TView View { get; set; }
     
     // ReSharper disable once UnusedAutoPropertyAccessor.Global
     protected ITestOutputHelper TestOutputHelper { get; }
@@ -64,7 +64,7 @@ public abstract class BaseTest<TPage, TView> : IAsyncLifetime
         return Task.CompletedTask;
     }
     
-    private async Task LoadContent(View content)
+    protected async Task LoadContent(View content)
     {
         TaskCompletionSource tcs = new TaskCompletionSource();
 

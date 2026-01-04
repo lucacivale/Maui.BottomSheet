@@ -602,6 +602,7 @@ MyBottomSheet.On<Android>().SetMaxHeight(800);
 MyBottomSheet.On<Android>().SetMaxWidth(600);
 MyBottomSheet.On<Android>().SetMargin(new Thickness(10, 0, 10, 0));
 MyBottomSheet.On<Android>().SetHalfExpanedRatio = 0.8f;
+MyBottomSheet.On<Android>().SetShouldRemoveExpandedCorners = false;
 ```
 
 ```xaml
@@ -611,7 +612,8 @@ xmlns:androidBottomsheet="http://pluginmauibottomsheet.com/platformconfiguration
 <bottomsheet:BottomSheet
     androidBottomsheet:BottomSheet.MaxWidth="300"
     androidBottomsheet:BottomSheet.Margin="10,0,10,0"
-    androidBottomsheet:BottomSheet.HalfExpandedRatio="0.8">
+    androidBottomsheet:BottomSheet.HalfExpandedRatio="0.8"
+    androidBottomsheet:BottomSheet.ShouldRemoveExpandedCorners="false">
     <!-- Content -->
 </bottomsheet:BottomSheet>
 ```

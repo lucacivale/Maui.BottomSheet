@@ -286,6 +286,17 @@ public sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, MauiB
     }
 
     /// <summary>
+    /// Maps the ShouldRemoveExpandedCorners property and applies the corresponding behavior on the platform-specific bottom sheet view.
+    /// </summary>
+    /// <param name="handler">The bottom sheet handler responsible for managing the platform-specific view.</param>
+    /// <param name="bottomSheet">The bottom sheet view instance implementing the <see cref="IBottomSheet"/> interface.</param>
+    /// <param name="sender">The object that triggered the property mapping. Can be null.</param>
+    private static void MapShouldRemoveExpandedCorners(BottomSheetHandler handler, IBottomSheet bottomSheet, object? sender)
+    {
+        handler.PlatformView.SetShouldRemoveExpandedCorners();
+    }
+
+    /// <summary>
     /// Maps the <c>SizeMode</c> property of the <see cref="IBottomSheet"/> to the platform-specific implementation.
     /// </summary>
     /// <param name="handler">The <see cref="BottomSheetHandler"/> responsible for managing the platform-specific view representation.</param>

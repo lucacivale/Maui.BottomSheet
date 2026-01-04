@@ -84,6 +84,39 @@ public static class BottomSheet
             propertyChanged: MarginPropertyChanged);
 
     /// <summary>
+    /// Bindable property that indicates whether the expanded corners of the BottomSheet should be removed.
+    /// </summary>
+    public static readonly BindableProperty ShouldRemoveExpandedCornersProperty =
+        BindableProperty.Create(
+            "ShouldRemoveExpandedCorners",
+            typeof(bool),
+            typeof(BottomSheet),
+            defaultValue: true,
+            propertyChanged: ShouldRemoveExpandedCornersPropertyChanged);
+
+    /// <summary>
+    /// Configures whether the expanded corners should be removed for the bottom sheet based on the provided value.
+    /// </summary>
+    /// <param name="config">The platform-specific configuration object for the bottom sheet.</param>
+    /// <param name="value">A boolean value indicating whether the expanded corners should be removed.</param>
+    /// <returns>The updated platform-specific configuration object for chaining additional configurations.</returns>
+    public static IPlatformElementConfiguration<Android, Maui.BottomSheet.BottomSheet> SetShouldRemoveExpandedCorners(this IPlatformElementConfiguration<Android, Maui.BottomSheet.BottomSheet> config, bool value)
+    {
+        SetShouldRemoveExpandedCorners(config.Element as BindableObject, value);
+        return config;
+    }
+
+    /// <summary>
+    /// Sets the value indicating whether the expanded corners of the bottom sheet should be removed.
+    /// </summary>
+    /// <param name="element">The bindable object representing the bottom sheet.</param>
+    /// <param name="value">A boolean value specifying if expanded corners should be removed.</param>
+    public static void SetShouldRemoveExpandedCorners(BindableObject element, bool value)
+    {
+        element.SetValue(ShouldRemoveExpandedCornersProperty, value);
+    }
+
+    /// <summary>
     /// Updates the half-expanded ratio value of the component based on the provided configuration.
     /// </summary>
     /// <param name="config">The configuration instance specific to the platform.</param>
@@ -123,6 +156,26 @@ public static class BottomSheet
     public static float GetHalfExpandedRatio(BindableObject element)
     {
         return (float)element.GetValue(HalfExpandedRatioProperty);
+    }
+
+    /// <summary>
+    /// Retrieves the value indicating whether the expanded corners should be removed for the bottom sheet.
+    /// </summary>
+    /// <param name="config">The platform-specific configuration object for the bottom sheet.</param>
+    /// <returns>A boolean value indicating whether the expanded corners should be removed.</returns>
+    public static bool GetShouldRemoveExpandedCorners(this IPlatformElementConfiguration<Android, Maui.BottomSheet.BottomSheet> config)
+    {
+        return GetShouldRemoveExpandedCorners(config.Element as BindableObject);
+    }
+
+    /// <summary>
+    /// Retrieves the value indicating whether the expanded corners should be removed for the bottom sheet.
+    /// </summary>
+    /// <param name="element">The bindable object representing the bottom sheet configuration.</param>
+    /// <returns>A boolean value indicating whether the expanded corners should be removed.</returns>
+    public static bool GetShouldRemoveExpandedCorners(BindableObject element)
+    {
+        return (bool)element.GetValue(ShouldRemoveExpandedCornersProperty);
     }
 
     /// <summary>
@@ -318,6 +371,36 @@ public static class BottomSheet
     }
 
     /// <summary>
+    /// Retrieves the value indicating whether the expanded corners should be removed for the bottom sheet associated with the specified element.
+    /// </summary>
+    /// <param name="element">The bottom sheet element implementing the IBottomSheet interface.</param>
+    /// <returns>A boolean value indicating whether the expanded corners should be removed.</returns>
+    internal static bool GetShouldRemoveExpandedCorners(this IBottomSheet element)
+    {
+        if (element is not BindableObject bindable)
+        {
+            throw new ArgumentException("Element must be a BindableObject");
+        }
+
+        return GetShouldRemoveExpandedCorners(bindable);
+    }
+
+    /// <summary>
+    /// Sets whether the expanded corners should be removed for the bottom sheet.
+    /// </summary>
+    /// <param name="element">The bottom sheet element implementing the <see cref="IBottomSheet"/> interface.</param>
+    /// <param name="value">A boolean indicating whether the expanded corners will be removed.</param>
+    internal static void SetShouldRemoveExpandedCorners(this IBottomSheet element, bool value)
+    {
+        if (element is not BindableObject bindable)
+        {
+            throw new ArgumentException("Element must be a BindableObject");
+        }
+
+        SetShouldRemoveExpandedCorners(bindable, value);
+    }
+
+    /// <summary>
     /// Sets the ratio that defines the half-expanded state for a bottom sheet component.
     /// </summary>
     /// <param name="element">The bottom sheet instance for which the ratio is being configured.</param>
@@ -423,6 +506,20 @@ public static class BottomSheet
         if (bindable is Element element)
         {
             element.Handler?.Invoke(nameof(SetHalfExpandedRatio));
+        }
+    }
+
+    /// <summary>
+    /// Handles changes to the ShouldRemoveExpandedCorners property by invoking the appropriate handler if the bindable object is an Element.
+    /// </summary>
+    /// <param name="bindable">The bindable object on which the property change occurred.</param>
+    /// <param name="oldValue">The old value of the ShouldRemoveExpandedCorners property before the change.</param>
+    /// <param name="newValue">The new value of the ShouldRemoveExpandedCorners property after the change.</param>
+    private static void ShouldRemoveExpandedCornersPropertyChanged(BindableObject bindable, object oldValue, object newValue)
+    {
+        if (bindable is Element element)
+        {
+            element.Handler?.Invoke(nameof(SetShouldRemoveExpandedCorners));
         }
     }
 }

@@ -293,6 +293,15 @@ public sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bott
     }
 
     /// <summary>
+    /// Gets or sets a value indicating whether the corners of the bottom sheet should be removed when the sheet is fully expanded.
+    /// </summary>
+    public bool ShouldRemoveExpandedCorners
+    {
+        get => Behavior.ShouldRemoveExpandedCorners;
+        set => Behavior.ShouldRemoveExpandedCorners = value;
+    }
+
+    /// <summary>
     /// Gets or sets the maximum allowable height for a given element or component.
     /// </summary>
     public int MaxHeight
