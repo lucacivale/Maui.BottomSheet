@@ -52,6 +52,7 @@ public sealed partial class BottomSheetHandler
 #if ANDROID
         [nameof(PlatformConfiguration.AndroidSpecific.BottomSheet.SetMargin)] = MapMargin,
         [nameof(PlatformConfiguration.AndroidSpecific.BottomSheet.SetHalfExpandedRatio)] = MapHalfExpandedRatio,
+        [nameof(PlatformConfiguration.AndroidSpecific.BottomSheet.SetShouldRemoveExpandedCorners)] = MapShouldRemoveExpandedCorners,
 #endif
 #if WINDOWS
         [nameof(PlatformConfiguration.WindowsSpecific.BottomSheet.SetMaxWidth)] = MapMaxWidth,

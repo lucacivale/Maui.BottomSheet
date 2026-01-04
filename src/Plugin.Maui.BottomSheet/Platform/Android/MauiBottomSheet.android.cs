@@ -143,6 +143,7 @@ public sealed class MauiBottomSheet : AndroidView
 
         SetHalfExpandedRatio();
         SetMargin();
+        SetShouldRemoveExpandedCorners();
         _bottomSheet.MaxHeight = _virtualView.GetMaxHeight();
         _bottomSheet.MaxWidth = _virtualView.GetMaxWidth();
 
@@ -247,6 +248,21 @@ public sealed class MauiBottomSheet : AndroidView
         }
 
         _bottomSheet.HalfExpandedRatio = _virtualView.GetHalfExpandedRatio();
+    }
+
+    /// <summary>
+    /// Updates the expanded corner visibility of the bottom sheet based on the associated
+    /// <see cref="IBottomSheet"/> configuration.
+    /// </summary>
+    public void SetShouldRemoveExpandedCorners()
+    {
+        if (_bottomSheet is null
+            || _virtualView is null)
+        {
+            return;
+        }
+
+        _bottomSheet.ShouldRemoveExpandedCorners = _virtualView.GetShouldRemoveExpandedCorners();
     }
 
     /// <summary>
