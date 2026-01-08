@@ -148,7 +148,13 @@ public sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bott
             if (_content?.Parent is View parent
                 && parent.Background is MaterialShapeDrawable shapeDrawable)
             {
-                shapeDrawable.SetCornerSize(Context.ToPixels(value));
+                ShapeAppearanceModel.Builder model = shapeDrawable.ShapeAppearanceModel.ToBuilder();
+                model.SetTopLeftCornerSize(Context.ToPixels(value));
+                model.SetTopRightCornerSize(Context.ToPixels(value));
+                model.SetBottomLeftCornerSize(0);
+                model.SetBottomRightCornerSize(0);
+
+                shapeDrawable.ShapeAppearanceModel = model.Build();
             }
         }
     }
