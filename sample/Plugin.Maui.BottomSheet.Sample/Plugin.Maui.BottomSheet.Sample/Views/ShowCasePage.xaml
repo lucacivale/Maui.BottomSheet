@@ -47,6 +47,7 @@
                 IsDraggable="{Binding IsDraggable}"
                 IsModal="{Binding IsModal, Mode=TwoWay}"
                 IsOpen="{Binding IsOpen}"
+                Padding="20"
                 PeekHeight="{bottomsheet:PeekView Name=PeekContent}"
                 ShowHeader="{Binding ShowHeader}"
                 States="Peek,Medium,Large"
