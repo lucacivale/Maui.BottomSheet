@@ -1,0 +1,9 @@
+<ResourceDictionary
+    x:Class="Plugin.BottomSheet.Tests.Maui.Unit.Application.Resources.Styles.GlobalImplicitStyleApplyToDerivedTypesPadding"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:bottomsheet="http://pluginmauibottomsheet.com"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    <Style ApplyToDerivedTypes="True" TargetType="bottomsheet:BottomSheet">
+        <Setter Property="Padding" Value="0" />
+    </Style>
+</ResourceDictionary>

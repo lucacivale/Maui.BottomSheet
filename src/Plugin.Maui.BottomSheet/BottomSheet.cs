@@ -325,14 +325,7 @@ public partial class BottomSheet : View, IBottomSheet, IElementConfiguration<Bot
         Unloaded += OnUnloaded;
         HandlerChanged += OnHandlerChanged;
 
-        ContainerView = new Grid
-        {
-            RowDefinitions = new RowDefinitionCollection(
-                new RowDefinition(GridLength.Auto),
-                new RowDefinition(GridLength.Auto),
-                new RowDefinition(GridLength.Star)),
-            Padding = Padding,
-        };
+        ContainerView.Padding = Padding;
     }
 
     /// <summary>
@@ -602,7 +595,14 @@ public partial class BottomSheet : View, IBottomSheet, IElementConfiguration<Bot
     /// <summary>
     /// Gets the container view element.
     /// </summary>
-    public Grid ContainerView { get; }
+    // Do not move initialization into constructor. See issue #200. Global implicit styles set BottomSheet properties before constructor is finished.
+    public Grid ContainerView { get; } = new()
+    {
+        RowDefinitions = new RowDefinitionCollection(
+            new RowDefinition(GridLength.Auto),
+            new RowDefinition(GridLength.Auto),
+            new RowDefinition(GridLength.Star)),
+    };
 
     /// <summary>
     /// Gets or sets a property that defines the sizing behavior of the bottom sheet,

@@ -108,6 +108,16 @@
       <MauiXaml Update="Platforms\Windows\App.xaml">
         <Generator>MSBuild:Compile</Generator>
       </MauiXaml>
+      <MauiXaml Update="Resources\Styles\GlobalImplicitStylePadding.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Resources\Styles\GlobalImplicitStylePadding.xaml.cs">
+        <DependentUpon>GlobalImplicitStylePadding.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
     <Target Name="RemoveVisualStudioTestRunner" BeforeTargets="_ComputeAppxPackagePayload">
