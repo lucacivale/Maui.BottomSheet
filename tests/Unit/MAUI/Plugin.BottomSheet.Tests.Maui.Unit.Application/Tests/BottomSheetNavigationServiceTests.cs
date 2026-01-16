@@ -438,6 +438,23 @@ public class BottomSheetNavigationServiceTests : IAsyncLifetime
         Assert.Same(vm2.Parameters, parameters);
         Assert.Equal(19, parameters.Count);
     }
+
+    [UIFact]
+    public async Task Issue210_ModalPage_NavigateToBottomSheet()
+    {
+        Routing.RegisterRoute(nameof(Issue210_ModalPage_NavigateToBottomSheet), typeof(EmptyModalContentPage));
+
+        await Shell.Current.GoToAsync(nameof(Issue210_ModalPage_NavigateToBottomSheet), true);
+        
+        INavigationResult result = await _bottomSheetNavigationService.NavigateToAsync("EmptyBottomSheet");
+        
+        WriteResult(result);
+        
+        await Shell.Current.GoToAsync("..");
+        Routing.UnRegisterRoute(nameof(Issue210_ModalPage_NavigateToBottomSheet));
+        
+        Assert.True(result.Success);
+    }
     
     private void WriteResult(INavigationResult result)
     {

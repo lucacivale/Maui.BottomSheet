@@ -421,7 +421,7 @@ public sealed class MauiBottomSheet : AndroidView
                 {
                     await CloseAsync().ConfigureAwait(true);
                     MvvmHelpers.OnNavigatedFrom(_virtualView, parameters);
-                    MvvmHelpers.OnNavigatedTo(_virtualView.GetPageParent(), parameters);
+                    MvvmHelpers.OnNavigatedTo(_virtualView.Parent, parameters);
                 }
                 else
                 {
