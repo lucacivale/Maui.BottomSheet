@@ -101,7 +101,7 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
     [SuppressMessage("Usage", "CA1826:Use property instead of Linq Enumerable method", Justification = "Improved readability.")]
     private void PrepareBottomSheetForNavigation(IBottomSheet bottomSheet, object? viewModel = null, Action<IBottomSheet>? configure = null)
     {
-        Page page = Application.Current?.Windows.LastOrDefault()?.Page ?? throw new InvalidOperationException("Application.Current?.Windows.LastOrDefault()?.Page cannot be null.");
+        Page page = Application.Current?.Windows.LastOrDefault()?.Page?.GetPageParent() ?? throw new InvalidOperationException("Application.Current?.Windows.LastOrDefault()?.Page cannot be null.");
         IMauiContext mauiContext = page.Handler?.MauiContext ?? throw new InvalidOperationException("Page.Handler?.MauiContext cannot be null.");
 
         bottomSheet.Handler = new Handlers.BottomSheetHandler(mauiContext);
@@ -144,7 +144,7 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
 
                 if (_bottomSheetStack.IsEmpty)
                 {
-                    MvvmHelpers.OnNavigatedFrom(bottomSheet.GetPageParent(), parameters);
+                    MvvmHelpers.OnNavigatedFrom(bottomSheet.Parent, parameters);
                 }
                 else
                 {
@@ -223,7 +223,7 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
 
                 if (_bottomSheetStack.IsEmpty)
                 {
-                    MvvmHelpers.OnNavigatedTo(bottomSheet.GetPageParent(), parameters);
+                    MvvmHelpers.OnNavigatedTo(bottomSheet.Parent, parameters);
                 }
                 else
                 {

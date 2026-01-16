@@ -1036,7 +1036,7 @@ public partial class BottomSheet : View, IBottomSheet, IElementConfiguration<Bot
     /// </summary>
     private void CreateLayout()
     {
-        bool isInModalPage = this.GetPageParent() is Page page
+        bool isInModalPage = Parent is Page page
             && Navigation.ModalStack.Contains(page);
 
         if (HasHandle)

@@ -403,7 +403,7 @@ public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>
                 {
                     await CloseAsync().ConfigureAwait(true);
                     MvvmHelpers.OnNavigatedFrom(_virtualView, parameters);
-                    MvvmHelpers.OnNavigatedTo(_virtualView.GetPageParent(), parameters);
+                    MvvmHelpers.OnNavigatedTo(_virtualView.Parent, parameters);
                 }
                 else
                 {

@@ -1,23 +1,22 @@
 namespace Plugin.Maui.BottomSheet;
 
 /// <summary>
-/// Provides a set of extension methods for the IBottomSheet interface
-/// to enable additional functionality such as traversing the visual
-/// tree to locate the parent page.
+/// Provides extension methods for the Element class in the .NET MAUI framework.
 /// </summary>
-internal static class IBottomSheetExtensions
+internal static class ElementExtensions
 {
     /// <summary>
-    /// Retrieves the parent page of the specified bottom sheet by navigating through its visual tree.
+    /// Retrieves the parent page of the specified element by traversing its ancestor hierarchy.
+    /// Returns null if no parent page is found.
     /// </summary>
-    /// <param name="bottomSheet">The bottom sheet instance from which to locate the parent page.</param>
-    /// <returns>The parent page if found, otherwise null.</returns>
-    internal static Page? GetPageParent(this IBottomSheet bottomSheet)
+    /// <param name="element">The element whose parent page is to be located.</param>
+    /// <returns>The parent page of the element if found, otherwise null.</returns>
+    internal static Page? GetPageParent(this Element element)
     {
         Page? page = null;
-        Element? parent = bottomSheet.Parent;
+        Element? parent = element;
 
-        if (parent is IPageContainer<Page> pageContainer)
+        if (element is IPageContainer<Page> pageContainer)
         {
             page = pageContainer.CurrentPage;
         }
