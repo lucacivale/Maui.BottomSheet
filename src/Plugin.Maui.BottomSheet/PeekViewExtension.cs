@@ -123,6 +123,8 @@ public sealed class PeekViewExtension : IMarkupExtension<double>
     /// <param name="e">An <see cref="EventArgs"/> instance containing the event data.</param>
     private void SheetOnClosing(object? sender, EventArgs e)
     {
+        _view = null;
+
         if (_bottomSheet?.TryGetTarget(out BottomSheet? sheet) == true)
         {
             sheet.LayoutChanged -= SheetOnLayoutChanged;
