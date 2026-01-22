@@ -16,17 +16,18 @@ internal static class ElementExtensions
         Page? page = null;
         Element? parent = element;
 
-        if (element is IPageContainer<Page> pageContainer)
+        if (parent is Shell || parent is NavigationPage)
         {
-            page = pageContainer.CurrentPage;
+            page = GetCurrentPageFromNavigation(parent);
         }
         else if (parent is FlyoutPage flyoutPage)
         {
             page = flyoutPage.IsPresented ? flyoutPage.Flyout : flyoutPage.Detail;
 
-            if (page is IPageContainer<Page> container)
+            if (page is Shell
+                || page is NavigationPage)
             {
-                page = container.CurrentPage;
+                page = GetCurrentPageFromNavigation(page);
             }
         }
         else
@@ -44,5 +45,26 @@ internal static class ElementExtensions
         }
 
         return page;
+    }
+
+    /// <summary>
+    /// Retrieves the currently active page from the navigation stack of the specified element.
+    /// This method determines the top page from either the navigation stack or the modal stack.
+    /// </summary>
+    /// <param name="element">The element whose navigation stack is to be inspected.</param>
+    /// <returns>The currently active page if found, otherwise null.</returns>
+    private static Page GetCurrentPageFromNavigation(Element element)
+    {
+        INavigation navigation;
+        if (element is Shell shell)
+        {
+            navigation = shell.Navigation;
+        }
+        else
+        {
+            navigation = ((NavigationPage)element).Navigation;
+        }
+
+        return navigation.ModalStack.Count == 0 ? navigation.NavigationStack[^1] : navigation.ModalStack[^1];
     }
 }
