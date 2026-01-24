@@ -993,7 +993,7 @@ public partial class BottomSheet : View, IBottomSheet, IElementConfiguration<Bot
 
     /// <summary>
     /// Handles the loaded event for the <see cref="BottomSheet"/> component.
-    /// Ensures that necessary event handlers, such as <see cref="OnUnloaded"/> and
+    /// Ensures that necessary event handlers, such as <see cref="OnUnloaded"/>.
     /// </summary>
     /// <param name="sender">
     /// The source of the event, typically the <see cref="BottomSheet"/> instance.
