@@ -322,8 +322,7 @@ public partial class BottomSheet : View, IBottomSheet, IElementConfiguration<Bot
     public BottomSheet()
     {
         _platformConfigurationRegistry = new Lazy<PlatformConfigurationRegistry<BottomSheet>>(() => new PlatformConfigurationRegistry<BottomSheet>(this));
-        Unloaded += OnUnloaded;
-        HandlerChanged += OnHandlerChanged;
+        Loaded += OnLoaded;
 
         ContainerView.Padding = Padding;
     }
@@ -993,25 +992,29 @@ public partial class BottomSheet : View, IBottomSheet, IElementConfiguration<Bot
     }
 
     /// <summary>
+    /// Handles the loaded event for the <see cref="BottomSheet"/> component.
+    /// Ensures that necessary event handlers, such as <see cref="OnUnloaded"/>.
+    /// </summary>
+    /// <param name="sender">
+    /// The source of the event, typically the <see cref="BottomSheet"/> instance.
+    /// </param>
+    /// <param name="e">
+    /// Contains the event data associated with the loaded event.
+    /// </param>
+    private void OnLoaded(object? sender, EventArgs e)
+    {
+        Unloaded += OnUnloaded;
+    }
+
+    /// <summary>
     /// Disconnects the handler manually to address scenarios where MAUI does not call the disconnect handler.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The event data.</param>
     private void OnUnloaded(object? sender, EventArgs e)
     {
-        Handler?.DisconnectHandler();
-        Unloaded -= OnUnloaded;
-        HandlerChanged -= OnHandlerChanged;
-    }
-
-    /// <summary>
-    /// Called when the handler for the associated element changes.
-    /// </summary>
-    /// <param name="sender">The source of the event, typically the associated element.</param>
-    /// <param name="e">An event data object that provides details about the change.</param>
-    private void OnHandlerChanged(object? sender, EventArgs e)
-    {
         IsOpen = false;
+        Unloaded -= OnUnloaded;
     }
 
     /// <summary>

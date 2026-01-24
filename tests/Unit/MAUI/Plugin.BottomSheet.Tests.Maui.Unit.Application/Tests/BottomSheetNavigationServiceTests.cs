@@ -6,7 +6,7 @@ using Xunit.Abstractions;
 
 namespace Plugin.BottomSheet.Tests.Maui.Unit.Application.Tests;
 
-[Collection("UITests.Navigation")]
+[Collection("UITests")]
 public class BottomSheetNavigationServiceTests : IAsyncLifetime
 {
     private const string ShellRoute = "uitests";
