@@ -4,6 +4,7 @@ using Plugin.Maui.BottomSheet;
 
 namespace Plugin.BottomSheet.Tests.Maui.Unit.Application.Tests;
 
+[Collection("UITests")]
 public class GlobalStyleTests : IAsyncLifetime
 {
     private const string ShellRoute = "uitests";
