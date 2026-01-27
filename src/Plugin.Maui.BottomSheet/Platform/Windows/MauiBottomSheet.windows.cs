@@ -317,7 +317,7 @@ public sealed partial class MauiBottomSheet : FrameworkElement
                 {
                     await CloseAsync().ConfigureAwait(true);
                     MvvmHelpers.OnNavigatedFrom(_virtualView, parameters);
-                    MvvmHelpers.OnNavigatedTo(_virtualView, parameters);
+                    MvvmHelpers.OnNavigatedTo(_virtualView.Parent, parameters);
                 }
                 else
                 {
