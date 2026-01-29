@@ -55,16 +55,16 @@ internal static class ElementExtensions
     /// <returns>The currently active page if found, otherwise null.</returns>
     private static Page GetCurrentPageFromNavigation(Element element)
     {
-        INavigation navigation;
+        Page currentPage;
         if (element is Shell shell)
         {
-            navigation = shell.Navigation;
+            currentPage = shell.CurrentPage;
         }
         else
         {
-            navigation = ((NavigationPage)element).Navigation;
+            currentPage = ((NavigationPage)element).CurrentPage;
         }
 
-        return navigation.ModalStack.Count == 0 ? navigation.NavigationStack[^1] : navigation.ModalStack[^1];
+        return currentPage;
     }
 }
