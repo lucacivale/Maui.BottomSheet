@@ -322,14 +322,15 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
         ApplyBackgroundColor();
         ApplyWindowBackgroundColor();
 
-        if (PresentationController?.ContainerView.Subviews.FirstOrDefault()?.GestureRecognizers is UIGestureRecognizer[] gestureRecognizers)
+        if (PresentationController?.ContainerView.Subviews.FirstOrDefault() is UIView view
+            && view.GestureRecognizers is UIGestureRecognizer[] gestureRecognizers)
         {
             if (gestureRecognizers.FirstOrDefault() is UITapGestureRecognizer defaultGestureRecognizer)
             {
                 defaultGestureRecognizer.Enabled = false;
             }
 
-            PresentationController.ContainerView.AddGestureRecognizer(_dimViewGestureRecognizer);
+            view.AddGestureRecognizer(_dimViewGestureRecognizer);
         }
     }
 
