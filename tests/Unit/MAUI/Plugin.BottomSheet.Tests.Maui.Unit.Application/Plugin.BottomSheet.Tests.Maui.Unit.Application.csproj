@@ -10,7 +10,7 @@
         <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 		<!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
 		<WindowsPackageType>None</WindowsPackageType>
-        
+
         <DefineConstants Condition="'$(TestingMode)' == 'NonInteractiveVisual'">$(DefineConstants);MODE_NON_INTERACTIVE_VISUAL</DefineConstants>
         <DefineConstants Condition="'$(TestingMode)' == 'XHarness'">$(DefineConstants);MODE_XHARNESS</DefineConstants>
 
@@ -32,7 +32,7 @@
         <MtouchInterpreter>All</MtouchInterpreter>
         <!--https://github.com/dotnet/maui/issues/27840-->
         <Registrar>static</Registrar>
-    </PropertyGroup>    
+    </PropertyGroup>
 
     <PropertyGroup>
         <ApplicationTitle>Plugin.BottomSheet.Tests.Maui.Unit.Application</ApplicationTitle>
@@ -44,7 +44,7 @@
     <ItemGroup>
         <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
     </ItemGroup>
-    
+
     <ItemGroup>
         <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
         <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
@@ -99,7 +99,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\..\src\Plugin.BottomSheet\Plugin.BottomSheet.csproj" />
       <ProjectReference Include="..\..\..\..\src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet.csproj" />
       <ProjectReference Include="..\Plugin.BottomSheet.Tests.Maui.Unit\Plugin.BottomSheet.Tests.Maui.Unit.csproj" />
     </ItemGroup>

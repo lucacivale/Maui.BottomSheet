@@ -16,9 +16,14 @@ internal static class ElementExtensions
         Page? page = null;
         Element? parent = element;
 
-        if (parent is Shell || parent is NavigationPage)
+        if (parent is Shell
+            || parent is NavigationPage)
         {
             page = GetCurrentPageFromNavigation(parent);
+        }
+        else if (parent is TabbedPage tabbedPage)
+        {
+            page = tabbedPage.CurrentPage;
         }
         else if (parent is FlyoutPage flyoutPage)
         {
