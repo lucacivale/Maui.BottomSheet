@@ -575,9 +575,12 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
     /// <param name="e">The event arguments.</param>
     private void BottomSheetDelegateOnConfirmDismiss(object? sender, EventArgs e)
     {
-        _eventManager.RaiseEvent(
-            this,
-            e,
-            nameof(Canceled));
+        if (ModalInPresentation == false)
+        {
+            _eventManager.RaiseEvent(
+                this,
+                e,
+                nameof(Canceled));
+        }
     }
 }
