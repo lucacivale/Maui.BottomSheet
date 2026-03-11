@@ -63,7 +63,7 @@ public sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bott
         _onBackPressedCallback = new BottomSheetDialogOnBackPressedCallback(true);
         _onBackPressedCallback.BackPressed += OnBackPressedCallbackOnBackPressed;
 
-        _slideDuration = Context.Resources?.GetInteger(Resource.Integer.bottom_sheet_slide_duration) ?? FallbackSlideDuration;
+        _slideDuration = Context.Resources?.GetInteger(_Microsoft.Android.Resource.Designer.Resource.Integer.bottom_sheet_slide_duration) ?? FallbackSlideDuration;
     }
 
     /// <summary>
@@ -428,10 +428,10 @@ public sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bott
     /// </summary>
     public BottomSheetSizeMode SizeMode
     {
-        get => Behavior.FitToContents == true ? BottomSheetSizeMode.FitToContent : BottomSheetSizeMode.States;
+        get => Behavior.FitToContents ? BottomSheetSizeMode.FitToContent : BottomSheetSizeMode.States;
         set
         {
-            Behavior.FitToContents = value == BottomSheetSizeMode.FitToContent ? true : false;
+            Behavior.FitToContents = value == BottomSheetSizeMode.FitToContent;
 
             if (_content?.Parent is View parent
                 && parent.LayoutParameters is not null)
@@ -446,6 +446,8 @@ public sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bott
     /// </summary>
     public override void Show()
     {
+        Behavior.PeekHeight = 0;
+
         ShowEvent += BottomSheetDialog_ShowEvent;
 
         Window?.ClearFlags(WindowManagerFlags.DimBehind);
