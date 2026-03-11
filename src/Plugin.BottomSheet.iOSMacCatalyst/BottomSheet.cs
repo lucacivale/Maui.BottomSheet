@@ -580,7 +580,7 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
             _eventManager.RaiseEvent(
                 this,
                 e,
-                nameof(Canceled));   
+                nameof(Canceled));
         }
     }
 }
