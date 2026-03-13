@@ -1,12 +1,13 @@
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
+using Android.Content;
+using Microsoft.Maui.HotReload;
 using Microsoft.Maui.LifecycleEvents;
-using Plugin.Maui.BottomSheet.Navigation;
+using Microsoft.Maui.Platform;
 using Plugin.BottomSheet;
 using Plugin.BottomSheet.Android;
-using Microsoft.Maui.Platform;
-using Android.Content;
+using Plugin.Maui.BottomSheet.Navigation;
 using Plugin.Maui.BottomSheet.PlatformConfiguration.AndroidSpecific;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using AActivity = Android.App.Activity;
 using AndroidLifecycle = Plugin.Maui.BottomSheet.LifecycleEvents.AndroidLifecycle;
 using AndroidView = Android.Views.View;
@@ -16,7 +17,7 @@ namespace Plugin.Maui.BottomSheet.Platform.Android;
 /// <summary>
 /// Represents the Android-specific implementation for a MAUI bottom sheet component.
 /// </summary>
-public sealed class MauiBottomSheet : AndroidView
+public sealed class MauiBottomSheet : AndroidView, IReloadHandler
 {
     private readonly IMauiContext _mauiContext;
     private readonly Context _context;
@@ -72,26 +73,20 @@ public sealed class MauiBottomSheet : AndroidView
     /// <param name="virtualView">The virtual view to associate.</param>
     public void SetView(IBottomSheet virtualView)
     {
+        if (virtualView is IHotReloadableView ihr)
+        {
+            ihr.ReloadHandler = this;
+            MauiHotReloadHelper.AddActiveView(ihr);
+        }
+
         _virtualView = virtualView;
     }
 
-    /// <summary>
-    /// Releases resources and detaches event handlers associated with the bottom sheet.
-    /// </summary>
-    public void Cleanup()
+    public async void Reload()
     {
-        if (_bottomSheet is null)
-        {
-            return;
-        }
-
-        _bottomSheet.Canceled -= BottomSheetOnCanceled;
-        _bottomSheet.StateChanged -= BottomSheetOnStateChanged;
-        _bottomSheet.BackPressed -= BottomSheetOnBackPressed;
-        _bottomSheet.LayoutChanged -= BottomSheetOnLayoutChanged;
-
-        _bottomSheet.Dispose();
-        _bottomSheet = null;
+        await CloseAsync().ConfigureAwait(true);
+        await Task.Delay(100).ConfigureAwait(true);
+        await OpenAsync().ConfigureAwait(true);
     }
 
     /// <summary>
@@ -174,6 +169,11 @@ public sealed class MauiBottomSheet : AndroidView
         {
             return;
         }
+
+        _bottomSheet.Canceled -= BottomSheetOnCanceled;
+        _bottomSheet.StateChanged -= BottomSheetOnStateChanged;
+        _bottomSheet.BackPressed -= BottomSheetOnBackPressed;
+        _bottomSheet.LayoutChanged -= BottomSheetOnLayoutChanged;
 
         _virtualView.OnClosingBottomSheet();
 
