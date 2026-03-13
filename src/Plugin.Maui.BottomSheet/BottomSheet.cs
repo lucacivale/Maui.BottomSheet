@@ -324,6 +324,10 @@ public partial class BottomSheet : View, IBottomSheet, IElementConfiguration<Bot
         _platformConfigurationRegistry = new Lazy<PlatformConfigurationRegistry<BottomSheet>>(() => new PlatformConfigurationRegistry<BottomSheet>(this));
         Loaded += OnLoaded;
 
+        #if DEBUG && (IOS || MACCATALYST)
+        Loaded += RiderHotReload;
+        #endif
+
         ContainerView.Padding = Padding;
     }
 
@@ -1005,6 +1009,39 @@ public partial class BottomSheet : View, IBottomSheet, IElementConfiguration<Bot
     {
         Unloaded += OnUnloaded;
     }
+
+    #if IOS || MACCATALYST
+    private void RiderHotReload(object? sender, EventArgs e)
+    {
+        if (this.GetPageParent() is Page page)
+        {
+            page.Disappearing += IOSMacCatalystOnDisappearing;
+        }
+    }
+
+    private void IOSMacCatalystOnDisappearing(object? sender, EventArgs e)
+    {
+        if (Environment.StackTrace.Contains("JetBrains.HotReloadAgent", StringComparison.OrdinalIgnoreCase) == false)
+        {
+            return;
+        }
+
+        if (this.GetPageParent() is Page page)
+        {
+            page.Disappearing -= IOSMacCatalystOnDisappearing;
+        }
+
+        IsOpen = false;
+        if (Parent is Layout layout)
+        {
+            layout.Remove(this);
+        }
+        else if (Parent is ContentView contentView)
+        {
+            contentView.Content = null;
+        }
+    }
+    #endif
 
     /// <summary>
     /// Disconnects the handler manually to address scenarios where MAUI does not call the disconnect handler.
