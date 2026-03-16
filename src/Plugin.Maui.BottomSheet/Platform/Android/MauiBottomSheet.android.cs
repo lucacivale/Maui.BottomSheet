@@ -141,6 +141,7 @@ public sealed class MauiBottomSheet : AndroidView
 
         _bottomSheet.SetContentView(_virtualView.ContainerView.ToPlatform(_mauiContext));
 
+        SetBottomSheetBackgroundColor();
         SetHalfExpandedRatio();
         SetMargin();
         SetShouldRemoveExpandedCorners();
@@ -154,7 +155,6 @@ public sealed class MauiBottomSheet : AndroidView
         _bottomSheet.Window?.DecorView.UpdateAutomationId(_virtualView);
 
         SetWindowBackgroundColor();
-        SetBottomSheetBackgroundColor();
         SetPeekHeight();
         SetIsModal();
         SetCornerRadius();
