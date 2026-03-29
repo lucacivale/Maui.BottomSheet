@@ -164,7 +164,8 @@ or
 
 > [!CAUTION]
 > The peek height is calculated using ***MAUI's*** measurement behavior. Different platforms may return different heights for the same layout.
-> This is especially true when using ScrollView, VerticalStackLayout, or Grid with Star rows.
+> You should not set a ScrollView as your peek view reference. Use the root of your ScrollView instead.
+> This is especially true when using VerticalStackLayout and Grid with Star rows.
 > To observe the differences, launch the **Plugin.BottomSheet.Tests.Maui.Ui.Application** test project and open the various peek BottomSheets
 
 ## 📖 API Reference
@@ -275,7 +276,7 @@ or
     States="Peek,Medium,Large"
     CurrentState="Medium"
     WindowBackgroundColor="Black">
-    
+
     <!-- Header Configuration -->
     <bottomsheet:BottomSheet.Header>
         <bottomsheet:BottomSheetHeader
@@ -291,7 +292,7 @@ or
             </bottomsheet:BottomSheetHeader.TopRightButton>
         </bottomsheet:BottomSheetHeader>
     </bottomsheet:BottomSheet.Header>
-    
+
     <!-- Content with Peek Height Behavior -->
     <bottomsheet:BottomSheetContent>
         <bottomsheet:BottomSheetContent.ContentTemplate>
@@ -304,7 +305,7 @@ or
                         </ContentView.Behaviors>
                         <Label Text="This content is visible in peek mode" />
                     </ContentView>
-                        
+
                     <!-- Full Content -->
                     <Grid>
                         <Label Text="This content appears when expanded" />
@@ -314,13 +315,13 @@ or
             </DataTemplate>
         </bottomsheet:BottomSheetContent.ContentTemplate>
     </bottomsheet:BottomSheetContent>
-    
+
     <!-- Styling -->
     <bottomsheet:BottomSheet.BottomSheetStyle>
         <bottomsheet:BottomSheetStyle>
             <bottomsheet:BottomSheetStyle.HeaderStyle>
-                <bottomsheet:BottomSheetHeaderStyle 
-                    TitleTextColor="Blue" 
+                <bottomsheet:BottomSheetHeaderStyle
+                    TitleTextColor="Blue"
                     TitleTextFontSize="18"
                     TitleTextFontAttributes="Bold"
                     CloseButtonTintColor="Red"/>
@@ -421,7 +422,7 @@ public class MainViewModel
             { "Mode", "Edit" },
             { "ShowActions", true }
         };
-        
+
         await _navigationService.NavigateToAsync("UserProfile", parameters);
     }
 
@@ -549,10 +550,10 @@ public class EditUserViewModel : IConfirmNavigationAsync
 }
 ```
 
-> [!IMPORTANT]  
+> [!IMPORTANT]
 > When using the `IsOpen` to manage the visibility of a `BottomSheet`, the parent `ViewModel` can implement `INavigationAware` to respond to the lifecycle of the `BottomSheet`.
 > This allows the parent `ViewModel` to handle actions when:
-> 
+>
 > | Scenario                                       | `INavigationAware` on Parent Triggered? |
 > |------------------------------------------------|-----------------------------------------|
 > | BottomSheet opened via navigation              | ❌ No                                    |
@@ -695,7 +696,7 @@ public static class MauiProgram
         builder
             .UseMauiApp<App>()
             .UseBottomSheet();
-        
+
         #if ANDROID
         builder.ConfigureLifecycleEvents(events =>
         {
