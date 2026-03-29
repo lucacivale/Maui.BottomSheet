@@ -19,7 +19,11 @@ namespace Plugin.Maui.BottomSheet.Sample
 
             builder
                 .UseMauiApp<App>()
-                .UseBottomSheet(config => config.CopyPagePropertiesToBottomSheet = true)
+                .UseBottomSheet(config =>
+                {
+                    config.CopyPagePropertiesToBottomSheet = true;
+                    config.UseNewPeekHeightCalculation = true;
+                })
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
