@@ -1,17 +1,18 @@
 namespace Plugin.Maui.BottomSheet.Platform.MaciOS;
 
+using Microsoft.Maui;
+using Microsoft.Maui.HotReload;
+using Microsoft.Maui.Platform;
+using Plugin.BottomSheet;
+using Plugin.Maui.BottomSheet.Navigation;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.Maui;
-using Microsoft.Maui.Platform;
-using Plugin.Maui.BottomSheet.Navigation;
-using Plugin.BottomSheet;
 using UIKit;
 
 /// <summary>
 /// Represents a platform-specific implementation of a bottom sheet for macOS and iOS, integrated into the .NET MAUI framework.
 /// </summary>
-public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>
+public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>, IReloadHandler
 {
     private readonly IMauiContext _mauiContext;
     private readonly TaskCompletionSource _isAttachedToWindowTcs;
@@ -68,7 +69,24 @@ public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>
     /// <param name="virtualView">The virtual view to associate with this bottom sheet.</param>
     public void SetView(IBottomSheet virtualView)
     {
+        if (virtualView is IHotReloadableView ihr)
+        {
+            ihr.ReloadHandler = this;
+            MauiHotReloadHelper.AddActiveView(ihr);
+        }
+
         _virtualView = virtualView;
+    }
+
+    /// <summary>
+    /// Reloads the bottom sheet by closing and reopening it asynchronously to apply updated content or settings.
+    /// </summary>
+    [SuppressMessage("Usage", "VSTHRD100: Avoid async void methods", Justification = "Is okay here.")]
+    public async void Reload()
+    {
+        await CloseAsync().ConfigureAwait(true);
+        await Task.Delay(100).ConfigureAwait(true);
+        await OpenAsync().ConfigureAwait(true);
     }
 
     /// <summary>
@@ -76,8 +94,6 @@ public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>
     /// </summary>
     public void Cleanup()
     {
-        _bottomSheet?.Dispose();
-
         RemoveFromSuperview();
     }
 

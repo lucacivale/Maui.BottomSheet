@@ -78,8 +78,6 @@ public sealed partial class BottomSheetHandler : ViewHandler<IBottomSheet, MauiB
             base.DisconnectHandler(platformView);
 
             await platformView.CloseAsync().ConfigureAwait(true);
-
-            platformView.Cleanup();
         }
         catch (Exception e)
         {
