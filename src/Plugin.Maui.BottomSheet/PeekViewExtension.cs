@@ -194,8 +194,55 @@ public sealed class PeekViewExtension : IMarkupExtension<double>
     {
         if (_bottomSheet?.TryGetTarget(out BottomSheet? bottomSheet) == true)
         {
-            double peekHeight = 0;
+            bottomSheet.PeekHeight = GetHeight(bottomSheet);
+        }
+    }
 
+    private double GetHeight(BottomSheet bottomSheet)
+    {
+        double peekHeight = 0;
+
+        Configuration? config = bottomSheet.Handler?.GetRequiredService<Configuration>();
+
+        if (config is not null)
+        {
+            if (config.UseNewPeekHeightCalculation)
+            {
+                if (_view?.TryGetTarget(out View? view) == true)
+                {
+                    peekHeight += view.DesiredSize.Height;
+                }
+
+                if (bottomSheet.ContainerView.TryGetView(BottomSheet.HandleRow, out View? handle))
+                {
+                    peekHeight += handle.DesiredSize.Height;
+                }
+
+                if (bottomSheet.ContainerView.TryGetView(BottomSheet.HeaderRow, out View? header))
+                {
+                    peekHeight += header.DesiredSize.Height;
+                }
+            }
+            else
+            {
+                if (_view?.TryGetTarget(out View? view) == true)
+                {
+                    peekHeight += view.Measure().Height;
+                }
+
+                if (bottomSheet.ContainerView.TryGetView(BottomSheet.HandleRow, out View? handle))
+                {
+                    peekHeight += handle.Measure().Height;
+                }
+
+                if (bottomSheet.ContainerView.TryGetView(BottomSheet.HeaderRow, out View? header))
+                {
+                    peekHeight += header.Measure().Height;
+                }
+            }
+        }
+        else
+        {
             if (_view?.TryGetTarget(out View? view) == true)
             {
                 peekHeight += view.Measure().Height;
@@ -210,8 +257,8 @@ public sealed class PeekViewExtension : IMarkupExtension<double>
             {
                 peekHeight += header.Measure().Height;
             }
-
-            bottomSheet.PeekHeight = peekHeight;
         }
+
+        return peekHeight;
     }
 }
