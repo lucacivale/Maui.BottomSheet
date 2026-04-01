@@ -729,6 +729,11 @@ public static class MauiProgram
 - **Don't mix** `IsOpen` with navigation methods
 - Always implement `IConfirmNavigation` for forms with user input
 
+
+### XAML and .NET HotReload
+- XAML and .NET HotReload are not supported for `BottomSheet`
+- If you face any issues please open an issue and describe your setup(Rider, VSCode, Visual Studio, Platform, OS etc.)
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

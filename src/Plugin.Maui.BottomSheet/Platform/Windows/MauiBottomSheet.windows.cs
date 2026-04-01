@@ -61,6 +61,10 @@ public sealed partial class MauiBottomSheet : FrameworkElement, IReloadHandler
         _virtualView = virtualView;
     }
 
+    /// <summary>
+    /// Reloads the bottom sheet by closing and reopening it asynchronously to apply updated content or settings.
+    /// </summary>
+    [SuppressMessage("Usage", "VSTHRD100: Avoid async void methods", Justification = "Is okay here.")]
     public async void Reload()
     {
         await CloseAsync().ConfigureAwait(true);
