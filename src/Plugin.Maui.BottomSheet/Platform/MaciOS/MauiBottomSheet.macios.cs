@@ -361,7 +361,7 @@ public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>, IReloadHandle
                 {
                     if (_virtualView.ContainerView.DesiredSize.Equals(Size.Zero))
                     {
-                        _virtualView.ContainerView.Measure(double.PositiveInfinity, double.PositiveInfinity);
+                        _virtualView.ContainerView.Measure(_virtualView.ContainerView.Window?.Width ?? double.PositiveInfinity, _virtualView.ContainerView.Window?.Height ?? double.PositiveInfinity);
                     }
 
                     return _virtualView.ContainerView.DesiredSize.Height;
