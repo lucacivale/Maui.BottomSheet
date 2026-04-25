@@ -350,7 +350,30 @@ public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>, IReloadHandle
         }
 
         _bottomSheet.SizeMode = _virtualView.SizeMode;
-        _bottomSheet.FitToContentCalculation = _bottomSheet.SizeMode == BottomSheetSizeMode.FitToContent ? () => _virtualView.ContainerView.Measure().Height : null;
+
+        Func<double>? calculation = null;
+
+        if (_bottomSheet.SizeMode == BottomSheetSizeMode.FitToContent)
+        {
+            if (_mauiContext.Services.GetRequiredService<Configuration>().UseNewPeekHeightCalculation)
+            {
+                calculation = () =>
+                {
+                    if (_virtualView.ContainerView.DesiredSize.Equals(Size.Zero))
+                    {
+                        _virtualView.ContainerView.Measure(_virtualView.ContainerView.Window?.Width ?? double.PositiveInfinity, _virtualView.ContainerView.Window?.Height ?? double.PositiveInfinity);
+                    }
+
+                    return _virtualView.ContainerView.DesiredSize.Height;
+                };
+            }
+            else
+            {
+                calculation = () => _virtualView.ContainerView.Measure().Height;
+            }
+        }
+
+        _bottomSheet.FitToContentCalculation = calculation;
     }
 
     /// <summary>

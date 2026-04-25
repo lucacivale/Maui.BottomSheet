@@ -539,12 +539,6 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
     {
         double height = FitToContentCalculation?.Invoke() ?? 0;
 
-        if (View?.Window is not null
-            && height > 0)
-        {
-            height += View.Window.SafeAreaInsets.Bottom;
-        }
-
         if (OperatingSystem.IsMacCatalyst()
             || (OperatingSystem.IsIOS()
                 && OperatingSystem.IsIOSVersionAtLeast(16)))
