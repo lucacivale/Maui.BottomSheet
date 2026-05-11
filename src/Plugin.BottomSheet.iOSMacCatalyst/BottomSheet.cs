@@ -182,8 +182,9 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
 
             if (SheetPresentationController is not null)
             {
-                // Actually bug in UIKit. Custom detent can't be undimmed. Submit a bug?.
-                SheetPresentationController.LargestUndimmedDetentIdentifier = _isModal ? UISheetPresentationControllerDetentIdentifier.Unknown : States.Last().ToPlatformState();
+                SheetPresentationController.LargestUndimmedDetentIdentifier = _isModal
+                    ? UISheetPresentationControllerDetentIdentifier.Unknown
+                    : UISheetPresentationControllerDetentIdentifier.Large;
             }
 
             ApplyWindowBackgroundColor();
@@ -274,11 +275,25 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
         {
             _sizeMode = value;
 
-            UISheetPresentationControllerDetent[] detents = _sizeMode == BottomSheetSizeMode.FitToContent ? [_contentDetent] : SheetPresentationController?.Detents ?? [_largeDetent];
+            // When non-modal + FitToContent, always include the standard .large detent alongside
+            // the custom content detent. UIKit requires LargestUndimmedDetentIdentifier to match
+            // an entry in the Detents list — without .large present, the setting is silently
+            // ignored and the dim overlay remains even with IsModal=False.
+            UISheetPresentationControllerDetent[] detents = _sizeMode == BottomSheetSizeMode.FitToContent
+                ? (_isModal ? [_contentDetent] : [_contentDetent, _largeDetent])
+                : SheetPresentationController?.Detents ?? [_largeDetent];
 
             SheetPresentationController?.AnimateChanges(() =>
             {
                 SheetPresentationController.Detents = detents;
+
+                // _largeDetent is added as a sentinel only; reset the selected detent to the
+                // content detent so the sheet does not open at full height.
+                // Unknown causes UIKit to fall back to the first detent (_contentDetent).
+                if (_sizeMode == BottomSheetSizeMode.FitToContent && !_isModal)
+                {
+                    SheetPresentationController.SelectedDetentIdentifier = UISheetPresentationControllerDetentIdentifier.Unknown;
+                }
             });
         }
     }
@@ -318,6 +333,28 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
     public override void ViewWillAppear(bool animated)
     {
         base.ViewWillAppear(animated);
+
+        if (SheetPresentationController is UISheetPresentationController spc && !_isModal)
+        {
+            // SheetPresentationController may have been null when SetSizeMode/SetStates were
+            // called (before presentation), so the detents may not yet be configured correctly.
+            // ViewWillAppear is the earliest point where the SPC is guaranteed non-null.
+            if (_sizeMode == BottomSheetSizeMode.FitToContent)
+            {
+                // UIKit requires LargestUndimmedDetentIdentifier to reference a detent that
+                // exists in the Detents array. FitToContent uses a custom detent only, so
+                // .large is absent and UIKit silently ignores the setting. Add _largeDetent
+                // as a sentinel entry so the identifier is recognised.
+                spc.Detents = [_contentDetent, _largeDetent];
+
+                // _largeDetent is a sentinel only; reset the selection to the content detent
+                // so the sheet opens at FitToContent height, not full-screen.
+                // Unknown causes UIKit to fall back to the first detent (_contentDetent).
+                spc.SelectedDetentIdentifier = UISheetPresentationControllerDetentIdentifier.Unknown;
+            }
+
+            spc.LargestUndimmedDetentIdentifier = UISheetPresentationControllerDetentIdentifier.Large;
+        }
 
         ApplyBackgroundColor();
         ApplyWindowBackgroundColor();
@@ -477,6 +514,10 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
         }
 
         SheetPresentationController.PrefersEdgeAttachedInCompactHeight = true;
+
+        SheetPresentationController.LargestUndimmedDetentIdentifier = _isModal
+            ? UISheetPresentationControllerDetentIdentifier.Unknown
+            : UISheetPresentationControllerDetentIdentifier.Large;
     }
 
     /// <summary>
