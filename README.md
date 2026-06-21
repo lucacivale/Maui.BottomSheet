@@ -201,6 +201,9 @@ or
 > Mode `FitToContent` is not compatible with the `States` and `CurrentState` property. Do not mix these two properties.
 > Requires iOS 16+. On prior versions of iOS, the medium state will be used instead.
 
+> [!NOTE]
+> On iOS and MacCatalyst, custom-detent presentations such as `FitToContent` and peek-only sheets internally include a large detent sentinel so UIKit can keep non-modal sheets undimmed. If the user drags to that sentinel, the sheet automatically snaps back to the custom detent.
+
 ### 🎭 BottomSheet States
 
 | State    | Description                      |
