@@ -10,7 +10,7 @@ namespace Plugin.Maui.BottomSheet;
 /// A UI component that provides a collapsible and expandable container, typically used to display additional content at the bottom of the screen.
 /// </summary>
 [ContentProperty(nameof(Content))]
-public partial class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet>
+public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet>
 {
     /// <summary>
     /// Represents a bindable property that determines whether the bottom sheet is displayed in modal mode.
@@ -634,6 +634,8 @@ public partial class BottomSheet : View, IBottomSheet, IElementConfiguration<Bot
     [EditorBrowsable(EditorBrowsableState.Never)]
     public void OnOpeningBottomSheet()
     {
+        AddLogicalChild(ContainerView);
+
         ContainerView.Parent = this;
         ContainerView.BindingContext = BindingContext;
 
@@ -660,6 +662,8 @@ public partial class BottomSheet : View, IBottomSheet, IElementConfiguration<Bot
     [EditorBrowsable(EditorBrowsableState.Never)]
     public void OnClosingBottomSheet()
     {
+        RemoveLogicalChild(ContainerView);
+
         RaiseEvent(nameof(Closing), EventArgs.Empty);
         ExecuteCommand(ClosingCommand, ClosingCommandParameter);
     }
