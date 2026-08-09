@@ -135,15 +135,22 @@ public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>, IReloadHandle
         _bottomSheet.FrameChanged += BottomSheetOnFrameChanged;
         _bottomSheet.LayoutChanged += BottomSheetOnLayoutChanged;
 
-        SetStates();
+        if (_virtualView.SizeMode == BottomSheetSizeMode.States)
+        {
+            SetStates();
+            SetCurrentState();
+        }
+        else
+        {
+            SetSizeMode();
+        }
+
         SetIsCancelable();
-        SetCurrentState();
 
         SetWindowBackgroundColor();
         SetBottomSheetBackgroundColor();
         SetIsModal();
         SetCornerRadius();
-        SetSizeMode();
 
         UIView view = _virtualView.ContainerView.ToPlatform(_mauiContext);
         view.UpdateAutomationId(_virtualView);

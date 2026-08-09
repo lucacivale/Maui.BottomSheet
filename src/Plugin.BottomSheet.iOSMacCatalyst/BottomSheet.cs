@@ -28,8 +28,9 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
     private BottomSheetContainerViewController? _containerViewController;
 
     private BottomSheetSizeMode _sizeMode;
-    private BottomSheetState[] _configuredStates = [BottomSheetState.Large];
-    private bool _isRestoringCustomDetent;
+    private bool _isRestoringOldState;
+    private ICollection<BottomSheetState> _states = [];
+    private bool _addedLargeDetentSentinelForCustomDetent;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheet"/> class.
@@ -180,12 +181,13 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
         {
             _isModal = value;
 
+            RefreshDetents();
             _dimViewGestureRecognizer.Enabled = _isModal;
 
             if (SheetPresentationController is not null)
             {
-                // Actually bug in UIKit. Custom detent can't be undimmed. Submit a bug?.
-                SheetPresentationController.LargestUndimmedDetentIdentifier = _isModal ? UISheetPresentationControllerDetentIdentifier.Unknown : States.Last().ToPlatformState();
+                // Actually bug in UIKit. Custom detent can't be undimmed. Submit a bug?
+                SheetPresentationController.LargestUndimmedDetentIdentifier = _isModal ? UISheetPresentationControllerDetentIdentifier.Unknown : LogicalStates.Last().ToPlatformState();
             }
 
             ApplyWindowBackgroundColor();
@@ -200,10 +202,15 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
         get => SheetPresentationController?.SelectedDetentIdentifier.ToBottomSheetState() ?? BottomSheetState.Peek;
         set
         {
-            SheetPresentationController?.AnimateChanges(() =>
+            if (ValidateState(value, State))
             {
-                SheetPresentationController.SelectedDetentIdentifier = value.ToPlatformState();
-            });
+                SheetPresentationController?.AnimateChanges(() =>
+                {
+                    SheetPresentationController.SelectedDetentIdentifier = value.ToPlatformState();
+
+                    _bottomSheetDelegate.CurrentState = State;
+                });
+            }
         }
     }
 
@@ -214,32 +221,30 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
     {
         get
         {
+            return _states;
+        }
+
+        set
+        {
+            _states = value;
+            LogicalStates = value;
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the collection of states that define the possible configurations
+    /// of the bottom sheet at different detent levels, such as Peek, Medium, and Large.
+    /// </summary>
+    public ICollection<BottomSheetState> LogicalStates
+    {
+        get
+        {
             return SheetPresentationController is null ? [] : SheetPresentationController.Detents.ToBottomSheetStates();
         }
 
         set
         {
-            _configuredStates = value.ToArray();
-
-            SheetPresentationController?.AnimateChanges(() =>
-            {
-                UISheetPresentationControllerDetent[] detents = _configuredStates
-                    .Select(ToPlatformDetent)
-                    .ToArray();
-
-                if (ShouldUseLargeDetentSentinelForPeekState())
-                {
-                    // UIKit cannot undim a custom-only detent, so keep a native large detent as the undimmed sentinel.
-                    detents = detents.Append(_largeDetent).ToArray();
-                }
-
-                SheetPresentationController.Detents = detents;
-
-                if (ShouldLockToCustomDetent())
-                {
-                    SheetPresentationController.SelectedDetentIdentifier = UISheetPresentationControllerDetentIdentifier.Unknown;
-                }
-            });
+            SetDetents(value);
         }
     }
 
@@ -279,16 +284,14 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
         {
             _sizeMode = value;
 
-            UISheetPresentationControllerDetent[] detents = _sizeMode == BottomSheetSizeMode.FitToContent ? [_contentDetent, _largeDetent] : SheetPresentationController?.Detents ?? [_largeDetent];
+            List<UISheetPresentationControllerDetent> detents = _sizeMode == BottomSheetSizeMode.FitToContent ? [_contentDetent] : SheetPresentationController?.Detents.ToList() ?? [_largeDetent];
+            AddLargeDetentIfNecessary(detents);
 
             SheetPresentationController?.AnimateChanges(() =>
             {
-                SheetPresentationController.Detents = detents;
-
-                if (ShouldLockToCustomDetent())
-                {
-                    SheetPresentationController.SelectedDetentIdentifier = UISheetPresentationControllerDetentIdentifier.Unknown;
-                }
+                SheetPresentationController.Detents = detents.ToArray();
+                SheetPresentationController.SelectedDetentIdentifier = UISheetPresentationControllerDetentIdentifier.Unknown;
+                _bottomSheetDelegate.CurrentState = State;
             });
         }
     }
@@ -566,10 +569,8 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
     /// <param name="e">The event arguments.</param>
     private void BottomSheetDelegateOnStateChanged(object? sender, BottomSheetStateChangedEventArgs e)
     {
-        if (e.NewState == BottomSheetState.Large
-            && ShouldLockToCustomDetent())
+        if (ValidateState(e.NewState, e.OldState) == false)
         {
-            RestoreSelectedCustomDetent();
             return;
         }
 
@@ -580,61 +581,82 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
     }
 
     /// <summary>
-    /// Converts a logical bottom sheet state to the native detent instance used by UIKit.
+    /// Ensures a large detent is added to the provided list of detents if necessary based on the current
+    /// configuration of the bottom sheet. This is required to accommodate scenarios where UIKit requires
+    /// a native large detent as an undimmed sentinel, especially when using custom-only detents.
     /// </summary>
-    /// <param name="state">The logical bottom sheet state to convert.</param>
-    /// <returns>The native detent that represents the requested state.</returns>
-    private UISheetPresentationControllerDetent ToPlatformDetent(BottomSheetState state)
+    /// <param name="detents">A list of <see cref="UISheetPresentationControllerDetent"/> to potentially modify
+    /// by adding a large detent as a sentinel if required.</param>
+    [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "Is validated.")]
+    private void AddLargeDetentIfNecessary(List<UISheetPresentationControllerDetent> detents)
     {
-        return state switch
-        {
-            BottomSheetState.Peek => _peekDetent,
-            BottomSheetState.Medium => _mediumDetent,
-            _ => _largeDetent,
-        };
-    }
-
-    /// <summary>
-    /// Determines whether the configured states rely on a single custom peek detent.
-    /// </summary>
-    /// <returns>True when the sheet should remain locked to the custom peek detent.</returns>
-    private bool ShouldUseLargeDetentSentinelForPeekState()
-    {
-        return _sizeMode == BottomSheetSizeMode.States
-            && _configuredStates.Length == 1
-            && _configuredStates[0] == BottomSheetState.Peek;
-    }
-
-    /// <summary>
-    /// Determines whether UIKit should be prevented from staying on the sentinel large detent.
-    /// </summary>
-    /// <returns>True when the current presentation uses a custom-only detent.</returns>
-    private bool ShouldLockToCustomDetent()
-    {
-        return _isRestoringCustomDetent == false
-            && (_sizeMode == BottomSheetSizeMode.FitToContent
-                || ShouldUseLargeDetentSentinelForPeekState());
-    }
-
-    /// <summary>
-    /// Restores the selected native detent to the custom detent after UIKit briefly selects the helper large detent.
-    /// </summary>
-    private void RestoreSelectedCustomDetent()
-    {
-        if (SheetPresentationController is null)
+        if (OperatingSystem.IsMacCatalyst()
+            || (OperatingSystem.IsIOS()
+                && OperatingSystem.IsIOSVersionAtLeast(16)))
         {
             return;
         }
 
-        try
+        _addedLargeDetentSentinelForCustomDetent = false;
+
+        bool isOnlyPeekState = _sizeMode == BottomSheetSizeMode.States
+           && detents.Count == 1
+           && detents[0].Identifier == PeekDetentId;
+
+        bool shouldAddLargeDetentSentinelForCustomDetent = IsModal == false
+           && (isOnlyPeekState
+               || _sizeMode == BottomSheetSizeMode.FitToContent);
+
+        if (!shouldAddLargeDetentSentinelForCustomDetent)
         {
-            _isRestoringCustomDetent = true;
-            SheetPresentationController.SelectedDetentIdentifier = UISheetPresentationControllerDetentIdentifier.Unknown;
+            return;
         }
-        finally
+
+        // UIKit cannot undim a custom-only detent, so keep a native large detent as the undimmed sentinel.
+        detents.Add(_largeDetent);
+
+        _addedLargeDetentSentinelForCustomDetent = true;
+    }
+
+    /// <summary>
+    /// Validates the transition between two <see cref="BottomSheetState"/> values, ensuring that the new state adheres to the component's constraints.
+    /// </summary>
+    /// <param name="newState">The new <see cref="BottomSheetState"/> to which the bottom sheet is attempting to transition.</param>
+    /// <param name="oldState">The previous <see cref="BottomSheetState"/> from which the bottom sheet is transitioning.</param>
+    /// <returns>
+    /// A boolean value indicating whether the transition to the new state is valid. Returns <c>true</c> if the transition is allowed, otherwise <c>false</c>.
+    /// </returns>
+    private bool ValidateState(BottomSheetState newState, BottomSheetState oldState)
+    {
+        // ReSharper disable once ReplaceWithSingleAssignment.True
+        bool isNewStateValid = true;
+
+        if (newState == BottomSheetState.Large
+            && _isRestoringOldState == false
+            && _addedLargeDetentSentinelForCustomDetent)
         {
-            _isRestoringCustomDetent = false;
+            isNewStateValid = false;
         }
+
+        if (isNewStateValid == false)
+        {
+            RestoreOldState(oldState);
+        }
+
+        return isNewStateValid;
+    }
+
+    /// <summary>
+    /// Restores the previous state of the bottom sheet to the specified <see cref="BottomSheetState"/> value.
+    /// This method sets the <see cref="State"/> property to the provided state and ensures that the
+    /// restoration process is tracked to prevent conflicts with other state changes.
+    /// </summary>
+    /// <param name="oldState">The previous <see cref="BottomSheetState"/> to restore.</param>
+    private void RestoreOldState(BottomSheetState oldState)
+    {
+        _isRestoringOldState = true;
+        State = oldState;
+        _isRestoringOldState = false;
     }
 
     /// <summary>
@@ -650,6 +672,54 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
                 this,
                 e,
                 nameof(Canceled));
+        }
+    }
+
+    /// <summary>
+    /// Configures the available states of the bottom sheet by setting its detents.
+    /// Each detent represents a predefined height or state that the bottom sheet can occupy.
+    /// </summary>
+    /// <param name="states">A collection of <see cref="BottomSheetState"/> values that define the possible states of the bottom sheet.</param>
+    private void SetDetents(ICollection<BottomSheetState> states)
+    {
+        SheetPresentationController?.AnimateChanges(() =>
+        {
+            List<UISheetPresentationControllerDetent> detents = states
+                .Select(x =>
+                {
+                    UISheetPresentationControllerDetent detent = x switch
+                    {
+                        BottomSheetState.Peek => _peekDetent,
+                        BottomSheetState.Medium => _mediumDetent,
+                        _ => _largeDetent,
+                    };
+
+                    return detent;
+                })
+                .ToList();
+
+            AddLargeDetentIfNecessary(detents);
+
+            SheetPresentationController.Detents = detents.ToArray();
+            SheetPresentationController.SelectedDetentIdentifier = State.ToPlatformState();
+        });
+    }
+
+    /// <summary>
+    /// Updates the detents of the <see cref="BottomSheet"/> based on the current size mode.
+    /// If the size mode is set to <see cref="BottomSheetSizeMode.States"/>, the available detents are updated
+    /// using the configured states in the <see cref="States"/> collection. For other modes, it resets
+    /// to the current size mode.
+    /// </summary>
+    private void RefreshDetents()
+    {
+        if (_sizeMode == BottomSheetSizeMode.States)
+        {
+            SetDetents(States);
+        }
+        else
+        {
+            SizeMode = _sizeMode;
         }
     }
 }
