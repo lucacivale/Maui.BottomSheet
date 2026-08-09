@@ -29,6 +29,12 @@ internal static class ElementExtensions
         {
             page = flyoutPage.IsPresented ? flyoutPage.Flyout : flyoutPage.Detail;
 
+            if (flyoutPage is IFlyoutPageController flyoutPageController
+                && flyoutPageController.ShouldShowSplitMode)
+            {
+                page = flyoutPage.Detail;
+            }
+
             if (page is Shell
                 || page is NavigationPage)
             {
