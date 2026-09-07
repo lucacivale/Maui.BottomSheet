@@ -59,6 +59,25 @@ public sealed partial class MauiBottomSheet : FrameworkElement, IReloadHandler
         }
 
         _virtualView = virtualView;
+        Application.Current!.RequestedThemeChanged += OnRequestedThemeChanged;
+    }
+
+    private void OnRequestedThemeChanged(object? sender, AppThemeChangedEventArgs e)
+    {
+        if (IsOpen)
+        {
+            MainThread.BeginInvokeOnMainThread(RefreshTheme);
+        }
+    }
+
+    private void RefreshTheme()
+    {
+        if (_virtualView?.BackgroundColor is null)
+        {
+            _bottomSheet?.RefreshThemeBackground();
+        }
+
+        SetWindowBackgroundColor();
     }
 
     /// <summary>
@@ -78,6 +97,7 @@ public sealed partial class MauiBottomSheet : FrameworkElement, IReloadHandler
     public void Cleanup()
     {
         Loaded -= MauiBottomSheet_Loaded;
+        Application.Current!.RequestedThemeChanged -= OnRequestedThemeChanged;
     }
 
     /// <summary>

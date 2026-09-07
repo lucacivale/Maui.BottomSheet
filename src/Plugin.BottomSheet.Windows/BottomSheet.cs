@@ -27,7 +27,7 @@ public sealed partial class BottomSheet
     private readonly WeakEventManager _eventManager = new();
 
     private readonly Brush _defaultWindowBackground;
-    private readonly Brush _defaultBackground;
+    private Brush _defaultBackground;
 
     private readonly Popup _popup;
     private readonly Grid _container;
@@ -200,6 +200,19 @@ public sealed partial class BottomSheet
     {
         get => _dialogBorder.Background;
         set => _dialogBorder.Background = value;
+    }
+
+    /// <summary>
+    /// Refreshes the default background brush from the current WinUI theme.
+    /// </summary>
+    public void RefreshThemeBackground()
+    {
+        if (_dialogBorder.Background == _defaultBackground
+            && Application.Current.Resources[DefaultBackgroundResourceKey] is Brush background)
+        {
+            _defaultBackground = background;
+            _dialogBorder.Background = background;
+        }
     }
 
     /// <summary>
