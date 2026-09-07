@@ -5,6 +5,7 @@ using Plugin.Maui.BottomSheet.Navigation;
 using Plugin.Maui.BottomSheet.PlatformConfiguration.WindowsSpecific;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using Application = Microsoft.Maui.Controls.Application;
 using WWindow = Microsoft.UI.Xaml.Window;
 
 namespace Plugin.Maui.BottomSheet.Platform.Windows;
