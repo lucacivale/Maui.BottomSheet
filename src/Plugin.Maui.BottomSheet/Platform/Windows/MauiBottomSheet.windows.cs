@@ -73,6 +73,11 @@ public sealed partial class MauiBottomSheet : FrameworkElement, IReloadHandler
 
     private void RefreshTheme()
     {
+        if (_virtualView is BottomSheet bottomSheet)
+        {
+            bottomSheet.RefreshHandleColor();
+        }
+
         if (_virtualView?.BackgroundColor is null
             && _bottomSheet is not null
             && Application.Current.Resources["SolidBackgroundFillColorBaseBrush"] is Microsoft.UI.Xaml.Media.Brush background)

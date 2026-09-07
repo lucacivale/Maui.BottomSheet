@@ -93,6 +93,11 @@ public sealed class MauiBottomSheet : AndroidView, IReloadHandler
 
     private void RefreshTheme()
     {
+        if (_virtualView is BottomSheet bottomSheet)
+        {
+            bottomSheet.RefreshHandleColor();
+        }
+
         if (_virtualView?.BackgroundColor is null)
         {
             _bottomSheet?.RefreshThemeBackground();

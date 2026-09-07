@@ -127,6 +127,17 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             propertyChanged: OnHasHandlePropertyChanged);
 
     /// <summary>
+    /// Bindable property for the handle color. When unset, the handle uses
+    /// theme-aware default colors.
+    /// </summary>
+    public static readonly BindableProperty HandleColorProperty =
+        BindableProperty.Create(
+            nameof(HandleColor),
+            typeof(Color),
+            typeof(BottomSheet),
+            propertyChanged: OnHandleColorPropertyChanged);
+
+    /// <summary>
     /// Bindable property that indicates whether the header is displayed.
     /// </summary>
     public static readonly BindableProperty ShowHeaderProperty =
@@ -402,6 +413,16 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     {
         get => (bool)GetValue(HasHandleProperty);
         set => SetValue(HasHandleProperty, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the color of the bottom-sheet handle. If unset, the
+    /// handle uses a theme-aware default color.
+    /// </summary>
+    public Color? HandleColor
+    {
+        get => (Color?)GetValue(HandleColorProperty);
+        set => SetValue(HandleColorProperty, value);
     }
 
     /// <summary>
@@ -808,6 +829,15 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
         => ((BottomSheet)bindable).OnHasHandlePropertyChanged();
 
     /// <summary>
+    /// Handles changes to the <see cref="HandleColorProperty"/> bindable property.
+    /// </summary>
+    /// <param name="bindable">The object that the property belongs to.</param>
+    /// <param name="oldValue">The previous value of the property.</param>
+    /// <param name="newValue">The new value of the property.</param>
+    private static void OnHandleColorPropertyChanged(BindableObject bindable, object oldValue, object newValue)
+        => ((BottomSheet)bindable).OnHandleColorPropertyChanged();
+
+    /// <summary>
     /// Handles changes to the <see cref="PaddingProperty"/> bindable property.
     /// This method is invoked when the <see cref="Padding"/> value is modified.
     /// </summary>
@@ -1075,6 +1105,23 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     }
 
     /// <summary>
+    /// Updates the existing handle after its color changes.
+    /// </summary>
+    private void OnHandleColorPropertyChanged()
+    {
+        if (ContainerView.Children.FirstOrDefault(child => ContainerView.GetRow(child) == HandleRow) is Border handle
+            && handle.Content is BoxView handleContent)
+        {
+            ApplyHandleColor(handle, handleContent);
+        }
+    }
+
+    internal void RefreshHandleColor()
+    {
+        OnHandleColorPropertyChanged();
+    }
+
+    /// <summary>
     /// Creates and arranges the layout elements for the bottom sheet, including the handle, header,
     /// and content, based on their respective configurations.
     /// </summary>
@@ -1188,23 +1235,42 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     /// <returns>A <see cref="Border"/> element configured as the handle, including margin, dimensions, and styling characteristics.</returns>
     private Border CreateHandle()
     {
-        return new()
+        BoxView handleContent = new()
+        {
+            WidthRequest = 40,
+            HeightRequest = 7.5,
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Fill,
+        };
+
+        Border handle = new()
         {
             AutomationId = AutomationIds.Handle,
             Margin = new(0, 10 - Padding.Top, 0, 10),
             WidthRequest = 40,
             HeightRequest = 7.5,
-            Content = new BoxView()
-            {
-                WidthRequest = 40,
-                Color = Colors.Gray,
-            },
+            Content = handleContent,
             StrokeShape = new RoundRectangle()
             {
                 CornerRadius = new(20),
             },
-            Stroke = Colors.Gray,
         };
+
+        ApplyHandleColor(handle, handleContent);
+
+        return handle;
+    }
+
+    private void ApplyHandleColor(Border handle, BoxView handleContent)
+    {
+        Color color = HandleColor
+            ?? (Application.Current?.RequestedTheme == AppTheme.Dark ? Colors.LightGray : Colors.Gray);
+
+        SolidColorBrush brush = new(color);
+        handleContent.Color = color;
+        handleContent.Background = brush;
+        handle.Background = brush;
+        handle.Stroke = brush;
     }
 
     /// <summary>
