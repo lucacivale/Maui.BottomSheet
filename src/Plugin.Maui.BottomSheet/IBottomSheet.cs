@@ -61,6 +61,11 @@ public interface IBottomSheet : IView, IPadding
     bool HasHandle { get; set; }
 
     /// <summary>
+    /// Gets or sets the color of the bottom-sheet handle.
+    /// </summary>
+    Color? HandleColor { get; set; }
+
+    /// <summary>
     /// Gets or sets a value indicating whether the header section is displayed, allowing customization of the appearance based on the value.
     /// </summary>
     bool ShowHeader { get; set; }

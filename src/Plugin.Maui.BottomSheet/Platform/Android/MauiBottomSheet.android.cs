@@ -80,6 +80,35 @@ public sealed class MauiBottomSheet : AndroidView, IReloadHandler
         }
 
         _virtualView = virtualView;
+        Application.Current!.RequestedThemeChanged += OnRequestedThemeChanged;
+    }
+
+    private void OnRequestedThemeChanged(object? sender, AppThemeChangedEventArgs e)
+    {
+        if (IsOpen)
+        {
+            MainThread.BeginInvokeOnMainThread(RefreshTheme);
+        }
+    }
+
+    private void RefreshTheme()
+    {
+        if (_virtualView is BottomSheet bottomSheet)
+        {
+            bottomSheet.RefreshHandleColor();
+        }
+
+        if (_virtualView?.BackgroundColor is null)
+        {
+            _bottomSheet?.RefreshThemeBackground();
+        }
+
+        SetWindowBackgroundColor();
+    }
+
+    public void Cleanup()
+    {
+        Application.Current!.RequestedThemeChanged -= OnRequestedThemeChanged;
     }
 
     /// <summary>
