@@ -15,7 +15,7 @@ using UIKit;
 public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>, IReloadHandler
 {
     private readonly IMauiContext _mauiContext;
-    private readonly TaskCompletionSource _isAttachedToWindowTcs;
+    private TaskCompletionSource _isAttachedToWindowTcs;
 
     private Plugin.BottomSheet.iOSMacCatalyst.BottomSheet? _bottomSheet;
 
@@ -52,12 +52,23 @@ public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>, IReloadHandle
         => (IEnumerator<UIView>)Subviews.GetEnumerator();
 
     /// <summary>
-    /// Called when the view is moved to a window, and ensures any pending operations
+    /// Called when the view is moved to a window or removed from its window, and ensures any pending operations
     /// waiting for the view to be attached to a window are completed.
     /// </summary>
     public override void MovedToWindow()
     {
         base.MovedToWindow();
+
+        if (Window is null)
+        {
+            if (_isAttachedToWindow)
+            {
+                _isAttachedToWindow = false;
+                _isAttachedToWindowTcs = new TaskCompletionSource();
+            }
+
+            return;
+        }
 
         _isAttachedToWindow = true;
         _isAttachedToWindowTcs.TrySetResult();
