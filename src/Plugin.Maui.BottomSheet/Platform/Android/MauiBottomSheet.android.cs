@@ -216,7 +216,7 @@ public sealed class MauiBottomSheet : AndroidView, IReloadHandler
         {
             if (_bottomSheet?.IsShowing == true)
             {
-                Cancel();
+                await CancelAsync(true).ConfigureAwait(true);
             }
         }
     }
@@ -397,8 +397,21 @@ public sealed class MauiBottomSheet : AndroidView, IReloadHandler
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The event data.</param>
     [SuppressMessage("Usage", "VSTHRD100: Avoid async void methods", Justification = "Is okay here.")]
-    [SuppressMessage("Design", "CA1031: Do not catch general exception types", Justification = "Catch all exceptions to prevent crash.")]
     private async void BottomSheetOnCanceled(object? sender, EventArgs e)
+    {
+        await CancelAsync(false).ConfigureAwait(true);
+    }
+
+    /// <summary>
+    /// Closes the bottom sheet, including navigation support.
+    /// </summary>
+    /// <param name="ignoreIsCancelable">
+    /// <c>true</c> if the close request comes from code (<see cref="IBottomSheet.IsOpen"/> was set to <c>false</c>).
+    /// <see cref="IBottomSheet.IsCancelable"/> only prevents that the user closes the bottom sheet.
+    /// </param>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    [SuppressMessage("Design", "CA1031: Do not catch general exception types", Justification = "Catch all exceptions to prevent crash.")]
+    private async Task CancelAsync(bool ignoreIsCancelable)
     {
         try
         {
@@ -420,7 +433,7 @@ public sealed class MauiBottomSheet : AndroidView, IReloadHandler
             }
             else
             {
-                if (_virtualView.IsCancelable
+                if ((ignoreIsCancelable || _virtualView.IsCancelable)
                     && await MvvmHelpers.ConfirmNavigationAsync(_virtualView, parameters).ConfigureAwait(true))
                 {
                     await CloseAsync().ConfigureAwait(true);

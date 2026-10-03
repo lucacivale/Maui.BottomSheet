@@ -176,7 +176,7 @@ public sealed partial class MauiBottomSheet : FrameworkElement, IReloadHandler
         {
             if (_bottomSheet?.IsOpen == true)
             {
-                Cancel();
+                await CancelAsync(true).ConfigureAwait(true);
             }
         }
     }
@@ -307,8 +307,21 @@ public sealed partial class MauiBottomSheet : FrameworkElement, IReloadHandler
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The event arguments indicating the cancellation event.</param>
     [SuppressMessage("Usage", "VSTHRD100: Avoid async void methods", Justification = "Is okay here.")]
-    [SuppressMessage("Design", "CA1031: Do not catch general exception types", Justification = "Catch all exceptions to prevent crash.")]
     private async void BottomSheetOnCanceled(object? sender, EventArgs e)
+    {
+        await CancelAsync(false).ConfigureAwait(true);
+    }
+
+    /// <summary>
+    /// Closes the bottom sheet, including navigation support.
+    /// </summary>
+    /// <param name="ignoreIsCancelable">
+    /// <c>true</c> if the close request comes from code (<see cref="IBottomSheet.IsOpen"/> was set to <c>false</c>).
+    /// <see cref="IBottomSheet.IsCancelable"/> only prevents that the user closes the bottom sheet.
+    /// </param>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    [SuppressMessage("Design", "CA1031: Do not catch general exception types", Justification = "Catch all exceptions to prevent crash.")]
+    private async Task CancelAsync(bool ignoreIsCancelable)
     {
         try
         {
@@ -330,7 +343,7 @@ public sealed partial class MauiBottomSheet : FrameworkElement, IReloadHandler
             }
             else
             {
-                if (_virtualView.IsCancelable
+                if ((ignoreIsCancelable || _virtualView.IsCancelable)
                     && await MvvmHelpers.ConfirmNavigationAsync(_virtualView, parameters).ConfigureAwait(true))
                 {
                     await CloseAsync().ConfigureAwait(true);
