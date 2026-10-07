@@ -83,17 +83,15 @@ public sealed partial class MauiBottomSheet : FrameworkElement, IReloadHandler
     /// <summary>
     /// Opens the bottom sheet asynchronously, initializing the required states and configurations.
     /// </summary>
-    /// <param name="force">A boolean indicating whether to forcefully open the bottom sheet, even if not attached to the window.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    public async Task OpenAsync(bool force = false)
+    public async Task OpenAsync()
     {
         if (_virtualView is null)
         {
             return;
         }
 
-        if (!_isAttachedToWindow
-            && force == false)
+        if (!_isAttachedToWindow)
         {
             using CancellationTokenSource cts = new(TimeSpan.FromSeconds(20));
             await _isAttachedToWindowTcs.Task.WaitAsync(cts.Token).ConfigureAwait(true);
@@ -335,7 +333,7 @@ public sealed partial class MauiBottomSheet : FrameworkElement, IReloadHandler
                 {
                     await CloseAsync().ConfigureAwait(true);
                     MvvmHelpers.OnNavigatedFrom(_virtualView, parameters);
-                    MvvmHelpers.OnNavigatedTo(_virtualView.Parent, parameters);
+                    MvvmHelpers.OnNavigatedTo(_virtualView.GetPageParent(), parameters);
                 }
                 else
                 {

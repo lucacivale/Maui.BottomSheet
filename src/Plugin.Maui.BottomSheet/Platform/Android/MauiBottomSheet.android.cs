@@ -104,23 +104,16 @@ public sealed class MauiBottomSheet : AndroidView, IReloadHandler
 
     /// <summary>
     /// Asynchronously opens the bottom sheet, initializing its properties and event handlers.
-    /// Optionally forces the bottom sheet to open immediately, bypassing attachment checks.
     /// </summary>
-    /// <param name="force">
-    /// A boolean value indicating whether to bypass the attachment check and force the bottom sheet to open.
-    /// Setting this parameter to <c>false</c> will cause the method to wait for the bottom sheet to be attached
-    /// to the window for up to 20 seconds. The default value is <c>false</c>.
-    /// </param>
     /// <returns>A <see cref="Task"/> that represents the asynchronous operation of opening the bottom sheet.</returns>
-    public async Task OpenAsync(bool force = false)
+    public async Task OpenAsync()
     {
         if (_virtualView is null)
         {
             return;
         }
 
-        if (!_isAttachedToWindow
-            && force == false)
+        if (!_isAttachedToWindow)
         {
             using CancellationTokenSource cts = new(TimeSpan.FromSeconds(20));
             await _isAttachedToWindowTcs.Task.WaitAsync(cts.Token).ConfigureAwait(true);
@@ -425,7 +418,7 @@ public sealed class MauiBottomSheet : AndroidView, IReloadHandler
                 {
                     await CloseAsync().ConfigureAwait(true);
                     MvvmHelpers.OnNavigatedFrom(_virtualView, parameters);
-                    MvvmHelpers.OnNavigatedTo(_virtualView.Parent, parameters);
+                    MvvmHelpers.OnNavigatedTo(_virtualView.GetPageParent(), parameters);
                 }
                 else
                 {

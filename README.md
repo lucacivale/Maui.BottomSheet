@@ -397,6 +397,9 @@ builder.Services.AddBottomSheet<UserProfilePage>("UserProfile", (sheet, page) =>
 
 ### 🎯 Using Navigation Service
 
+> [!IMPORTANT]
+> `BottomSheets` are attached to the first `Layout` in the current page's visual hierarchy to ensure compatibility with the .NET MAUI view lifecycle. Navigation fails if no layout is available.
+
 ```csharp
 public class MainViewModel
 {
