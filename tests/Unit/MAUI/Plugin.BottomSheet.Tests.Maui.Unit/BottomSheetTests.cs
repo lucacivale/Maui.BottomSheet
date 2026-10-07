@@ -1,4 +1,8 @@
 using System.Windows.Input;
+using Microsoft.Maui.ApplicationModel;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.Graphics;
+using Microsoft.Maui.Controls.Shapes;
 using NSubstitute;
 using Plugin.Maui.BottomSheet;
 using Plugin.Maui.BottomSheet.PlatformConfiguration.AndroidSpecific;
@@ -612,5 +616,79 @@ public class BottomSheetTests
 
         Assert.NotEqual(BottomSheetState.Medium, sheet.CurrentState);
         Assert.Equal(BottomSheetState.Large, sheet.CurrentState);
+    }
+
+    [Fact]
+    public void HandleColorChanged_ShouldUpdateExistingHandle()
+    {
+        MauiBottomSheet sheet = new MauiBottomSheet { HandleColor = Colors.Red };
+        sheet.OnOpeningBottomSheet();
+        Border handle = Assert.IsType<Border>(Assert.Single(sheet.ContainerView.Children));
+        BoxView content = Assert.IsType<BoxView>(handle.Content);
+        Assert.Equal(Colors.Red, content.Color);
+
+        sheet.HandleColor = Colors.Blue;
+
+        Assert.Same(handle, Assert.Single(sheet.ContainerView.Children));
+        Assert.Equal(Colors.Blue, content.Color);
+        Assert.Equal(Colors.Blue, content.BackgroundColor);
+        Assert.Equal(Colors.Blue, handle.BackgroundColor);
+        Assert.Equal(Colors.Blue, Assert.IsType<SolidColorBrush>(handle.Stroke).Color);
+
+        sheet.HandleColor = null;
+        Assert.Null(sheet.HandleColor);
+        Assert.Equal(Colors.Gray, content.Color);
+        Assert.Equal(Colors.Gray, Assert.IsType<SolidColorBrush>(handle.Stroke).Color);
+    }
+
+    [Fact]
+    public void HandleColorChanged_WhileHidden_ShouldApplyWhenShown()
+    {
+        MauiBottomSheet sheet = new MauiBottomSheet { HasHandle = false };
+        sheet.OnOpeningBottomSheet();
+        sheet.HandleColor = Colors.Red;
+        Assert.Empty(sheet.ContainerView.Children);
+
+        sheet.HasHandle = true;
+
+        Border handle = Assert.IsType<Border>(Assert.Single(sheet.ContainerView.Children));
+        Assert.Equal(Colors.Red, Assert.IsType<BoxView>(handle.Content).Color);
+    }
+
+    [Fact]
+    public void HandleColor_DefaultsShouldFollowThemeAndRespectExplicitColor()
+    {
+        Application? previousApplication = Application.Current;
+        Application application = new Application();
+        Application.Current = application;
+        try
+        {
+            application.UserAppTheme = AppTheme.Light;
+            MauiBottomSheet sheet = new MauiBottomSheet();
+            ContentPage page = new ContentPage { Content = sheet };
+            Window window = new Window(page) { Parent = application };
+            sheet.OnOpeningBottomSheet();
+            Border handle = Assert.IsType<Border>(Assert.Single(sheet.ContainerView.Children));
+            BoxView content = Assert.IsType<BoxView>(handle.Content);
+            Assert.Equal(Colors.Gray, content.Color);
+
+            application.UserAppTheme = AppTheme.Dark;
+            Assert.Equal(Colors.LightGray, content.Color);
+            Assert.Equal(Colors.LightGray, Assert.IsType<SolidColorBrush>(handle.Stroke).Color);
+
+            sheet.HandleColor = Colors.Red;
+            application.UserAppTheme = AppTheme.Light;
+            Assert.Equal(Colors.Red, content.Color);
+            Assert.Equal(Colors.Red, Assert.IsType<SolidColorBrush>(handle.Stroke).Color);
+
+            sheet.HandleColor = null;
+            Assert.Equal(Colors.Gray, content.Color);
+            application.UserAppTheme = AppTheme.Dark;
+            Assert.Equal(Colors.LightGray, content.Color);
+        }
+        finally
+        {
+            Application.Current = previousApplication;
+        }
     }
 }

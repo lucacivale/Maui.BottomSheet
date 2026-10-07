@@ -177,6 +177,7 @@ or
 | `IsModal`               | `bool`                   | Enable/disable interaction with content under BottomSheet                                                                                                                                  |
 | `IsCancelable`          | `bool`                   | Allow user to close via gestures or background click                                                                                                                                       |
 | `HasHandle`             | `bool`                   | Show/hide the drag handle                                                                                                                                                                  |
+| `HandleColor`           | `Color?`                 | Custom drag-handle color; `null` uses Gray in light mode and LightGray in dark mode. |
 | `ShowHeader`            | `bool`                   | Show/hide the header section                                                                                                                                                               |
 | `IsOpen`                | `bool`                   | Control open/close state                                                                                                                                                                   |
 | `IsDraggable`           | `bool`                   | Enable/disable drag gestures (useful for drawing)                                                                                                                                          |
@@ -189,6 +190,20 @@ or
 | `WindowBackgroundColor` | `Color`                  | Window background (modal only)                                                                                                                                                             |
 | `SizeMode`              | `BottomSheetSizeMode`    | Represents a size mode for the bottom sheet where the height is adjusted dynamically to fit the content displayed within it or a fixed value based on the number of states it can display. |
 
+
+### Handle Color
+
+Use `HandleColor` to customize the drag handle on any platform. It is a bindable property, so changes update an existing handle without reopening the bottom sheet.
+
+```xml
+<mauibottomsheet:BottomSheet
+    HasHandle="True"
+    HandleColor="{AppThemeBinding Light=DarkSlateGray, Dark=LightSkyBlue}">
+    <!-- Header and content -->
+</mauibottomsheet:BottomSheet>
+```
+
+You can also set `sheet.HandleColor = Colors.CornflowerBlue;` in C#. Set it back to `null` to restore the defaults: `Gray` in light mode and `LightGray` in dark mode. The default colors follow theme changes automatically. `HasHandle="False"` still hides the handle.
 
 ### Size Modes
 
