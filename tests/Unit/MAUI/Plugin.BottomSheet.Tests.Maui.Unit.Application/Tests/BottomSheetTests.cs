@@ -1,4 +1,5 @@
 using System.Windows.Input;
+using Microsoft.Maui.Platform;
 using NSubstitute;
 using Plugin.Maui.BottomSheet;
 using Plugin.Maui.BottomSheet.PlatformConfiguration.AndroidSpecific;
@@ -542,4 +543,177 @@ public class BottomSheetTests : BaseTest<Mocks.EmptyContentPage, Plugin.Maui.Bot
         Assert.NotEqual(BottomSheetState.Medium, View.CurrentState);
         Assert.Equal(BottomSheetState.Large, View.CurrentState);
     }
+
+    #if IOS || MACCATALYST
+    [UIFact]
+    public async Task NonModalSheet_OnlyPeekState_LargeState_IsAdded()
+    {
+        View.IsModal = false;
+        View.States = [BottomSheetState.Peek];
+        View.PeekHeight = 300;
+        View.IsOpen = true;
+
+        await Task.Delay(TimeSpan.FromSeconds(1));
+
+        iOSMacCatalyst.BottomSheet mauiBottomSheet = ((Plugin.Maui.BottomSheet.Platform.MaciOS.MauiBottomSheet)View.ToPlatform(View.Handler!.MauiContext!)).BottomSheet!;
+        
+        Assert.Contains(mauiBottomSheet.LogicalStates, x => x == BottomSheetState.Peek);
+        Assert.Contains(mauiBottomSheet.LogicalStates, x => x == BottomSheetState.Large);
+    }
+    
+    [UIFact]
+    public async Task NonModalSheet_PeekStateWithMedium_LargeNotAdded()
+    {
+        View.IsModal = false;
+        View.States = [BottomSheetState.Peek, BottomSheetState.Medium];
+        View.PeekHeight = 300;
+        View.IsOpen = true;
+
+        await Task.Delay(TimeSpan.FromSeconds(1));
+
+        iOSMacCatalyst.BottomSheet mauiBottomSheet = ((Plugin.Maui.BottomSheet.Platform.MaciOS.MauiBottomSheet)View.ToPlatform(View.Handler!.MauiContext!)).BottomSheet!;
+        
+        Assert.Contains(mauiBottomSheet.LogicalStates, x => x == BottomSheetState.Peek);
+        Assert.DoesNotContain(mauiBottomSheet.LogicalStates, x => x == BottomSheetState.Large);
+    }
+    
+    [UIFact]
+    public async Task NonModalSheet_OnlyPeekState_PeekStateLocked()
+    {
+        View.IsModal = false;
+        View.States = [BottomSheetState.Peek];
+        View.PeekHeight = 300;
+        View.IsOpen = true;
+
+        await Task.Delay(TimeSpan.FromSeconds(1));
+        
+        iOSMacCatalyst.BottomSheet mauiBottomSheet = ((Plugin.Maui.BottomSheet.Platform.MaciOS.MauiBottomSheet)View.ToPlatform(View.Handler!.MauiContext!)).BottomSheet!;
+        
+        mauiBottomSheet.State = BottomSheetState.Large;
+
+        await Task.Delay(TimeSpan.FromSeconds(1));
+        
+        Assert.Equal(BottomSheetState.Peek, mauiBottomSheet.State);
+    }
+    
+    [UIFact]
+    public async Task ModalSheet_OnlyPeekState_LargeState_IsNotAdded()
+    {
+        View.IsModal = true;
+        View.States = [BottomSheetState.Peek];
+        View.PeekHeight = 300;
+        View.IsOpen = true;
+
+        await Task.Delay(TimeSpan.FromSeconds(1));
+
+        iOSMacCatalyst.BottomSheet mauiBottomSheet = ((Plugin.Maui.BottomSheet.Platform.MaciOS.MauiBottomSheet)View.ToPlatform(View.Handler!.MauiContext!)).BottomSheet!;
+        
+        Assert.Contains(mauiBottomSheet.LogicalStates, x => x == BottomSheetState.Peek);
+        Assert.DoesNotContain(mauiBottomSheet.LogicalStates, x => x == BottomSheetState.Large);
+    }
+    
+    [UIFact]
+    public async Task NonModalSheet_FitToContent_LargeState_IsAdded()
+    {
+        View.IsModal = false;
+        View.SizeMode = BottomSheetSizeMode.FitToContent;
+        View.Content = new BottomSheetContent
+        {
+            Content = new VerticalStackLayout
+            {
+                new Border { HeightRequest = 250, WidthRequest = 250 }
+            }
+        };
+        View.IsOpen = true;
+
+        await Task.Delay(TimeSpan.FromSeconds(1));
+
+        iOSMacCatalyst.BottomSheet mauiBottomSheet = ((Plugin.Maui.BottomSheet.Platform.MaciOS.MauiBottomSheet)View.ToPlatform(View.Handler!.MauiContext!)).BottomSheet!;
+        
+        Assert.Contains(mauiBottomSheet.LogicalStates, x => x == BottomSheetState.Peek);
+        Assert.Contains(mauiBottomSheet.LogicalStates, x => x == BottomSheetState.Large);
+    }
+
+    [UIFact]
+    public async Task NonModalSheet_FitToContent_ContentState_IsLocked()
+    {
+        View.IsModal = false;
+        View.SizeMode = BottomSheetSizeMode.FitToContent;
+        View.Content = new BottomSheetContent
+        {
+            Content = new VerticalStackLayout
+            {
+                new Border { HeightRequest = 250, WidthRequest = 250 }
+            }
+        };
+        View.IsOpen = true;
+
+        await Task.Delay(TimeSpan.FromSeconds(1));
+
+        iOSMacCatalyst.BottomSheet mauiBottomSheet = ((Plugin.Maui.BottomSheet.Platform.MaciOS.MauiBottomSheet)View.ToPlatform(View.Handler!.MauiContext!)).BottomSheet!;
+        
+        mauiBottomSheet.State = BottomSheetState.Large;
+
+        await Task.Delay(TimeSpan.FromSeconds(1));
+        
+        Assert.Equal(BottomSheetState.Peek, mauiBottomSheet.State);
+    }
+        
+    [UIFact]
+    public async Task ModalSheet_FitToContent_LargeState_IsNotNotAdded()
+    {
+        View.IsModal = true;
+        View.SizeMode = BottomSheetSizeMode.FitToContent;
+        View.Content = new BottomSheetContent
+        {
+            Content = new VerticalStackLayout
+            {
+                new Border { HeightRequest = 250, WidthRequest = 250 }
+            }
+        };
+        View.IsOpen = true;
+
+        await Task.Delay(TimeSpan.FromSeconds(1));
+
+        iOSMacCatalyst.BottomSheet mauiBottomSheet = ((Plugin.Maui.BottomSheet.Platform.MaciOS.MauiBottomSheet)View.ToPlatform(View.Handler!.MauiContext!)).BottomSheet!;
+        
+        Assert.Contains(mauiBottomSheet.LogicalStates, x => x == BottomSheetState.Peek);
+        Assert.DoesNotContain(mauiBottomSheet.LogicalStates, x => x == BottomSheetState.Large);
+    }
+    
+    [UIFact]
+    public async Task NonModalSheet_PeekOnly_StatesChanged_CurrentStateRemained()
+    {
+        View.IsModal = false;
+        View.States = [BottomSheetState.Peek];
+        View.PeekHeight = 200;
+        View.IsOpen = true;
+
+        await Task.Delay(TimeSpan.FromSeconds(1));
+
+        View.States = [BottomSheetState.Peek, BottomSheetState.Medium];
+        iOSMacCatalyst.BottomSheet mauiBottomSheet = ((Plugin.Maui.BottomSheet.Platform.MaciOS.MauiBottomSheet)View.ToPlatform(View.Handler!.MauiContext!)).BottomSheet!;
+        
+        Assert.Equal(BottomSheetState.Peek, mauiBottomSheet.State);
+        Assert.Equal(mauiBottomSheet.LogicalStates.Count, View.States.Count);
+        Assert.DoesNotContain(mauiBottomSheet.LogicalStates, x => x == BottomSheetState.Large);
+    }
+    
+    [UIFact]
+    public async Task NonModalSheet_PeekOnly_StatesChanged_PeekNotLocked()
+    {
+        View.IsModal = false;
+        View.States = [BottomSheetState.Peek];
+        View.PeekHeight = 200;
+        View.IsOpen = true;
+
+        await Task.Delay(TimeSpan.FromSeconds(1));
+
+        View.States = [BottomSheetState.Peek, BottomSheetState.Medium];
+        View.CurrentState = BottomSheetState.Medium;
+        iOSMacCatalyst.BottomSheet mauiBottomSheet = ((Plugin.Maui.BottomSheet.Platform.MaciOS.MauiBottomSheet)View.ToPlatform(View.Handler!.MauiContext!)).BottomSheet!;
+        
+        Assert.Equal(BottomSheetState.Medium, mauiBottomSheet.State);
+    }
+    #endif
 }

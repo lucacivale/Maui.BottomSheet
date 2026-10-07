@@ -29,6 +29,11 @@ internal sealed class BottomSheetDelegate : UISheetPresentationControllerDelegat
     }
 
     /// <summary>
+    /// Gets or sets current state of the bottom sheet, indicating its level of expansion or visibility.
+    /// </summary>
+    internal BottomSheetState CurrentState { get; set; }
+
+    /// <summary>
     /// Determines whether the presentation controller should dismiss when touched outside or swiped.
     /// Note: DidAttemptToDismiss is only called for swipe dismissal, while ShouldDismiss handles background taps and swipes.
     /// </summary>
@@ -69,7 +74,7 @@ internal sealed class BottomSheetDelegate : UISheetPresentationControllerDelegat
 
         _eventManager.RaiseEvent(
             sheetPresentationController,
-            new BottomSheetStateChangedEventArgs(state, state),
+            new BottomSheetStateChangedEventArgs(CurrentState, state),
             nameof(StateChanged));
     }
 }

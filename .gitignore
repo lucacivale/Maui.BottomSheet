@@ -38,3 +38,5 @@ Desktop.ini
 .DS_Store
 
 **/artifacts/
+
+**/.junie/

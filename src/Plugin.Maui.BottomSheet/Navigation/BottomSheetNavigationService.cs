@@ -107,6 +107,11 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
 
         bottomSheet.Closed += OnClose;
 
+        if (bottomSheet is Element element)
+        {
+            page.AddLogicalChild(element);
+        }
+
         if (viewModel is not null)
         {
             bottomSheet.BindingContext = viewModel;
@@ -209,6 +214,11 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
             else
             {
                 _bottomSheetStack.Current.Closed -= OnClose;
+
+                if (_bottomSheetStack.Current is Element element)
+                {
+                    _bottomSheetStack.Current.Parent.RemoveLogicalChild(element);
+                }
 
                 if (_bottomSheetStack.Current.Handler is Handlers.BottomSheetHandler bottomSheetHandler)
                 {
