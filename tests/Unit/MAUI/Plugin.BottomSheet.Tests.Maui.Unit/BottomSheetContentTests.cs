@@ -1,3 +1,4 @@
+using Microsoft.Maui.Controls;
 using Plugin.Maui.BottomSheet;
 
 namespace Plugin.BottomSheet.Tests.Maui.Unit;
@@ -215,5 +216,47 @@ public class BottomSheetContentTests
         Assert.Equal(nameof(BottomSheetContent.ContentTemplate), BottomSheetContent.ContentTemplateProperty.PropertyName);
         Assert.Equal(typeof(View), BottomSheetContent.ContentProperty.ReturnType);
         Assert.Equal(typeof(DataTemplate), BottomSheetContent.ContentTemplateProperty.ReturnType);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void BindingContextChanged_ShouldPreserveChildContexts(bool useTemplate)
+    {
+        object explicitContext = new object();
+        Label explicitChild = new Label { BindingContext = explicitContext };
+        Label boundChild = new Label();
+        boundChild.SetBinding(BindableObject.BindingContextProperty, new Binding("ChildContext"));
+        Label inheritedChild = new Label();
+        VerticalStackLayout root = new VerticalStackLayout();
+        root.Children.Add(explicitChild);
+        root.Children.Add(boundChild);
+        root.Children.Add(inheritedChild);
+        BottomSheetContent content = new BottomSheetContent();
+        if (useTemplate)
+        {
+            content.ContentTemplate = new DataTemplate(() => root);
+        }
+        else
+        {
+            content.Content = root;
+        }
+
+        var firstContext = new { ChildContext = new object() };
+        content.BindingContext = firstContext;
+        content.CreateContent();
+
+        Assert.Same(firstContext, root.BindingContext);
+        Assert.Same(firstContext, inheritedChild.BindingContext);
+        Assert.Same(explicitContext, explicitChild.BindingContext);
+        Assert.Same(firstContext.ChildContext, boundChild.BindingContext);
+
+        var secondContext = new { ChildContext = new object() };
+        content.BindingContext = secondContext;
+
+        Assert.Same(secondContext, root.BindingContext);
+        Assert.Same(secondContext, inheritedChild.BindingContext);
+        Assert.Same(explicitContext, explicitChild.BindingContext);
+        Assert.Same(secondContext.ChildContext, boundChild.BindingContext);
     }
 }
