@@ -1,6 +1,7 @@
 using System.Windows.Input;
 using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Controls;
+using Microsoft.Maui.Dispatching;
 using Microsoft.Maui.Graphics;
 using Microsoft.Maui.Controls.Shapes;
 using NSubstitute;
@@ -621,43 +622,53 @@ public class BottomSheetTests
     [Fact]
     public void HandleColorChanged_ShouldUpdateExistingHandle()
     {
+        using HandleTestDispatcher dispatcher = new HandleTestDispatcher();
         MauiBottomSheet sheet = new MauiBottomSheet { HandleColor = Colors.Red };
         sheet.OnOpeningBottomSheet();
         Border handle = Assert.IsType<Border>(Assert.Single(sheet.ContainerView.Children));
-        BoxView content = Assert.IsType<BoxView>(handle.Content);
-        Assert.Equal(Colors.Red, content.Color);
+        Assert.Equal(Colors.Red, Assert.IsType<SolidColorBrush>(handle.Background).Color);
+        Assert.Equal(40, handle.WidthRequest);
+        Assert.Equal(7.5, handle.HeightRequest);
+        Assert.Equal(0, handle.StrokeThickness);
 
         sheet.HandleColor = Colors.Blue;
 
         Assert.Same(handle, Assert.Single(sheet.ContainerView.Children));
-        Assert.Equal(Colors.Blue, content.Color);
-        Assert.Equal(Colors.Blue, content.BackgroundColor);
-        Assert.Equal(Colors.Blue, handle.BackgroundColor);
-        Assert.Equal(Colors.Blue, Assert.IsType<SolidColorBrush>(handle.Stroke).Color);
+        Assert.Equal(Colors.Blue, Assert.IsType<SolidColorBrush>(handle.Background).Color);
 
-        sheet.HandleColor = null;
-        Assert.Null(sheet.HandleColor);
-        Assert.Equal(Colors.Gray, content.Color);
-        Assert.Equal(Colors.Gray, Assert.IsType<SolidColorBrush>(handle.Stroke).Color);
+        sheet.ClearValue(MauiBottomSheet.HandleColorProperty);
+        Assert.Equal(Colors.Gray, sheet.HandleColor);
+        Assert.Equal(Colors.Gray, Assert.IsType<SolidColorBrush>(handle.Background).Color);
     }
 
     [Fact]
     public void HandleColorChanged_WhileHidden_ShouldApplyWhenShown()
     {
+        using HandleTestDispatcher dispatcher = new HandleTestDispatcher();
         MauiBottomSheet sheet = new MauiBottomSheet { HasHandle = false };
         sheet.OnOpeningBottomSheet();
         sheet.HandleColor = Colors.Red;
         Assert.Empty(sheet.ContainerView.Children);
 
         sheet.HasHandle = true;
-
         Border handle = Assert.IsType<Border>(Assert.Single(sheet.ContainerView.Children));
-        Assert.Equal(Colors.Red, Assert.IsType<BoxView>(handle.Content).Color);
+        Assert.Equal(Colors.Red, Assert.IsType<SolidColorBrush>(handle.Background).Color);
+
+        sheet.HasHandle = false;
+        sheet.HandleColor = Colors.Blue;
+        Assert.Empty(sheet.ContainerView.Children);
+        Assert.Equal(Colors.Red, Assert.IsType<SolidColorBrush>(handle.Background).Color);
+
+        sheet.HasHandle = true;
+        Border replacement = Assert.IsType<Border>(Assert.Single(sheet.ContainerView.Children));
+        Assert.NotSame(handle, replacement);
+        Assert.Equal(Colors.Blue, Assert.IsType<SolidColorBrush>(replacement.Background).Color);
     }
 
     [Fact]
-    public void HandleColor_DefaultsShouldFollowThemeAndRespectExplicitColor()
+    public void HandleColor_ShouldKeepGrayDefaultAndSupportAppThemeBindings()
     {
+        using HandleTestDispatcher dispatcher = new HandleTestDispatcher();
         Application? previousApplication = Application.Current;
         Application application = new Application();
         Application.Current = application;
@@ -669,26 +680,37 @@ public class BottomSheetTests
             Window window = new Window(page) { Parent = application };
             sheet.OnOpeningBottomSheet();
             Border handle = Assert.IsType<Border>(Assert.Single(sheet.ContainerView.Children));
-            BoxView content = Assert.IsType<BoxView>(handle.Content);
-            Assert.Equal(Colors.Gray, content.Color);
+            Assert.Equal(Colors.Gray, sheet.HandleColor);
+            Assert.Equal(Colors.Gray, Assert.IsType<SolidColorBrush>(handle.Background).Color);
 
             application.UserAppTheme = AppTheme.Dark;
-            Assert.Equal(Colors.LightGray, content.Color);
-            Assert.Equal(Colors.LightGray, Assert.IsType<SolidColorBrush>(handle.Stroke).Color);
+            Assert.Equal(Colors.Gray, sheet.HandleColor);
+            Assert.Equal(Colors.Gray, Assert.IsType<SolidColorBrush>(handle.Background).Color);
 
-            sheet.HandleColor = Colors.Red;
+            sheet.SetAppThemeColor(MauiBottomSheet.HandleColorProperty, Colors.Red, Colors.Blue);
+            Assert.Equal(Colors.Blue, Assert.IsType<SolidColorBrush>(handle.Background).Color);
             application.UserAppTheme = AppTheme.Light;
-            Assert.Equal(Colors.Red, content.Color);
-            Assert.Equal(Colors.Red, Assert.IsType<SolidColorBrush>(handle.Stroke).Color);
-
-            sheet.HandleColor = null;
-            Assert.Equal(Colors.Gray, content.Color);
-            application.UserAppTheme = AppTheme.Dark;
-            Assert.Equal(Colors.LightGray, content.Color);
+            Assert.Equal(Colors.Red, Assert.IsType<SolidColorBrush>(handle.Background).Color);
         }
         finally
         {
             Application.Current = previousApplication;
+        }
+    }
+    private sealed class HandleTestDispatcher : IDisposable
+    {
+        private readonly IDispatcherProvider _previousProvider = DispatcherProvider.Current;
+
+        public HandleTestDispatcher()
+        {
+            IDispatcherProvider provider = Substitute.For<IDispatcherProvider>();
+            provider.GetForCurrentThread().Returns(Substitute.For<IDispatcher>());
+            DispatcherProvider.SetCurrent(provider);
+        }
+
+        public void Dispose()
+        {
+            DispatcherProvider.SetCurrent(_previousProvider);
         }
     }
 }
