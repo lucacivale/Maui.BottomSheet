@@ -127,6 +127,16 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             propertyChanged: OnHasHandlePropertyChanged);
 
     /// <summary>
+    /// Bindable property for the handle color. Defaults to <see cref="Colors.Gray"/>.
+    /// </summary>
+    public static readonly BindableProperty HandleColorProperty =
+        BindableProperty.Create(
+            nameof(HandleColor),
+            typeof(Color),
+            typeof(BottomSheet),
+            defaultValue: Colors.Gray);
+
+    /// <summary>
     /// Bindable property that indicates whether the header is displayed.
     /// </summary>
     public static readonly BindableProperty ShowHeaderProperty =
@@ -402,6 +412,15 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     {
         get => (bool)GetValue(HasHandleProperty);
         set => SetValue(HasHandleProperty, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the color of the bottom-sheet handle. Defaults to <see cref="Colors.Gray"/>.
+    /// </summary>
+    public Color HandleColor
+    {
+        get => (Color)GetValue(HandleColorProperty);
+        set => SetValue(HandleColorProperty, value);
     }
 
     /// <summary>
@@ -1157,7 +1176,11 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     /// </summary>
     private void RemoveHandle()
     {
-        ContainerView.Remove(ContainerView.Children.FirstOrDefault(child => ContainerView.GetRow(child) == HandleRow));
+        if (ContainerView.Children.FirstOrDefault(child => ContainerView.GetRow(child) == HandleRow) is View handle)
+        {
+            handle.RemoveBinding(BackgroundProperty);
+            ContainerView.Remove(handle);
+        }
     }
 
     /// <summary>
@@ -1188,7 +1211,7 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
     /// <returns>A <see cref="Border"/> element configured as the handle, including margin, dimensions, and styling characteristics.</returns>
     private Border CreateHandle()
     {
-        return new()
+        Border handle = new()
         {
             AutomationId = AutomationIds.Handle,
             Margin = new(0, 10 - Padding.Top, 0, 10),
@@ -1196,15 +1219,20 @@ public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet
             HeightRequest = 7.5,
             Content = new BoxView()
             {
+                CornerRadius = 20,
                 WidthRequest = 40,
-                Color = Colors.Gray,
+                Background = Colors.Transparent,
             },
+            StrokeThickness = 0,
             StrokeShape = new RoundRectangle()
             {
                 CornerRadius = new(20),
             },
-            Stroke = Colors.Gray,
         };
+
+        handle.SetBinding(BackgroundProperty, static (BottomSheet bottomSheet) => bottomSheet.HandleColor, source: this);
+
+        return handle;
     }
 
     /// <summary>
