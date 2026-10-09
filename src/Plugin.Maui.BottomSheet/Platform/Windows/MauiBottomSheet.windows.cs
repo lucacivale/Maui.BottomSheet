@@ -5,7 +5,6 @@ using Plugin.Maui.BottomSheet.Navigation;
 using Plugin.Maui.BottomSheet.PlatformConfiguration.WindowsSpecific;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using Application = Microsoft.Maui.Controls.Application;
 using WWindow = Microsoft.UI.Xaml.Window;
 
 namespace Plugin.Maui.BottomSheet.Platform.Windows;
@@ -60,27 +59,6 @@ public sealed partial class MauiBottomSheet : FrameworkElement, IReloadHandler
         }
 
         _virtualView = virtualView;
-        Application.Current!.RequestedThemeChanged += OnRequestedThemeChanged;
-    }
-
-    private void OnRequestedThemeChanged(object? sender, AppThemeChangedEventArgs e)
-    {
-        if (IsOpen)
-        {
-            MainThread.BeginInvokeOnMainThread(RefreshTheme);
-        }
-    }
-
-    private void RefreshTheme()
-    {
-        if (_virtualView?.BackgroundColor is null
-            && _bottomSheet is not null
-            && Application.Current.Resources["SolidBackgroundFillColorBaseBrush"] is Microsoft.UI.Xaml.Media.Brush background)
-        {
-            _bottomSheet.Background = background;
-        }
-
-        SetWindowBackgroundColor();
     }
 
     /// <summary>
@@ -100,7 +78,6 @@ public sealed partial class MauiBottomSheet : FrameworkElement, IReloadHandler
     public void Cleanup()
     {
         Loaded -= MauiBottomSheet_Loaded;
-        Application.Current!.RequestedThemeChanged -= OnRequestedThemeChanged;
     }
 
     /// <summary>

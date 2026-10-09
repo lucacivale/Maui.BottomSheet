@@ -347,18 +347,6 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
         }
     }
 
-    /// <inheritdoc/>
-    public override void TraitCollectionDidChange(UITraitCollection? previousTraitCollection)
-    {
-        base.TraitCollectionDidChange(previousTraitCollection);
-
-        if (previousTraitCollection?.UserInterfaceStyle != TraitCollection.UserInterfaceStyle)
-        {
-            ApplyBackgroundColor();
-            ApplyWindowBackgroundColor();
-        }
-    }
-
     /// <summary>
     /// Called to notify that the view is about to disappear from the screen.
     /// </summary>

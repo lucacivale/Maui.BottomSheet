@@ -442,29 +442,6 @@ public sealed class BottomSheetDialog : Google.Android.Material.BottomSheet.Bott
     }
 
     /// <summary>
-    /// Reapplies the current Android theme background when no explicit
-    /// background color was supplied by the MAUI view.
-    /// </summary>
-    public void RefreshThemeBackground()
-    {
-        using global::Android.Util.TypedValue value = new();
-
-        if (_content?.Parent is not View bottomSheetFrame
-            || Context is not { } context
-            || context.Theme is not { } theme
-            || !theme.ResolveAttribute(global::Android.Resource.Attribute.ColorBackground, value, true))
-        {
-            return;
-        }
-
-        int color = value.ResourceId != 0
-            ? AndroidX.Core.Content.ContextCompat.GetColor(context, value.ResourceId)
-            : value.Data;
-
-        bottomSheetFrame.BackgroundTintList = ColorStateList.ValueOf(new global::Android.Graphics.Color(color));
-    }
-
-    /// <summary>
     /// Displays the bottom sheet or to the user.
     /// </summary>
     public override void Show()
