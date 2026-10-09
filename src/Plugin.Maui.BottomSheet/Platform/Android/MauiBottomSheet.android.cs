@@ -1,4 +1,5 @@
 using Android.Content;
+using Android.Util;
 using Microsoft.Maui.HotReload;
 using Microsoft.Maui.LifecycleEvents;
 using Microsoft.Maui.Platform;
@@ -9,8 +10,10 @@ using Plugin.Maui.BottomSheet.PlatformConfiguration.AndroidSpecific;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using AActivity = Android.App.Activity;
+using AConfiguration = Android.Content.Res.Configuration;
 using AndroidLifecycle = Plugin.Maui.BottomSheet.LifecycleEvents.AndroidLifecycle;
 using AndroidView = Android.Views.View;
+using MauiApplication = Microsoft.Maui.Controls.Application;
 
 namespace Plugin.Maui.BottomSheet.Platform.Android;
 
@@ -27,6 +30,7 @@ public sealed class MauiBottomSheet : AndroidView, IReloadHandler
     private BottomSheetDialog? _bottomSheet;
 
     private bool _isAttachedToWindow;
+    private MauiApplication? _themeApplication;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MauiBottomSheet"/> class.
@@ -133,6 +137,7 @@ public sealed class MauiBottomSheet : AndroidView, IReloadHandler
 
         _bottomSheet.SetContentView(_virtualView.ContainerView.ToPlatform(_mauiContext));
 
+        ObserveTheme();
         SetBottomSheetBackgroundColor();
         SetHalfExpandedRatio();
         SetMargin();
@@ -161,6 +166,7 @@ public sealed class MauiBottomSheet : AndroidView, IReloadHandler
     /// <returns>A task representing the asynchronous operation.</returns>
     public async Task CloseAsync()
     {
+        StopObservingTheme();
         if (_bottomSheet is null
             || _virtualView is null)
         {
@@ -319,15 +325,47 @@ public sealed class MauiBottomSheet : AndroidView, IReloadHandler
     /// <summary>
     /// Sets the background color of the bottom sheet based on the virtual view's background color.
     /// </summary>
+    [SuppressMessage("Sonar", "S3265:Non-flags enums should not be used in bitwise operations", Justification = "Android UiMode defines configuration bit masks.")]
     public void SetBottomSheetBackgroundColor()
     {
-        if (_virtualView?.BackgroundColor is null
-            || _bottomSheet is null)
+        if (_virtualView is null || _bottomSheet is null)
         {
             return;
         }
 
-        _bottomSheet.BackgroundColor = _virtualView.BackgroundColor.ToPlatform();
+        if (_virtualView.BackgroundColor is { } background)
+        {
+            _bottomSheet.BackgroundColor = background.ToPlatform();
+            return;
+        }
+
+        if (_bottomSheet.Context is not { } context || context.Theme is not { } theme)
+        {
+            return;
+        }
+
+        // Resolve the existing native theme against the app's selected night configuration.
+        // A separate context avoids changing the activity or other controls' appearance.
+        using AConfiguration configuration = new(context.Resources!.Configuration);
+        global::Android.Content.Res.UiMode nightMode = (_themeApplication?.UserAppTheme ?? AppTheme.Unspecified) switch
+            {
+                AppTheme.Dark => global::Android.Content.Res.UiMode.NightYes,
+                AppTheme.Light => global::Android.Content.Res.UiMode.NightNo,
+                _ => context.Resources.Configuration!.UiMode & global::Android.Content.Res.UiMode.NightMask,
+            };
+        configuration.UiMode = (configuration.UiMode & ~global::Android.Content.Res.UiMode.NightMask) | nightMode;
+        using Context configuredContext = context.CreateConfigurationContext(configuration)!;
+        using global::Android.Views.ContextThemeWrapper themedContext = new(configuredContext, 0);
+        themedContext.Theme!.SetTo(theme);
+        AndroidX.Core.Content.Resources.ResourcesCompat.ThemeCompat.Rebase(themedContext.Theme);
+        using TypedValue value = new();
+        if (themedContext.Theme.ResolveAttribute(global::Android.Resource.Attribute.ColorBackground, value, true))
+        {
+            int color = value.ResourceId != 0
+                ? AndroidX.Core.Content.ContextCompat.GetColor(themedContext, value.ResourceId)
+                : value.Data;
+            _bottomSheet.BackgroundColor = new global::Android.Graphics.Color(color);
+        }
     }
 
     /// <summary>
@@ -371,6 +409,25 @@ public sealed class MauiBottomSheet : AndroidView, IReloadHandler
         _bottomSheet.SizeMode = _virtualView.SizeMode;
     }
 
+    /// <inheritdoc/>
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            StopObservingTheme();
+        }
+
+        base.Dispose(disposing);
+    }
+
+    /// <inheritdoc/>
+    protected override void OnConfigurationChanged(AConfiguration? newConfig)
+    {
+        base.OnConfigurationChanged(newConfig);
+
+        SetBottomSheetBackgroundColor();
+    }
+
     /// <summary>
     /// Called when the view is attached to a window. This method overrides the base implementation
     /// to initialize platform-specific logic for the bottom sheet component and sets the internal
@@ -382,6 +439,30 @@ public sealed class MauiBottomSheet : AndroidView, IReloadHandler
 
         _isAttachedToWindow = true;
         _isAttachedToWindowTcs.TrySetResult();
+    }
+
+    private void ObserveTheme()
+    {
+        StopObservingTheme();
+        _themeApplication = MauiApplication.Current;
+        if (_themeApplication is not null)
+        {
+            _themeApplication.RequestedThemeChanged += RequestedThemeChanged;
+        }
+    }
+
+    private void StopObservingTheme()
+    {
+        if (_themeApplication is not null)
+        {
+            _themeApplication.RequestedThemeChanged -= RequestedThemeChanged;
+            _themeApplication = null;
+        }
+    }
+
+    private void RequestedThemeChanged(object? sender, AppThemeChangedEventArgs e)
+    {
+        Microsoft.Maui.ApplicationModel.MainThread.BeginInvokeOnMainThread(SetBottomSheetBackgroundColor);
     }
 
     /// <summary>

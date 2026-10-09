@@ -200,3 +200,11 @@ dotnet_diagnostic.RS2008.severity = none
 
 # IDE0130: Namespace does not match folder structure
 dotnet_diagnostic.IDE0130.severity = warning
+
+# Preserve the existing LF convention of the native theme implementation files.
+[src/{Plugin.BottomSheet.Windows/BottomSheet.cs,Plugin.BottomSheet.iOSMacCatalyst/BottomSheet.cs,Plugin.Maui.BottomSheet/Platform/Android/MauiBottomSheet.android.cs,Plugin.Maui.BottomSheet/Platform/MaciOS/MauiBottomSheet.macios.cs}]
+end_of_line = lf
+
+# Keep sample additions consistent with the existing LF files.
+[sample/Plugin.Maui.BottomSheet.Sample/Plugin.Maui.BottomSheet.Sample/{MainPage.xaml.cs,ThemeAppearanceSample.cs}]
+end_of_line = lf

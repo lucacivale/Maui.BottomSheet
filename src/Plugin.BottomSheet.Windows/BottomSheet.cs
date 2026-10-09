@@ -37,6 +37,7 @@ public sealed partial class BottomSheet
     private readonly KeyboardAccelerator _escapeKeyboardAccelerator;
 
     private Size _contentSize = Size.Empty;
+    private bool _hasCustomBackground;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BottomSheet"/> class.
@@ -199,7 +200,11 @@ public sealed partial class BottomSheet
     public Brush Background
     {
         get => _dialogBorder.Background;
-        set => _dialogBorder.Background = value;
+        set
+        {
+            _hasCustomBackground = true;
+            _dialogBorder.Background = value;
+        }
     }
 
     /// <summary>
@@ -259,6 +264,8 @@ public sealed partial class BottomSheet
         };
 
         _popup.Opened += @event;
+        _popup.ActualThemeChanged += Popup_ActualThemeChanged;
+        RefreshDefaultBackground();
 
         _contentPresenter.SizeChanged += Content_SizeChanged;
 
@@ -291,6 +298,7 @@ public sealed partial class BottomSheet
         };
 
         _popup.Closed += @event;
+        _popup.ActualThemeChanged -= Popup_ActualThemeChanged;
 
         _contentPresenter.SizeChanged -= Content_SizeChanged;
         _dialogBorder.SizeChanged -= DialogBorder_SizeChanged;
@@ -310,6 +318,20 @@ public sealed partial class BottomSheet
     public void Cancel()
     {
         _eventManager.RaiseEvent(this, EventArgs.Empty, nameof(Canceled));
+    }
+
+    private void Popup_ActualThemeChanged(FrameworkElement sender, object args)
+    {
+        RefreshDefaultBackground();
+    }
+
+    private void RefreshDefaultBackground()
+    {
+        if (!_hasCustomBackground
+            && Application.Current.Resources[DefaultBackgroundResourceKey] is Brush background)
+        {
+            _dialogBorder.Background = background;
+        }
     }
 
     private void DialogBorder_SizeChanged(object sender, SizeChangedEventArgs e)
