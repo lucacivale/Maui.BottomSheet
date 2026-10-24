@@ -102,11 +102,15 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
     private void PrepareBottomSheetForNavigation(IBottomSheet bottomSheet, object? viewModel = null, Action<IBottomSheet>? configure = null)
     {
         Page page = Application.Current?.Windows.LastOrDefault()?.Page?.GetPageParent() ?? throw new InvalidOperationException("Application.Current?.Windows.LastOrDefault()?.Page cannot be null.");
-        IMauiContext mauiContext = page.Handler?.MauiContext ?? throw new InvalidOperationException("Page.Handler?.MauiContext cannot be null.");
+        Layout layout = page.GetVisualTreeDescendants().OfType<Layout>().FirstOrDefault() ?? throw new InvalidOperationException("No layout found to attach bottom sheet.");
+        layout.Add(bottomSheet);
 
-        bottomSheet.Handler = new Handlers.BottomSheetHandler(mauiContext);
-        bottomSheet.Parent = page;
         bottomSheet.Closed += OnClose;
+
+        if (bottomSheet is Element element)
+        {
+            page.AddLogicalChild(element);
+        }
 
         if (viewModel is not null)
         {
@@ -144,7 +148,7 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
 
                 if (_bottomSheetStack.IsEmpty)
                 {
-                    MvvmHelpers.OnNavigatedFrom(bottomSheet.Parent, parameters);
+                    MvvmHelpers.OnNavigatedFrom(bottomSheet.GetPageParent(), parameters);
                 }
                 else
                 {
@@ -211,11 +215,22 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
             {
                 _bottomSheetStack.Current.Closed -= OnClose;
 
+                if (_bottomSheetStack.Current is Element element)
+                {
+                    _bottomSheetStack.Current.Parent.RemoveLogicalChild(element);
+                }
+
                 if (_bottomSheetStack.Current.Handler is Handlers.BottomSheetHandler bottomSheetHandler)
                 {
                     await bottomSheetHandler.CloseAsync().ConfigureAwait(true);
                 }
 
+                if (_bottomSheetStack.Current.Parent is not Layout layoutParent)
+                {
+                    throw new InvalidOperationException("BottomSheet.Parent must be a Layout. If you see this open a GitHub issue.");
+                }
+
+                layoutParent.Remove(_bottomSheetStack.Current);
                 _bottomSheetStack.Current.Handler?.DisconnectHandler();
                 IBottomSheet bottomSheet = _bottomSheetStack.Remove();
 
@@ -223,7 +238,7 @@ public sealed class BottomSheetNavigationService : IBottomSheetNavigationService
 
                 if (_bottomSheetStack.IsEmpty)
                 {
-                    MvvmHelpers.OnNavigatedTo(bottomSheet.Parent, parameters);
+                    MvvmHelpers.OnNavigatedTo(bottomSheet.GetPageParent(), parameters);
                 }
                 else
                 {

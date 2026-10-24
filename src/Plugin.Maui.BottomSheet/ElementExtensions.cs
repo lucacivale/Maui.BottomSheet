@@ -11,18 +11,29 @@ internal static class ElementExtensions
     /// </summary>
     /// <param name="element">The element whose parent page is to be located.</param>
     /// <returns>The parent page of the element if found, otherwise null.</returns>
-    internal static Page? GetPageParent(this Element element)
+    internal static Page? GetPageParent(this IElement element)
     {
         Page? page = null;
-        Element? parent = element;
+        IElement? parent = element;
 
-        if (parent is Shell || parent is NavigationPage)
+        if (parent is Shell
+            || parent is NavigationPage)
         {
             page = GetCurrentPageFromNavigation(parent);
+        }
+        else if (parent is TabbedPage tabbedPage)
+        {
+            page = tabbedPage.CurrentPage;
         }
         else if (parent is FlyoutPage flyoutPage)
         {
             page = flyoutPage.IsPresented ? flyoutPage.Flyout : flyoutPage.Detail;
+
+            if (flyoutPage is IFlyoutPageController flyoutPageController
+                && flyoutPageController.ShouldShowSplitMode)
+            {
+                page = flyoutPage.Detail;
+            }
 
             if (page is Shell
                 || page is NavigationPage)
@@ -53,7 +64,7 @@ internal static class ElementExtensions
     /// </summary>
     /// <param name="element">The element whose navigation stack is to be inspected.</param>
     /// <returns>The currently active page if found, otherwise null.</returns>
-    private static Page GetCurrentPageFromNavigation(Element element)
+    private static Page GetCurrentPageFromNavigation(IElement element)
     {
         Page currentPage;
         if (element is Shell shell)

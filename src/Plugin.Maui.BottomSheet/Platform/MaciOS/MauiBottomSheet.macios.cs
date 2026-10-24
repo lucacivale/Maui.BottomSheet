@@ -1,17 +1,18 @@
 namespace Plugin.Maui.BottomSheet.Platform.MaciOS;
 
+using Microsoft.Maui;
+using Microsoft.Maui.HotReload;
+using Microsoft.Maui.Platform;
+using Plugin.BottomSheet;
+using Plugin.Maui.BottomSheet.Navigation;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.Maui;
-using Microsoft.Maui.Platform;
-using Plugin.Maui.BottomSheet.Navigation;
-using Plugin.BottomSheet;
 using UIKit;
 
 /// <summary>
 /// Represents a platform-specific implementation of a bottom sheet for macOS and iOS, integrated into the .NET MAUI framework.
 /// </summary>
-public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>
+public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>, IReloadHandler
 {
     private readonly IMauiContext _mauiContext;
     private readonly TaskCompletionSource _isAttachedToWindowTcs;
@@ -68,7 +69,24 @@ public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>
     /// <param name="virtualView">The virtual view to associate with this bottom sheet.</param>
     public void SetView(IBottomSheet virtualView)
     {
+        if (virtualView is IHotReloadableView ihr)
+        {
+            ihr.ReloadHandler = this;
+            MauiHotReloadHelper.AddActiveView(ihr);
+        }
+
         _virtualView = virtualView;
+    }
+
+    /// <summary>
+    /// Reloads the bottom sheet by closing and reopening it asynchronously to apply updated content or settings.
+    /// </summary>
+    [SuppressMessage("Usage", "VSTHRD100: Avoid async void methods", Justification = "Is okay here.")]
+    public async void Reload()
+    {
+        await CloseAsync().ConfigureAwait(true);
+        await Task.Delay(100).ConfigureAwait(true);
+        await OpenAsync().ConfigureAwait(true);
     }
 
     /// <summary>
@@ -76,8 +94,6 @@ public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>
     /// </summary>
     public void Cleanup()
     {
-        _bottomSheet?.Dispose();
-
         RemoveFromSuperview();
     }
 
@@ -97,17 +113,15 @@ public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>
     /// <summary>
     /// Opens the bottom sheet asynchronously, initializing the required states and configurations.
     /// </summary>
-    /// <param name="force">A boolean indicating whether to forcefully open the bottom sheet, even if not attached to the window.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    public async Task OpenAsync(bool force = false)
+    public async Task OpenAsync()
     {
         if (_virtualView is null)
         {
             return;
         }
 
-        if (!_isAttachedToWindow
-            && force == false)
+        if (!_isAttachedToWindow)
         {
             using CancellationTokenSource cts = new(TimeSpan.FromSeconds(20));
             await _isAttachedToWindowTcs.Task.WaitAsync(cts.Token).ConfigureAwait(true);
@@ -119,15 +133,22 @@ public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>
         _bottomSheet.FrameChanged += BottomSheetOnFrameChanged;
         _bottomSheet.LayoutChanged += BottomSheetOnLayoutChanged;
 
-        SetStates();
+        if (_virtualView.SizeMode == BottomSheetSizeMode.States)
+        {
+            SetStates();
+            SetCurrentState();
+        }
+        else
+        {
+            SetSizeMode();
+        }
+
         SetIsCancelable();
-        SetCurrentState();
 
         SetWindowBackgroundColor();
         SetBottomSheetBackgroundColor();
         SetIsModal();
         SetCornerRadius();
-        SetSizeMode();
 
         UIView view = _virtualView.ContainerView.ToPlatform(_mauiContext);
         view.UpdateAutomationId(_virtualView);
@@ -135,12 +156,6 @@ public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>
         _bottomSheet.SetContentView(view);
 
         _virtualView.OnOpeningBottomSheet();
-
-        if (Window is null
-            && _virtualView.Parent.ToPlatform(_mauiContext) is UIView parent)
-        {
-            parent.Window?.AddSubview(this);
-        }
 
         await _bottomSheet.OpenAsync(Window).ConfigureAwait(true);
 
@@ -334,7 +349,30 @@ public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>
         }
 
         _bottomSheet.SizeMode = _virtualView.SizeMode;
-        _bottomSheet.FitToContentCalculation = _bottomSheet.SizeMode == BottomSheetSizeMode.FitToContent ? () => _virtualView.ContainerView.Measure().Height : null;
+
+        Func<double>? calculation = null;
+
+        if (_bottomSheet.SizeMode == BottomSheetSizeMode.FitToContent)
+        {
+            if (_mauiContext.Services.GetRequiredService<Configuration>().UseNewPeekHeightCalculation)
+            {
+                calculation = () =>
+                {
+                    if (_virtualView.ContainerView.DesiredSize.Equals(Size.Zero))
+                    {
+                        _virtualView.ContainerView.Measure(_virtualView.ContainerView.Window?.Width ?? double.PositiveInfinity, _virtualView.ContainerView.Window?.Height ?? double.PositiveInfinity);
+                    }
+
+                    return _virtualView.ContainerView.DesiredSize.Height;
+                };
+            }
+            else
+            {
+                calculation = () => _virtualView.ContainerView.Measure().Height;
+            }
+        }
+
+        _bottomSheet.FitToContentCalculation = calculation;
     }
 
     /// <summary>
@@ -403,7 +441,7 @@ public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>
                 {
                     await CloseAsync().ConfigureAwait(true);
                     MvvmHelpers.OnNavigatedFrom(_virtualView, parameters);
-                    MvvmHelpers.OnNavigatedTo(_virtualView.Parent, parameters);
+                    MvvmHelpers.OnNavigatedTo(_virtualView.GetPageParent(), parameters);
                 }
                 else
                 {

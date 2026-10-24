@@ -89,19 +89,6 @@ public sealed partial class BottomSheetHandler
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="BottomSheetHandler"/> class.
-    /// Represents the handler responsible for managing the behavior and presentation
-    /// of a bottom sheet within a .NET MAUI application.
-    /// </summary>
-    /// <param name="context">The <see cref="IMauiContext"/> instance associated with the handler.</param>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "S1118:Utility classes should not have public constructors", Justification = "Must be public.")]
-    public BottomSheetHandler(IMauiContext context)
-        : base(_bottomSheetMapper, _bottomSheetCommandMapper)
-    {
-        SetMauiContext(context);
-    }
-
-    /// <summary>
     /// Gets a value indicating whether the handler is currently in the process of establishing
     /// a connection between the virtual view and the platform-specific view.
     /// </summary>

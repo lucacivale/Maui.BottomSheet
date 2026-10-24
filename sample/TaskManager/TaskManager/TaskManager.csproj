@@ -14,10 +14,10 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<LangVersion>preview</LangVersion>
-		
+
 		<!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
 		<WindowsPackageType>None</WindowsPackageType>
-		
+
 		<!-- Display name -->
 		<ApplicationTitle>TaskManager</ApplicationTitle>
 
@@ -66,7 +66,6 @@
 	</ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\src\Plugin.BottomSheet\Plugin.BottomSheet.csproj" />
       <ProjectReference Include="..\..\..\src\Plugin.Maui.BottomSheet\Plugin.Maui.BottomSheet.csproj" />
     </ItemGroup>
 

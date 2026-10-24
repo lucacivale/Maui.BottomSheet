@@ -11,8 +11,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
     <bottomsheet:BottomSheet.Content>
         <bottomsheet:BottomSheetContent>
-            <ScrollView Padding="16,24,16,0" x:Name="PeekContent">
-                <VerticalStackLayout Spacing="16">
+            <ScrollView Padding="16,24,16,0">
+                <VerticalStackLayout Spacing="16" x:Name="PeekContent">
                     <Label FontAttributes="Bold" Text="Name Change" />
                     <Entry
                         AutomationId="CustomBottomSheetNewusernameEntry"

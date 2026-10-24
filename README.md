@@ -164,7 +164,8 @@ or
 
 > [!CAUTION]
 > The peek height is calculated using ***MAUI's*** measurement behavior. Different platforms may return different heights for the same layout.
-> This is especially true when using ScrollView, VerticalStackLayout, or Grid with Star rows.
+> You should not set a ScrollView as your peek view reference. Use the root of your ScrollView instead.
+> This is especially true when using VerticalStackLayout and Grid with Star rows.
 > To observe the differences, launch the **Plugin.BottomSheet.Tests.Maui.Ui.Application** test project and open the various peek BottomSheets
 
 ## 📖 API Reference
@@ -176,6 +177,7 @@ or
 | `IsModal`               | `bool`                   | Enable/disable interaction with content under BottomSheet                                                                                                                                  |
 | `IsCancelable`          | `bool`                   | Allow user to close via gestures or background click                                                                                                                                       |
 | `HasHandle`             | `bool`                   | Show/hide the drag handle                                                                                                                                                                  |
+| `HandleColor`           | `Color`                  | Custom drag-handle color; defaults to Gray in every theme. |
 | `ShowHeader`            | `bool`                   | Show/hide the header section                                                                                                                                                               |
 | `IsOpen`                | `bool`                   | Control open/close state                                                                                                                                                                   |
 | `IsDraggable`           | `bool`                   | Enable/disable drag gestures (useful for drawing)                                                                                                                                          |
@@ -189,6 +191,23 @@ or
 | `SizeMode`              | `BottomSheetSizeMode`    | Represents a size mode for the bottom sheet where the height is adjusted dynamically to fit the content displayed within it or a fixed value based on the number of states it can display. |
 
 
+### Handle Color
+
+Use the bindable `HandleColor` property to customize the drag handle. It defaults to `Colors.Gray` in every theme, preserving the existing appearance. Changes update an existing handle without reopening the bottom sheet.
+
+Set `HandleColor="CornflowerBlue"` in XAML or `sheet.HandleColor = Colors.CornflowerBlue;` in C#. Use `sheet.ClearValue(BottomSheet.HandleColorProperty);` to restore the gray default. `HasHandle="False"` still hides the handle.
+
+For theme-specific colors, configure a .NET MAUI style in your app:
+
+```xml
+<Style TargetType="mauibottomsheet:BottomSheet">
+    <Setter Property="HandleColor"
+            Value="{AppThemeBinding Light=DarkSlateGray, Dark=LightSkyBlue}" />
+</Style>
+```
+
+.NET MAUI applies the style's theme binding when the app theme changes.
+
 ### Size Modes
 
 | State          | Description                                                                                                                                                                                                                                        |
@@ -199,6 +218,9 @@ or
 > [!CAUTION]
 > Mode `FitToContent` is not compatible with the `States` and `CurrentState` property. Do not mix these two properties.
 > Requires iOS 16+. On prior versions of iOS, the medium state will be used instead.
+
+> [!NOTE]
+> On iOS and MacCatalyst, custom-detent presentations such as `FitToContent` and peek-only sheets internally include a large detent sentinel so UIKit can keep non-modal sheets undimmed. If the user drags to that sentinel, the sheet automatically snaps back to the custom detent.
 
 ### 🎭 BottomSheet States
 
@@ -275,7 +297,7 @@ or
     States="Peek,Medium,Large"
     CurrentState="Medium"
     WindowBackgroundColor="Black">
-    
+
     <!-- Header Configuration -->
     <bottomsheet:BottomSheet.Header>
         <bottomsheet:BottomSheetHeader
@@ -291,7 +313,7 @@ or
             </bottomsheet:BottomSheetHeader.TopRightButton>
         </bottomsheet:BottomSheetHeader>
     </bottomsheet:BottomSheet.Header>
-    
+
     <!-- Content with Peek Height Behavior -->
     <bottomsheet:BottomSheetContent>
         <bottomsheet:BottomSheetContent.ContentTemplate>
@@ -304,7 +326,7 @@ or
                         </ContentView.Behaviors>
                         <Label Text="This content is visible in peek mode" />
                     </ContentView>
-                        
+
                     <!-- Full Content -->
                     <Grid>
                         <Label Text="This content appears when expanded" />
@@ -314,13 +336,13 @@ or
             </DataTemplate>
         </bottomsheet:BottomSheetContent.ContentTemplate>
     </bottomsheet:BottomSheetContent>
-    
+
     <!-- Styling -->
     <bottomsheet:BottomSheet.BottomSheetStyle>
         <bottomsheet:BottomSheetStyle>
             <bottomsheet:BottomSheetStyle.HeaderStyle>
-                <bottomsheet:BottomSheetHeaderStyle 
-                    TitleTextColor="Blue" 
+                <bottomsheet:BottomSheetHeaderStyle
+                    TitleTextColor="Blue"
                     TitleTextFontSize="18"
                     TitleTextFontAttributes="Bold"
                     CloseButtonTintColor="Red"/>
@@ -396,6 +418,9 @@ builder.Services.AddBottomSheet<UserProfilePage>("UserProfile", (sheet, page) =>
 
 ### 🎯 Using Navigation Service
 
+> [!IMPORTANT]
+> `BottomSheets` are attached to the first `Layout` in the current page's visual hierarchy to ensure compatibility with the .NET MAUI view lifecycle. Navigation fails if no layout is available.
+
 ```csharp
 public class MainViewModel
 {
@@ -421,7 +446,7 @@ public class MainViewModel
             { "Mode", "Edit" },
             { "ShowActions", true }
         };
-        
+
         await _navigationService.NavigateToAsync("UserProfile", parameters);
     }
 
@@ -549,10 +574,10 @@ public class EditUserViewModel : IConfirmNavigationAsync
 }
 ```
 
-> [!IMPORTANT]  
+> [!IMPORTANT]
 > When using the `IsOpen` to manage the visibility of a `BottomSheet`, the parent `ViewModel` can implement `INavigationAware` to respond to the lifecycle of the `BottomSheet`.
 > This allows the parent `ViewModel` to handle actions when:
-> 
+>
 > | Scenario                                       | `INavigationAware` on Parent Triggered? |
 > |------------------------------------------------|-----------------------------------------|
 > | BottomSheet opened via navigation              | ❌ No                                    |
@@ -695,7 +720,7 @@ public static class MauiProgram
         builder
             .UseMauiApp<App>()
             .UseBottomSheet();
-        
+
         #if ANDROID
         builder.ConfigureLifecycleEvents(events =>
         {
@@ -727,6 +752,11 @@ public static class MauiProgram
 
 - **Don't mix** `IsOpen` with navigation methods
 - Always implement `IConfirmNavigation` for forms with user input
+
+
+### XAML and .NET HotReload
+- XAML and .NET HotReload are not supported for `BottomSheet`
+- If you face any issues please open an issue and describe your setup(Rider, VSCode, Visual Studio, Platform, OS etc.)
 
 ## 📄 License
 

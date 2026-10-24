@@ -10,7 +10,7 @@ namespace Plugin.Maui.BottomSheet;
 /// A UI component that provides a collapsible and expandable container, typically used to display additional content at the bottom of the screen.
 /// </summary>
 [ContentProperty(nameof(Content))]
-public partial class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet>
+public class BottomSheet : View, IBottomSheet, IElementConfiguration<BottomSheet>
 {
     /// <summary>
     /// Represents a bindable property that determines whether the bottom sheet is displayed in modal mode.
@@ -125,6 +125,16 @@ public partial class BottomSheet : View, IBottomSheet, IElementConfiguration<Bot
             defaultValue: true,
             defaultBindingMode: BindingMode.TwoWay,
             propertyChanged: OnHasHandlePropertyChanged);
+
+    /// <summary>
+    /// Bindable property for the handle color. Defaults to <see cref="Colors.Gray"/>.
+    /// </summary>
+    public static readonly BindableProperty HandleColorProperty =
+        BindableProperty.Create(
+            nameof(HandleColor),
+            typeof(Color),
+            typeof(BottomSheet),
+            defaultValue: Colors.Gray);
 
     /// <summary>
     /// Bindable property that indicates whether the header is displayed.
@@ -324,6 +334,10 @@ public partial class BottomSheet : View, IBottomSheet, IElementConfiguration<Bot
         _platformConfigurationRegistry = new Lazy<PlatformConfigurationRegistry<BottomSheet>>(() => new PlatformConfigurationRegistry<BottomSheet>(this));
         Loaded += OnLoaded;
 
+        #if DEBUG
+        Loaded += HotReload;
+        #endif
+
         ContainerView.Padding = Padding;
     }
 
@@ -398,6 +412,15 @@ public partial class BottomSheet : View, IBottomSheet, IElementConfiguration<Bot
     {
         get => (bool)GetValue(HasHandleProperty);
         set => SetValue(HasHandleProperty, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the color of the bottom-sheet handle. Defaults to <see cref="Colors.Gray"/>.
+    /// </summary>
+    public Color HandleColor
+    {
+        get => (Color)GetValue(HandleColorProperty);
+        set => SetValue(HandleColorProperty, value);
     }
 
     /// <summary>
@@ -630,6 +653,8 @@ public partial class BottomSheet : View, IBottomSheet, IElementConfiguration<Bot
     [EditorBrowsable(EditorBrowsableState.Never)]
     public void OnOpeningBottomSheet()
     {
+        AddLogicalChild(ContainerView);
+
         ContainerView.Parent = this;
         ContainerView.BindingContext = BindingContext;
 
@@ -656,6 +681,8 @@ public partial class BottomSheet : View, IBottomSheet, IElementConfiguration<Bot
     [EditorBrowsable(EditorBrowsableState.Never)]
     public void OnClosingBottomSheet()
     {
+        RemoveLogicalChild(ContainerView);
+
         RaiseEvent(nameof(Closing), EventArgs.Empty);
         ExecuteCommand(ClosingCommand, ClosingCommandParameter);
     }
@@ -1006,6 +1033,39 @@ public partial class BottomSheet : View, IBottomSheet, IElementConfiguration<Bot
         Unloaded += OnUnloaded;
     }
 
+    #if DEBUG
+    private void HotReload(object? sender, EventArgs e)
+    {
+        if (this.GetPageParent() is Page page)
+        {
+            page.Disappearing += OnDisappearing;
+        }
+    }
+
+    private void OnDisappearing(object? sender, EventArgs e)
+    {
+        if (Environment.StackTrace.Contains("HotReload", StringComparison.OrdinalIgnoreCase) == false)
+        {
+            return;
+        }
+
+        if (this.GetPageParent() is Page page)
+        {
+            page.Disappearing -= OnDisappearing;
+        }
+
+        IsOpen = false;
+        if (Parent is Layout layout)
+        {
+            layout.Remove(this);
+        }
+        else if (Parent is ContentView contentView)
+        {
+            contentView.Content = null;
+        }
+    }
+    #endif
+
     /// <summary>
     /// Disconnects the handler manually to address scenarios where MAUI does not call the disconnect handler.
     /// </summary>
@@ -1116,7 +1176,11 @@ public partial class BottomSheet : View, IBottomSheet, IElementConfiguration<Bot
     /// </summary>
     private void RemoveHandle()
     {
-        ContainerView.Remove(ContainerView.Children.FirstOrDefault(child => ContainerView.GetRow(child) == HandleRow));
+        if (ContainerView.Children.FirstOrDefault(child => ContainerView.GetRow(child) == HandleRow) is View handle)
+        {
+            handle.RemoveBinding(BackgroundProperty);
+            ContainerView.Remove(handle);
+        }
     }
 
     /// <summary>
@@ -1147,7 +1211,7 @@ public partial class BottomSheet : View, IBottomSheet, IElementConfiguration<Bot
     /// <returns>A <see cref="Border"/> element configured as the handle, including margin, dimensions, and styling characteristics.</returns>
     private Border CreateHandle()
     {
-        return new()
+        Border handle = new()
         {
             AutomationId = AutomationIds.Handle,
             Margin = new(0, 10 - Padding.Top, 0, 10),
@@ -1155,15 +1219,20 @@ public partial class BottomSheet : View, IBottomSheet, IElementConfiguration<Bot
             HeightRequest = 7.5,
             Content = new BoxView()
             {
+                CornerRadius = 20,
                 WidthRequest = 40,
-                Color = Colors.Gray,
+                Background = Colors.Transparent,
             },
+            StrokeThickness = 0,
             StrokeShape = new RoundRectangle()
             {
                 CornerRadius = new(20),
             },
-            Stroke = Colors.Gray,
         };
+
+        handle.SetBinding(BackgroundProperty, static (BottomSheet bottomSheet) => bottomSheet.HandleColor, source: this);
+
+        return handle;
     }
 
     /// <summary>

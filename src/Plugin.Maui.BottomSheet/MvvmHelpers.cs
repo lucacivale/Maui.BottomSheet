@@ -59,15 +59,16 @@ internal static class MvvmHelpers
     {
         bool canNavigate = true;
 
-        if (bottomSheet.Parent is IConfirmNavigation
-            || bottomSheet.Parent.BindingContext is IConfirmNavigation)
+        Page? pageParent = bottomSheet.GetPageParent();
+        if (pageParent is IConfirmNavigation
+            || pageParent?.BindingContext is IConfirmNavigation)
         {
-            if (bottomSheet.Parent is IConfirmNavigation parentConfirmNavigation)
+            if (pageParent is IConfirmNavigation parentConfirmNavigation)
             {
                 canNavigate = parentConfirmNavigation.CanNavigate(parameters);
             }
 
-            if (bottomSheet.Parent.BindingContext is IConfirmNavigation parentBindableConfirmNavigation)
+            if (pageParent?.BindingContext is IConfirmNavigation parentBindableConfirmNavigation)
             {
                 canNavigate = canNavigate
                     && parentBindableConfirmNavigation.CanNavigate(parameters);
@@ -104,15 +105,16 @@ internal static class MvvmHelpers
     {
         bool canNavigate = true;
 
-        if (bottomSheet.Parent is IConfirmNavigationAsync
-            || bottomSheet.Parent.BindingContext is IConfirmNavigationAsync)
+        Page? pageParent = bottomSheet.GetPageParent();
+        if (pageParent is IConfirmNavigationAsync
+            || pageParent?.BindingContext is IConfirmNavigationAsync)
         {
-            if (bottomSheet.Parent is IConfirmNavigationAsync parentConfirmNavigation)
+            if (pageParent is IConfirmNavigationAsync parentConfirmNavigation)
             {
                 canNavigate = await parentConfirmNavigation.CanNavigateAsync(parameters).ConfigureAwait(false);
             }
 
-            if (bottomSheet.Parent.BindingContext is IConfirmNavigationAsync parentBindableConfirmNavigation)
+            if (pageParent?.BindingContext is IConfirmNavigationAsync parentBindableConfirmNavigation)
             {
                 canNavigate = canNavigate
                     && await parentBindableConfirmNavigation.CanNavigateAsync(parameters).ConfigureAwait(false);

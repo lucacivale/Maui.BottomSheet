@@ -1,4 +1,5 @@
-﻿using Microsoft.Maui.Platform;
+﻿using Microsoft.Maui.HotReload;
+using Microsoft.Maui.Platform;
 using Microsoft.UI.Xaml;
 using Plugin.Maui.BottomSheet.Navigation;
 using Plugin.Maui.BottomSheet.PlatformConfiguration.WindowsSpecific;
@@ -11,7 +12,7 @@ namespace Plugin.Maui.BottomSheet.Platform.Windows;
 /// <summary>
 /// Represents a platform-specific implementation of a bottom sheet for Windows, integrated into the .NET MAUI framework.
 /// </summary>
-public sealed partial class MauiBottomSheet : FrameworkElement
+public sealed partial class MauiBottomSheet : FrameworkElement, IReloadHandler
 {
     private readonly IMauiContext _mauiContext;
     private readonly TaskCompletionSource _isAttachedToWindowTcs;
@@ -51,7 +52,24 @@ public sealed partial class MauiBottomSheet : FrameworkElement
     /// <param name="virtualView">The virtual view to associate with this bottom sheet.</param>
     public void SetView(IBottomSheet virtualView)
     {
+        if (virtualView is IHotReloadableView ihr)
+        {
+            ihr.ReloadHandler = this;
+            MauiHotReloadHelper.AddActiveView(ihr);
+        }
+
         _virtualView = virtualView;
+    }
+
+    /// <summary>
+    /// Reloads the bottom sheet by closing and reopening it asynchronously to apply updated content or settings.
+    /// </summary>
+    [SuppressMessage("Usage", "VSTHRD100: Avoid async void methods", Justification = "Is okay here.")]
+    public async void Reload()
+    {
+        await CloseAsync().ConfigureAwait(true);
+        await Task.Delay(100).ConfigureAwait(true);
+        await OpenAsync().ConfigureAwait(true);
     }
 
     /// <summary>
@@ -65,17 +83,15 @@ public sealed partial class MauiBottomSheet : FrameworkElement
     /// <summary>
     /// Opens the bottom sheet asynchronously, initializing the required states and configurations.
     /// </summary>
-    /// <param name="force">A boolean indicating whether to forcefully open the bottom sheet, even if not attached to the window.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    public async Task OpenAsync(bool force = false)
+    public async Task OpenAsync()
     {
         if (_virtualView is null)
         {
             return;
         }
 
-        if (!_isAttachedToWindow
-            && force == false)
+        if (!_isAttachedToWindow)
         {
             using CancellationTokenSource cts = new(TimeSpan.FromSeconds(20));
             await _isAttachedToWindowTcs.Task.WaitAsync(cts.Token).ConfigureAwait(true);
@@ -317,7 +333,7 @@ public sealed partial class MauiBottomSheet : FrameworkElement
                 {
                     await CloseAsync().ConfigureAwait(true);
                     MvvmHelpers.OnNavigatedFrom(_virtualView, parameters);
-                    MvvmHelpers.OnNavigatedTo(_virtualView.Parent, parameters);
+                    MvvmHelpers.OnNavigatedTo(_virtualView.GetPageParent(), parameters);
                 }
                 else
                 {
