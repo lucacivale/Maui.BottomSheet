@@ -41,6 +41,6 @@
     <PackageVersion Include="Microsoft.Maui.Controls" Version="9.0.21" />
   </ItemGroup>
   <ItemGroup Condition="$(TargetFramework.StartsWith('$(NETVersion)'))">
-    <PackageVersion Include="Microsoft.Maui.Controls" Version="10.0.120" />
+    <PackageVersion Include="Microsoft.Maui.Controls" Version="10.0.10" />
   </ItemGroup>
 </Project>
