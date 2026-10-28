@@ -511,7 +511,7 @@ public sealed class BottomSheet : UINavigationController, IEnumerable<UIView>
     {
         if (View is not null)
         {
-            View.BackgroundColor = BackgroundColor;
+            View.BackgroundColor = BackgroundColor ?? UIColor.SystemBackground;
         }
     }
 

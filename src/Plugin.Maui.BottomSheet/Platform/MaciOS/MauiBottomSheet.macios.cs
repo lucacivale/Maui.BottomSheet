@@ -8,6 +8,7 @@ using Plugin.Maui.BottomSheet.Navigation;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using UIKit;
+using MauiApplication = Microsoft.Maui.Controls.Application;
 
 /// <summary>
 /// Represents a platform-specific implementation of a bottom sheet for macOS and iOS, integrated into the .NET MAUI framework.
@@ -22,6 +23,10 @@ public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>, IReloadHandle
     private IBottomSheet? _virtualView;
 
     private bool _isAttachedToWindow;
+    private MauiApplication? _themeApplication;
+    private IUITraitChangeRegistration? _appearanceRegistration;
+    private UIWindow? _appearanceWindow;
+    private ThemeAppearanceObserver? _legacyAppearanceObserver;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MauiBottomSheet"/> class.
@@ -94,6 +99,7 @@ public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>, IReloadHandle
     /// </summary>
     public void Cleanup()
     {
+        StopObservingTheme();
         RemoveFromSuperview();
     }
 
@@ -128,6 +134,7 @@ public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>, IReloadHandle
         }
 
         _bottomSheet = new Plugin.BottomSheet.iOSMacCatalyst.BottomSheet();
+        ObserveTheme();
         _bottomSheet.StateChanged += BottomSheetOnStateChanged;
         _bottomSheet.Canceled += BottomSheetOnCanceled;
         _bottomSheet.FrameChanged += BottomSheetOnFrameChanged;
@@ -178,6 +185,7 @@ public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>, IReloadHandle
             return;
         }
 
+        StopObservingTheme();
         _virtualView.OnClosingBottomSheet();
 
         _bottomSheet.StateChanged -= BottomSheetOnStateChanged;
@@ -386,9 +394,87 @@ public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>, IReloadHandle
             return;
         }
 
+        StopObservingTheme();
         _bottomSheet?.Dispose();
 
         base.Dispose(disposing);
+    }
+
+    private void ObserveTheme()
+    {
+        StopObservingTheme();
+        _themeApplication = MauiApplication.Current;
+        if (_themeApplication is not null)
+        {
+            _themeApplication.RequestedThemeChanged += Application_RequestedThemeChanged;
+        }
+
+        _appearanceWindow = Window;
+        if (_appearanceWindow is not null)
+        {
+            if (OperatingSystem.IsIOSVersionAtLeast(17) || OperatingSystem.IsMacCatalystVersionAtLeast(17))
+            {
+                _appearanceRegistration = _appearanceWindow.RegisterForTraitChanges<UITraitUserInterfaceStyle>((_, _) => WindowAppearanceChanged());
+            }
+            else
+            {
+                _legacyAppearanceObserver = new ThemeAppearanceObserver(WindowAppearanceChanged);
+                _appearanceWindow.AddSubview(_legacyAppearanceObserver);
+            }
+        }
+
+        ApplyUserAppTheme();
+    }
+
+    private void StopObservingTheme()
+    {
+        if (_appearanceRegistration is not null
+            && _appearanceWindow is not null
+            && (OperatingSystem.IsIOSVersionAtLeast(17) || OperatingSystem.IsMacCatalystVersionAtLeast(17)))
+        {
+            _appearanceWindow.UnregisterForTraitChanges(_appearanceRegistration);
+            _appearanceRegistration.Dispose();
+            _appearanceRegistration = null;
+        }
+
+        _legacyAppearanceObserver?.RemoveFromSuperview();
+        _legacyAppearanceObserver?.Dispose();
+        _legacyAppearanceObserver = null;
+        _appearanceWindow = null;
+
+        if (_themeApplication is not null)
+        {
+            _themeApplication.RequestedThemeChanged -= Application_RequestedThemeChanged;
+            _themeApplication = null;
+        }
+    }
+
+    private void Application_RequestedThemeChanged(object? sender, AppThemeChangedEventArgs e)
+    {
+        MainThread.BeginInvokeOnMainThread(ApplyUserAppTheme);
+    }
+
+    private void WindowAppearanceChanged()
+    {
+        // A presented controller can prevent the underlying MAUI controller from
+        // receiving the OS appearance notification. Keep its resource theme in sync.
+        (_themeApplication as IApplication)?.ThemeChanged();
+        ApplyUserAppTheme();
+    }
+
+    private void ApplyUserAppTheme()
+    {
+        if (_bottomSheet is null || _themeApplication is null)
+        {
+            return;
+        }
+
+        _bottomSheet.OverrideUserInterfaceStyle = _themeApplication.UserAppTheme switch
+        {
+            AppTheme.Light => UIUserInterfaceStyle.Light,
+            AppTheme.Dark => UIUserInterfaceStyle.Dark,
+            _ => UIUserInterfaceStyle.Unspecified,
+        };
     }
 
     /// <summary>
@@ -504,5 +590,31 @@ public sealed class MauiBottomSheet : UIView, IEnumerable<UIView>, IReloadHandle
             _bottomSheet.Frame.Y,
             _bottomSheet.Frame.Width,
             _bottomSheet.Frame.Height);
+    }
+
+    /// <summary>
+    /// Observes the window's inherited appearance on systems before targeted trait registration was available.
+    /// </summary>
+    private sealed class ThemeAppearanceObserver : UIView
+    {
+        private readonly Action _appearanceChanged;
+
+        public ThemeAppearanceObserver(Action appearanceChanged)
+        {
+            _appearanceChanged = appearanceChanged;
+            UserInteractionEnabled = false;
+            AccessibilityElementsHidden = true;
+        }
+
+        /// <inheritdoc/>
+        [SuppressMessage("Interoperability", "CA1422:Validate platform compatibility", Justification = "Only instantiated on iOS and MacCatalyst versions before 17.")]
+        public override void TraitCollectionDidChange(UITraitCollection? previousTraitCollection)
+        {
+            base.TraitCollectionDidChange(previousTraitCollection);
+            if (previousTraitCollection?.UserInterfaceStyle != TraitCollection.UserInterfaceStyle)
+            {
+                _appearanceChanged();
+            }
+        }
     }
 }
