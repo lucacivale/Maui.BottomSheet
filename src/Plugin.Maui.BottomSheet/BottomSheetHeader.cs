@@ -273,6 +273,18 @@ public sealed class BottomSheetHeader : BottomSheetContentView, IBottomSheetHead
         base.OnBindingContextChanged();
 
         OnBindingContextChanged(_builtInHeaderLayout);
+
+        if (_builtInHeaderLayout is null)
+        {
+            return;
+        }
+
+        // TryAdd gives each built-in header view (buttons, title, close button) a local
+        // binding context, so they do not inherit it from the layout: refresh them explicitly.
+        foreach (View view in _builtInHeaderLayout.Children.OfType<View>())
+        {
+            view.BindingContext = BindingContext;
+        }
     }
 
     /// <summary>

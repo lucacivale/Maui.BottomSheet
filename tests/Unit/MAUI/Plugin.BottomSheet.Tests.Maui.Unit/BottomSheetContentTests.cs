@@ -216,4 +216,63 @@ public class BottomSheetContentTests
         Assert.Equal(typeof(View), BottomSheetContent.ContentProperty.ReturnType);
         Assert.Equal(typeof(DataTemplate), BottomSheetContent.ContentTemplateProperty.ReturnType);
     }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void BindingContextChanged_ShouldPreserveChildBindingContexts(bool useTemplate)
+    {
+        // Arrange
+        object explicitContext = new object();
+        Label explicitChild = new Label { BindingContext = explicitContext };
+        Label boundChild = new Label();
+        boundChild.SetBinding(BindableObject.BindingContextProperty, new Binding(nameof(ReproViewModel.Child)));
+        Label inheritedChild = new Label();
+        VerticalStackLayout list = new VerticalStackLayout();
+        BindableLayout.SetItemTemplate(list, new DataTemplate(() => new Label()));
+        list.SetBinding(BindableLayout.ItemsSourceProperty, new Binding(nameof(ReproViewModel.Items)));
+        VerticalStackLayout root = new VerticalStackLayout { explicitChild, boundChild, inheritedChild, list };
+
+        BottomSheetContent content = new BottomSheetContent();
+        if (useTemplate)
+        {
+            content.ContentTemplate = new DataTemplate(() => root);
+        }
+        else
+        {
+            content.Content = root;
+        }
+
+        ReproViewModel firstContext = new ReproViewModel();
+        ReproViewModel secondContext = new ReproViewModel();
+
+        // Act
+        content.BindingContext = firstContext;
+        content.CreateContent();
+
+        // Assert
+        AssertChildContexts(firstContext);
+
+        // Act
+        content.BindingContext = secondContext;
+
+        // Assert
+        AssertChildContexts(secondContext);
+
+        void AssertChildContexts(ReproViewModel expected)
+        {
+            Assert.Same(expected, root.BindingContext);
+            Assert.Same(expected, inheritedChild.BindingContext);
+            Assert.Same(explicitContext, explicitChild.BindingContext);
+            Assert.Same(expected.Child, boundChild.BindingContext);
+            Assert.Equal(expected.Items, list.Children.Cast<BindableObject>().Select(row => row.BindingContext));
+        }
+    }
+
+    private sealed class ReproViewModel
+    {
+        public object Child { get; } = new object();
+
+        public IReadOnlyList<object> Items { get; } = [new object(), new object()];
+    }
 }

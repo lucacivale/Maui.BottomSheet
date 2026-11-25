@@ -117,7 +117,8 @@ public class BottomSheetContentView : BindableObject
     }
 
     /// <summary>
-    /// Updates the binding context of the current view and all its visual descendants.
+    /// Updates the binding context of the content root. Descendants inherit it through
+    /// the MAUI visual tree and keep their own local or bound binding context.
     /// </summary>
     /// <param name="content">The view whose binding context needs to be updated.</param>
     protected void OnBindingContextChanged(View? content)
@@ -128,11 +129,6 @@ public class BottomSheetContentView : BindableObject
         }
 
         content.BindingContext = BindingContext;
-
-        foreach (View view in content.GetVisualTreeDescendants().OfType<View>())
-        {
-            view.BindingContext = content.BindingContext;
-        }
     }
 
     /// <summary>
