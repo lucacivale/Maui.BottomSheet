@@ -281,4 +281,33 @@ public class BottomSheetHeaderTests
         // Assert
         Assert.Equal(parent, result.Parent);
     }
+
+    [Fact]
+    public void BindingContextChanged_ShouldUpdateBuiltInHeaderViews()
+    {
+        // Arrange
+        Button topLeftButton = new Button();
+        Button topRightButton = new Button();
+        BottomSheetHeader header = new BottomSheetHeader
+        {
+            TitleText = "Title",
+            TopLeftButton = topLeftButton,
+            TopRightButton = topRightButton,
+            HeaderAppearance = BottomSheetHeaderButtonAppearanceMode.LeftAndRightButton,
+        };
+        object firstContext = new object();
+        object secondContext = new object();
+
+        header.BindingContext = firstContext;
+        Layout layout = Assert.IsAssignableFrom<Layout>(header.CreateContent());
+
+        // Act
+        header.BindingContext = secondContext;
+
+        // Assert
+        Assert.Same(secondContext, layout.BindingContext);
+        Assert.Same(secondContext, topLeftButton.BindingContext);
+        Assert.Same(secondContext, topRightButton.BindingContext);
+        Assert.All(layout.Children.Cast<BindableObject>(), view => Assert.Same(secondContext, view.BindingContext));
+    }
 }
